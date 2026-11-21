@@ -1,0 +1,9 @@
+node_modules/
+dashboard/node_modules/
+dashboard/dist/
+dashboard/studio.log
+out/
+.env
+*.mp4
+*.wav
+*.mp3
