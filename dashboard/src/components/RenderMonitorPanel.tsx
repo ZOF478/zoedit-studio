@@ -7,7 +7,6 @@ import {
   Download,
   Film,
   Loader2,
-  MonitorPlay,
   PlayCircle,
   Terminal,
 } from 'lucide-react';
@@ -25,13 +24,13 @@ interface RenderMonitorPanelProps {
   logs: RenderLogEntry[];
   overallProgress: number;
   isRendering: boolean;
+  canStart: boolean;
   onStartRender: () => void;
   renderedVideo: RenderedVideoResult | null;
   totalDurationSec: number;
   totalFrames: number;
   fps: FpsOption;
   aspectRatio: AspectRatio;
-  apiBaseUrl: string;
   renderStartedAt: number | null;
   renderRemainingSec?: number | null;
   renderRemainingUpdatedAt?: number | null;
@@ -42,20 +41,18 @@ export function RenderMonitorPanel({
   logs,
   overallProgress,
   isRendering,
+  canStart,
   onStartRender,
   renderedVideo,
   totalDurationSec,
   totalFrames,
   fps,
   aspectRatio,
-  apiBaseUrl,
   renderStartedAt,
   renderRemainingSec = null,
   renderRemainingUpdatedAt = null,
 }: RenderMonitorPanelProps) {
   const { t } = useI18n();
-  const [openingStudio, setOpeningStudio] = useState(false);
-  const [studioNotice, setStudioNotice] = useState<string | null>(null);
   const [showLogs, setShowLogs] = useState(false);
   const [clock, setClock] = useState(() => Date.now());
 
@@ -75,13 +72,10 @@ export function RenderMonitorPanel({
   const remainingFresh =
     renderRemainingUpdatedAt !== null && clock - renderRemainingUpdatedAt < 15000;
   const liveRemainingSec =
-    remainingFresh &&
-    renderRemainingSec !== null &&
-    renderRemainingUpdatedAt !== null
+    remainingFresh && renderRemainingSec !== null && renderRemainingUpdatedAt !== null
       ? Math.max(
           0,
-          renderRemainingSec -
-            Math.floor(Math.max(0, clock - renderRemainingUpdatedAt) / 1000)
+          renderRemainingSec - Math.floor(Math.max(0, clock - renderRemainingUpdatedAt) / 1000)
         )
       : null;
   const displayRemainingSec = isRendering
@@ -101,52 +95,6 @@ export function RenderMonitorPanel({
   const activeStepIndex = Math.max(0, steps.findIndex((step) => step.id === activeStep?.id));
   const lastLog = logs[logs.length - 1];
 
-  const handleOpenStudio = async () => {
-    setOpeningStudio(true);
-    setStudioNotice(
-      t('جاري تشغيل Remotion Studio...', 'Starting Remotion Studio...')
-    );
-    const studioWindow = window.open('about:blank', '_blank');
-    try {
-      const res = await fetch(`${apiBaseUrl}/open-remotion-studio`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
-      const data = (await res.json()) as {
-        ok?: boolean;
-        port?: number;
-        running?: boolean;
-        started?: boolean;
-        error?: string;
-      };
-      if (!res.ok || data.ok === false || !data.port) {
-        throw new Error(data.error || `HTTP ${res.status}`);
-      }
-      const studioUrl = `http://${window.location.hostname || 'localhost'}:${data.port}`;
-      if (studioWindow) {
-        studioWindow.location.href = studioUrl;
-      } else {
-        window.location.href = studioUrl;
-      }
-      setStudioNotice(
-        t(
-          `تم فتح Remotion Studio على المنفذ ${data.port}.`,
-          `Remotion Studio is opening on port ${data.port}.`
-        )
-      );
-    } catch (error) {
-      studioWindow?.close();
-      setStudioNotice(
-        error instanceof Error
-          ? error.message
-          : t('تعذر فتح Remotion Studio.', 'Could not open Remotion Studio.')
-      );
-    } finally {
-      setOpeningStudio(false);
-    }
-  };
-
   const handleDownload = () => {
     if (!renderedVideo) return;
     const link = document.createElement('a');
@@ -159,24 +107,22 @@ export function RenderMonitorPanel({
 
   return (
     <section id="render-monitor" className="space-y-5">
-      {/* Action & Summary Strip */}
       <div className="rounded-xl border border-white/8 bg-[#10141D] p-5 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/8 pb-4">
           <div>
             <h2 className="font-display text-base font-bold text-slate-100">
-              {t('مراقب التصيير المباشر (SSE Pipeline)', 'Live render monitor (SSE pipeline)')}
+              {t('بدء تصدير الفيديو', 'Start video export')}
             </h2>
             <p className="mt-0.5 font-mono text-xs text-slate-400" dir="ltr">
-              SSE Stream: {apiBaseUrl}/render/stream · {aspectRatio} @ {fps}fps ·{' '}
-              {totalDurationSec.toFixed(1)}s ({totalFrames} frames)
+              {aspectRatio} @ {fps}fps · {totalDurationSec.toFixed(1)}s ({totalFrames} frames)
             </p>
           </div>
 
           <button
             type="button"
-            disabled={isRendering}
+            disabled={isRendering || !canStart}
             onClick={onStartRender}
-            className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-sky-400 disabled:opacity-60 transition-colors cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
           >
             {isRendering ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -185,17 +131,16 @@ export function RenderMonitorPanel({
             )}
             <span>
               {isRendering
-                ? t('جاري تصيير الفيديو...', 'Rendering video...')
-                : t('تصيير الفيديو النهائي', 'Render final video')}
+                ? t('جاري تصدير الفيديو...', 'Exporting video...')
+                : t('بدء تصدير الفيديو', 'Start video export')}
             </span>
           </button>
         </div>
 
-        {/* 4-Step Progress Bar */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-slate-200">
-              {t('التقدم العام للتصيير', 'Overall render progress')}
+              {t('تقدم التصدير', 'Export progress')}
             </span>
             <span className="font-mono tabular-nums text-sky-300">{overallProgress}%</span>
           </div>
@@ -216,8 +161,9 @@ export function RenderMonitorPanel({
                 <Clock className="h-4 w-4 text-slate-500" />
               )}
               <span className="font-semibold text-slate-100">
-                {t('المرحلة الحالية', 'Current stage')}:{' '}
-                {activeStep?.label || t('جاهز للبدء', 'Ready to start')}
+                {overallProgress >= 100
+                  ? t('اكتمل التصدير', 'Export complete')
+                  : activeStep?.label || t('جاهز للبدء', 'Ready to start')}
               </span>
               <span className="font-mono text-[11px] text-slate-400 tabular-nums" dir="ltr">
                 {steps.length > 0 ? `${activeStepIndex + 1}/${steps.length}` : '0/0'}
@@ -240,14 +186,12 @@ export function RenderMonitorPanel({
                     )
                   : overallProgress >= 100
                     ? t('اكتمل', 'Complete')
-                    : isRendering
-                      ? t('الوقت المتبقي —', 'Time remaining —')
-                      : t('الوقت المتبقي —', 'Time remaining —')}
+                    : t('الوقت المتبقي —', 'Time remaining —')}
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2.5 pt-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2.5 pt-2 sm:grid-cols-3">
             {steps.map((step, idx) => {
               const isActive = step.status === 'active';
               const isDone = step.status === 'completed';
@@ -281,7 +225,6 @@ export function RenderMonitorPanel({
           </div>
         </div>
 
-        {/* Compact status + optional verbose logs */}
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2 text-xs font-semibold text-slate-300">
@@ -309,8 +252,8 @@ export function RenderMonitorPanel({
               {logs.length === 0 ? (
                 <div className="text-slate-500">
                   {t(
-                    'في انتظار بدء التصيير — اضغط على "تصيير الفيديو النهائي" لبدء البث المباشر.',
-                    'Waiting to start — click "Render final video" to begin the live stream.'
+                    'في انتظار بدء التصدير — اضغط على "بدء تصدير الفيديو" لبدء البث المباشر.',
+                    'Waiting to start — click "Start video export" to begin the live stream.'
                   )}
                 </div>
               ) : (
@@ -344,15 +287,11 @@ export function RenderMonitorPanel({
         </div>
       </div>
 
-      {/* Built-in MP4 Video Player & Download Final Video */}
-      <div
-        id="video-output"
-        className="rounded-xl border border-white/8 bg-[#10141D] p-5 space-y-4"
-      >
+      <div id="video-output" className="rounded-xl border border-white/8 bg-[#10141D] p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-display text-base font-bold text-slate-100">
-              {t('مشغل الفيديو النهائي والمخرجات', 'Final video player & output')}
+              {t('ملف الفيديو النهائي', 'Final video file')}
             </h3>
             <p className="text-xs text-slate-400">
               {renderedVideo
@@ -361,43 +300,22 @@ export function RenderMonitorPanel({
                     `Ready file (${(renderedVideo.fileSizeBytes / (1024 * 1024)).toFixed(2)} MB · ${renderedVideo.extension.toUpperCase()})`
                   )
                 : t(
-                    'سيظهر الفيديو المصيّر هنا للمعاينة والتحميل فور اكتمال عملية التصيير.',
-                    'The rendered video will appear here for preview and download once rendering completes.'
+                    'سيظهر الفيديو المصيّر هنا للمعاينة والتحميل فور اكتمال التصدير.',
+                    'The rendered video will appear here for preview and download once export completes.'
                   )}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => void handleOpenStudio()}
-              disabled={openingStudio}
-              className="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-sky-500/15 px-4 py-2 text-xs font-semibold text-sky-200 hover:bg-sky-500/25 disabled:opacity-50 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              {openingStudio ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <MonitorPlay className="h-4 w-4" />
-              )}
-              <span>{t('فتح في Remotion Studio', 'Open in Remotion Studio')}</span>
-            </button>
-            <button
-              type="button"
-              disabled={!renderedVideo}
-              onClick={handleDownload}
-              className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-4 py-2 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/25 disabled:opacity-40 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              <Download className="h-4 w-4" />
-              <span>{t('تحميل الفيديو النهائي', 'Download final video')}</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            disabled={!renderedVideo}
+            onClick={handleDownload}
+            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-4 py-2 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/25 disabled:opacity-40 transition-colors cursor-pointer whitespace-nowrap"
+          >
+            <Download className="h-4 w-4" />
+            <span>{t('تحميل الفيديو', 'Download video')}</span>
+          </button>
         </div>
-
-        {studioNotice ? (
-          <p className="rounded-lg border border-sky-500/25 bg-sky-500/10 px-3 py-2 text-xs text-sky-100">
-            {studioNotice}
-          </p>
-        ) : null}
 
         {renderedVideo ? (
           <div className="flex justify-center rounded-lg border border-white/10 bg-[#07090E] p-4">
@@ -413,13 +331,7 @@ export function RenderMonitorPanel({
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-white/12 bg-[#0B0E14] py-12 text-center">
             <PlayCircle className="h-9 w-9 text-slate-600" />
             <p className="mt-3 text-sm font-medium text-slate-300">
-              {t('لم يتم تصيير فيديو نهائي بعد', 'No final video rendered yet')}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              {t(
-                'أنهِ تعديل المشاهد ثم اضغط على "تصيير الفيديو النهائي" لمعاينة الفيديو وتحميله.',
-                'Finish editing scenes, then click "Render final video" to preview and download it.'
-              )}
+              {t('لم يتم تصدير فيديو بعد', 'No video exported yet')}
             </p>
           </div>
         )}

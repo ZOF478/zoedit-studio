@@ -24,7 +24,7 @@ const OUT_DIR = path.join(PROJECT_ROOT, 'out');
 const REMOTION_ENTRY = path.join(PROJECT_ROOT, 'src', 'index.ts');
 const GENERATED_DIR = path.join(PROJECT_ROOT, 'src', 'generated');
 const GENERATED_REGISTRY_FILE = path.join(GENERATED_DIR, 'index.ts');
-const GENERATED_FILE_PREFIX = 'CustomScene_';
+const GENERATED_FILE_PATTERN = /^(?:CustomScene_[A-Za-z0-9_]+|Scene\d+)$/;
 const ZOF_HOME_DIR = path.join(os.homedir(), '.zof-studio');
 const SETTINGS_FILE = path.join(ZOF_HOME_DIR, 'settings.json');
 const LEGACY_SETTINGS_FILE = path.join(DASHBOARD_DIR, 'data', 'studio-settings.json');
@@ -255,6 +255,8 @@ interface RenderJob {
   wordsPerScreen: string;
   captionsEnabled: boolean;
   elevenlabsKey: string;
+  masterPrompt?: string;
+  targetDuration?: ExportTargetDuration;
   audioPrepared?: boolean;
   usage?: { ttsCharacters: number; ttsCalls: number; ttsUsd: number };
   status: 'queued' | 'rendering' | 'completed' | 'error';
@@ -323,6 +325,7 @@ type ParentScene = {
   }>;
   characterLayout?: 'side-by-side' | 'top-bottom';
   ambientScene?: string;
+  generatedComponent?: string;
   elements: Array<Record<string, unknown>>;
 };
 
@@ -3585,6 +3588,7 @@ function buildParentScene(
         : {}
       : {}),
     ...(scene.ambientScene ? { ambientScene: scene.ambientScene } : {}),
+    ...(scene.generatedComponent ? { generatedComponent: scene.generatedComponent } : {}),
     elements,
   };
 }
@@ -4725,12 +4729,17 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   'react',
   'remotion',
   '../components/Stickman',
+  '@remotion/google-fonts',
+  '@remotion/noise',
+  '@remotion/paths',
+  '@remotion/shapes',
+  '@remotion/transitions',
 ]);
 
 function isAllowedGeneratedImport(source: string): boolean {
   return (
     GENERATED_ALLOWED_IMPORTS.has(source) ||
-    source.startsWith('@remotion/')
+    source.startsWith('@remotion/google-fonts/')
   );
 }
 
@@ -4810,8 +4819,8 @@ function syncGeneratedRegistry(): string[] {
     .map((entry) => entry.name)
     .filter(
       (name) =>
-        name.startsWith(GENERATED_FILE_PREFIX) &&
         name.endsWith('.tsx') &&
+        GENERATED_FILE_PATTERN.test(name.replace(/\.tsx$/, '')) &&
         isValidGeneratedComponentName(name.replace(/\.tsx$/, '')),
     )
     .sort();
@@ -4889,7 +4898,10 @@ function cleanGeneratedTsxCache(): string[] {
   const removed: string[] = [];
   for (const entry of fs.readdirSync(GENERATED_DIR, { withFileTypes: true })) {
     if (!entry.isFile()) continue;
-    if (!entry.name.startsWith(GENERATED_FILE_PREFIX) || !entry.name.endsWith('.tsx')) {
+    if (
+      !entry.name.endsWith('.tsx') ||
+      !GENERATED_FILE_PATTERN.test(entry.name.replace(/\.tsx$/, ''))
+    ) {
       continue;
     }
     try {
@@ -5038,7 +5050,7 @@ async function requestCustomSceneCode(options: {
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", packages starting with "@remotion/", and "../components/Stickman".',
+    'Only import from: "react", "remotion", "../components/Stickman", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", or "@remotion/google-fonts".',
     'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
@@ -5320,6 +5332,521 @@ function pickSmartEditTsx(record: Record<string, unknown>): string {
     if (typeof value === 'string' && value.trim()) return value;
   }
   return '';
+}
+
+type ExportTargetDuration = '30' | '60' | '90' | 'auto';
+type ExportStepId = 'audio' | 'code' | 'render';
+
+const EXPORT_LOCK_TTL_MS = 3 * 60 * 60 * 1000;
+
+let activeExportLock: { jobId: string; startedAt: number } | null = null;
+
+function exportLockIsActive(): boolean {
+  if (!activeExportLock) return false;
+  if (Date.now() - activeExportLock.startedAt > EXPORT_LOCK_TTL_MS) {
+    activeExportLock = null;
+    return false;
+  }
+  return true;
+}
+
+function acquireExportLock(jobId: string): boolean {
+  if (exportLockIsActive()) return false;
+  activeExportLock = { jobId, startedAt: Date.now() };
+  return true;
+}
+
+function releaseExportLock(jobId: string): void {
+  if (activeExportLock?.jobId === jobId) {
+    activeExportLock = null;
+  }
+}
+
+function normalizeTargetDuration(value: unknown): ExportTargetDuration {
+  return value === '30' || value === '60' || value === '90' || value === 'auto'
+    ? value
+    : 'auto';
+}
+
+function exportSceneCount(
+  prompt: string,
+  targetDuration: ExportTargetDuration,
+): number {
+  if (targetDuration === '30') return 6;
+  if (targetDuration === '60') return 10;
+  if (targetDuration === '90') return 14;
+  const words = prompt.trim().split(/\s+/).filter(Boolean).length;
+  return Math.min(16, Math.max(5, Math.ceil(words / 16)));
+}
+
+function splitScriptIntoChunks(prompt: string, count: number): string[] {
+  const text = prompt.replace(/\r/g, ' ').trim();
+  if (!text) return [];
+  const sentences = text
+    .split(/(?<=[.!?؟。！])\s+|\n+/)
+    .map((part) => part.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+
+  const chunks: string[] = [];
+  if (sentences.length >= count) {
+    const targetLength = text.length / count;
+    let current: string[] = [];
+    let currentLength = 0;
+    for (const sentence of sentences) {
+      const remainingSentences = sentences.length - (chunks.length + 1);
+      const shouldFlush =
+        current.length > 0 &&
+        (currentLength >= targetLength || chunks.length + 1 === count);
+      if (shouldFlush && chunks.length + 1 < count) {
+        chunks.push(current.join(' '));
+        current = [];
+        currentLength = 0;
+      }
+      current.push(sentence);
+      currentLength += sentence.length + 1;
+      if (chunks.length + 1 === count && remainingSentences >= 0) {
+        chunks.push(current.join(' '));
+        current = [];
+        currentLength = 0;
+        break;
+      }
+    }
+    if (current.length > 0 && chunks.length < count) {
+      chunks.push(current.join(' '));
+    }
+  }
+
+  if (chunks.length === 0) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const perChunk = Math.max(1, Math.ceil(words.length / count));
+    for (let index = 0; index < count; index += 1) {
+      const slice = words.slice(index * perChunk, (index + 1) * perChunk);
+      if (slice.length > 0) chunks.push(slice.join(' '));
+    }
+  }
+
+  while (chunks.length < count) {
+    const longest = chunks.reduce(
+      (best, chunk, index) =>
+        chunk.length > (chunks[best]?.length || 0) ? index : best,
+      0,
+    );
+    const words = (chunks[longest] || text).split(/\s+/).filter(Boolean);
+    if (words.length <= 1) break;
+    const midpoint = Math.ceil(words.length / 2);
+    chunks[longest] = words.slice(0, midpoint).join(' ');
+    chunks.splice(longest + 1, 0, words.slice(midpoint).join(' '));
+  }
+
+  return chunks.slice(0, count);
+}
+
+function sceneTitleFromNarration(
+  narration: string,
+  index: number,
+  used: Set<string>,
+): string {
+  const cleaned = narration
+    .replace(/[^\p{L}\p{N}\s']/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const words = cleaned.split(' ').filter(Boolean).slice(0, 7);
+  let title = words.join(' ') || `Scene ${index + 1}`;
+  title = title.slice(0, 72).trim();
+  if (used.has(title.toLowerCase())) {
+    title = `${title} ${index + 1}`;
+  }
+  used.add(title.toLowerCase());
+  return title;
+}
+
+function buildExportScenePlan(
+  prompt: string,
+  targetDuration: ExportTargetDuration,
+  voiceoverEnabled: boolean,
+): Array<{ title: string; narration: string; durationSec: number }> {
+  const effectiveTarget = targetDuration === 'auto' && !voiceoverEnabled ? '60' : targetDuration;
+  const count = exportSceneCount(prompt, effectiveTarget);
+  const chunks = splitScriptIntoChunks(prompt, count);
+  const targetSeconds =
+    effectiveTarget === 'auto' ? null : Number(effectiveTarget);
+  const usedTitles = new Set<string>();
+
+  return chunks.map((narration, index) => {
+    const words = narration.split(/\s+/).filter(Boolean).length;
+    const estimate = Math.max(2.6, Number((words * 0.48 + 0.8).toFixed(2)));
+    const durationSec = targetSeconds
+      ? Number((targetSeconds / Math.max(1, chunks.length)).toFixed(1))
+      : estimate;
+    return {
+      title: sceneTitleFromNarration(narration, index, usedTitles),
+      narration,
+      durationSec,
+    };
+  });
+}
+
+function exportSfxId(index: number): string {
+  const catalog = [
+    'whoosh-fast',
+    'pop-bubble',
+    'whoosh-deep',
+    'typing-click',
+    'ding-success',
+    'riser-build',
+  ];
+  return catalog[index % catalog.length];
+}
+
+function buildExportScenes(options: {
+  jobId: string;
+  prompt: string;
+  targetDuration: ExportTargetDuration;
+  voiceoverEnabled: boolean;
+  sfxEnabled: boolean;
+  language: string;
+}): RenderScenePayload[] {
+  const plan = buildExportScenePlan(
+    options.prompt,
+    options.targetDuration,
+    options.voiceoverEnabled,
+  );
+
+  return plan.map((item, index) => ({
+    id: `scene-${options.jobId}-${index + 1}`,
+    title: item.title,
+    narration: item.narration,
+    pose: index % 2 === 0 ? 'explaining' : 'pointing',
+    visualType: 'custom-tsx',
+    visualLabel: item.title,
+    visualValue: item.narration.slice(0, 160),
+    customCodeBrief: item.narration,
+    visualKeywords: item.title.split(/\s+/).slice(0, 5),
+    showCharacter: true,
+    durationSec: item.durationSec,
+    backgroundPreset: 'ai-free',
+    ...(options.sfxEnabled
+      ? {
+          sfxId: exportSfxId(index),
+          sfxAt: 0.15,
+        }
+      : {}),
+  }));
+}
+
+function syncExportProject(job: RenderJob): void {
+  try {
+    const project = normalizeProjectState({
+      topic: job.masterPrompt || job.scenes.map((scene) => scene.narration).join(' '),
+      scenes: job.scenes,
+      aiProvider: studioSettings.aiProvider,
+      aiModel: studioSettings.aiModel,
+      voiceId: job.voiceId,
+      voiceModelId: job.modelId,
+      voiceStability: job.voiceStability,
+      voiceSimilarityBoost: job.voiceSimilarityBoost,
+      voiceoverEnabled: job.voiceoverEnabled,
+      visualStyle: job.visualStyle,
+      aspectRatio: job.aspectRatio,
+      fps: job.fps,
+      scriptLanguage: job.scriptLanguage,
+      scriptDepth: job.scriptDepth,
+      creativeCodeMode: 'creative',
+      scriptPacing: job.scriptPacing,
+      captionAnimationStyle: job.captionAnimationStyle,
+      wordsPerScreen: job.wordsPerScreen,
+      captionsEnabled: job.captionsEnabled,
+      brandKit: job.brandKit,
+      sfxEnabled: job.sfxEnabled,
+      sfxVolume: job.sfxVolume,
+      sfxMode: job.sfxMode,
+      backgroundPreset: job.backgroundPreset,
+      selectedSceneId: job.scenes[0]?.id,
+      updatedAt: Date.now(),
+    });
+    if (project) saveProjectState(project);
+  } catch {
+    // Project persistence must never interrupt an export.
+  }
+}
+
+function expectedGeneratedSceneNames(count: number): string[] {
+  return Array.from({ length: Math.max(1, count) }, (_, index) => `Scene${index + 1}`);
+}
+
+function buildFallbackSceneSource(componentName: string): string {
+  return `import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Stickman } from "../components/Stickman";
+
+type Props = {
+  accentColor: string;
+  bgColor: string;
+  textColor: string;
+  mutedColor: string;
+  characterBody: string;
+  characterFace: string;
+  characterAccent: string;
+  characterShadow: string;
+  isRtl: boolean;
+  language: string;
+  title?: string;
+  text?: string;
+  keywords?: string[];
+  data?: Record<string, unknown>;
+  durationInFrames: number;
+  showCharacter?: boolean;
+};
+
+export const ${componentName} = (props: Props) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const progress = interpolate(frame, [0, Math.max(1, props.durationInFrames - 1)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const enter = spring({ frame, fps, config: { damping: 18, mass: 0.7, stiffness: 90 } });
+  const sway = Math.sin((frame / Math.max(1, fps)) * 1.4) * 16;
+  const title = props.title?.trim() || "Zof Studio";
+  const text = props.text?.trim() || "";
+  const keywords = (props.keywords && props.keywords.length > 0 ? props.keywords : [title]).slice(0, 4);
+  const align = props.isRtl ? "right" : "left";
+
+  return (
+    <AbsoluteFill style={{ background: props.bgColor, overflow: "hidden", direction: props.isRtl ? "rtl" : "ltr" }}>
+      <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 20%, " + props.accentColor + "33 0%, transparent 62%)" }} />
+      <svg viewBox="0 0 1080 1920" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+        <path d={"M 120 " + (900 + sway) + " C 340 " + (640 - sway) + ", 720 " + (1180 + sway) + ", 960 " + (760 - sway)} fill="none" stroke={props.accentColor} strokeWidth={6} strokeLinecap="round" strokeDasharray={1800} strokeDashoffset={1800 * (1 - progress)} opacity={0.7} />
+        <circle cx={540 + sway * 2} cy={820} r={230 + Math.sin(progress * Math.PI) * 30} fill="none" stroke={props.accentColor} strokeOpacity={0.32} strokeWidth={3} />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 26, padding: "0 10%", textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 44 + "px)" }}>
+        <div style={{ alignSelf: props.isRtl ? "flex-end" : "flex-start", padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor, background: props.accentColor + "22", color: props.accentColor, fontSize: 26, fontWeight: 800, letterSpacing: "0.06em" }}>ZOF STUDIO</div>
+        <div style={{ fontSize: 82, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
+        {text ? <div style={{ fontSize: 36, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor, maxWidth: "88%" }}>{text}</div> : null}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: props.isRtl ? "flex-end" : "flex-start" }}>
+          {keywords.map((keyword, index) => (
+            <div key={keyword + index} style={{ padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor + "66", background: props.bgColor + "cc", color: props.textColor, fontSize: 28, fontWeight: 700, transform: "translateY(" + Math.sin(progress * 6 + index) * 8 + "px)" }}>{keyword}</div>
+          ))}
+        </div>
+      </div>
+      {props.showCharacter ? (
+        <div style={{ position: "absolute", bottom: "12%", [props.isRtl ? "left" : "right"]: "7%", width: 220, height: 320 }}>
+          <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} />
+        </div>
+      ) : null}
+    </AbsoluteFill>
+  );
+};
+`;
+}
+
+function writeFallbackSceneFiles(job: RenderJob): void {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  for (let index = 0; index < job.scenes.length; index += 1) {
+    const name = `Scene${index + 1}`;
+    fs.writeFileSync(
+      path.join(GENERATED_DIR, `${name}.tsx`),
+      buildFallbackSceneSource(name),
+      'utf8',
+    );
+  }
+  syncGeneratedRegistry();
+}
+
+function repairGeneratedSceneFiles(job: RenderJob): void {
+  const expected = expectedGeneratedSceneNames(job.scenes.length);
+  let repaired = false;
+  for (const name of expected) {
+    const file = path.join(GENERATED_DIR, `${name}.tsx`);
+    if (!fs.existsSync(file)) {
+      fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+      repaired = true;
+      continue;
+    }
+    try {
+      const source = fs.readFileSync(file, 'utf8');
+      const sanitized = sanitizeGeneratedTsx(source, name);
+      if (!sanitized.ok) {
+        fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+        repaired = true;
+      } else if (sanitized.code !== source.trim()) {
+        fs.writeFileSync(file, `${sanitized.code}\n`, 'utf8');
+        repaired = true;
+      }
+    } catch {
+      fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+      repaired = true;
+    }
+  }
+  syncGeneratedRegistry();
+  if (repaired) {
+    console.log('[export] repaired generated scene files with safe fallbacks.');
+  }
+}
+
+function attachGeneratedComponents(job: RenderJob): void {
+  job.scenes.forEach((scene, index) => {
+    scene.generatedComponent = `Scene${index + 1}`;
+    scene.visualType = 'custom-tsx';
+    scene.customCodeBrief = scene.customCodeBrief || scene.narration;
+    if (!scene.visualKeywords || scene.visualKeywords.length === 0) {
+      scene.visualKeywords = scene.title.split(/\s+/).slice(0, 5);
+    }
+  });
+}
+
+function buildOpenCodeScenePrompt(job: RenderJob): string {
+  const sceneLines = job.scenes
+    .map((scene, index) => {
+      const frames = Math.max(1, Math.round(scene.durationSec * job.fps));
+      return [
+        `Scene${index + 1}`,
+        `title: ${scene.title}`,
+        `narration: ${scene.narration}`,
+        `durationSeconds: ${scene.durationSec.toFixed(2)}`,
+        `durationInFrames: ${frames}`,
+      ].join(' | ');
+    })
+    .join('\n');
+
+  const { width, height } = aspectDimensions(job.aspectRatio);
+  const watermarkRule = job.brandKit.watermarkEnabled
+    ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
+    : 'Global watermark is DISABLED. Do not draw any watermark.';
+
+  return [
+    'You are the creative motion-graphics engineer for Zof Studio.',
+    'Work inside the project root and create a complete bespoke Remotion scene set from the master prompt below.',
+    '',
+    '## MASTER PROMPT (single source of truth)',
+    job.masterPrompt,
+    '',
+    '## OUTPUT FILES (exactly these, no other files)',
+    ...job.scenes.map((_, index) => `- src/generated/Scene${index + 1}.tsx`),
+    '- src/generated/index.ts',
+    '',
+    'Each Scene file must export exactly one named component matching its file name.',
+    'src/generated/index.ts must import every component, export the GeneratedSceneProps type, and export:',
+    'export const GENERATED_SCENES: Record<string, ComponentType<GeneratedSceneProps>> = { "Scene1": Scene1, ... };',
+    '',
+    '## EXACT SCENES AND TIMING',
+    sceneLines,
+    '',
+    '## VIDEO SETTINGS',
+    `Aspect ratio: ${job.aspectRatio} (${width}x${height})`,
+    `FPS: ${job.fps}`,
+    `Language: ${job.scriptLanguage} (${job.scriptLanguage === 'ar' ? 'RTL' : 'LTR'})`,
+    `Brand background: ${job.brandKit.bgColor}`,
+    `Brand accent: ${job.brandKit.accentColor}`,
+    `Voiceover: ${job.voiceoverEnabled ? 'ENABLED (audio is handled by the composition)' : 'DISABLED (silent visual pacing)'}`,
+    `SFX: ${job.sfxEnabled ? 'ENABLED (the composition plays SFX; design visual accents that match)' : 'DISABLED'}`,
+    watermarkRule,
+    '',
+    '## PROPS CONTRACT (must match exactly)',
+    'type Props = {',
+    '  accentColor: string; bgColor: string; textColor: string; mutedColor: string;',
+    '  characterBody: string; characterFace: string; characterAccent: string; characterShadow: string;',
+    '  isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[];',
+    '  data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean;',
+    '};',
+    '',
+    '## HARD DESIGN RULES',
+    '- Use free-form React/Remotion JSX and animated inline <svg> scenes and props. Do not use fixed card templates.',
+    '- Featureless stickman ONLY: a smooth silhouette head and body with NO eyes, NO eyebrows, NO nose, NO mouth, and NO ears. Emotion must come from posture, head tilt, limb motion, interactive SVG props, and visual cues.',
+    '- Default to neutral/male minimalist stickman figures. NEVER depict a female character unless the script strictly requires it; if strictly required, keep the silhouette completely featureless and modest.',
+    '- Build custom topic metaphors and story-driven props that match the master prompt. Avoid repetitive text cards.',
+    '- Never show the same title twice on screen. Each scene should have a single clear headline at most.',
+    '- Use the provided brand colors, keep text contrast high, and respect RTL/LTR direction.',
+    '- Animate continuously across the entire durationInFrames using useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never freeze.',
+    '- Every scene must be responsive to the aspect ratio using useVideoConfig(); no overflow and no fixed single-frame assumptions.',
+    '- Keep critical content out of the bottom 18% safe zone.',
+    '',
+    '## IMPORT RESTRICTIONS',
+    '- Only import from "react", "remotion", "../components/Stickman", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", or "@remotion/google-fonts". Do not import any other package.',
+    '- Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), or dynamic import().',
+    '- TypeScript strict mode and noUnusedLocals are enabled: every import and local must be used and fully typed.',
+    '- Return only real files written to disk. Do not return markdown fences or commentary.',
+  ].join('\n');
+}
+
+function runOpenCodeExport(
+  job: RenderJob,
+  prompt: string,
+  onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const args = [
+      'run',
+      '--auto',
+      '--dir',
+      PROJECT_ROOT,
+      '--title',
+      `Zof Export ${job.id.slice(0, 8)}`,
+      prompt,
+    ];
+    onLog('info', 'opencode run --auto (headless) starting…');
+    const child = spawn('opencode', args, {
+      cwd: PROJECT_ROOT,
+      env: { ...process.env },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let settled = false;
+    let lineCount = 0;
+    let buffer = '';
+    const timer = setTimeout(() => {
+      if (settled) return;
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        // ignore
+      }
+      settled = true;
+      reject(new Error('opencode run timed out after 20 minutes.'));
+    }, 20 * 60 * 1000);
+
+    const handleLine = (line: string) => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      lineCount += 1;
+      if (lineCount > 220) return;
+      if (trimmed.length > 500) return;
+      onLog(
+        /error|failed|exception|denied/i.test(trimmed) ? 'warn' : 'info',
+        `[opencode] ${trimmed}`,
+      );
+    };
+
+    const handleChunk = (chunk: Buffer) => {
+      buffer += chunk.toString('utf8');
+      const lines = buffer.split(/\r?\n/);
+      buffer = lines.pop() || '';
+      for (const line of lines) handleLine(line);
+    };
+
+    child.stdout?.on('data', handleChunk);
+    child.stderr?.on('data', handleChunk);
+
+    child.on('error', (error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      reject(error);
+    });
+
+    child.on('close', (code) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (buffer.trim()) handleLine(buffer);
+      if (code !== 0) {
+        reject(new Error(`opencode run exited with code ${code ?? 'unknown'}`));
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+async function validateGeneratedScenes(): Promise<{ ok: boolean; errors: string }> {
+  const check = await runRootTypeScriptCheck();
+  const errors = generatedTypeScriptErrors(check.output);
+  return { ok: !errors, errors };
 }
 
 async function startServer() {
@@ -7238,6 +7765,407 @@ async function startServer() {
     });
   });
 
+  app.post('/api/export/start', async (req: Request, res: Response) => {
+    const body = (req.body || {}) as {
+      prompt?: unknown;
+      targetDuration?: unknown;
+      aspectRatio?: unknown;
+      fps?: unknown;
+      brandKit?: unknown;
+      voiceoverEnabled?: unknown;
+      voiceId?: unknown;
+      modelId?: unknown;
+      stability?: unknown;
+      similarityBoost?: unknown;
+      sfxEnabled?: unknown;
+      sfxVolume?: unknown;
+      scriptLanguage?: unknown;
+    };
+
+    const prompt =
+      typeof body.prompt === 'string' ? body.prompt.trim().slice(0, 24000) : '';
+    if (!prompt) {
+      res.status(400).json({ error: 'يرجى كتابة برومبت الفيديو الرئيسي أولاً.' });
+      return;
+    }
+    if (exportLockIsActive()) {
+      res.status(409).json({
+        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+      });
+      return;
+    }
+
+    const { elevenlabsKey } = resolveApiKeys(req);
+    const jobId = crypto.randomUUID();
+    const targetDuration = normalizeTargetDuration(body.targetDuration);
+    const aspectRatio =
+      body.aspectRatio === '16:9' || body.aspectRatio === '1:1' || body.aspectRatio === '9:16'
+        ? body.aspectRatio
+        : studioSettings.aspectRatio;
+    const fps = Number(body.fps) === 30 ? 30 : 60;
+    const brandKit = normalizeBrandKit(body.brandKit ?? studioSettings.brandKit);
+    const voiceoverEnabled = Boolean(body.voiceoverEnabled);
+    const sfxEnabled = Boolean(body.sfxEnabled);
+    const requestedSfxVolume = Number(body.sfxVolume);
+    const sfxVolume = Number.isFinite(requestedSfxVolume)
+      ? Math.min(1, Math.max(0, requestedSfxVolume))
+      : studioSettings.sfxVolume;
+    const scenes = buildExportScenes({
+      jobId,
+      prompt,
+      targetDuration,
+      voiceoverEnabled,
+      sfxEnabled,
+      language: body.scriptLanguage === 'en' ? 'en' : 'ar',
+    });
+
+    const job: RenderJob = {
+      id: jobId,
+      createdAt: Date.now(),
+      scenes,
+      visualStyle: 'stickman',
+      aspectRatio,
+      fps,
+      voiceoverEnabled,
+      voiceId:
+        typeof body.voiceId === 'string' && body.voiceId.trim()
+          ? body.voiceId.trim()
+          : studioSettings.voiceId,
+      modelId:
+        typeof body.modelId === 'string' && body.modelId.trim()
+          ? body.modelId.trim()
+          : studioSettings.voiceModelId,
+      voiceStability: clampNumber(body.stability, studioSettings.voiceStability, 0, 1),
+      voiceSimilarityBoost: clampNumber(
+        body.similarityBoost,
+        studioSettings.voiceSimilarityBoost,
+        0,
+        1,
+      ),
+      sfxEnabled,
+      sfxVolume,
+      sfxMode: 'auto',
+      backgroundPreset: 'ai-free',
+      brandKit,
+      scriptLanguage: body.scriptLanguage === 'en' ? 'en' : 'ar',
+      scriptDepth: studioSettings.scriptDepth,
+      creativeCodeMode: 'creative',
+      scriptPacing: studioSettings.scriptPacing,
+      captionAnimationStyle: studioSettings.captionAnimationStyle,
+      wordsPerScreen: studioSettings.wordsPerScreen,
+      captionsEnabled: false,
+      elevenlabsKey,
+      masterPrompt: prompt,
+      targetDuration,
+      status: 'queued',
+    };
+
+    if (!acquireExportLock(jobId)) {
+      res.status(409).json({
+        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+      });
+      return;
+    }
+
+    renderJobs.set(jobId, job);
+    res.json({
+      jobId,
+      targetDuration,
+      fps,
+      aspectRatio,
+      totalScenes: scenes.length,
+      totalDurationSec: scenes.reduce((total, scene) => total + scene.durationSec, 0),
+      outputFile: path.relative(PROJECT_ROOT, path.join(OUT_DIR, `${jobId}.mp4`)),
+    });
+  });
+
+  app.get('/api/export/stream/:jobId', (req: Request, res: Response) => {
+    const jobId = String(req.params.jobId || '');
+    const job = renderJobs.get(jobId);
+
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    if (!job) {
+      res.write(`event: error\ndata: ${JSON.stringify({ message: 'لم يتم العثور على مهمة تصدير.' })}\n\n`);
+      res.end();
+      return;
+    }
+
+    let closed = false;
+    req.on('close', () => {
+      closed = true;
+    });
+
+    const sendEvent = (eventName: string, payload: Record<string, unknown>) => {
+      if (closed) return;
+      res.write(`event: ${eventName}\ndata: ${JSON.stringify(payload)}\n\n`);
+    };
+    const sendLog = (
+      step: ExportStepId,
+      level: 'info' | 'success' | 'warn' | 'error',
+      message: string,
+    ) => sendEvent('log', { step, level, message });
+    const sendStep = (
+      step: ExportStepId,
+      status: 'pending' | 'active' | 'completed' | 'error',
+      progress: number,
+    ) => sendEvent('step', { step, status, progress });
+
+    const buildTimings = () =>
+      job.scenes.map((scene, index) => ({
+        index: index + 1,
+        id: scene.id,
+        durationInFrames: Math.max(1, Math.round(scene.durationSec * job.fps)),
+        generatedComponent: scene.generatedComponent,
+      }));
+
+    const emitComplete = () => {
+      const timings = buildTimings();
+      sendEvent('complete', {
+        jobId: job.id,
+        totalFrames: timings.reduce((total, timing) => total + timing.durationInFrames, 0),
+        totalDurationSec: job.scenes.reduce((total, scene) => total + scene.durationSec, 0),
+        fps: job.fps,
+        timings,
+        outputFile: job.outputFile || null,
+        outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
+        fileSizeBytes: job.outputSize ?? null,
+      });
+    };
+
+    if (job.status === 'completed') {
+      emitComplete();
+      res.end();
+      return;
+    }
+    if (job.status === 'error') {
+      sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
+      res.end();
+      return;
+    }
+    if (job.status === 'rendering') {
+      sendLog('render', 'info', 'مهمة التصدير قيد التنفيذ بالفعل — في انتظار اكتمالها...');
+      const poll = setInterval(() => {
+        if (job.status === 'completed') {
+          clearInterval(poll);
+          emitComplete();
+          if (!closed) res.end();
+        } else if (job.status === 'error') {
+          clearInterval(poll);
+          sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
+          if (!closed) res.end();
+        }
+      }, 500);
+      req.on('close', () => clearInterval(poll));
+      return;
+    }
+
+    job.status = 'rendering';
+
+    const runPipeline = async () => {
+      try {
+        // Step 1 — Audio & exact timing.
+        sendStep('audio', 'active', 5);
+        sendLog(
+          'audio',
+          'info',
+          `تقسيم البرومبت إلى ${job.scenes.length} مشاهد — المدة المستهدفة: ${
+            job.targetDuration === 'auto' ? 'تلقائية حسب التعليق الصوتي' : `${job.targetDuration}s`
+          }.`,
+        );
+        if (job.voiceoverEnabled) {
+          const generated = await prepareSceneAudio(job, (level, message) =>
+            sendLog('audio', level, message),
+          );
+          job.audioPrepared = true;
+          sendLog(
+            'audio',
+            'success',
+            `تم تجهيز ${generated} مقطع صوتي عبر ElevenLabs وقياس المدد الفعلية لكل مشهد.`,
+          );
+          if (job.usage) {
+            recordUsage({
+              ttsCharacters: job.usage.ttsCharacters,
+              ttsCalls: job.usage.ttsCalls,
+              ttsUsd: job.usage.ttsUsd,
+            });
+          }
+        } else {
+          const totalSeconds =
+            job.targetDuration === 'auto' ? 60 : Number(job.targetDuration);
+          const perScene = totalSeconds / Math.max(1, job.scenes.length);
+          job.scenes.forEach((scene) => {
+            scene.audioSrc = undefined;
+            scene.audioDataUrl = undefined;
+            scene.audioDuration = undefined;
+            scene.durationSec = Number(perScene.toFixed(1));
+          });
+          job.audioPrepared = true;
+          sendLog(
+            'audio',
+            'success',
+            `الوضع الصامت — تم توزيع ${totalSeconds}s بصرياً على ${job.scenes.length} مشاهد.`,
+          );
+        }
+
+        if (job.targetDuration !== 'auto') {
+          const targetSeconds = Number(job.targetDuration);
+          const current = job.scenes.reduce((total, scene) => total + scene.durationSec, 0);
+          if (current + 0.3 < targetSeconds) {
+            const extra = (targetSeconds - current) / Math.max(1, job.scenes.length);
+            job.scenes.forEach((scene) => {
+              scene.durationSec = Number((scene.durationSec + extra).toFixed(1));
+            });
+            sendLog(
+              'audio',
+              'info',
+              `تم تمديد التوقيت بصرياً للوصول إلى المدة المستهدفة ${targetSeconds}s.`,
+            );
+          }
+        }
+
+        const plannedFrames = job.scenes.reduce(
+          (total, scene) => total + Math.max(1, Math.round(scene.durationSec * job.fps)),
+          0,
+        );
+        sendLog(
+          'audio',
+          'success',
+          `التوقيت النهائي: ${plannedFrames} إطاراً بمعدل ${job.fps}fps.`,
+        );
+        syncExportProject(job);
+        sendStep('audio', 'completed', 30);
+
+        // Step 2 — Real opencode headless scene coding.
+        sendStep('code', 'active', 34);
+        sendLog(
+          'code',
+          'info',
+          'تشغيل opencode headless لكتابة مشاهد Remotion مخصصة في src/generated/.',
+        );
+        const removed = cleanGeneratedTsxCache();
+        if (removed.length > 0) {
+          sendLog('code', 'info', `تنظيف ${removed.length} مكوّن مولّد سابق.`);
+        }
+        const openCodePrompt = buildOpenCodeScenePrompt(job);
+        try {
+          await runOpenCodeExport(job, openCodePrompt, (level, message) =>
+            sendLog('code', level, message),
+          );
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : 'فشل تشغيل opencode.';
+          sendLog('code', 'error', message);
+          throw error;
+        }
+
+        repairGeneratedSceneFiles(job);
+        const validation = await validateGeneratedScenes();
+        if (!validation.ok) {
+          sendLog(
+            'code',
+            'warn',
+            `مشاهد opencode لم تجتز TypeScript — سيتم استخدام مشاهد آمنة بديلة. ${validation.errors}`,
+          );
+          writeFallbackSceneFiles(job);
+          const retry = await validateGeneratedScenes();
+          if (!retry.ok) {
+            throw new Error(
+              `تعذر التحقق من مشاهد Remotion المولّدة: ${retry.errors}`,
+            );
+          }
+        }
+        attachGeneratedComponents(job);
+        syncExportProject(job);
+        const videoData = buildParentVideoData(job, job.masterPrompt);
+        job.videoData = videoData;
+        writeJsonFile(DATA_FILE, videoData);
+
+        let generatedChars = 0;
+        for (const scene of job.scenes) {
+          if (!scene.generatedComponent) continue;
+          try {
+            generatedChars += fs.statSync(
+              path.join(GENERATED_DIR, `${scene.generatedComponent}.tsx`),
+            ).size;
+          } catch {
+            // ignore
+          }
+        }
+        const inputTokens = Math.max(1, Math.round(openCodePrompt.length / 4));
+        const outputTokens = Math.max(1, Math.round(generatedChars / 4));
+        recordUsage({
+          aiInputTokens: inputTokens,
+          aiOutputTokens: outputTokens,
+          aiCalls: 1,
+          aiUsd: estimateAiUsd(studioSettings.aiModel, inputTokens, outputTokens),
+          aiModel: studioSettings.aiModel,
+        });
+        sendLog(
+          'code',
+          'success',
+          `opencode كتب ${job.scenes.length} مشهداً مخصصاً وأُضيفت إلى سجل src/generated.`,
+        );
+        sendStep('code', 'completed', 70);
+
+        // Step 3 — Render final MP4 and register it.
+        sendStep('render', 'active', 74);
+        const renderVideoData = buildParentVideoData(job, job.masterPrompt);
+        job.videoData = renderVideoData;
+        writeJsonFile(DATA_FILE, renderVideoData);
+        const renderFrames = job.scenes.reduce(
+          (total, scene) => total + Math.max(1, Math.round(scene.durationSec * job.fps)),
+          0,
+        );
+        recordUsage({
+          renderedFrames: renderFrames,
+          renderJobs: 1,
+          renderUsd: 0,
+        });
+        sendLog(
+          'render',
+          'info',
+          `بدء تصيير MainComposition (${job.aspectRatio} @ ${job.fps}fps).`,
+        );
+
+        const result = await renderJobWithSceneCache(
+          job,
+          renderVideoData,
+          (progress) => {
+            sendStep('render', 'active', Math.min(99, 74 + Math.round(progress * 0.25)));
+          },
+          (level, message) => sendLog('render', level, message),
+          (remainingSec) => sendEvent('time', { remainingSec, updatedAt: Date.now() }),
+        );
+
+        job.status = 'completed';
+        job.outputPath = result.outputPath;
+        job.outputFile = result.outputFile;
+        try {
+          job.outputSize = fs.statSync(result.outputPath).size;
+        } catch {
+          job.outputSize = undefined;
+        }
+        syncExportProject(job);
+        sendStep('render', 'completed', 100);
+        sendLog('render', 'success', `اكتمل التصدير: ${result.outputFile}`);
+        emitComplete();
+      } catch (error) {
+        job.status = 'error';
+        job.error = error instanceof Error ? error.message : 'فشلت عملية التصدير.';
+        sendEvent('error', { message: job.error });
+      } finally {
+        releaseExportLock(job.id);
+        if (!closed) res.end();
+      }
+    };
+
+    void runPipeline();
+  });
+
   app.post('/api/render/start', async (req: Request, res: Response) => {
     const body = (req.body || {}) as {
       topic?: unknown;
@@ -7266,6 +8194,12 @@ async function startServer() {
 
     if (!Array.isArray(body.scenes) || body.scenes.length === 0) {
       res.status(400).json({ error: 'يجب وجود مشهد واحد على الأقل للتصيير.' });
+      return;
+    }
+    if (exportLockIsActive()) {
+      res.status(409).json({
+        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+      });
       return;
     }
 

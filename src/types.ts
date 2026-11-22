@@ -357,6 +357,7 @@ export type Scene = {
   characters?: CharacterConfig[];
   characterLayout?: CharacterLayout;
   ambientScene?: AmbientEnvironment;
+  generatedComponent?: string;
   elements?: SceneElement[];
 };
 

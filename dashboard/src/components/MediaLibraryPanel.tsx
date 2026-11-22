@@ -16,6 +16,7 @@ import type { MediaFileInfo, MediaLibraryResponse } from '../types/studio';
 interface MediaLibraryPanelProps {
   apiBaseUrl: string;
   sessionToken: string;
+  refreshKey?: number;
 }
 
 function formatSize(bytes: number): string {
@@ -30,7 +31,11 @@ function formatDate(timestamp: number): string {
   return new Date(timestamp).toLocaleString();
 }
 
-export function MediaLibraryPanel({ apiBaseUrl, sessionToken }: MediaLibraryPanelProps) {
+export function MediaLibraryPanel({
+  apiBaseUrl,
+  sessionToken,
+  refreshKey = 0,
+}: MediaLibraryPanelProps) {
   const { t } = useI18n();
   const [videos, setVideos] = useState<MediaFileInfo[]>([]);
   const [audio, setAudio] = useState<MediaFileInfo[]>([]);
@@ -71,7 +76,7 @@ export function MediaLibraryPanel({ apiBaseUrl, sessionToken }: MediaLibraryPane
 
   useEffect(() => {
     void fetchMedia();
-  }, [fetchMedia]);
+  }, [fetchMedia, refreshKey]);
 
   const deleteFile = async (file: MediaFileInfo) => {
     if (!window.confirm(t(`حذف ${file.name}؟`, `Delete ${file.name}?`))) return;
@@ -233,7 +238,7 @@ export function MediaLibraryPanel({ apiBaseUrl, sessionToken }: MediaLibraryPane
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 pb-4">
         <div>
           <h2 className="font-display text-base font-bold text-slate-100">
-            {t('مدير الوسائط والمخرجات', 'Media & Outputs Manager')}
+            {t('سجل التصدير والفيديوهات المصدّرة', 'Recent Exports & Rendered Videos')}
           </h2>
           <p className="mt-0.5 text-xs text-slate-400">
             {t(

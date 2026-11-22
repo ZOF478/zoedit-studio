@@ -317,7 +317,9 @@ export interface VoiceoverConfig {
   similarityBoost: number;
 }
 
-export type RenderStepId = 'script' | 'voices' | 'sync' | 'render';
+export type ExportTargetDuration = '30' | '60' | '90' | 'auto';
+
+export type RenderStepId = 'audio' | 'code' | 'render';
 
 export type StepStatus = 'pending' | 'active' | 'completed' | 'error';
 
