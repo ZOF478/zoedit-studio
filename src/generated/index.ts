@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { CustomScene_scene_2156279a_5 } from "./CustomScene_scene_2156279a_5";
+import { CustomScene_scene_4e14b274_5 } from "./CustomScene_scene_4e14b274_5";
 import { CustomScene_scene_6e63c750_0 } from "./CustomScene_scene_6e63c750_0";
 
 export type GeneratedSceneProps = {
@@ -26,5 +27,6 @@ export const GENERATED_SCENES: Record<
   ComponentType<GeneratedSceneProps>
 > = {
   "CustomScene_scene_2156279a_5": CustomScene_scene_2156279a_5,
+  "CustomScene_scene_4e14b274_5": CustomScene_scene_4e14b274_5,
   "CustomScene_scene_6e63c750_0": CustomScene_scene_6e63c750_0,
 };

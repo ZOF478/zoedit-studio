@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "الفخ الأول",
-    "topic": "لماذا يفشل 90% من الناس في تغيير حياتهم خلال أول شهر؟ لأنهم يبحثون عن قفزة عملاقة في يوم واحد، ويتجاهلون قوة التحسن بنسبة 1% فقط يومياً. تخيل شخصين يبدآن من نفس نقطة الصفر تماماً: الأول يطوّر مهارته أو صحته بنسبة 1% كل يوم، والثاني يتراجع أو يؤجل بنسبة 1% كل يوم. في الأسبوع الأول، لا يظهر أي فرق ملحوظ بينهما؛ كلاهما يبدو في نفس المكان. لكن بعد 365 يوماً، تكشف الرياضيات الحقيقة الصادمة: الشخص الأول يتضاعف مستواه 37 مرة (37.78x)، بينما ينهار الشخص الثاني إلى الصفر تقريباً (0.03x). الفرق ليس في الموهبة، بل في اتجاه المنحنى اليومي. ابدأ اليوم بعادة صغيرة لا تستغرق أكثر من 10 دقائق، ودع الزمن يضاعف النتيجة.",
-    "description": "الفخ الأول · نقطة الصفر · أسبوع بلا فرق · الرياضيات الصادمة · المنحنى يكشف · مضاعفة صامتة · ابدأ بعشر دقائق"
+    "title": "الحبة قبل الفنجان",
+    "topic": "لماذا ارتفع سعر كوب القهوة الصباحي بنسبة 40% خلال عامين فقط؟ القصة لا تبدأ في المقهى، بل في مزارع البرازيل وفيتنام. موجة جفاف قياسية قلّصت المحصول العالمي، بينما تضاعفت تكاليف الشحن البحري 3 مرات. النتيجة: سلسلة إمداد مضغوطة تجعل حبة البن الواحدة أغلى سلعة زراعية في 2026.",
+    "description": "الحبة قبل الفنجان · الجفاف يضرب المحصول · الشحن يتضاعف ثلاثاً · الخطأ الشائع · سلسلة مضغوطة · أغلى سلعة زراعية · ما تفعله أنت"
   },
-  "width": 1920,
-  "height": 1080,
-  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
   "style": "smart_mix",
   "script_language": "ar",
   "script_depth": "condensed",
@@ -20,14 +20,15 @@
   },
   "brand_kit": {
     "name": "ZOF",
-    "primary": "#0B0F17",
+    "primary": "#8b1ad1",
     "secondary": "#FBBF24",
-    "accent": "#0B0F17",
+    "accent": "#8b1ad1",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#1A85D1",
+    "background": "#f7f2f7",
     "watermark": "@ZofStudio",
-    "watermark_enabled": false
+    "watermark_enabled": false,
+    "watermark_position": "top-left"
   },
   "sfx": {
     "enabled": true,
@@ -35,147 +36,184 @@
   },
   "scenes": [
     {
-      "id": "scene-07304b6d",
-      "kicker": "خطأ شائع",
-      "title": "الفخ الأول",
-      "subtitle": "خطأ شائع",
-      "caption": "تسعون بالمئة يفشلون في أول شهر لأنهم يطلبون نتيجة سنة في يوم واحد.",
-      "duration": 4,
+      "id": "scene-86c332c4",
+      "kicker": "نقطة البداية",
+      "title": "الحبة قبل الفنجان",
+      "subtitle": "نقطة البداية",
+      "caption": "سعر فنجانك ارتفع أربعين بالمئة، لكن القصة تبدأ في مزارع البرازيل وفيتنام لا في المقهى.",
+      "duration": 8.8,
+      "audioSrc": "audio/scene-1795303704801-3ac73a2a.mp3",
+      "audioDuration": 8.359,
       "sfxAt": 0,
       "sfxCues": [
         {
-          "frameOffset": 9,
-          "sound": "impact",
-          "volume": 0.37
+          "frameOffset": 18,
+          "sound": "pop",
+          "volume": 0.34
+        },
+        {
+          "frameOffset": 30,
+          "sound": "tick",
+          "volume": 0.35
         }
       ],
       "layout": "centered",
-      "camera": "push-in",
-      "background": "linear-gradient(135deg, rgba(11, 15, 23, 0.22) 0%, transparent 58%)",
-      "backgroundPreset": "particle-field",
+      "camera": "slow-zoom-in",
+      "background": "linear-gradient(135deg, rgba(139, 26, 209, 0.22) 0%, transparent 58%)",
+      "backgroundPreset": "editorial-paper",
       "character": {
-        "pose": "facepalm",
+        "pose": "shocked",
         "side": "left",
         "accessory": "badge",
         "enabled": true
       },
-      "ambientScene": "night-room",
+      "elements": [
+        {
+          "type": "hero_title",
+          "title": "نقطة البداية",
+          "subtitle": "+40% في عامين",
+          "kicker": "الحبة قبل الفنجان",
+          "badge": "ZOF STUDIO"
+        }
+      ]
+    },
+    {
+      "id": "scene-31d88205",
+      "kicker": "السبب الجذري",
+      "title": "الجفاف يضرب المحصول",
+      "subtitle": "السبب الجذري",
+      "caption": "جفاف قياسي ضرب البرازيل وفيتنام، فانخفض المحصول العالمي وارتفعت أسعار البن الخام فوراً.",
+      "duration": 9,
+      "audioSrc": "audio/scene-1795303706124-4ba029fa.mp3",
+      "audioDuration": 8.594,
+      "sfxAt": 0,
+      "sfxCues": [
+        {
+          "frameOffset": 34,
+          "sound": "pop",
+          "volume": 0.4
+        },
+        {
+          "frameOffset": 135,
+          "sound": "tick",
+          "volume": 0.35
+        }
+      ],
+      "layout": "split",
+      "camera": "pan-right",
+      "background": "linear-gradient(215deg, rgba(139, 26, 209, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "kinetic-grid",
+      "character": {
+        "pose": "sad",
+        "side": "right",
+        "accessory": "tie",
+        "enabled": false
+      },
+      "elements": [
+        {
+          "type": "generative_scene",
+          "title": "السبب الجذري",
+          "headline": "محصول أقل = سعر أعلى",
+          "keywords": [
+            "جفاف قياسي",
+            "البرازيل",
+            "فيتنام",
+            "محصول منخفض",
+            "سعر خام"
+          ],
+          "motif": "funnel",
+          "badge": "الجفاف يضرب المحصول"
+        }
+      ]
+    },
+    {
+      "id": "scene-9d88a998",
+      "kicker": "تكلفة الشحن البحري",
+      "title": "الشحن يتضاعف ثلاثاً",
+      "subtitle": "تكلفة الشحن البحري",
+      "caption": "وبينما يقلّ المحصول، تضاعفت تكاليف الشحن البحري ثلاث مرات، فصار نقل الحبة أغلى من قيمتها.",
+      "duration": 9.3,
+      "audioSrc": "audio/scene-1795303707099-68802552.mp3",
+      "audioDuration": 8.908,
+      "sfxSrc": "sfx/bass-drop.wav",
+      "sfxAt": 0.5,
+      "layout": "overlay",
+      "camera": "push-in",
+      "background": "radial-gradient(circle at 82% 18%, rgba(139, 26, 209, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "particle-field",
+      "character": {
+        "pose": "explaining",
+        "side": "left",
+        "accessory": "tie",
+        "enabled": true
+      },
+      "elements": [
+        {
+          "type": "stat_number",
+          "value": 3,
+          "label": "تكلفة الشحن البحري",
+          "icon": "chart"
+        }
+      ]
+    },
+    {
+      "id": "scene-cb0e8c75",
+      "kicker": "خطأ شائع",
+      "title": "الخطأ الشائع",
+      "subtitle": "خطأ شائع",
+      "caption": "الخطأ الشائع أن نلوم المقهى، بينما هامشه ضاق فعلاً؛ الضغط كله قادم من المزرعة والبحر.",
+      "duration": 9.6,
+      "audioSrc": "audio/scene-1795303708052-8bcf4aea.mp3",
+      "audioDuration": 9.169,
+      "sfxSrc": "sfx/alert-warning.wav",
+      "sfxAt": 0,
+      "layout": "stacked",
+      "camera": "slow-zoom-out",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(139, 26, 209, 0.18) 100%)",
+      "backgroundPreset": "animated-mesh",
+      "character": {
+        "pose": "facepalm",
+        "side": "right",
+        "accessory": "badge",
+        "enabled": true
+      },
       "elements": [
         {
           "type": "warning_card",
           "title": "خطأ شائع",
-          "badge": "الفخ الأول",
-          "myth": "نتيجة سنة في يوم؟",
-          "text": "تسعون بالمئة يفشلون في أول شهر لأنهم يطلبون نتيجة سنة في يوم واحد.",
+          "badge": "الخطأ الشائع",
+          "myth": "المقهى ليس السبب",
+          "text": "الخطأ الشائع أن نلوم المقهى، بينما هامشه ضاق فعلاً؛ الضغط كله قادم من المزرعة والبحر.",
           "tone": "warning"
         }
       ]
     },
     {
-      "id": "scene-9f20fe09",
-      "kicker": "نقطة البداية",
-      "title": "نقطة الصفر",
-      "subtitle": "نقطة البداية",
-      "caption": "شخصان يبدآن من الصفر نفسه: أحدهما يتحسن واحداً بالمئة والآخر يتراجع واحداً بالمئة.",
-      "duration": 4,
+      "id": "scene-b1e258b1",
+      "kicker": "سلسلة الإمداد",
+      "title": "سلسلة مضغوطة",
+      "subtitle": "سلسلة الإمداد",
+      "caption": "حين يقلّ العرض ويغلو النقل، تضيق سلسلة الإمداد كلها، وينتقل الضغط من المزرعة إلى فنجانك.",
+      "duration": 9.8,
+      "audioSrc": "audio/scene-1795303709079-06730831.mp3",
+      "audioDuration": 9.404,
       "sfxAt": 0,
       "sfxCues": [
         {
-          "frameOffset": 9,
+          "frameOffset": 34,
           "sound": "pop",
-          "volume": 0.46
+          "volume": 0.4
         },
         {
-          "frameOffset": 33,
+          "frameOffset": 144,
           "sound": "tick",
-          "volume": 0.4
+          "volume": 0.35
         }
       ],
       "layout": "split",
-      "camera": "pan-right",
-      "background": "linear-gradient(215deg, rgba(11, 15, 23, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "particle-field",
-      "character": {
-        "pose": "idle",
-        "side": "right",
-        "accessory": "tie",
-        "enabled": true
-      },
-      "characters": [
-        {
-          "pose": "walking",
-          "side": "left",
-          "accessory": "none",
-          "label": "+1% يومياً",
-          "enabled": true
-        },
-        {
-          "pose": "thinking",
-          "side": "right",
-          "accessory": "none",
-          "label": "-1% يومياً",
-          "enabled": true
-        }
-      ],
-      "characterLayout": "side-by-side",
-      "elements": [
-        {
-          "type": "comparison_box",
-          "title": "نقطة البداية",
-          "left": {
-            "title": "1% يومياً ↑",
-            "icon": "alert",
-            "tone": "negative",
-            "points": []
-          },
-          "right": {
-            "title": "↓",
-            "icon": "trend",
-            "tone": "positive",
-            "points": []
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-f4cbd21b",
-      "kicker": "الأسبوع الأول",
-      "title": "أسبوع بلا فرق",
-      "subtitle": "الأسبوع الأول",
-      "caption": "في الأسبوع الأول لا يظهر فرق؛ كلاهما يبدو في المكان نفسه تماماً.",
-      "duration": 4,
-      "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 13,
-          "sound": "tick",
-          "volume": 0.4
-        },
-        {
-          "frameOffset": 17,
-          "sound": "pop",
-          "volume": 0.46
-        },
-        {
-          "frameOffset": 37,
-          "sound": "tick",
-          "volume": 0.4
-        },
-        {
-          "frameOffset": 57,
-          "sound": "pop",
-          "volume": 0.4
-        },
-        {
-          "frameOffset": 78,
-          "sound": "tick",
-          "volume": 0.4
-        }
-      ],
-      "layout": "overlay",
-      "camera": "slow-zoom-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(11, 15, 23, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "particle-field",
+      "camera": "pan-left",
+      "background": "linear-gradient(135deg, rgba(139, 26, 209, 0.22) 0%, transparent 58%)",
+      "backgroundPreset": "deep-wave",
       "character": {
         "pose": "thinking",
         "side": "left",
@@ -185,122 +223,36 @@
       "elements": [
         {
           "type": "generative_scene",
-          "title": "الأسبوع الأول",
-          "headline": "لا فرق مرئي",
+          "title": "سلسلة الإمداد",
+          "headline": "ضغط ينتقل خطوة بخطوة",
           "keywords": [
-            "نقطة الصفر",
-            "يوم 1",
-            "يوم 7",
-            "خط متطابق"
+            "مزرعة",
+            "تصدير",
+            "شحن",
+            "تحميص",
+            "مقهى"
           ],
           "motif": "flow",
-          "badge": "أسبوع بلا فرق"
+          "badge": "سلسلة مضغوطة"
         }
       ]
     },
     {
-      "id": "scene-8b4d78c2",
-      "kicker": "بعد 365 يوماً",
-      "title": "الرياضيات الصادمة",
-      "subtitle": "بعد 365 يوماً",
-      "caption": "بعد ثلاثمئة وخمسة وستين يوماً، الأول يتضاعف سبعاً وثلاثين مرة والثاني ينهار إلى الصفر.",
-      "duration": 4.5,
-      "sfxSrc": "sfx/bass-drop.wav",
-      "sfxAt": 0.6,
-      "sfxCues": [
-        {
-          "frameOffset": 12,
-          "sound": "pop",
-          "volume": 0.4
-        }
-      ],
-      "layout": "stacked",
-      "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(11, 15, 23, 0.18) 100%)",
-      "backgroundPreset": "particle-field",
-      "character": {
-        "pose": "shocked",
-        "side": "right",
-        "accessory": "badge",
-        "enabled": false
-      },
-      "elements": [
-        {
-          "type": "stat_number",
-          "value": 37.78,
-          "label": "بعد 365 يوماً",
-          "icon": "chart"
-        }
-      ]
-    },
-    {
-      "id": "scene-e9711dd7",
-      "kicker": "اتجاه المنحنى",
-      "title": "المنحنى يكشف",
-      "subtitle": "اتجاه المنحنى",
-      "caption": "الفرق ليس في الموهبة، بل في اتجاه المنحنى الصغير الذي تكرره كل يوم.",
-      "duration": 4,
-      "sfxSrc": "sfx/riser-build.wav",
+      "id": "scene-4e14b274",
+      "kicker": "2026",
+      "title": "أغلى سلعة زراعية",
+      "subtitle": "2026",
+      "caption": "النتيجة أن حبة البن صارت أغلى سلعة زراعية في 2026، قبل أن تصل إلى يدك.",
+      "duration": 9.2,
+      "audioSrc": "audio/scene-1795303710238-b44ffbec.mp3",
+      "audioDuration": 8.751,
       "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 14,
-          "sound": "rise",
-          "volume": 0.38
-        },
-        {
-          "frameOffset": 26,
-          "sound": "pop",
-          "volume": 0.36
-        }
-      ],
-      "layout": "overlay",
-      "camera": "pan-left",
-      "background": "linear-gradient(135deg, rgba(11, 15, 23, 0.22) 0%, transparent 58%)",
-      "backgroundPreset": "particle-field",
+      "layout": "centered",
+      "camera": "slow-zoom-in",
+      "background": "linear-gradient(215deg, rgba(139, 26, 209, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "neon-cyber",
       "character": {
         "pose": "pointing",
-        "side": "left",
-        "accessory": "tie",
-        "enabled": false
-      },
-      "elements": [
-        {
-          "type": "line_chart",
-          "title": "اتجاه المنحنى",
-          "label": "اتجاه المنحنى",
-          "points": [
-            20,
-            27,
-            33,
-            40,
-            48
-          ],
-          "suffix": ""
-        }
-      ]
-    },
-    {
-      "id": "scene-2156279a",
-      "kicker": "نقطة الانحناء",
-      "title": "مضاعفة صامتة",
-      "subtitle": "نقطة الانحناء",
-      "caption": "التحسن التراكمي يعمل بصمت، ثم ينفجر فجأة حين يصل المنحنى لنقطة الانحناء.",
-      "duration": 4.5,
-      "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 9,
-          "sound": "pop",
-          "volume": 0.36
-        }
-      ],
-      "layout": "centered",
-      "camera": "slow-zoom-out",
-      "background": "linear-gradient(215deg, rgba(11, 15, 23, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "particle-field",
-      "character": {
-        "pose": "explaining",
         "side": "right",
         "accessory": "tie",
         "enabled": false
@@ -308,51 +260,45 @@
       "elements": [
         {
           "type": "custom_tsx",
-          "component": "CustomScene_scene_2156279a_5",
-          "title": "نقطة الانحناء",
-          "text": "صمت ثم انفجار",
+          "component": "CustomScene_scene_4e14b274_5",
+          "title": "2026",
+          "text": "حبة البن = أغلى سلعة زراعية",
           "keywords": [
-            "صمت ثم انفجار"
+            "حبة البن = أغلى سلعة زراعية"
           ],
           "data": {
-            "narration": "التحسن التراكمي يعمل بصمت، ثم ينفجر فجأة حين يصل المنحنى لنقطة الانحناء.",
+            "narration": "النتيجة أن حبة البن صارت أغلى سلعة زراعية في 2026، قبل أن تصل إلى يدك.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-757cfeae",
-      "kicker": "خطوتك الآن",
-      "title": "ابدأ بعشر دقائق",
-      "subtitle": "خطوتك الآن",
-      "caption": "ابدأ اليوم بعادة صغيرة لا تتجاوز عشر دقائق، ودع الزمن يضاعف النتيجة بدلاً منك.",
-      "duration": 4,
+      "id": "scene-c26ba97f",
+      "kicker": "خطوة عملية",
+      "title": "ما تفعله أنت",
+      "subtitle": "خطوة عملية",
+      "caption": "راقب سعر الكيلو لا الفنجان، واشترِ حبوباً كاملة بالجملة؛ هذا ما يخفف فاتورتك فعلاً.",
+      "duration": 9,
+      "audioSrc": "audio/scene-1795303711144-fa224933.mp3",
+      "audioDuration": 8.594,
       "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 12,
-          "sound": "chime",
-          "volume": 0.36
-        }
-      ],
-      "layout": "overlay",
-      "camera": "slow-zoom-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(11, 15, 23, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "particle-field",
+      "layout": "stacked",
+      "camera": "static",
+      "background": "radial-gradient(circle at 82% 18%, rgba(139, 26, 209, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "floating-orbs",
       "character": {
-        "pose": "happy",
+        "pose": "idea",
         "side": "left",
         "accessory": "badge",
         "enabled": true
       },
-      "ambientScene": "cozy-desk",
       "elements": [
         {
           "type": "cta",
-          "title": "خطوتك الآن",
-          "subtitle": "10 دقائق يومياً",
-          "buttonLabel": "ابدأ بعشر دقائق",
+          "title": "خطوة عملية",
+          "subtitle": "اشترِ الكيلو لا الفنجان",
+          "buttonLabel": "ما تفعله أنت",
           "icon": "rocket"
         }
       ]
