@@ -64,6 +64,7 @@ export function AgentDirectorPanel({
         provider: fromFallback.provider,
         providerLabel: fromFallback.providerLabel,
         note: fromFallback.note,
+        noteAr: fromFallback.noteAr,
         isFree: fromFallback.isFree,
         upstream: fromFallback.upstream,
       };
@@ -208,7 +209,9 @@ export function AgentDirectorPanel({
 
         {selectedModel?.note ? (
           <p className="rounded-lg border border-white/[0.06] bg-[#0B0E14] px-2.5 py-2 text-[10px] leading-relaxed text-slate-500">
-            {selectedModel.note}
+            {selectedModel.noteAr
+              ? t(selectedModel.noteAr, selectedModel.note)
+              : selectedModel.note}
           </p>
         ) : null}
 

@@ -413,7 +413,7 @@ export async function renderScenesToVideo(params: {
   canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('تعذر تهيئة محرك الرسم ثنائي الأبعاد في المتصفح.');
+    throw new Error('Could not initialize the browser 2D rendering context.');
   }
 
   // Audio mix setup (SFX + any generated scene audio)
@@ -509,7 +509,7 @@ export async function renderScenesToVideo(params: {
   return await new Promise<RenderedVideoResult>((resolve, reject) => {
     recorder.onerror = () => {
       if (audioCtx) void audioCtx.close();
-      reject(new Error('فشل تسجيل تدفق الفيديو في المتصفح.'));
+      reject(new Error('Could not record the video stream in the browser.'));
     };
 
     recorder.onstop = () => {

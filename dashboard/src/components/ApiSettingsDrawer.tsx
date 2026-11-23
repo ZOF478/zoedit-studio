@@ -1,5 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Check, Eye, EyeOff, KeyRound, Loader2, RefreshCw, Server, Sparkles, X } from 'lucide-react';
+import {
+  BookOpen,
+  Check,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Loader2,
+  RefreshCw,
+  Server,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import { useI18n } from '../i18n';
 import { ModelSearchSelect } from './ModelSearchSelect';
 import type {
@@ -25,6 +36,7 @@ interface ApiSettingsDrawerProps {
   sessionToken?: string;
   onChangeApiBaseUrl: (url: string) => void;
   onSaveAndSync: (settings: SettingsSavePayload) => Promise<void>;
+  onOpenSetupGuide?: () => void;
 }
 
 function SecretField({
@@ -96,6 +108,7 @@ export function ApiSettingsDrawer({
   sessionToken = '',
   onChangeApiBaseUrl,
   onSaveAndSync,
+  onOpenSetupGuide,
 }: ApiSettingsDrawerProps) {
   const { t } = useI18n();
   const [openrouterKey, setOpenrouterKey] = useState('');
@@ -185,6 +198,16 @@ export function ApiSettingsDrawer({
             <p className="mt-1 font-mono text-[10px] text-slate-500" dir="ltr">
               {settingsFile}
             </p>
+            {onOpenSetupGuide ? (
+              <button
+                type="button"
+                onClick={onOpenSetupGuide}
+                className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-sky-400/30 bg-sky-500/10 px-2.5 py-1.5 text-[10px] font-semibold text-sky-200 transition-colors hover:bg-sky-500/20 cursor-pointer"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                {t('دليل تفعيل المفاتيح والنماذج', 'Open the API setup guide')}
+              </button>
+            ) : null}
           </div>
           <button
             type="button"
@@ -225,7 +248,9 @@ export function ApiSettingsDrawer({
                       />
                     </div>
                     <p className="mt-1 text-[10px] leading-relaxed text-slate-400">
-                      {provider.description}
+                      {provider.descriptionAr
+                        ? t(provider.descriptionAr, provider.description)
+                        : provider.description}
                     </p>
                   </button>
                 );
@@ -268,9 +293,15 @@ export function ApiSettingsDrawer({
               onChangeModel={onChangeAiModel}
             />
             <p className="text-xs text-slate-400">
-              {selectedModel?.note ||
-                activeProvider?.description ||
-                t('اختر المزود والنموذج المناسب.', 'Select a provider and model.')}
+              {selectedModel
+                ? selectedModel.noteAr
+                  ? t(selectedModel.noteAr, selectedModel.note)
+                  : selectedModel.note
+                : activeProvider
+                  ? activeProvider.descriptionAr
+                    ? t(activeProvider.descriptionAr, activeProvider.description)
+                    : activeProvider.description
+                  : t('اختر المزود والنموذج المناسب.', 'Select a provider and model.')}
             </p>
           </section>
 

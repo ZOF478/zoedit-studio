@@ -56,9 +56,21 @@ export function TopHeader({
       <div className="mx-auto flex max-w-[1440px] min-w-0 flex-wrap items-center justify-between gap-3 px-3 py-2.5 sm:px-5">
         <a
           href="#top"
-          className="font-display text-lg font-bold tracking-tight text-slate-50 whitespace-nowrap shrink-0"
+          title={t(
+            'Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي',
+            'Zof Studio — AI-Directed Motion Graphics Studio'
+          )}
+          className="flex min-w-0 shrink-0 flex-col leading-tight"
         >
-          Zof Studio
+          <span className="font-display text-lg font-bold tracking-tight text-slate-50 whitespace-nowrap">
+            Zof Studio
+          </span>
+          <span className="hidden max-w-[260px] truncate text-[9px] font-medium text-slate-500 lg:block">
+            {t(
+              'استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي',
+              'AI-Directed Motion Graphics Studio'
+            )}
+          </span>
         </a>
 
         <div className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-1.5 order-3 w-full sm:order-2 sm:w-auto">

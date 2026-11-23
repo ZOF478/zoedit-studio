@@ -134,13 +134,13 @@ export function ColorSandbox({ brandKit, onChange, disabled = false }: ColorSand
         <div className="mt-3 flex items-end justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70">
-              {t('عنوان عربي', 'Arabic headline')}
+              {t('عنوان عربي', 'Primary headline')}
             </p>
             <p
               className="mt-0.5 text-lg font-black leading-tight"
               style={{ color: brandKit.textColor }}
             >
-              أصنع فيديو يلفت الأنظار
+              {t('أصنع فيديو يلفت الأنظار', 'Create video that stands out')}
             </p>
             <p
               dir="ltr"

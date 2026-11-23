@@ -441,6 +441,7 @@ export interface AiProviderOption {
   id: AiProviderId;
   label: string;
   description: string;
+  descriptionAr?: string;
   requiresKey: boolean;
   configured?: boolean;
 }
@@ -490,6 +491,7 @@ export interface AiModelOption {
   provider: AiProviderId;
   providerLabel: string;
   note: string;
+  noteAr?: string;
   isFree: boolean;
   upstream?: 'openrouter' | 'deepseek' | 'kieai' | 'custom';
 }
@@ -499,30 +501,35 @@ export const AI_PROVIDERS: AiProviderOption[] = [
     id: 'opencode-free',
     label: 'OpenCode Free Models',
     description: 'Free OpenCode-compatible models with automatic fallback.',
+    descriptionAr: 'نماذج OpenCode المجانية المتوافقة مع تبديل تلقائي عند التعذر.',
     requiresKey: false,
   },
   {
     id: 'deepseek',
     label: 'DeepSeek',
     description: 'Live models from your DeepSeek API account.',
+    descriptionAr: 'نماذج حية من حساب DeepSeek الخاص بك.',
     requiresKey: true,
   },
   {
     id: 'openrouter',
     label: 'OpenRouter',
     description: 'Hosted and :free OpenRouter models.',
+    descriptionAr: 'نماذج OpenRouter المستضافة والمجانية (:free).',
     requiresKey: true,
   },
   {
     id: 'kieai',
     label: 'Kie.ai',
     description: 'Kie.ai OpenAI-compatible chat completions.',
+    descriptionAr: 'إكمالات محادثة متوافقة مع OpenAI عبر Kie.ai.',
     requiresKey: true,
   },
   {
     id: 'custom',
     label: 'Custom Provider',
     description: 'Any OpenAI-compatible endpoint.',
+    descriptionAr: 'أي نقطة نهاية متوافقة مع OpenAI.',
     requiresKey: true,
   },
 ];
@@ -534,6 +541,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'opencode-free',
     providerLabel: 'OpenCode Free Models',
     note: 'Fast free script drafting and structured JSON.',
+    noteAr: 'صياغة سكربت سريعة مجانية وإخراج JSON منظم.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -543,6 +551,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'opencode-free',
     providerLabel: 'OpenCode Free Models',
     note: 'Low-latency free model with multilingual output.',
+    noteAr: 'نموذج مجاني منخفض التأخير بمخرجات متعددة اللغات.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -552,6 +561,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'opencode-free',
     providerLabel: 'OpenCode Free Models',
     note: 'Free NVIDIA model for rich scene planning.',
+    noteAr: 'نموذج NVIDIA مجاني لتخطيط مشاهد غني.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -561,6 +571,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'opencode-free',
     providerLabel: 'OpenCode Free Models',
     note: 'Free balanced Arabic and English dialogue model.',
+    noteAr: 'نموذج مجاني متوازن للحوار العربي والإنجليزي.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -570,6 +581,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'openrouter',
     providerLabel: 'OpenRouter',
     note: 'Premium creative writing through OpenRouter.',
+    noteAr: 'كتابة إبداعية متقدمة عبر OpenRouter.',
     isFree: false,
     upstream: 'openrouter',
   },
@@ -579,6 +591,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'openrouter',
     providerLabel: 'OpenRouter',
     note: 'Fast structured JSON generation.',
+    noteAr: 'توليد JSON منظم وسريع.',
     isFree: false,
     upstream: 'openrouter',
   },
@@ -588,6 +601,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'openrouter',
     providerLabel: 'OpenRouter',
     note: 'OpenRouter free model with generous context.',
+    noteAr: 'نموذج OpenRouter مجاني بسياق واسع.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -597,6 +611,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'openrouter',
     providerLabel: 'OpenRouter',
     note: 'OpenRouter free general-purpose model.',
+    noteAr: 'نموذج OpenRouter مجاني متعدد الاستخدامات.',
     isFree: true,
     upstream: 'openrouter',
   },
@@ -606,6 +621,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'kieai',
     providerLabel: 'Kie.ai',
     note: 'Kie.ai chat completion model.',
+    noteAr: 'نموذج إكمال محادثة من Kie.ai.',
     isFree: false,
     upstream: 'kieai',
   },
@@ -615,6 +631,7 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     provider: 'custom',
     providerLabel: 'Custom Provider',
     note: 'Any model ID supported by your endpoint.',
+    noteAr: 'أي معرّف نموذج يدعمه مزودك.',
     isFree: false,
     upstream: 'custom',
   },
@@ -892,6 +909,7 @@ export interface ProviderModelOption {
   provider: AiProviderId;
   providerLabel: string;
   note?: string;
+  noteAr?: string;
   isFree: boolean;
   upstream?: 'openrouter' | 'deepseek' | 'kieai' | 'custom';
 }

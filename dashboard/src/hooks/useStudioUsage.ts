@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useI18n } from '../i18n';
 import type {
   LiveBalancesResponse,
   UsageDelta,
@@ -36,6 +37,7 @@ function addUsageDelta(target: UsageResponse, delta: UsageDelta): UsageResponse 
 }
 
 export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
+  const { t } = useI18n();
   const [usage, setUsage] = useState<UsageResponse | null>(null);
   const [balances, setBalances] = useState<LiveBalancesResponse | null>(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
@@ -56,11 +58,11 @@ export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
       const data = (await res.json()) as UsageResponse;
       setUsage(data);
     } catch {
-      setNotice('تعذر تحميل عداد الاستهلاك من الخادم.');
+      setNotice(t('تعذر تحميل عداد الاستهلاك من الخادم.', 'Could not load usage data from the server.'));
     } finally {
       setLoadingUsage(false);
     }
-  }, [apiBaseUrl, headers]);
+  }, [apiBaseUrl, headers, t]);
 
   const refreshBalances = useCallback(async () => {
     setLoadingBalances(true);
@@ -70,11 +72,11 @@ export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
       const data = (await res.json()) as LiveBalancesResponse;
       setBalances(data);
     } catch {
-      setNotice('تعذر تحديث الأرصدة الحية الآن.');
+      setNotice(t('تعذر تحديث الأرصدة الحية الآن.', 'Could not refresh live balances right now.'));
     } finally {
       setLoadingBalances(false);
     }
-  }, [apiBaseUrl, headers]);
+  }, [apiBaseUrl, headers, t]);
 
   const refreshAll = useCallback(async () => {
     await Promise.all([refreshUsage(), refreshBalances()]);
@@ -91,13 +93,13 @@ export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = (await res.json()) as UsageResponse;
       setUsage(data);
-      setNotice('تم تصفير عداد الاستهلاك بنجاح.');
+      setNotice(t('تم تصفير عداد الاستهلاك بنجاح.', 'Usage counters were reset successfully.'));
     } catch {
-      setNotice('تعذر تصفير العداد.');
+      setNotice(t('تعذر تصفير العداد.', 'Could not reset the counters.'));
     } finally {
       setLoadingUsage(false);
     }
-  }, [apiBaseUrl, headers]);
+  }, [apiBaseUrl, headers, t]);
 
   const applyDelta = useCallback((delta: UsageDelta | undefined) => {
     if (!delta) return;

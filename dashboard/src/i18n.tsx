@@ -20,6 +20,16 @@ interface I18nValue {
 
 const STORAGE_KEY = 'zof-studio-lang';
 
+const SITE_TITLES: Record<Lang, string> = {
+  ar: 'Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي',
+  en: 'Zof Studio — AI-Directed Motion Graphics Studio',
+};
+
+const SITE_DESCRIPTIONS: Record<Lang, string> = {
+  ar: 'استوديو موشن جرافيك ذكي يكتب مشاهد Remotion مخصصة بالكود، مع تعليق صوتي عبر ElevenLabs وترجمة متزامنة وتأطير آمن لمنصات الفيديو.',
+  en: 'An AI-directed motion graphics studio that writes bespoke Remotion scene code, with ElevenLabs voiceover, synced captions, and platform-safe framing.',
+};
+
 const I18nContext = createContext<I18nValue | null>(null);
 
 function readInitialLang(): Lang {
@@ -42,6 +52,17 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (typeof document === 'undefined') return;
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.title = SITE_TITLES[lang];
+    const description = SITE_DESCRIPTIONS[lang];
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', description);
+    document
+      .querySelector('meta[property="og:title"]')
+      ?.setAttribute('content', SITE_TITLES[lang]);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute('content', description);
   }, [lang]);
 
   const value = useMemo<I18nValue>(() => {

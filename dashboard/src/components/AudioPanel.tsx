@@ -56,25 +56,25 @@ const FALLBACK_ELEVENLABS_MODELS: ElevenLabsModel[] = [
   {
     model_id: 'eleven_multilingual_v2',
     name: 'Eleven Multilingual v2',
-    description: 'أعلى دقة نطق متعددة اللغات',
-    latencyBadge: 'جودة فائقة',
-    qualityBadge: '29 لغة',
+    description: 'Highest multilingual pronunciation accuracy',
+    latencyBadge: 'Ultra quality',
+    qualityBadge: '29 languages',
     languages: ['Arabic', 'English'],
   },
   {
     model_id: 'eleven_turbo_v2_5',
     name: 'Eleven Turbo v2.5',
-    description: 'توازن بين السرعة والجودة',
-    latencyBadge: 'استجابة سريعة · ~250ms',
-    qualityBadge: 'متوازن',
+    description: 'Balanced speed and quality',
+    latencyBadge: 'Fast response · ~250ms',
+    qualityBadge: 'Balanced',
     languages: ['Arabic', 'English'],
   },
   {
     model_id: 'eleven_flash_v2_5',
     name: 'Eleven Flash v2.5',
-    description: 'أسرع نموذج لمعاينة المشاهد',
-    latencyBadge: 'زمن فائق الانخفاض · ~75ms',
-    qualityBadge: 'سرعة قصوى',
+    description: 'Fastest model for scene previews',
+    latencyBadge: 'Ultra-low latency · ~75ms',
+    qualityBadge: 'Maximum speed',
     languages: ['Arabic', 'English'],
   },
 ];
@@ -257,6 +257,19 @@ export function AudioPanel({
 
   const captionsLocked = !voiceover.enabled;
   const captionsActive = captionsEnabled && voiceover.enabled;
+
+  const localizedModelDescription = (model: ElevenLabsModel): string => {
+    switch (model.model_id) {
+      case 'eleven_multilingual_v2':
+        return t('أعلى دقة نطق متعددة اللغات', 'Highest multilingual pronunciation accuracy');
+      case 'eleven_turbo_v2_5':
+        return t('توازن بين السرعة والجودة', 'Balanced speed and quality');
+      case 'eleven_flash_v2_5':
+        return t('أسرع نموذج لمعاينة المشاهد', 'Fastest model for scene previews');
+      default:
+        return model.description;
+    }
+  };
 
   const languageOptions = useMemo(
     () => Array.from(new Set(voices.flatMap((voice) => voiceLanguages(voice)))).sort(),
@@ -522,7 +535,7 @@ export function AudioPanel({
                     <option
                       key={model.model_id}
                       value={model.model_id}
-                      title={model.description}
+                      title={localizedModelDescription(model)}
                       className="bg-[#10141D]"
                     >
                       {model.name}

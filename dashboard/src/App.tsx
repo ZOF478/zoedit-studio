@@ -6,6 +6,7 @@ import { MainPreviewPanel } from './components/MainPreviewPanel';
 import { NotificationPermissionBanner } from './components/NotificationPermissionBanner';
 import { QuickTweakPanel } from './components/QuickTweakPanel';
 import { RenderMonitorPanel } from './components/RenderMonitorPanel';
+import { StudioFooter, StudioInfoModal, type StudioInfoModalId } from './components/StudioFooter';
 import { StudioSidePanel } from './components/StudioSidePanel';
 import { TopHeader } from './components/TopHeader';
 import { UsageCostPanel } from './components/UsageCostPanel';
@@ -259,8 +260,10 @@ const DEFAULT_BRAND_KIT: BrandKit = {
   watermarkPosition: 'top-left',
 };
 
-const DEFAULT_PROMPT =
+const DEFAULT_PROMPT_AR =
   'كيف تصنع فيديوهات تعليمية قصيرة بالذكاء الاصطناعي وتضاعف التفاعل';
+const DEFAULT_PROMPT_EN =
+  'How to create short educational videos with AI and double engagement';
 
 function nowTimeLabel(): string {
   return new Date().toLocaleTimeString('en-GB', { hour12: false });
@@ -293,7 +296,7 @@ function createExportSteps(fps: FpsOption, t: Translator): RenderStepState[] {
 }
 
 export default function App() {
-  const { t, dir } = useI18n();
+  const { t, dir, lang } = useI18n();
   const defaultBaseUrl =
     typeof window !== 'undefined' && window.location.port === '4789'
       ? 'http://localhost:4789/api'
@@ -302,6 +305,7 @@ export default function App() {
   const [apiBaseUrl, setApiBaseUrl] = useState<string>(defaultBaseUrl);
   const [sessionToken, setSessionToken] = useState<string>('');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [footerModal, setFooterModal] = useState<StudioInfoModalId | null>(null);
   const usageTracker = useStudioUsage(apiBaseUrl, sessionToken);
 
   const [selectedAiProvider, setSelectedAiProvider] = useState<AiProviderId>('opencode-free');
@@ -318,8 +322,9 @@ export default function App() {
   const availableModels = apiStatus.models?.length ? apiStatus.models : AI_SCRIPT_MODELS;
 
   const [masterPrompt, setMasterPrompt] = useState<string>(() => {
-    if (typeof window === 'undefined') return DEFAULT_PROMPT;
-    return window.localStorage.getItem(PROMPT_STORAGE_KEY) || DEFAULT_PROMPT;
+    const fallback = t(DEFAULT_PROMPT_AR, DEFAULT_PROMPT_EN);
+    if (typeof window === 'undefined') return fallback;
+    return window.localStorage.getItem(PROMPT_STORAGE_KEY) || fallback;
   });
   const [voiceoverScript, setVoiceoverScript] = useState<string>(() => {
     if (typeof window === 'undefined') return '';
@@ -580,6 +585,13 @@ export default function App() {
       // localStorage can be unavailable in private mode.
     }
   }, [masterPrompt]);
+
+  useEffect(() => {
+    if (!lang) return;
+    if (masterPrompt === DEFAULT_PROMPT_AR || masterPrompt === DEFAULT_PROMPT_EN) {
+      setMasterPrompt(t(DEFAULT_PROMPT_AR, DEFAULT_PROMPT_EN));
+    }
+  }, [lang, masterPrompt, t]);
 
   useEffect(() => {
     try {
@@ -1243,7 +1255,7 @@ export default function App() {
   };
 
   return (
-    <div id="top" dir={dir} className="min-h-screen w-full min-w-0 overflow-x-hidden bg-[#0B0E14] text-slate-100">
+    <div id="top" dir={dir} className="flex min-h-screen w-full min-w-0 flex-col overflow-x-hidden bg-[#0B0E14] text-slate-100">
       <TopHeader
         onOpenSettings={() => setSettingsOpen(true)}
         voiceoverEnabled={voiceConfig.enabled}
@@ -1259,7 +1271,7 @@ export default function App() {
         disabled={isRendering}
       />
 
-      <main className="mx-auto w-full max-w-[1440px] min-w-0 overflow-x-hidden px-3 py-4 sm:px-5 lg:py-6">
+      <main className="mx-auto w-full max-w-[1440px] min-w-0 flex-1 overflow-x-hidden px-3 py-4 sm:px-5 lg:py-6">
         {!notificationBannerDismissed ? (
           <div className="mb-4 min-w-0">
             <NotificationPermissionBanner
@@ -1414,6 +1426,8 @@ export default function App() {
         </div>
       </main>
 
+      <StudioFooter onOpenModal={setFooterModal} />
+
       <ApiSettingsDrawer
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
@@ -1428,7 +1442,13 @@ export default function App() {
         sessionToken={sessionToken}
         onChangeApiBaseUrl={setApiBaseUrl}
         onSaveAndSync={handleSaveAndSync}
+        onOpenSetupGuide={() => {
+          setSettingsOpen(false);
+          setFooterModal('api');
+        }}
       />
+
+      <StudioInfoModal modal={footerModal} onClose={() => setFooterModal(null)} />
 
       {toast ? (
         <div className="pointer-events-none fixed bottom-5 left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2">
