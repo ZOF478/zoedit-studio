@@ -21,6 +21,7 @@ interface TopHeaderProps {
   llmProvider?: string;
   balancesLoading?: boolean;
   onRefreshBalances?: () => void;
+  disabled?: boolean;
 }
 
 function formatUsd(value: number | null | undefined): string {
@@ -46,6 +47,7 @@ export function TopHeader({
   llmProvider,
   balancesLoading,
   onRefreshBalances,
+  disabled = false,
 }: TopHeaderProps) {
   const { lang, setLang, t } = useI18n();
 
@@ -63,9 +65,10 @@ export function TopHeader({
           <button
             type="button"
             role="switch"
+            disabled={disabled}
             aria-checked={voiceoverEnabled}
             onClick={onToggleVoiceover}
-            className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-colors cursor-pointer ${
+            className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${
               voiceoverEnabled
                 ? 'border-sky-400/40 bg-sky-500/15 text-sky-100'
                 : 'border-amber-400/40 bg-amber-500/15 text-amber-100'

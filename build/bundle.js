@@ -20190,12 +20190,2190 @@ if (true) {
 
 
 },
-6906(__unused_rspack_module, __unused_rspack___webpack_exports__, __webpack_require__) {
+1704(__unused_rspack_module, __unused_rspack___webpack_exports__, __webpack_require__) {
 
 // EXTERNAL MODULE: ./node_modules/remotion/dist/esm/index.mjs
 var esm = __webpack_require__(3947);
 // EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(4848);
+;// CONCATENATED MODULE: ./src/data.json
+var data_namespaceObject = /*#__PURE__*/JSON.parse('{"meta":{"title":"كيف","topic":"كيف تصنع فيديوهات تعليمية قصيرة بالذكاء الاصطناعي وتضاعف التفاعل","description":"كيف · تصنع · فيديوهات · تعليمية · قصيرة · بالذكاء · الاصطناعي · وتضاعف · التفاعل"},"width":1080,"height":1920,"fps":60,"style":"stickman","script_language":"ar","script_depth":"condensed","creative_code_mode":"creative","script_pacing":"auto","caption":{"animation_style":"auto","words_per_screen":"auto","lead_in":0.2,"enabled":true},"brand_kit":{"name":"ZOF","primary":"#E77B40","secondary":"#E77B40","accent":"#E77B40","success":"#16A34A","danger":"#DC2626","background":"#1D150C","watermark":"@ZofStudio","watermark_enabled":false,"watermark_position":"top-left"},"sfx":{"enabled":true,"volume":0.65},"scenes":[{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-1","kicker":"كيف","title":"كيف","subtitle":"كيف","caption":"كيف","duration":6.3,"audioSrc":"audio/scene-1795364862550-bd968fc0.mp3","audioDuration":0.914,"sfxSrc":"sfx/whoosh-fast.wav","sfxAt":0.15,"layout":"centered","camera":"slow-zoom-in","background":"linear-gradient(135deg, rgba(231, 123, 64, 0.22) 0%, transparent 58%)","backgroundPreset":"ai-free","character":{"pose":"explaining","side":"left","accessory":"badge","enabled":true},"generatedComponent":"Scene1","elements":[{"type":"custom_tsx","component":"Scene1","title":"كيف","text":"كيف","keywords":["كيف"],"data":{"narration":"كيف","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-2","kicker":"تصنع","title":"تصنع","subtitle":"تصنع","caption":"تصنع","duration":6.5,"audioSrc":"audio/scene-1795364863659-08e5cc51.mp3","audioDuration":1.071,"sfxSrc":"sfx/pop-bubble.wav","sfxAt":0.15,"layout":"split","camera":"pan-left","background":"linear-gradient(215deg, rgba(231, 123, 64, 0.16) 0%, transparent 62%)","backgroundPreset":"ai-free","character":{"pose":"pointing","side":"right","accessory":"tie","enabled":true},"generatedComponent":"Scene2","elements":[{"type":"custom_tsx","component":"Scene2","title":"تصنع","text":"تصنع","keywords":["تصنع"],"data":{"narration":"تصنع","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-3","kicker":"فيديوهات","title":"فيديوهات","subtitle":"فيديوهات","caption":"فيديوهات","duration":6.7,"audioSrc":"audio/scene-1795362151521-d70c3b40.mp3","audioDuration":1.306,"sfxSrc":"sfx/whoosh-deep.wav","sfxAt":0.15,"layout":"stacked","camera":"push-in","background":"radial-gradient(circle at 82% 18%, rgba(231, 123, 64, 0.24) 0%, transparent 46%)","backgroundPreset":"ai-free","character":{"pose":"explaining","side":"left","accessory":"tie","enabled":true},"generatedComponent":"Scene3","elements":[{"type":"custom_tsx","component":"Scene3","title":"فيديوهات","text":"فيديوهات","keywords":["فيديوهات"],"data":{"narration":"فيديوهات","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-4","kicker":"تعليمية","title":"تعليمية","subtitle":"تعليمية","caption":"تعليمية","duration":6.5,"audioSrc":"audio/scene-1795362151845-85fc6740.mp3","audioDuration":1.149,"sfxSrc":"sfx/typing-click.wav","sfxAt":0.15,"layout":"overlay","camera":"slow-zoom-out","background":"linear-gradient(160deg, transparent 20%, rgba(231, 123, 64, 0.18) 100%)","backgroundPreset":"ai-free","character":{"pose":"pointing","side":"right","accessory":"badge","enabled":true},"generatedComponent":"Scene4","elements":[{"type":"custom_tsx","component":"Scene4","title":"تعليمية","text":"تعليمية","keywords":["تعليمية"],"data":{"narration":"تعليمية","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-5","kicker":"قصيرة","title":"قصيرة","subtitle":"قصيرة","caption":"قصيرة","duration":6.5,"audioSrc":"audio/scene-1795364863938-961e9f5e.mp3","audioDuration":1.071,"sfxSrc":"sfx/ding-success.wav","sfxAt":0.15,"layout":"split","camera":"pan-right","background":"linear-gradient(135deg, rgba(231, 123, 64, 0.22) 0%, transparent 58%)","backgroundPreset":"ai-free","character":{"pose":"explaining","side":"left","accessory":"tie","enabled":true},"generatedComponent":"Scene5","elements":[{"type":"custom_tsx","component":"Scene5","title":"قصيرة","text":"قصيرة","keywords":["قصيرة"],"data":{"narration":"قصيرة","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-6","kicker":"بالذكاء","title":"بالذكاء","subtitle":"بالذكاء","caption":"بالذكاء","duration":6.8,"audioSrc":"audio/scene-1795364864246-af9446d8.mp3","audioDuration":1.411,"sfxSrc":"sfx/riser-build.wav","sfxAt":0.15,"layout":"centered","camera":"slow-zoom-in","background":"linear-gradient(215deg, rgba(231, 123, 64, 0.16) 0%, transparent 62%)","backgroundPreset":"ai-free","character":{"pose":"pointing","side":"right","accessory":"tie","enabled":true},"generatedComponent":"Scene6","elements":[{"type":"custom_tsx","component":"Scene6","title":"بالذكاء","text":"بالذكاء","keywords":["بالذكاء"],"data":{"narration":"بالذكاء","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-7","kicker":"الاصطناعي","title":"الاصطناعي","subtitle":"الاصطناعي","caption":"الاصطناعي","duration":7,"audioSrc":"audio/scene-1795364864553-95f94384.mp3","audioDuration":1.567,"sfxSrc":"sfx/whoosh-fast.wav","sfxAt":0.15,"layout":"split","camera":"pan-left","background":"radial-gradient(circle at 82% 18%, rgba(231, 123, 64, 0.24) 0%, transparent 46%)","backgroundPreset":"ai-free","character":{"pose":"explaining","side":"left","accessory":"badge","enabled":true},"generatedComponent":"Scene7","elements":[{"type":"custom_tsx","component":"Scene7","title":"الاصطناعي","text":"الاصطناعي","keywords":["الاصطناعي"],"data":{"narration":"الاصطناعي","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-8","kicker":"وتضاعف","title":"وتضاعف","subtitle":"وتضاعف","caption":"وتضاعف","duration":6.9,"audioSrc":"audio/scene-1795364864851-805a8b0a.mp3","audioDuration":1.489,"sfxSrc":"sfx/pop-bubble.wav","sfxAt":0.15,"layout":"stacked","camera":"push-in","background":"linear-gradient(160deg, transparent 20%, rgba(231, 123, 64, 0.18) 100%)","backgroundPreset":"ai-free","character":{"pose":"pointing","side":"right","accessory":"tie","enabled":true},"generatedComponent":"Scene8","elements":[{"type":"custom_tsx","component":"Scene8","title":"وتضاعف","text":"وتضاعف","keywords":["وتضاعف"],"data":{"narration":"وتضاعف","visualType":"custom-tsx"}}]},{"id":"scene-472958a2-b772-4bed-8a62-aaddabe8a41d-9","kicker":"التفاعل","title":"التفاعل","subtitle":"التفاعل","caption":"التفاعل","duration":6.7,"audioSrc":"audio/scene-1795362152980-534d3f29.mp3","audioDuration":1.306,"sfxSrc":"sfx/whoosh-deep.wav","sfxAt":0.15,"layout":"overlay","camera":"slow-zoom-out","background":"linear-gradient(135deg, rgba(231, 123, 64, 0.22) 0%, transparent 58%)","backgroundPreset":"ai-free","character":{"pose":"explaining","side":"left","accessory":"tie","enabled":true},"generatedComponent":"Scene9","elements":[{"type":"custom_tsx","component":"Scene9","title":"التفاعل","text":"التفاعل","keywords":["التفاعل"],"data":{"narration":"التفاعل","visualType":"custom-tsx"}}]}]}')
+;// CONCATENATED MODULE: ./src/config.ts
+
+const videoData = data_namespaceObject;
+const RTL_LANGUAGES = new Set([
+    "ar",
+    "fa",
+    "ur",
+    "he",
+    "yi",
+    "ps",
+    "sd",
+    "ug",
+    "ku",
+    "ckb"
+]);
+const positiveNumber = (value, fallback)=>{
+    return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : fallback;
+};
+const normalizeStyleId = (value)=>{
+    const style = typeof value === "string" ? value.toLowerCase() : "";
+    if (style === "modern_dark" || style === "modern-dark") return "modern_dark";
+    if (style === "editorial_clean" || style === "editorial-clean") return "editorial_clean";
+    if (style === "smart_mix" || style === "smart-mix" || style === "aimix") return "smart_mix";
+    return "stickman";
+};
+const getVideoSettings = (data)=>{
+    var _data_video, _data_video1, _data_video2, _data_video3;
+    const language = (data.script_language ?? data.language ?? "en").slice(0, 3).toLowerCase();
+    return {
+        width: Math.round(positiveNumber(data.width ?? ((_data_video = data.video) === null || _data_video === void 0 ? void 0 : _data_video.width), 1080)),
+        height: Math.round(positiveNumber(data.height ?? ((_data_video1 = data.video) === null || _data_video1 === void 0 ? void 0 : _data_video1.height), 1920)),
+        fps: positiveNumber(data.fps ?? ((_data_video2 = data.video) === null || _data_video2 === void 0 ? void 0 : _data_video2.fps), 60),
+        style: normalizeStyleId(data.style ?? ((_data_video3 = data.video) === null || _data_video3 === void 0 ? void 0 : _data_video3.style)),
+        language,
+        isRtl: RTL_LANGUAGES.has(language.split("-")[0])
+    };
+};
+const getSceneDurationInSeconds = (scene)=>{
+    return positiveNumber(scene.durationInSeconds ?? scene.duration, 6);
+};
+const getSceneTimings = (data, fps)=>{
+    let cursor = 0;
+    const scenes = data.scenes.length > 0 ? data.scenes : [
+        {}
+    ];
+    return scenes.map((scene)=>{
+        const explicitFrames = scene.durationInFrames;
+        const durationInFrames = typeof explicitFrames === "number" && Number.isFinite(explicitFrames) && explicitFrames > 0 ? Math.max(1, Math.round(explicitFrames)) : Math.max(1, Math.round(getSceneDurationInSeconds(scene) * fps));
+        const timing = {
+            from: cursor,
+            durationInFrames
+        };
+        cursor += durationInFrames;
+        return timing;
+    });
+};
+const getTotalDurationInFrames = (data, fps)=>{
+    return getSceneTimings(data, fps).reduce((total, timing)=>total + timing.durationInFrames, 0);
+};
+const calculateMetadata = ({ props })=>{
+    var _data_meta_title, _data_meta;
+    const data = props.data ?? videoData;
+    const settings = getVideoSettings(data);
+    return {
+        width: settings.width,
+        height: settings.height,
+        fps: settings.fps,
+        durationInFrames: getTotalDurationInFrames(data, settings.fps),
+        defaultOutName: `${((_data_meta = data.meta) === null || _data_meta === void 0 ? void 0 : (_data_meta_title = _data_meta.title) === null || _data_meta_title === void 0 ? void 0 : _data_meta_title.trim()) || "zof-studio"}`
+    };
+};
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(6540);
+;// CONCATENATED MODULE: ./src/components/Stickman.tsx
+
+
+const POSES = {
+    idle: {
+        headX: 0,
+        headY: 0,
+        headTilt: 0,
+        bodyLean: 0,
+        leftUpper: 8,
+        leftFore: 4,
+        rightUpper: -8,
+        rightFore: -4
+    },
+    walking: {
+        headX: -2,
+        headY: -1,
+        headTilt: -2,
+        bodyLean: -2,
+        leftUpper: 26,
+        leftFore: 10,
+        rightUpper: -30,
+        rightFore: -12
+    },
+    explaining: {
+        headX: -4,
+        headY: -2,
+        headTilt: -4,
+        bodyLean: -1,
+        leftUpper: 16,
+        leftFore: 8,
+        rightUpper: -112,
+        rightFore: -22
+    },
+    thinking: {
+        headX: 4,
+        headY: 2,
+        headTilt: 6,
+        bodyLean: 2,
+        leftUpper: 2,
+        leftFore: 25,
+        rightUpper: -100,
+        rightFore: 180
+    },
+    shocked: {
+        headX: -2,
+        headY: -8,
+        headTilt: -6,
+        bodyLean: -5,
+        leftUpper: 118,
+        leftFore: 24,
+        rightUpper: -118,
+        rightFore: -24
+    },
+    happy: {
+        headX: 0,
+        headY: -6,
+        headTilt: 4,
+        bodyLean: 0,
+        leftUpper: 148,
+        leftFore: 16,
+        rightUpper: -148,
+        rightFore: -16
+    },
+    sad: {
+        headX: 2,
+        headY: 7,
+        headTilt: -10,
+        bodyLean: 5,
+        leftUpper: -2,
+        leftFore: 18,
+        rightUpper: 2,
+        rightFore: -18
+    },
+    pointing: {
+        headX: -6,
+        headY: -2,
+        headTilt: -6,
+        bodyLean: -3,
+        leftUpper: 20,
+        leftFore: 6,
+        rightUpper: -154,
+        rightFore: -8
+    },
+    celebrating: {
+        headX: 0,
+        headY: -10,
+        headTilt: 8,
+        bodyLean: -2,
+        leftUpper: 166,
+        leftFore: 26,
+        rightUpper: -166,
+        rightFore: -26
+    },
+    idea: {
+        headX: -2,
+        headY: -4,
+        headTilt: -2,
+        bodyLean: -1,
+        leftUpper: 10,
+        leftFore: 4,
+        rightUpper: -142,
+        rightFore: 34
+    },
+    facepalm: {
+        headX: 5,
+        headY: 5,
+        headTilt: 12,
+        bodyLean: 4,
+        leftUpper: 8,
+        leftFore: 6,
+        rightUpper: -124,
+        rightFore: 196
+    }
+};
+const Stickman = ({ pose = "idle", color, faceColor, accent, shadow, accessory = "none", delay = 0 })=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
+    const localFrame = Math.max(0, frame - delay);
+    const target = POSES[pose] ?? POSES.idle;
+    const enter = (0,esm/* .spring */.oz)({
+        frame: localFrame,
+        fps,
+        config: {
+            damping: 14,
+            mass: 0.7,
+            stiffness: 110
+        }
+    });
+    const ease = Math.min(1, Math.max(0, enter));
+    const seconds = localFrame / fps;
+    const breathe = Math.sin(seconds * Math.PI * 2 / 3.2) * ease;
+    const sway = Math.sin(seconds * Math.PI * 2 / 5.1) * ease;
+    const walking = pose === "walking";
+    const stride = walking ? Math.sin(seconds * Math.PI * 2 * 1.35) : 0;
+    const gesture = pose === "pointing" || pose === "explaining" || pose === "idea";
+    const gesturePulse = gesture ? Math.sin(seconds * Math.PI * 2 * 0.9) * 3.5 : 0;
+    const travel = walking ? Math.sin(seconds * 0.85) * 10 : 0;
+    const headTilt = target.headTilt * ease + sway * 0.9;
+    const bodyLean = target.bodyLean * ease + sway * 0.4 + stride * 1.6;
+    const headX = target.headX * ease + sway * 1.4;
+    const headY = target.headY * ease + breathe * 0.8;
+    const bob = breathe * 1.8 + Math.abs(stride) * 2.2;
+    const leftUpper = target.leftUpper * ease + sway * 1.6 - stride * 12;
+    const leftFore = target.leftFore * ease + sway * 1.2 + stride * 6;
+    const rightUpper = target.rightUpper * ease - sway * 1.6 + stride * 12 + gesturePulse;
+    const rightFore = target.rightFore * ease - sway * 1.2 + gesturePulse * 0.6;
+    const leftShoulder = {
+        x: 122,
+        y: 180
+    };
+    const leftElbow = {
+        x: 104,
+        y: 252
+    };
+    const leftWrist = {
+        x: 110,
+        y: 318
+    };
+    const rightShoulder = {
+        x: 198,
+        y: 180
+    };
+    const rightElbow = {
+        x: 216,
+        y: 252
+    };
+    const rightWrist = {
+        x: 210,
+        y: 318
+    };
+    const leftFootX = 128 + stride * 16;
+    const rightFootX = 192 - stride * 16;
+    const stroke = {
+        stroke: color,
+        strokeWidth: 17,
+        strokeLinecap: "round"
+    };
+    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+        style: {
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            scale: (0,esm/* .interpolate */.GW)(ease, [
+                0,
+                1
+            ], [
+                0.92,
+                1
+            ]),
+            translate: `${travel}px ${(0,esm/* .interpolate */.GW)(ease, [
+                0,
+                1
+            ], [
+                28,
+                0
+            ]) + Math.abs(stride) * -2}px`,
+            opacity: Math.min(1, ease * 1.4)
+        },
+        children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+            viewBox: "0 0 320 440",
+            style: {
+                height: "100%",
+                width: "100%",
+                overflow: "visible"
+            },
+            children: [
+                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
+                    cx: "160",
+                    cy: "424",
+                    rx: 80 * ease,
+                    ry: 14 * ease,
+                    fill: shadow
+                }),
+                /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                    transform: `rotate(${bodyLean} 160 292)`,
+                    children: [
+                        /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
+                            transform: `translate(0 ${bob})`,
+                            children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                transform: `rotate(${leftUpper} ${leftShoulder.x} ${leftShoulder.y})`,
+                                children: [
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                        d: `M${leftShoulder.x} ${leftShoulder.y} L${leftElbow.x} ${leftElbow.y}`,
+                                        fill: "none",
+                                        ...stroke
+                                    }),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                        transform: `rotate(${leftFore} ${leftElbow.x} ${leftElbow.y})`,
+                                        children: [
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                                d: `M${leftElbow.x} ${leftElbow.y} L${leftWrist.x} ${leftWrist.y}`,
+                                                fill: "none",
+                                                ...stroke
+                                            }),
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                                cx: leftWrist.x,
+                                                cy: leftWrist.y,
+                                                r: "9",
+                                                fill: color
+                                            })
+                                        ]
+                                    })
+                                ]
+                            })
+                        }),
+                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                            transform: `translate(0 ${breathe * 1.8})`,
+                            children: [
+                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                    d: `M140 282 L${leftFootX - 4} 356 L${leftFootX - 2} 404`,
+                                    fill: "none",
+                                    ...stroke
+                                }),
+                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                    d: `M180 282 L${rightFootX + 4} 356 L${rightFootX + 2} 404`,
+                                    fill: "none",
+                                    ...stroke
+                                }),
+                                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
+                                    cx: leftFootX - 2,
+                                    cy: 412,
+                                    rx: "20",
+                                    ry: "11",
+                                    fill: color
+                                }),
+                                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
+                                    cx: rightFootX + 2,
+                                    cy: 412,
+                                    rx: "20",
+                                    ry: "11",
+                                    fill: color
+                                }),
+                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                    d: "M160 146 C132 146 118 160 114 184 C109 213 116 249 123 282 L197 282 C204 249 211 213 206 184 C202 160 188 146 160 146 Z",
+                                    fill: color
+                                }),
+                                accessory === "tie" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                    children: [
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                            d: "M160 156 L151 166 L160 196 L169 166 Z",
+                                            fill: accent
+                                        }),
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                            d: "M160 196 L155 214 L160 246 L165 214 Z",
+                                            fill: accent,
+                                            opacity: 0.85
+                                        })
+                                    ]
+                                }) : null,
+                                accessory === "badge" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                    children: [
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                            cx: "194",
+                                            cy: "208",
+                                            r: "11",
+                                            fill: accent
+                                        }),
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                            cx: "194",
+                                            cy: "208",
+                                            r: "4.5",
+                                            fill: "none",
+                                            stroke: faceColor,
+                                            strokeWidth: "2.5"
+                                        })
+                                    ]
+                                }) : null,
+                                /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                    transform: `translate(${headX} ${headY + bob}) rotate(${headTilt} 160 96)`,
+                                    shapeRendering: "geometricPrecision",
+                                    children: [
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
+                                            x: "149",
+                                            y: "120",
+                                            width: "22",
+                                            height: "46",
+                                            rx: "11",
+                                            fill: color
+                                        }),
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                            cx: "160",
+                                            cy: "96",
+                                            r: "50",
+                                            fill: color
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
+                            transform: `translate(0 ${bob})`,
+                            children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                transform: `rotate(${rightUpper} ${rightShoulder.x} ${rightShoulder.y})`,
+                                children: [
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                        d: `M${rightShoulder.x} ${rightShoulder.y} L${rightElbow.x} ${rightElbow.y}`,
+                                        fill: "none",
+                                        ...stroke
+                                    }),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                        transform: `rotate(${rightFore} ${rightElbow.x} ${rightElbow.y})`,
+                                        children: [
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                                d: `M${rightElbow.x} ${rightElbow.y} L${rightWrist.x} ${rightWrist.y}`,
+                                                fill: "none",
+                                                ...stroke
+                                            }),
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                                cx: rightWrist.x,
+                                                cy: rightWrist.y,
+                                                r: "9",
+                                                fill: color
+                                            })
+                                        ]
+                                    })
+                                ]
+                            })
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene1.tsx
+
+
+
+
+const Scene1 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 16,
+            mass: 0.8
+        }
+    });
+    const grow = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames * 0.7
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const pulse = 0.5 + 0.5 * Math.sin(frame / 18);
+    const rings = [
+        0,
+        1,
+        2
+    ];
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 50% 40%, ${props.accentColor}22 0%, transparent 60%)`
+                }
+            }),
+            rings.map((r)=>{
+                const scale = 0.4 + (frame + r * 40) % 120 / 120;
+                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                    style: {
+                        position: "absolute",
+                        left: "50%",
+                        top: isPortrait ? "42%" : "46%",
+                        width: height * 0.9,
+                        height: height * 0.9,
+                        marginLeft: -height * 0.45,
+                        marginTop: -height * 0.45,
+                        borderRadius: "50%",
+                        border: `3px solid ${props.accentColor}`,
+                        opacity: (1 - scale) * 0.35,
+                        transform: `scale(${scale})`
+                    }
+                }, r);
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 40
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 210 : 260,
+                            color: props.textColor,
+                            opacity: entrance,
+                            transform: `translateY(${(1 - entrance) * 60}px) scale(${0.85 + entrance * 0.15})`,
+                            direction: "rtl",
+                            lineHeight: 1
+                        },
+                        children: props.title ?? "كيف"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            position: "relative",
+                            width: 340,
+                            height: 460,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transform: `scale(${0.9 + grow * 0.1})`
+                        },
+                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                            pose: "pointing",
+                            color: props.characterBody,
+                            faceColor: props.characterFace,
+                            accent: props.characterAccent,
+                            shadow: props.characterShadow,
+                            delay: 4
+                        })
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            display: "flex",
+                            gap: 22,
+                            direction: "rtl"
+                        },
+                        children: [
+                            0,
+                            1,
+                            2,
+                            3
+                        ].map((i)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    width: 22,
+                                    height: 22,
+                                    borderRadius: "50%",
+                                    backgroundColor: props.accentColor,
+                                    opacity: 0.3 + 0.7 * Math.max(0, pulse - i * 0.15),
+                                    transform: `translateY(${Math.sin(frame / 10 + i) * 8}px)`
+                                }
+                            }, i))
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene2.tsx
+
+
+
+
+const Scene2 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 18
+        }
+    });
+    const sweep = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        -0.2,
+        1.2
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const sparks = [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+    ];
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `linear-gradient(135deg, ${props.accentColor}18 0%, transparent 55%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
+                width: "100%",
+                height: "100%",
+                style: {
+                    position: "absolute",
+                    inset: 0
+                },
+                viewBox: "0 0 100 100",
+                preserveAspectRatio: "none",
+                children: Array.from({
+                    length: 8
+                }).map((_, i)=>{
+                    const y = (i + 1) * 10;
+                    return /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                        x1: 0,
+                        y1: y,
+                        x2: 100,
+                        y2: y,
+                        stroke: props.accentColor,
+                        strokeWidth: 0.15,
+                        opacity: 0.09 + 0.05 * Math.sin(frame / 25 + i)
+                    }, i);
+                })
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 36
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 190 : 230,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance,
+                            transform: `translateX(${(1 - entrance) * -50}px)`,
+                            textShadow: `0 0 ${40 * (1 - sweep)}px ${props.accentColor}55`
+                        },
+                        children: props.title ?? "تصنع"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: 340,
+                            height: 460,
+                            transform: `translateY(${Math.sin(frame / 22) * 6}px)`
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                pose: "idea",
+                                color: props.characterBody,
+                                faceColor: props.characterFace,
+                                accent: props.characterAccent,
+                                shadow: props.characterShadow,
+                                delay: 2
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "absolute",
+                                    top: -20,
+                                    left: "50%",
+                                    width: 26,
+                                    height: 26,
+                                    marginLeft: -13,
+                                    borderRadius: "50%",
+                                    backgroundColor: props.accentColor,
+                                    opacity: 0.4 + 0.6 * Math.abs(Math.sin(frame / 10)),
+                                    boxShadow: `0 0 30px ${props.accentColor}`
+                                }
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            position: "relative",
+                            width: "60%",
+                            maxWidth: 460,
+                            height: 6,
+                            borderRadius: 99,
+                            backgroundColor: `${props.accentColor}33`,
+                            overflow: "hidden"
+                        },
+                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                            style: {
+                                position: "absolute",
+                                left: `${sweep * 100}%`,
+                                top: 0,
+                                width: "22%",
+                                height: "100%",
+                                borderRadius: 99,
+                                backgroundColor: props.accentColor,
+                                opacity: 0.9
+                            }
+                        })
+                    })
+                ]
+            }),
+            sparks.map((i)=>{
+                const t = (frame + i * 22) % 110 / 110;
+                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                    style: {
+                        position: "absolute",
+                        left: `${15 + i * 13}%`,
+                        top: `${(1 - t) * 60 + 10}%`,
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: props.accentColor,
+                        opacity: Math.sin(t * Math.PI) * 0.7
+                    }
+                }, i);
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene3.tsx
+
+
+
+
+const Scene3 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 20
+        }
+    });
+    const playhead = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const thumbW = isPortrait ? 150 : 170;
+    const thumbH = thumbW * 1.5;
+    const thumbs = [
+        {
+            d: 0.55,
+            y: -0.08
+        },
+        {
+            d: 0.75,
+            y: 0.06
+        },
+        {
+            d: 0.95,
+            y: -0.04
+        }
+    ];
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 30% 30%, ${props.accentColor}20 0%, transparent 55%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 34
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 150 : 190,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance,
+                            transform: `translateY(${(1 - entrance) * 40}px)`
+                        },
+                        children: props.title ?? "فيديوهات"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            display: "flex",
+                            flexDirection: isPortrait ? "row" : "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 26,
+                            width: "100%",
+                            maxWidth: 760
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "relative",
+                                    width: 300,
+                                    height: 420,
+                                    flexShrink: 0
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                    pose: "explaining",
+                                    color: props.characterBody,
+                                    faceColor: props.characterFace,
+                                    accent: props.characterAccent,
+                                    shadow: props.characterShadow,
+                                    delay: 0
+                                })
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    display: "flex",
+                                    gap: 20,
+                                    direction: "ltr",
+                                    alignItems: "center"
+                                },
+                                children: thumbs.map((t, i)=>{
+                                    const appear = (0,esm/* .spring */.oz)({
+                                        frame: frame - 12 - i * 10,
+                                        fps,
+                                        config: {
+                                            damping: 14
+                                        }
+                                    });
+                                    const active = playhead > t.d;
+                                    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                                        style: {
+                                            position: "relative",
+                                            width: thumbW,
+                                            height: thumbH,
+                                            borderRadius: 20,
+                                            backgroundColor: "#0F0A05",
+                                            border: `2px solid ${active ? props.accentColor : "#ffffff14"}`,
+                                            overflow: "hidden",
+                                            opacity: appear,
+                                            transform: `translateY(${(1 - appear) * 40 + t.y * 40}px) scale(${0.9 + appear * 0.1})`,
+                                            boxShadow: active ? `0 0 34px ${props.accentColor}66` : "none"
+                                        },
+                                        children: [
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                                style: {
+                                                    position: "absolute",
+                                                    inset: `${20 + i * 8}% 14% 34% 14%`,
+                                                    borderRadius: 10,
+                                                    background: `linear-gradient(160deg, ${props.accentColor}${active ? "55" : "22"}, transparent)`
+                                                }
+                                            }),
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                                style: {
+                                                    position: "absolute",
+                                                    left: "50%",
+                                                    top: "50%",
+                                                    width: 46,
+                                                    height: 46,
+                                                    marginLeft: -23,
+                                                    marginTop: -23,
+                                                    borderRadius: "50%",
+                                                    backgroundColor: `${props.accentColor}${active ? "ee" : "55"}`,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center"
+                                                },
+                                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                                    style: {
+                                                        width: 0,
+                                                        height: 0,
+                                                        borderTop: "9px solid transparent",
+                                                        borderBottom: "9px solid transparent",
+                                                        borderLeft: `14px solid ${props.bgColor}`,
+                                                        marginLeft: 4
+                                                    }
+                                                })
+                                            }),
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                                style: {
+                                                    position: "absolute",
+                                                    left: 12,
+                                                    right: 12,
+                                                    bottom: 12,
+                                                    height: 6,
+                                                    borderRadius: 99,
+                                                    backgroundColor: "#ffffff1a",
+                                                    overflow: "hidden"
+                                                },
+                                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                                    style: {
+                                                        width: `${Math.min(1, Math.max(0, (playhead - t.d + 0.25) * 4)) * 100}%`,
+                                                        height: "100%",
+                                                        backgroundColor: props.accentColor
+                                                    }
+                                                })
+                                            })
+                                        ]
+                                    }, i);
+                                })
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene4.tsx
+
+
+
+
+const Scene4 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 18
+        }
+    });
+    const draw = (0,esm/* .interpolate */.GW)(frame, [
+        10,
+        durationInFrames * 0.8
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const bob = Math.sin(frame / 20) * 8;
+    const boardW = Math.min(width * 0.62, 640);
+    const boardH = boardW * 0.62;
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 70% 65%, ${props.accentColor}1f 0%, transparent 55%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: isPortrait ? "column" : "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 40
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            position: "relative",
+                            width: 300,
+                            height: 420,
+                            flexShrink: 0,
+                            transform: `translateY(${bob}px)`
+                        },
+                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                            pose: "thinking",
+                            color: props.characterBody,
+                            faceColor: props.characterFace,
+                            accent: props.characterAccent,
+                            shadow: props.characterShadow,
+                            delay: 0
+                        })
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 30,
+                            opacity: entrance
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    fontFamily: "sans-serif",
+                                    fontWeight: 900,
+                                    fontSize: isPortrait ? 150 : 180,
+                                    color: props.textColor,
+                                    direction: "rtl",
+                                    lineHeight: 1,
+                                    transform: `translateY(${(1 - entrance) * 30}px)`
+                                },
+                                children: props.title ?? "تعليمية"
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+                                width: boardW,
+                                height: boardH,
+                                viewBox: "0 0 400 250",
+                                style: {
+                                    overflow: "visible"
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
+                                        x: 4,
+                                        y: 4,
+                                        width: 392,
+                                        height: 242,
+                                        rx: 22,
+                                        fill: `${props.accentColor}12`,
+                                        stroke: `${props.accentColor}66`,
+                                        strokeWidth: 2
+                                    }),
+                                    [
+                                        {
+                                            x: 40,
+                                            y: 60,
+                                            w: 150
+                                        },
+                                        {
+                                            x: 40,
+                                            y: 110,
+                                            w: 220
+                                        },
+                                        {
+                                            x: 40,
+                                            y: 160,
+                                            w: 180
+                                        }
+                                    ].map((line, i)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
+                                            x: line.x,
+                                            y: line.y,
+                                            width: line.w * Math.min(1, Math.max(0, draw * 1.6 - i * 0.2)),
+                                            height: 12,
+                                            rx: 6,
+                                            fill: i === 0 ? props.accentColor : `${props.textColor}88`
+                                        }, i)),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                        cx: 330,
+                                        cy: 70,
+                                        r: 34,
+                                        fill: "none",
+                                        stroke: props.accentColor,
+                                        strokeWidth: 4,
+                                        strokeDasharray: 214,
+                                        strokeDashoffset: 214 * (1 - draw),
+                                        transform: "rotate(-90 330 70)"
+                                    }),
+                                    draw > 0.5 ? /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                        d: "M312 70 L326 85 L352 55",
+                                        fill: "none",
+                                        stroke: props.accentColor,
+                                        strokeWidth: 5,
+                                        strokeLinecap: "round",
+                                        strokeLinejoin: "round",
+                                        opacity: (draw - 0.5) * 2
+                                    }) : null,
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                        d: `M 260 215 L ${260 + 70 * draw} 215`,
+                                        stroke: props.accentColor,
+                                        strokeWidth: 4,
+                                        strokeLinecap: "round",
+                                        opacity: 0.7
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene5.tsx
+
+
+
+
+const Scene5 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 16
+        }
+    });
+    const clockSpin = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        0,
+        300
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const dash = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const clockR = isPortrait ? 150 : 170;
+    const perimeter = 2 * Math.PI * clockR;
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 50% 35%, ${props.accentColor}22 0%, transparent 60%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 40
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: clockR * 2 + 40,
+                            height: clockR * 2 + 40,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            opacity: entrance,
+                            transform: `scale(${0.8 + entrance * 0.2})`
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+                                width: clockR * 2 + 40,
+                                height: clockR * 2 + 40,
+                                viewBox: `0 0 ${clockR * 2 + 40} ${clockR * 2 + 40}`,
+                                style: {
+                                    position: "absolute",
+                                    inset: 0
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                        cx: clockR + 20,
+                                        cy: clockR + 20,
+                                        r: clockR,
+                                        fill: `${props.accentColor}0f`,
+                                        stroke: `${props.textColor}22`,
+                                        strokeWidth: 10
+                                    }),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                        cx: clockR + 20,
+                                        cy: clockR + 20,
+                                        r: clockR,
+                                        fill: "none",
+                                        stroke: props.accentColor,
+                                        strokeWidth: 10,
+                                        strokeLinecap: "round",
+                                        strokeDasharray: perimeter,
+                                        strokeDashoffset: perimeter * (1 - dash),
+                                        transform: `rotate(-90 ${clockR + 20} ${clockR + 20})`
+                                    }),
+                                    Array.from({
+                                        length: 12
+                                    }).map((_, i)=>{
+                                        const a = i / 12 * Math.PI * 2 - Math.PI / 2;
+                                        const x1 = clockR + 20 + Math.cos(a) * (clockR - 22);
+                                        const y1 = clockR + 20 + Math.sin(a) * (clockR - 22);
+                                        const x2 = clockR + 20 + Math.cos(a) * (clockR - 36);
+                                        const y2 = clockR + 20 + Math.sin(a) * (clockR - 36);
+                                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                                            x1: x1,
+                                            y1: y1,
+                                            x2: x2,
+                                            y2: y2,
+                                            stroke: `${props.textColor}66`,
+                                            strokeWidth: 4,
+                                            strokeLinecap: "round"
+                                        }, i);
+                                    }),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
+                                        transform: `rotate(${clockSpin} ${clockR + 20} ${clockR + 20})`,
+                                        children: [
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                                                x1: clockR + 20,
+                                                y1: clockR + 20,
+                                                x2: clockR + 20,
+                                                y2: clockR + 20 - clockR * 0.6,
+                                                stroke: props.textColor,
+                                                strokeWidth: 8,
+                                                strokeLinecap: "round"
+                                            }),
+                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                                                x1: clockR + 20,
+                                                y1: clockR + 20,
+                                                x2: clockR + 20 + clockR * 0.4,
+                                                y2: clockR + 20,
+                                                stroke: props.accentColor,
+                                                strokeWidth: 6,
+                                                strokeLinecap: "round"
+                                            })
+                                        ]
+                                    }),
+                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                        cx: clockR + 20,
+                                        cy: clockR + 20,
+                                        r: 10,
+                                        fill: props.accentColor
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "relative",
+                                    width: 220,
+                                    height: 300,
+                                    marginTop: 40,
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center"
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                    pose: "happy",
+                                    color: props.characterBody,
+                                    faceColor: props.characterFace,
+                                    accent: props.characterAccent,
+                                    shadow: props.characterShadow,
+                                    delay: 6
+                                })
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 150 : 178,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance
+                        },
+                        children: props.title ?? "قصيرة"
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene6.tsx
+
+
+
+
+const Scene6 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 18
+        }
+    });
+    const flow = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const nodes = [
+        {
+            x: 0.24,
+            y: 0.34
+        },
+        {
+            x: 0.5,
+            y: 0.18
+        },
+        {
+            x: 0.76,
+            y: 0.34
+        },
+        {
+            x: 0.5,
+            y: 0.66
+        },
+        {
+            x: 0.24,
+            y: 0.62
+        },
+        {
+            x: 0.76,
+            y: 0.62
+        }
+    ];
+    const mapW = Math.min(width * 0.74, 760);
+    const mapH = mapW * 0.78;
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 50% 50%, ${props.accentColor}20 0%, transparent 62%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 30
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 138 : 168,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance
+                        },
+                        children: props.title ?? "بالذكاء"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: mapW,
+                            height: mapH,
+                            opacity: entrance
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+                                width: mapW,
+                                height: mapH,
+                                viewBox: "0 0 100 78",
+                                style: {
+                                    position: "absolute",
+                                    inset: 0
+                                },
+                                preserveAspectRatio: "none",
+                                children: [
+                                    nodes.map((n, i)=>{
+                                        const next = nodes[(i + 1) % nodes.length];
+                                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                                            x1: n.x * 100,
+                                            y1: n.y * 78,
+                                            x2: next.x * 100,
+                                            y2: next.y * 78,
+                                            stroke: props.accentColor,
+                                            strokeWidth: 0.6,
+                                            opacity: 0.18 + 0.2 * flow
+                                        }, i);
+                                    }),
+                                    nodes.map((n, i)=>{
+                                        const next = nodes[(i + 1) % nodes.length];
+                                        const t = (flow * 2 + i * 0.2) % 1;
+                                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                            cx: (n.x + (next.x - n.x) * t) * 100,
+                                            cy: (n.y + (next.y - n.y) * t) * 78,
+                                            r: 0.9,
+                                            fill: props.accentColor
+                                        }, `p${i}`);
+                                    })
+                                ]
+                            }),
+                            nodes.map((n, i)=>{
+                                const appear = (0,esm/* .spring */.oz)({
+                                    frame: frame - 8 - i * 6,
+                                    fps,
+                                    config: {
+                                        damping: 13
+                                    }
+                                });
+                                const pulse = 0.5 + 0.5 * Math.sin(frame / 14 + i);
+                                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                    style: {
+                                        position: "absolute",
+                                        left: `${n.x * 100}%`,
+                                        top: `${n.y * 100}%`,
+                                        width: 64,
+                                        height: 64,
+                                        marginLeft: -32,
+                                        marginTop: -32,
+                                        borderRadius: "50%",
+                                        backgroundColor: `${props.bgColor}`,
+                                        border: `3px solid ${props.accentColor}`,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        opacity: appear,
+                                        transform: `scale(${appear * (0.9 + pulse * 0.1)})`,
+                                        boxShadow: `0 0 ${20 + pulse * 18}px ${props.accentColor}55`
+                                    },
+                                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                        style: {
+                                            width: 18,
+                                            height: 18,
+                                            borderRadius: "50%",
+                                            backgroundColor: props.accentColor,
+                                            opacity: 0.5 + pulse * 0.5
+                                        }
+                                    })
+                                }, i);
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "absolute",
+                                    right: -6,
+                                    bottom: -6,
+                                    width: 170,
+                                    height: 240
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                    pose: "pointing",
+                                    color: props.characterBody,
+                                    faceColor: props.characterFace,
+                                    accent: props.characterAccent,
+                                    shadow: props.characterShadow,
+                                    delay: 4
+                                })
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene7.tsx
+
+
+
+
+const Scene7 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 20
+        }
+    });
+    const assemble = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames * 0.7
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const shimmer = frame % 160 / 160;
+    const orbitR = isPortrait ? 190 : 210;
+    const coreSize = isPortrait ? 150 : 180;
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 50% 46%, ${props.accentColor}24 0%, transparent 58%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 36
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 140 : 172,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance,
+                            transform: `translateY(${(1 - entrance) * 40}px)`
+                        },
+                        children: props.title ?? "الاصطناعي"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: orbitR * 2 + 120,
+                            height: orbitR * 2 + 120,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        },
+                        children: [
+                            [
+                                0,
+                                1,
+                                2
+                            ].map((i)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                    style: {
+                                        position: "absolute",
+                                        width: orbitR * 2 - i * 46,
+                                        height: orbitR * 2 - i * 46,
+                                        borderRadius: "50%",
+                                        border: `2px dashed ${props.accentColor}${i === 0 ? "55" : "2b"}`,
+                                        transform: `rotate(${frame * (0.4 + i * 0.25)}deg)`
+                                    }
+                                }, i)),
+                            [
+                                0,
+                                1,
+                                2,
+                                3
+                            ].map((i)=>{
+                                const a = (frame / 55 + i * Math.PI / 2) % (Math.PI * 2);
+                                const x = Math.cos(a) * orbitR;
+                                const y = Math.sin(a) * orbitR * 0.8;
+                                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                    style: {
+                                        position: "absolute",
+                                        left: "50%",
+                                        top: "50%",
+                                        width: 20,
+                                        height: 20,
+                                        marginLeft: -10,
+                                        marginTop: -10,
+                                        borderRadius: "50%",
+                                        backgroundColor: props.accentColor,
+                                        opacity: 0.4 + 0.6 * assemble,
+                                        transform: `translate(${x}px, ${y}px)`,
+                                        boxShadow: `0 0 18px ${props.accentColor}`
+                                    }
+                                }, i);
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "relative",
+                                    width: coreSize,
+                                    height: coreSize,
+                                    borderRadius: 32,
+                                    background: `linear-gradient(${140 + shimmer * 180}deg, ${props.accentColor} 0%, ${props.accentColor}88 45%, ${props.textColor}22 100%)`,
+                                    transform: `scale(${0.7 + assemble * 0.3}) rotate(${assemble * 8 - 4}deg)`,
+                                    boxShadow: `0 0 ${40 + shimmer * 40}px ${props.accentColor}66`,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+                                    width: coreSize * 0.66,
+                                    height: coreSize * 0.66,
+                                    viewBox: "0 0 100 100",
+                                    children: [
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
+                                            x: 20,
+                                            y: 20,
+                                            width: 60,
+                                            height: 60,
+                                            rx: 14,
+                                            fill: "none",
+                                            stroke: props.bgColor,
+                                            strokeWidth: 6,
+                                            opacity: 0.85
+                                        }),
+                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                                            cx: 50,
+                                            cy: 50,
+                                            r: 12,
+                                            fill: props.bgColor
+                                        }),
+                                        [
+                                            0,
+                                            1,
+                                            2,
+                                            3
+                                        ].map((i)=>{
+                                            const o = i * 90;
+                                            return /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
+                                                x1: 50,
+                                                y1: 8,
+                                                x2: 50,
+                                                y2: 20,
+                                                stroke: props.bgColor,
+                                                strokeWidth: 6,
+                                                strokeLinecap: "round",
+                                                transform: `rotate(${o} 50 50)`,
+                                                opacity: 0.5 + 0.5 * Math.abs(Math.sin(frame / 12 + i))
+                                            }, i);
+                                        })
+                                    ]
+                                })
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "absolute",
+                                    left: -30,
+                                    bottom: -30,
+                                    width: 150,
+                                    height: 210
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                    pose: "shocked",
+                                    color: props.characterBody,
+                                    faceColor: props.characterFace,
+                                    accent: props.characterAccent,
+                                    shadow: props.characterShadow,
+                                    delay: 10
+                                })
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene8.tsx
+
+
+
+
+const Scene8 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 16
+        }
+    });
+    const climb = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames * 0.85
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const bars = [
+        {
+            v: 0.28
+        },
+        {
+            v: 0.46
+        },
+        {
+            v: 0.62
+        },
+        {
+            v: 0.82
+        },
+        {
+            v: 1
+        }
+    ];
+    const chartW = Math.min(width * 0.68, 680);
+    const chartH = chartW * 0.62;
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `linear-gradient(200deg, ${props.accentColor}20 0%, transparent 60%)`
+                }
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 34
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 138 : 170,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance,
+                            transform: `translateY(${(1 - entrance) * 40}px)`
+                        },
+                        children: props.title ?? "وتضاعف"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: chartW,
+                            height: chartH,
+                            display: "flex",
+                            alignItems: "flex-end",
+                            justifyContent: "center",
+                            gap: chartW * 0.045,
+                            opacity: entrance
+                        },
+                        children: [
+                            bars.map((b, i)=>{
+                                const grow = (0,esm/* .spring */.oz)({
+                                    frame: frame - i * 7,
+                                    fps,
+                                    config: {
+                                        damping: 15
+                                    }
+                                });
+                                const h = chartH * 0.72 * b.v * Math.min(1, grow);
+                                const isLast = i === bars.length - 1;
+                                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                    style: {
+                                        position: "relative",
+                                        width: chartW * 0.12,
+                                        height: h,
+                                        borderRadius: 16,
+                                        background: isLast ? `linear-gradient(180deg, ${props.accentColor}, ${props.accentColor}88)` : `${props.textColor}2e`,
+                                        boxShadow: isLast ? `0 0 30px ${props.accentColor}66` : "none"
+                                    },
+                                    children: isLast ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                        style: {
+                                            position: "absolute",
+                                            top: -46,
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            width: 46,
+                                            height: 46,
+                                            borderRadius: "50%",
+                                            backgroundColor: props.accentColor,
+                                            opacity: 0.4 + 0.6 * Math.abs(Math.sin(frame / 12)),
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center"
+                                        },
+                                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                            style: {
+                                                width: 0,
+                                                height: 0,
+                                                borderLeft: "10px solid transparent",
+                                                borderRight: "10px solid transparent",
+                                                borderBottom: `14px solid ${props.bgColor}`
+                                            }
+                                        })
+                                    }) : null
+                                }, i);
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
+                                width: chartW,
+                                height: chartH,
+                                viewBox: `0 0 ${chartW} ${chartH}`,
+                                style: {
+                                    position: "absolute",
+                                    inset: 0,
+                                    pointerEvents: "none"
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                                    d: `M ${chartW * 0.08} ${chartH * 0.72}
+                  C ${chartW * 0.3} ${chartH * 0.62},
+                    ${chartW * 0.42} ${chartH * 0.4},
+                    ${chartW * 0.6} ${chartH * 0.34}
+                  S ${chartW * 0.82} ${chartH * 0.16},
+                    ${chartW * 0.92} ${chartH * 0.08}`,
+                                    fill: "none",
+                                    stroke: props.accentColor,
+                                    strokeWidth: 4,
+                                    strokeLinecap: "round",
+                                    strokeDasharray: 900,
+                                    strokeDashoffset: 900 * (1 - climb),
+                                    opacity: 0.85
+                                })
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            position: "relative",
+                            width: 200,
+                            height: 260,
+                            marginTop: -10
+                        },
+                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                            pose: "celebrating",
+                            color: props.characterBody,
+                            faceColor: props.characterFace,
+                            accent: props.characterAccent,
+                            shadow: props.characterShadow,
+                            delay: 14
+                        })
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/Scene9.tsx
+
+
+
+
+const Scene9 = (props)=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { fps, durationInFrames, width, height } = (0,esm/* .useVideoConfig */.Bk)();
+    const isPortrait = height >= width;
+    const entrance = (0,esm/* .spring */.oz)({
+        frame,
+        fps,
+        config: {
+            damping: 18
+        }
+    });
+    const pop = (0,esm/* .spring */.oz)({
+        frame: frame - 10,
+        fps,
+        config: {
+            damping: 11
+        }
+    });
+    const glow = 0.5 + 0.5 * Math.sin(frame / 16);
+    const rise = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        durationInFrames
+    ], [
+        0,
+        1
+    ], {
+        extrapolateRight: "clamp"
+    });
+    const hearts = [
+        0,
+        1,
+        2,
+        3,
+        4
+    ];
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
+        style: {
+            backgroundColor: props.bgColor,
+            overflow: "hidden",
+            direction: props.isRtl ? "rtl" : "ltr"
+        },
+        children: [
+            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    background: `radial-gradient(circle at 50% 40%, ${props.accentColor}26 0%, transparent 60%)`
+                }
+            }),
+            hearts.map((i)=>{
+                const t = (frame + i * 26) % 150 / 150;
+                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                    style: {
+                        position: "absolute",
+                        left: `${12 + i * 18}%`,
+                        bottom: `${15 + t * 55}%`,
+                        opacity: Math.sin(t * Math.PI) * 0.5,
+                        transform: `scale(${0.6 + t * 0.8}) rotate(${Math.sin(t * 6 + i) * 12}deg)`
+                    },
+                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
+                        width: 30,
+                        height: 30,
+                        viewBox: "0 0 24 24",
+                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                            d: "M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z",
+                            fill: props.accentColor
+                        })
+                    })
+                }, i);
+            }),
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    padding: isPortrait ? "100px 80px" : "80px 110px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 36
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                        style: {
+                            position: "relative",
+                            width: isPortrait ? 380 : 420,
+                            height: isPortrait ? 380 : 420,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            opacity: entrance,
+                            transform: `scale(${0.78 + pop * 0.22})`
+                        },
+                        children: [
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "absolute",
+                                    inset: 0,
+                                    borderRadius: "50%",
+                                    border: `4px solid ${props.accentColor}`,
+                                    opacity: 0.4 + glow * 0.4,
+                                    boxShadow: `0 0 ${40 + glow * 50}px ${props.accentColor}66, inset 0 0 ${30 + glow * 40}px ${props.accentColor}33`
+                                }
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "absolute",
+                                    width: "82%",
+                                    height: "82%",
+                                    borderRadius: "50%",
+                                    border: `2px solid ${props.accentColor}55`,
+                                    transform: `rotate(${frame * 0.6}deg)`
+                                }
+                            }),
+                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    position: "relative",
+                                    width: 240,
+                                    height: 320,
+                                    marginTop: 30
+                                },
+                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
+                                    pose: "celebrating",
+                                    color: props.characterBody,
+                                    faceColor: props.characterFace,
+                                    accent: props.characterAccent,
+                                    shadow: props.characterShadow,
+                                    delay: 6
+                                })
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontFamily: "sans-serif",
+                            fontWeight: 900,
+                            fontSize: isPortrait ? 168 : 200,
+                            color: props.textColor,
+                            direction: "rtl",
+                            lineHeight: 1,
+                            opacity: entrance,
+                            transform: `translateY(${(1 - entrance) * 40}px)`,
+                            textShadow: `0 0 ${30 + glow * 30}px ${props.accentColor}55`
+                        },
+                        children: props.title ?? "التفاعل"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            display: "flex",
+                            gap: 16,
+                            direction: "ltr",
+                            alignItems: "center"
+                        },
+                        children: [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ].map((i)=>{
+                            const a = Math.min(1, Math.max(0, rise * 7 - i));
+                            return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                                style: {
+                                    width: 14,
+                                    height: 14,
+                                    borderRadius: "50%",
+                                    backgroundColor: props.accentColor,
+                                    opacity: a * (0.5 + 0.5 * Math.abs(Math.sin(frame / 10 + i))),
+                                    transform: `translateY(${(1 - a) * 20}px)`
+                                }
+                            }, i);
+                        })
+                    })
+                ]
+            })
+        ]
+    });
+};
+
+;// CONCATENATED MODULE: ./src/generated/index.ts
+
+
+
+
+
+
+
+
+
+const GENERATED_SCENES = {
+    "Scene1": Scene1,
+    "Scene2": Scene2,
+    "Scene3": Scene3,
+    "Scene4": Scene4,
+    "Scene5": Scene5,
+    "Scene6": Scene6,
+    "Scene7": Scene7,
+    "Scene8": Scene8,
+    "Scene9": Scene9
+};
+
+;// CONCATENATED MODULE: ./src/components/GeneratedSceneBoundary.tsx
+
+class GeneratedSceneBoundary extends react.Component {
+    state = {
+        hasError: false
+    };
+    static getDerivedStateFromError() {
+        return {
+            hasError: true
+        };
+    }
+    componentDidCatch() {
+    // The declarative fallback below keeps the render alive.
+    }
+    render() {
+        if (this.state.hasError) {
+            return this.props.fallback;
+        }
+        return this.props.children;
+    }
+}
+
+;// CONCATENATED MODULE: ./src/sfx.ts
+const SFX_FILES = (/* unused pure expression or super */ null && ({
+    "whoosh-fast": "whoosh-fast.wav",
+    "whoosh-deep": "whoosh-deep.wav",
+    "pop-bubble": "pop-bubble.wav",
+    "pop-sharp": "pop-sharp.wav",
+    "ding-success": "ding-success.wav",
+    "alert-warning": "alert-warning.wav",
+    "cash-register": "cash-register.wav",
+    "typing-click": "typing-click.wav",
+    "notification-chime": "notification-chime.wav",
+    "cinematic-hit": "cinematic-hit.wav",
+    "bass-drop": "bass-drop.wav",
+    "riser-build": "riser-build.wav"
+}));
+const SFX_DURATIONS = (/* unused pure expression or super */ null && ({
+    "whoosh-fast": 0.62,
+    "whoosh-deep": 1.25,
+    "pop-bubble": 0.34,
+    "pop-sharp": 0.24,
+    "ding-success": 1.55,
+    "alert-warning": 1.15,
+    "cash-register": 1.4,
+    "typing-click": 0.46,
+    "notification-chime": 1.85,
+    "cinematic-hit": 2.2,
+    "bass-drop": 1.85,
+    "riser-build": 2.55
+}));
+const DEFAULT_SFX_VOLUME = 0.65;
+const DEFAULT_SFX_CUE_VOLUME = 0.4;
+const SFX_CUE_FILES = {
+    pop: "pop-sharp.wav",
+    tick: "typing-click.wav",
+    whoosh: "whoosh-fast.wav",
+    rise: "riser-build.wav",
+    impact: "cinematic-hit.wav",
+    chime: "notification-chime.wav"
+};
+const resolveSceneSfxSrc = (scene)=>{
+    var _scene_sfxSrc;
+    const explicit = (_scene_sfxSrc = scene.sfxSrc) === null || _scene_sfxSrc === void 0 ? void 0 : _scene_sfxSrc.trim();
+    if (!explicit || explicit === "none") return null;
+    return explicit.startsWith("/") ? explicit.slice(1) : explicit;
+};
+
 // EXTERNAL MODULE: ./node_modules/remotion/dist/esm/no-react.mjs
 var no_react = __webpack_require__(9382);
 ;// CONCATENATED MODULE: ./node_modules/@remotion/google-fonts/dist/esm/ABeeZee-zf0hehwd.mjs
@@ -20664,14558 +22842,73 @@ const ensureCairoFont = ()=>{
     });
 };
 
-;// CONCATENATED MODULE: ./node_modules/colord/index.mjs
-for(var colord_r={grad:.9,turn:360,rad:360/(2*Math.PI)},colord_t=function(r){return"string"==typeof r?r.length>0:"number"==typeof r},colord_n=function(r,t,n){return void 0===t&&(t=0),void 0===n&&(n=Math.pow(10,t)),Math.round(n*r)/n+0},colord_e=function(r){var t=Math.round(100*r)/100;return Math.round(255*t)===255*r?t:Math.round(1e3*r)/1e3},colord_u=function(r,t,n){return void 0===t&&(t=0),void 0===n&&(n=1),r>n?n:r>t?r:t},colord_o=function(r){return(r=isFinite(r)?r%360:0)<0?r+360:r},colord_a=function(r,t){return void 0===t&&(t=0),colord_n(r,t)%360},colord_i=function(r){return{r:colord_u(r.r,0,255),g:colord_u(r.g,0,255),b:colord_u(r.b,0,255),a:colord_u(r.a)}},colord_s=function(r){return{r:colord_n(r.r),g:colord_n(r.g),b:colord_n(r.b),a:colord_e(r.a)}},colord_d=/^#([0-9a-f]{3,8})$/i,colord_h=function(r,t){var n=r.charCodeAt(t);return(15&n)+9*(n>>6)},colord_f=function(r,t){return colord_h(r,t)<<4|colord_h(r,t+1)},colord_b=[],colord_l=0;colord_l<256;colord_l++)colord_b.push((colord_l<16?"0":"")+colord_l.toString(16));var colord_v=function(r){return colord_b[colord_u(r,0,255)]},colord_c=function(r){var t=r.r,n=r.g,e=r.b,u=r.a,o=Math.max(t,n,e),a=o-Math.min(t,n,e),i=a?o===t?(n-e)/a:o===n?2+(e-t)/a:4+(t-n)/a:0;return{h:60*(i<0?i+6:i),s:o?a/o*100:0,v:o/255*100,a:u}},colord_g=function(r){var t=r.h,n=r.s,e=r.v,u=r.a;t=t/360*6,n/=100,e/=100;var o=Math.floor(t),a=e*(1-n),i=e*(1-(t-o)*n),s=e*(1-(1-t+o)*n),d=o%6,h=function(r){return Math.round(255e9*r)/1e9+0};return{r:h([e,i,a,a,s,e][d]),g:h([s,e,e,i,a,a][d]),b:h([a,a,s,e,e,i][d]),a:u}},colord_p=function(r){return{h:colord_o(r.h),s:colord_u(r.s,0,100),l:colord_u(r.l,0,100),a:colord_u(r.a)}},colord_m=function(r){return{h:colord_a(r.h),s:colord_n(r.s),l:colord_n(r.l),a:colord_e(r.a)}},colord_y=function(r){return colord_g((n=(t=r).s,{h:t.h,s:(n*=((e=t.l)<50?e:100-e)/100)>0?2*n/(e+n)*100:0,v:e+n,a:t.a}));// removed by dead control flow
-{ var e, n, t }},N=function(r){return{h:(t=colord_c(r)).h,s:(u=(200-(n=t.s))*(e=t.v)/100)>0&&u<200?n*e/100/(u<=100?u:200-u)*100:0,l:u/2,a:t.a};// removed by dead control flow
-{ var e, n, t, u }},M=/^hsla?\(\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(deg|rad|grad|turn)?\s*,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)%\s*,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)%\s*(?:,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*)?\)$/i,colord_x=/^hsla?\(\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(deg|rad|grad|turn)?\s+([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)%?\s+([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)%?\s*(?:\/\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*)?\)$/i,H=/^rgba?\(\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*(?:,\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*)?\)$/i,$=/^rgba?\(\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s+([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s+([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*(?:\/\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)(%)?\s*)?\)$/i,colord_w={string:[[function(r){if(!colord_d.test(r))return null;var t=r.length;return t<=5?{r:17*colord_h(r,1),g:17*colord_h(r,2),b:17*colord_h(r,3),a:5===t?17*colord_h(r,4)/255:1}:7===t||9===t?{r:colord_f(r,1),g:colord_f(r,3),b:colord_f(r,5),a:9===t?colord_f(r,7)/255:1}:null},"hex"],[function(r){var t=H.exec(r);if(t&&(t[2]!==t[4]||t[4]!==t[6]))return null;var n=t||$.exec(r);return n?colord_i({r:Number(n[1])/(n[2]?100/255:1),g:Number(n[3])/(n[4]?100/255:1),b:Number(n[5])/(n[6]?100/255:1),a:void 0===n[7]?1:Number(n[7])/(n[8]?100:1)}):null},"rgb"],[function(t){var n=M.exec(t)||colord_x.exec(t);if(!n)return null;var e,u,o=colord_p({h:(e=n[1],u=n[2],void 0===u&&(u="deg"),Number(e)*(colord_r[u.toLowerCase()]||1)),s:Number(n[3]),l:Number(n[4]),a:void 0===n[5]?1:Number(n[5])/(n[6]?100:1)});return colord_y(o)},"hsl"]],object:[[function(r){var n=r.r,e=r.g,u=r.b,o=r.a,a=void 0===o?1:o;return colord_t(n)&&colord_t(e)&&colord_t(u)?colord_i({r:Number(n),g:Number(e),b:Number(u),a:Number(a)}):null},"rgb"],[function(r){var n=r.h,e=r.s,u=r.l,o=r.a,a=void 0===o?1:o;if(!colord_t(n)||!colord_t(e)||!colord_t(u))return null;var i=colord_p({h:Number(n),s:Number(e),l:Number(u),a:Number(a)});return colord_y(i)},"hsl"],[function(r){var n=r.h,e=r.s,a=r.v,i=r.a,s=void 0===i?1:i;if(!colord_t(n)||!colord_t(e)||!colord_t(a))return null;var d=function(r){return{h:colord_o(r.h),s:colord_u(r.s,0,100),v:colord_u(r.v,0,100),a:colord_u(r.a)}}({h:Number(n),s:Number(e),v:Number(a),a:Number(s)});return colord_g(d)},"hsv"]]},colord_j=function(r,t){for(var n=0;n<t.length;n++){var e=t[n][0](r);if(e)return[e,t[n][1]]}return[null,void 0]},colord_S=function(r){return"string"==typeof r?colord_j(r.trim(),colord_w.string):"object"==typeof r&&null!==r?colord_j(r,colord_w.object):[null,void 0]},colord_k=function(r){return colord_S(r)[1]},colord_C=function(r,t,n){var e=N(r);return{h:e.h,s:colord_u(e.s+t*(n?e.s:100),0,100),l:e.l,a:e.a}},colord_E=function(r){return(299*r.r+587*r.g+114*r.b)/1e3/255},colord_L=function(r,t,n){var e=N(r);return{h:e.h,s:e.s,l:colord_u(e.l+t*(n?e.l:100),0,100),a:e.a}},colord_R=function(){function r(r){this.parsed=colord_S(r)[0],this.rgba=this.parsed||{r:0,g:0,b:0,a:1}}return r.prototype.isValid=function(){return null!==this.parsed},r.prototype.brightness=function(){return colord_n(colord_E(this.rgba),2)},r.prototype.isDark=function(){return colord_E(this.rgba)<.5},r.prototype.isLight=function(){return colord_E(this.rgba)>=.5},r.prototype.toHex=function(){return r=colord_s(this.rgba),t=r.r,e=r.g,u=r.b,a=(o=r.a)<1?colord_v(colord_n(255*o)):"","#"+colord_v(t)+colord_v(e)+colord_v(u)+a;// removed by dead control flow
-{ var a, e, o, r, t, u }},r.prototype.toRgb=function(){return colord_s(this.rgba)},r.prototype.toRgbString=function(){return r=colord_s(this.rgba),t=r.r,n=r.g,e=r.b,(u=r.a)<1?"rgba("+t+", "+n+", "+e+", "+u+")":"rgb("+t+", "+n+", "+e+")";// removed by dead control flow
-{ var e, n, r, t, u }},r.prototype.toHsl=function(){return colord_m(N(this.rgba))},r.prototype.toHslString=function(){return r=colord_m(N(this.rgba)),t=r.h,n=r.s,e=r.l,(u=r.a)<1?"hsla("+t+", "+n+"%, "+e+"%, "+u+")":"hsl("+t+", "+n+"%, "+e+"%)";// removed by dead control flow
-{ var e, n, r, t, u }},r.prototype.toHsv=function(){return r=colord_c(this.rgba),{h:colord_a(r.h),s:colord_n(r.s),v:colord_n(r.v),a:colord_e(r.a)};// removed by dead control flow
-{ var r }},r.prototype.invert=function(){return colord_q({r:255-(r=this.rgba).r,g:255-r.g,b:255-r.b,a:r.a});// removed by dead control flow
-{ var r }},r.prototype.saturate=function(r,t){return void 0===r&&(r=.1),colord_q(colord_C(this.rgba,r,null==t?void 0:t.relative))},r.prototype.desaturate=function(r,t){return void 0===r&&(r=.1),colord_q(colord_C(this.rgba,-r,null==t?void 0:t.relative))},r.prototype.grayscale=function(){return colord_q(colord_C(this.rgba,-1))},r.prototype.lighten=function(r,t){return void 0===r&&(r=.1),colord_q(colord_L(this.rgba,r,null==t?void 0:t.relative))},r.prototype.darken=function(r,t){return void 0===r&&(r=.1),colord_q(colord_L(this.rgba,-r,null==t?void 0:t.relative))},r.prototype.rotate=function(r){return void 0===r&&(r=15),this.hue(N(this.rgba).h+r)},r.prototype.alpha=function(r){return"number"==typeof r?colord_q({r:(t=this.rgba).r,g:t.g,b:t.b,a:r}):colord_e(this.rgba.a);// removed by dead control flow
-{ var t }},r.prototype.hue=function(r){var t=N(this.rgba);return"number"==typeof r?colord_q({h:r,s:t.s,l:t.l,a:t.a}):colord_a(t.h)},r.prototype.isEqual=function(r){return this.toHex()===colord_q(r).toHex()},r}(),colord_q=function(r){return r instanceof colord_R?r:new colord_R(r)},colord_A=[],D=function(r){r.forEach(function(r){colord_A.indexOf(r)<0&&(r(colord_R,colord_w),colord_A.push(r))})},colord_F=function(){return new colord_R({r:255*Math.random(),g:255*Math.random(),b:255*Math.random()})};
-
-;// CONCATENATED MODULE: ./node_modules/colord/plugins/a11y.mjs
-var a11y_o=function(o){var t=o/255;return t<.04045?t/12.92:Math.pow((t+.055)/1.055,2.4)},a11y_t=function(t){return.2126*a11y_o(t.r)+.7152*a11y_o(t.g)+.0722*a11y_o(t.b)},a11y_r=function(o){o.prototype.luminance=function(){return o=a11y_t(this.rgba),void 0===(r=2)&&(r=0),void 0===n&&(n=Math.pow(10,r)),Math.round(n*o)/n+0;// removed by dead control flow
-{ var n, o, r }},o.prototype.contrast=function(r){void 0===r&&(r="#FFF");var n,a,i,e,v,u,d,c=r instanceof o?r:new o(r);return e=this.rgba,v=c.toRgb(),u=a11y_t(e),d=a11y_t(v),n=u>d?(u+.05)/(d+.05):(d+.05)/(u+.05),void 0===(a=2)&&(a=0),void 0===i&&(i=Math.pow(10,a)),Math.floor(i*n)/i+0},o.prototype.isReadable=function(o,t){return void 0===o&&(o="#FFF"),void 0===t&&(t={}),this.contrast(o)>=(e=void 0===(i=(r=t).size)?"normal":i,"AAA"===(a=void 0===(n=r.level)?"AA":n)&&"normal"===e?7:"AA"===a&&"large"===e?3:4.5);// removed by dead control flow
-{ var a, e, i, n, r }}};
-
-;// CONCATENATED MODULE: ./node_modules/colord/plugins/mix.mjs
-var mix_t=function(t,r,a){return void 0===r&&(r=0),void 0===a&&(a=1),t>a?a:t>r?t:r},mix_r=function(t){var r=t/255;return r<.04045?r/12.92:Math.pow((r+.055)/1.055,2.4)},mix_a=function(t){return 255*(t>.0031308?1.055*Math.pow(t,1/2.4)-.055:12.92*t)},mix_n=96.422,mix_o=100,mix_u=82.521,mix_e=function(r){var n,o,u={x:.9555766*(n=r).x+-.0230393*n.y+.0631636*n.z,y:-.0282895*n.x+1.0099416*n.y+.0210077*n.z,z:.0122982*n.x+-.020483*n.y+1.3299098*n.z};return o={r:mix_a(.032404542*u.x-.015371385*u.y-.004985314*u.z),g:mix_a(-.00969266*u.x+.018760108*u.y+41556e-8*u.z),b:mix_a(556434e-9*u.x-.002040259*u.y+.010572252*u.z),a:r.a},{r:mix_t(o.r,0,255),g:mix_t(o.g,0,255),b:mix_t(o.b,0,255),a:mix_t(o.a)}},mix_i=function(a){var e=mix_r(a.r),i=mix_r(a.g),f=mix_r(a.b);return function(r){return{x:mix_t(r.x,0,mix_n),y:mix_t(r.y,0,mix_o),z:mix_t(r.z,0,mix_u),a:mix_t(r.a)}}(function(t){return{x:1.0478112*t.x+.0228866*t.y+-.050127*t.z,y:.0295424*t.x+.9904844*t.y+-.0170491*t.z,z:-.0092345*t.x+.0150436*t.y+.7521316*t.z,a:t.a}}({x:100*(.4124564*e+.3575761*i+.1804375*f),y:100*(.2126729*e+.7151522*i+.072175*f),z:100*(.0193339*e+.119192*i+.9503041*f),a:a.a}))},mix_f=216/24389,mix_p=24389/27,mix_h=function(t){var r=mix_i(t),a=r.x/mix_n,e=r.y/mix_o,h=r.z/mix_u;return a=a>mix_f?Math.cbrt(a):(mix_p*a+16)/116,{l:116*(e=e>mix_f?Math.cbrt(e):(mix_p*e+16)/116)-16,a:500*(a-e),b:200*(e-(h=h>mix_f?Math.cbrt(h):(mix_p*h+16)/116)),alpha:r.a}},mix_b=function(r,a,i,b){var c=function(t,r){return t+(r-t)*i};if(0===i||1===i)return i?a:r;if("rgb"===b||r.r===a.r&&r.g===a.g&&r.b===a.b)return{r:c(r.r,a.r),g:c(r.g,a.g),b:c(r.b,a.b),a:c(r.a,a.a)};var y,x=mix_h(r),l=mix_h(a);return function(t){var r=(t.l+16)/116,a=t.a/500+r,i=r-t.b/200;return mix_e({x:(Math.pow(a,3)>mix_f?Math.pow(a,3):(116*a-16)/mix_p)*mix_n,y:(t.l>8?Math.pow((t.l+16)/116,3):t.l/mix_p)*mix_o,z:(Math.pow(i,3)>mix_f?Math.pow(i,3):(116*i-16)/mix_p)*mix_u,a:t.alpha})}((y={l:c(x.l,l.l),a:c(x.a,l.a),b:c(x.b,l.b),alpha:c(x.alpha,l.alpha)},{l:mix_t(y.l,0,100),a:y.a,b:y.b,alpha:mix_t(y.alpha)}))},mix_c=function(t){function r(t,r,a,n){void 0===a&&(a=5);for(var o=[],u=1/(a-1),e=0;e<=a-1;e++)o.push(t.mix(r,e===a-1&&a>1?1:u*e,n));return o}t.prototype.mix=function(r,a,n){void 0===a&&(a=.5);var o=r instanceof t?r:new t(r),u=mix_b(this.toRgb(),o.toRgb(),a,n);return new t(u)},t.prototype.tints=function(t,a){return r(this,"#fff",t,a)},t.prototype.shades=function(t,a){return r(this,"#000",t,a)},t.prototype.tones=function(t,a){return r(this,"#808080",t,a)}};
-
-;// CONCATENATED MODULE: ./src/utils/wcagPalette.ts
+;// CONCATENATED MODULE: ./src/Composition.tsx
 
 
 
-D([
-    a11y_r,
-    mix_c
-]);
-const NIGHT_MOOD = /(ليلاً|ليل|ليلة|ظلام|مظلم|غرفة مظلمة|غرفة معتمة|منتصف الليل|night|dark|midnight|dim|noir)/i;
-const isNightMoodText = (text)=>NIGHT_MOOD.test(text);
-const safeColor = (value, fallback)=>{
-    if (!value) return fallback;
-    const parsed = colord_q(value);
-    return parsed.isValid() ? parsed.toHex() : fallback;
+
+
+
+
+const FALLBACK_ACCENT = "#E77B40";
+const FALLBACK_BACKGROUND = "#0B0F17";
+const safeHex = (value, fallback)=>{
+    return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value.trim()) ? value.trim() : fallback;
 };
-const isDarkColor = (value)=>colord_q(value).isDark();
-const contrast = (foreground, background)=>{
-    const ratio = colord_q(foreground).contrast(background);
-    return Number.isFinite(ratio) ? ratio : 0;
+const hexLuminance = (hex)=>{
+    const value = hex.replace("#", "");
+    const channels = [
+        0,
+        2,
+        4
+    ].map((offset)=>{
+        const channel = Number.parseInt(value.slice(offset, offset + 2), 16) / 255;
+        return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
 };
-const ensureContrast = (foreground, backgrounds, minimum, fallback)=>{
-    if (backgrounds.length === 0) return foreground;
-    const passes = (candidate)=>backgrounds.every((background)=>contrast(candidate, background) >= minimum);
-    if (passes(foreground)) return foreground;
-    const reference = colord_q(backgrounds[0]);
-    const lighten = reference.isDark();
-    let candidate = colord_q(foreground);
-    for(let step = 0; step < 40; step += 1){
-        candidate = lighten ? candidate.lighten(0.035) : candidate.darken(0.035);
-        if (passes(candidate.toHex())) return candidate.toHex();
-    }
-    return passes(fallback) ? fallback : lighten ? "#FFFFFF" : "#000000";
+const withAlpha = (hex, alpha)=>{
+    const value = hex.replace("#", "");
+    const r = Number.parseInt(value.slice(0, 2), 16);
+    const g = Number.parseInt(value.slice(2, 4), 16);
+    const b = Number.parseInt(value.slice(4, 6), 16);
+    const clamped = Math.min(1, Math.max(0, alpha));
+    return `rgba(${r}, ${g}, ${b}, ${clamped})`;
 };
-const mix = (a, b, amount)=>colord_q(a).mix(b, Math.min(1, Math.max(0, amount))).toHex();
-const rgba = (hex, alpha)=>colord_q(hex).alpha(Math.min(1, Math.max(0, alpha))).toRgbString();
-const buildPromptBlock = (palette)=>{
-    const vars = Object.entries({
-        "--zof-bg": palette.bgColor,
-        "--zof-bg-alt": palette.backgroundAlt,
-        "--zof-card-bg": palette.surfaceCardBg,
-        "--zof-card-border": palette.surfaceBorder,
-        "--zof-text": palette.primaryText,
-        "--zof-headline": palette.headlineText,
-        "--zof-text-muted": palette.secondaryText,
-        "--zof-accent": palette.safeAccent,
-        "--zof-accent-on-surface": palette.accentOnSurface,
-        "--zof-caption-bg": palette.captionBg,
-        "--zof-caption-text": palette.captionText
-    }).map(([key, value])=>`${key}: ${value};`).join("\n");
-    return [
-        "WCAG HARMONY CONTRACT (mandatory):",
-        "Use these exact CSS variables and never invent low-contrast greys or blue-greys:",
-        vars,
-        `Background is ${palette.isDark ? "DARK" : "LIGHT"}. Headline contrast must stay >= 7:1 against --zof-bg.`,
-        `Body/secondary text must stay >= 4.5:1 against --zof-card-bg (current ratio: ${palette.contrast.secondaryOnSurface.toFixed(2)}:1).`,
-        `Accent must stay >= 4.5:1 against both --zof-bg and --zof-card-bg (current ratios: ${palette.contrast.accentOnBg.toFixed(2)}:1 / ${palette.contrast.accentOnSurface.toFixed(2)}:1).`,
-        palette.nightMood ? "Night/dark mood is explicitly requested: keep a rich deep dark base and use light text; never place faint blue/grey text on dark cards." : "Keep cards clearly separated from the background using --zof-card-bg and --zof-card-border.",
-        "Mobile typography at 1080x1920: headline 54px-68px bold (lineHeight 1.2); card body/comparison/axis labels 30px-36px semibold. Never use text below 26px.",
-        "Reserve the bottom 220px as a strict safe zone for AnimatedCaption. Never place cards, characters, or controls there."
-    ].join("\n");
-};
-const resolveWcagPalette = (input = {})=>{
-    const requestedBg = safeColor(input.bgColor, "#0B0F17");
-    const accentSeed = safeColor(input.accentColor, "#E77B40");
-    const moodText = input.moodText ?? "";
-    const nightMood = NIGHT_MOOD.test(moodText);
-    let bgColor = requestedBg;
-    if (nightMood && !isDarkColor(requestedBg)) {
-        bgColor = "#0B0F17";
-    } else if (nightMood && isDarkColor(requestedBg)) {
-        bgColor = colord_q(requestedBg).darken(0.08).toHex();
-    }
-    const isDark = isDarkColor(bgColor);
-    const surfaceBase = input.surfaceColor ? safeColor(input.surfaceColor, bgColor) : bgColor;
-    const surfaceCardBg = isDark ? mix(mix(surfaceBase, "#FFFFFF", 0.075), accentSeed, 0.035) : mix(mix(surfaceBase, "#FFFFFF", 0.72), accentSeed, 0.025);
-    const backgroundAlt = isDark ? mix(bgColor, accentSeed, 0.09) : mix(bgColor, accentSeed, 0.06);
-    const primarySeed = isDark ? "#F8FAFC" : "#0F172A";
-    const primaryText = ensureContrast(primarySeed, [
-        bgColor
-    ], 7, primarySeed);
-    const headlineText = ensureContrast(primarySeed, [
-        bgColor
-    ], 7, primarySeed);
-    const secondarySeedText = mix(primaryText, isDark ? bgColor : surfaceCardBg, isDark ? 0.42 : 0.5);
-    const secondaryText = ensureContrast(secondarySeedText, [
-        surfaceCardBg,
-        bgColor
-    ], 4.5, mix(primaryText, surfaceCardBg, 0.18));
-    const mutedText = ensureContrast(mix(secondaryText, surfaceCardBg, 0.22), [
-        surfaceCardBg,
-        bgColor
-    ], 4.5, secondaryText);
-    const safeAccent = ensureContrast(accentSeed, [
-        bgColor,
-        surfaceCardBg
-    ], 4.5, primaryText);
-    const accentOnSurface = ensureContrast(safeAccent, [
-        surfaceCardBg
-    ], 4.5, primaryText);
-    const surfaceBorder = mix(mix(surfaceCardBg, primaryText, isDark ? 0.2 : 0.16), accentSeed, 0.14);
-    const captionBg = rgba(mix(bgColor, "#000000", isDark ? 0.24 : 0.1), 0.92);
-    const captionText = ensureContrast(primaryText, [
-        captionBg
-    ], 4.5, primaryText);
-    const captionHighlight = ensureContrast(isDark ? colord_q(safeAccent).lighten(0.08).toHex() : safeAccent, [
-        captionBg
-    ], 4.5, safeAccent);
-    const captionHighlightText = isDarkColor(captionHighlight) ? "#FFFFFF" : "#0B0F17";
-    const contrastStats = {
-        headlineOnBg: contrast(headlineText, bgColor),
-        accentOnBg: contrast(safeAccent, bgColor),
-        accentOnSurface: contrast(accentOnSurface, surfaceCardBg),
-        secondaryOnSurface: contrast(secondaryText, surfaceCardBg)
-    };
-    const base = {
-        isDark,
-        nightMood,
-        bgColor,
-        backgroundAlt,
-        surfaceCardBg,
-        surfaceBorder,
-        primaryText,
-        headlineText,
-        secondaryText,
-        mutedText,
-        safeAccent,
-        accentOnSurface,
-        captionBg,
-        captionText,
-        captionHighlight,
-        captionHighlightText,
-        glow: rgba(safeAccent, 0.35),
-        contrast: contrastStats
-    };
+const buildPalette = (scene, brand)=>{
+    const background = safeHex(brand.background, FALLBACK_BACKGROUND);
+    const accent = safeHex(brand.accent ?? brand.primary, FALLBACK_ACCENT);
+    const isDark = hexLuminance(background) < 0.4;
+    const text = safeHex(brand.text, isDark ? "#F8FAFC" : "#0F172A");
+    const muted = safeHex(brand.muted, isDark ? "rgba(226, 232, 240, 0.72)" : "rgba(15, 23, 42, 0.68)");
     return {
-        ...base,
-        cssVariables: {
-            "--zof-bg": bgColor,
-            "--zof-bg-alt": backgroundAlt,
-            "--zof-card-bg": surfaceCardBg,
-            "--zof-card-border": surfaceBorder,
-            "--zof-text": primaryText,
-            "--zof-headline": headlineText,
-            "--zof-text-muted": secondaryText,
-            "--zof-accent": safeAccent,
-            "--zof-accent-on-surface": accentOnSurface,
-            "--zof-caption-bg": captionBg,
-            "--zof-caption-text": captionText
-        },
-        promptBlock: buildPromptBlock(base)
+        background,
+        accent,
+        text,
+        muted,
+        characterBody: isDark ? "#E2E8F0" : "#111827",
+        characterFace: isDark ? "#CBD5E1" : "#1F2937",
+        characterAccent: accent,
+        characterShadow: withAlpha(accent, 0.28)
     };
 };
-const wcagCssVariableBlock = (palette)=>Object.entries(palette.cssVariables).map(([key, value])=>`${key}: ${value};`).join("\n");
-
-;// CONCATENATED MODULE: ./src/theme.ts
-
-
-const BASE_THEMES = {
-    stickman: {
-        id: "stickman",
-        isDark: false,
-        wcag: resolveWcagPalette({
-            bgColor: "#FFF7EA",
-            accentColor: "#F97316"
-        }),
-        colors: {
-            background: "#FFF7EA",
-            backgroundAlt: "#FFE9CF",
-            surface: "#FFFFFF",
-            surfaceAlt: "#FFF1DC",
-            text: "#2A2118",
-            muted: "#93795F",
-            primary: "#F97316",
-            secondary: "#FBBF24",
-            accent: "#EF4444",
-            success: "#16A34A",
-            danger: "#DC2626",
-            border: "#2A2118",
-            glow: "rgba(249, 115, 22, 0.35)"
-        },
-        caption: {
-            background: "rgba(42, 33, 24, 0.94)",
-            text: "#FFF7EA",
-            highlight: "#FBBF24",
-            highlightText: "#2A2118"
-        },
-        card: {
-            background: "#FFFFFF",
-            border: "3px solid #2A2118",
-            radius: 26,
-            shadow: "7px 7px 0 rgba(42, 33, 24, 0.92)"
-        },
-        character: {
-            body: "#2A2118",
-            face: "#FFF1DC",
-            accent: "#F97316",
-            shadow: "rgba(42, 33, 24, 0.18)"
-        },
-        radius: 26,
-        fontFamily: FONT_FAMILY,
-        displayFamily: FONT_FAMILY
-    },
-    modern_dark: {
-        id: "modern_dark",
-        isDark: true,
-        wcag: resolveWcagPalette({
-            bgColor: "#070B17",
-            accentColor: "#22D3EE"
-        }),
-        colors: {
-            background: "#070B17",
-            backgroundAlt: "#0E1730",
-            surface: "rgba(255, 255, 255, 0.06)",
-            surfaceAlt: "rgba(255, 255, 255, 0.1)",
-            text: "#F8FAFC",
-            muted: "#94A3B8",
-            primary: "#22D3EE",
-            secondary: "#A78BFA",
-            accent: "#F472B6",
-            success: "#34D399",
-            danger: "#FB7185",
-            border: "rgba(255, 255, 255, 0.14)",
-            glow: "rgba(34, 211, 238, 0.35)"
-        },
-        caption: {
-            background: "rgba(3, 7, 18, 0.8)",
-            text: "#F8FAFC",
-            highlight: "#22D3EE",
-            highlightText: "#03131A"
-        },
-        card: {
-            background: "rgba(255, 255, 255, 0.065)",
-            border: "1px solid rgba(255, 255, 255, 0.14)",
-            radius: 24,
-            shadow: "0 24px 60px rgba(0, 0, 0, 0.45)",
-            backdropFilter: "blur(18px)"
-        },
-        character: {
-            body: "#E2E8F0",
-            face: "#0B1220",
-            accent: "#22D3EE",
-            shadow: "rgba(0, 0, 0, 0.55)"
-        },
-        radius: 24,
-        fontFamily: FONT_FAMILY,
-        displayFamily: FONT_FAMILY
-    },
-    editorial_clean: {
-        id: "editorial_clean",
-        isDark: false,
-        wcag: resolveWcagPalette({
-            bgColor: "#F7F6F2",
-            accentColor: "#2563EB"
-        }),
-        colors: {
-            background: "#F7F6F2",
-            backgroundAlt: "#FFFFFF",
-            surface: "#FFFFFF",
-            surfaceAlt: "#F2F1EC",
-            text: "#111111",
-            muted: "#6B7280",
-            primary: "#2563EB",
-            secondary: "#F59E0B",
-            accent: "#EF4444",
-            success: "#059669",
-            danger: "#DC2626",
-            border: "#D9D8D2",
-            glow: "rgba(37, 99, 235, 0.18)"
-        },
-        caption: {
-            background: "#111111",
-            text: "#FFFFFF",
-            highlight: "#F59E0B",
-            highlightText: "#111111"
-        },
-        card: {
-            background: "#FFFFFF",
-            border: "1px solid #E2E1DB",
-            radius: 10,
-            shadow: "0 18px 40px rgba(17, 17, 17, 0.08)"
-        },
-        character: {
-            body: "#111111",
-            face: "#F7F6F2",
-            accent: "#2563EB",
-            shadow: "rgba(17, 17, 17, 0.16)"
-        },
-        radius: 10,
-        fontFamily: FONT_FAMILY,
-        displayFamily: FONT_FAMILY
-    },
-    smart_mix: {
-        id: "smart_mix",
-        isDark: true,
-        wcag: resolveWcagPalette({
-            bgColor: "#080B14",
-            accentColor: "#E77B40"
-        }),
-        colors: {
-            background: "#080B14",
-            backgroundAlt: "#101828",
-            surface: "rgba(255, 255, 255, 0.065)",
-            surfaceAlt: "rgba(255, 255, 255, 0.11)",
-            text: "#F8FAFC",
-            muted: "#9AA8BF",
-            primary: "#E77B40",
-            secondary: "#F2C66D",
-            accent: "#5EEAD4",
-            success: "#34D399",
-            danger: "#FB7185",
-            border: "rgba(255, 255, 255, 0.14)",
-            glow: "rgba(231, 123, 64, 0.38)"
-        },
-        caption: {
-            background: "rgba(6, 9, 17, 0.72)",
-            text: "#F8FAFC",
-            highlight: "#E77B40",
-            highlightText: "#160A03"
-        },
-        card: {
-            background: "rgba(255, 255, 255, 0.06)",
-            border: "1px solid rgba(255, 255, 255, 0.14)",
-            radius: 22,
-            shadow: "0 24px 60px rgba(0, 0, 0, 0.42)",
-            backdropFilter: "blur(18px)"
-        },
-        character: {
-            body: "#E7ECF5",
-            face: "#0B1220",
-            accent: "#E77B40",
-            shadow: "rgba(0, 0, 0, 0.5)"
-        },
-        radius: 22,
-        fontFamily: FONT_FAMILY,
-        displayFamily: FONT_FAMILY
+const findCustomElement = (scene)=>{
+    if (!scene.elements) return undefined;
+    return scene.elements.find((element)=>element.type === "custom_tsx");
+};
+const keywordsFor = (scene, element)=>{
+    if ((element === null || element === void 0 ? void 0 : element.keywords) && element.keywords.length > 0) {
+        return element.keywords.slice(0, 5);
     }
+    const source = `${scene.title ?? ""} ${scene.caption ?? ""}`.trim();
+    const words = source.split(/\s+/).filter((word)=>word.length > 2);
+    return words.slice(0, 4);
 };
-const withWcagPalette = (theme, palette)=>{
-    const isDark = palette.isDark;
-    return {
-        ...theme,
-        isDark,
-        wcag: palette,
-        colors: {
-            ...theme.colors,
-            background: palette.bgColor,
-            backgroundAlt: palette.backgroundAlt,
-            surface: palette.surfaceCardBg,
-            surfaceAlt: palette.surfaceCardBg,
-            text: palette.primaryText,
-            muted: palette.secondaryText,
-            primary: palette.safeAccent,
-            accent: palette.safeAccent,
-            border: palette.surfaceBorder,
-            glow: palette.glow
-        },
-        caption: {
-            ...theme.caption,
-            background: palette.captionBg,
-            text: palette.captionText,
-            highlight: palette.captionHighlight,
-            highlightText: palette.captionHighlightText
-        },
-        card: {
-            ...theme.card,
-            background: palette.surfaceCardBg,
-            border: `1px solid ${palette.surfaceBorder}`,
-            shadow: isDark ? "0 24px 60px rgba(0, 0, 0, 0.5)" : "0 18px 44px rgba(15, 23, 42, 0.14)",
-            backdropFilter: isDark ? "blur(18px)" : undefined
-        },
-        character: {
-            ...theme.character,
-            body: palette.primaryText,
-            face: isDark ? palette.bgColor : palette.surfaceCardBg,
-            accent: palette.safeAccent,
-            shadow: isDark ? "rgba(0, 0, 0, 0.55)" : "rgba(15, 23, 42, 0.18)"
-        }
-    };
-};
-const createTheme = (style, brandKit)=>{
-    const normalizedStyle = style === "smart-mix" ? "smart_mix" : style;
-    const base = BASE_THEMES[normalizedStyle] ?? BASE_THEMES.stickman;
-    const kit = brandKit ?? {};
-    const resolvedBackground = kit.background ?? base.colors.background;
-    const palette = resolveWcagPalette({
-        bgColor: resolvedBackground,
-        accentColor: kit.primary ?? kit.accent ?? base.colors.primary,
-        moodText: kit.name ?? ""
-    });
-    const themed = withWcagPalette(base, palette);
-    return {
-        ...themed,
-        id: normalizedStyle,
-        isDark: palette.isDark,
-        colors: {
-            ...themed.colors,
-            ...kit.secondary ? {
-                secondary: kit.secondary
-            } : {},
-            ...kit.success ? {
-                success: kit.success
-            } : {},
-            ...kit.danger ? {
-                danger: kit.danger
-            } : {}
-        },
-        caption: {
-            ...themed.caption
-        },
-        card: {
-            ...themed.card,
-            ...kit.radius !== undefined ? {
-                radius: kit.radius
-            } : {}
-        },
-        character: {
-            ...themed.character
-        },
-        radius: kit.radius ?? base.radius,
-        fontFamily: kit.font_body ?? base.fontFamily,
-        displayFamily: kit.font_headline ?? base.displayFamily
-    };
-};
-const theme_alpha = (color, opacity)=>{
-    if (color.startsWith("#")) {
-        const hex = color.slice(1);
-        const full = hex.length === 3 ? hex.split("").map((char)=>char + char).join("") : hex;
-        if (full.length === 6) {
-            const value = parseInt(full, 16);
-            const r = value >> 16 & 255;
-            const g = value >> 8 & 255;
-            const b = value & 255;
-            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-        }
-    }
-    if (color.startsWith("rgb(")) {
-        return color.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
-    }
-    if (color.startsWith("rgba(")) {
-        return color.replace(/rgba\(([^)]+),\s*[\d.]+\)/, `rgba($1, ${opacity})`);
-    }
-    return color;
-};
-
-;// CONCATENATED MODULE: ./src/components/Background.tsx
-
-
-
-const AI_PRESET_POOL = [
-    "animated-mesh",
-    "kinetic-grid",
-    "floating-orbs",
-    "deep-wave",
-    "particle-field",
-    "neon-cyber",
-    "animated-mesh",
-    "deep-wave"
-];
-const pickAiPreset = (seed, style)=>{
-    const base = Math.abs(Math.floor(seed)) + style.length * 7;
-    return AI_PRESET_POOL[base % AI_PRESET_POOL.length];
-};
-const Blob = ({ color, size, x, y, blur, opacity })=>{
-    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-        style: {
-            position: "absolute",
-            left: x,
-            top: y,
-            width: size,
-            height: size,
-            marginLeft: -size / 2,
-            marginTop: -size / 2,
-            borderRadius: "50%",
-            background: `radial-gradient(circle at 40% 35%, ${color}, transparent 70%)`,
-            filter: `blur(${blur}px)`,
-            opacity
-        }
-    });
-};
-const PresetBackground = ({ theme, preset, seed })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps, width, height } = (0,esm/* .useVideoConfig */.Bk)();
-    const seconds = frame / fps;
-    const minSide = Math.min(width, height);
-    const accent = theme.colors.primary;
-    const secondary = theme.colors.secondary;
-    const third = theme.colors.accent;
-    const drift = Math.sin(seconds * 0.32) * minSide * 0.045;
-    const driftAlt = Math.cos(seconds * 0.26) * minSide * 0.038;
-    if (preset === "animated-mesh") {
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        inset: "-18%",
-                        background: `conic-gradient(from ${seconds * 18}deg at 50% 50%, ${theme_alpha(accent, 0.4)}, ${theme_alpha(secondary, 0.32)} 28%, ${theme_alpha(third, 0.24)} 48%, ${theme_alpha(accent, 0.36)} 72%, ${theme_alpha(secondary, 0.32)} 100%)`,
-                        filter: `blur(${Math.round(minSide * 0.13)}px)`,
-                        opacity: 0.72
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                    color: theme_alpha(theme.colors.backgroundAlt, 0.9),
-                    size: minSide * 1.1,
-                    x: `${50 + Math.sin(seconds * 0.5) * 10}%`,
-                    y: `${48 + Math.cos(seconds * 0.42) * 8}%`,
-                    blur: minSide * 0.16,
-                    opacity: 0.45
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                    color: theme_alpha(accent, 0.6),
-                    size: minSide * 0.62,
-                    x: `${22 + Math.sin(seconds * 0.6) * 6}%`,
-                    y: `${28 + Math.cos(seconds * 0.5) * 7}%`,
-                    blur: minSide * 0.08,
-                    opacity: 0.65
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                    color: theme_alpha(third, 0.45),
-                    size: minSide * 0.55,
-                    x: `${78 + Math.cos(seconds * 0.48) * 7}%`,
-                    y: `${72 + Math.sin(seconds * 0.55) * 6}%`,
-                    blur: minSide * 0.09,
-                    opacity: 0.6
-                })
-            ]
-        });
-    }
-    if (preset === "kinetic-grid") {
-        const gap = Math.round(minSide * 0.072);
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                    style: {
-                        backgroundImage: `linear-gradient(${theme_alpha(accent, 0.2)} 1.5px, transparent 1.5px), linear-gradient(90deg, ${theme_alpha(accent, 0.2)} 1.5px, transparent 1.5px)`,
-                        backgroundSize: `${gap}px ${gap}px`,
-                        transform: `perspective(${Math.round(minSide * 1.4)}px) rotateX(58deg) scale(1.5) translateY(${seconds * 14}px)`,
-                        transformOrigin: "50% 100%",
-                        opacity: 0.8
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        background: `radial-gradient(ellipse at 50% 62%, transparent 18%, ${theme_alpha(theme.colors.background, 0.86)} 72%)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        left: 0,
-                        right: 0,
-                        top: `${seconds * 22 % 100}%`,
-                        height: Math.round(minSide * 0.008),
-                        background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
-                        boxShadow: `0 0 ${Math.round(minSide * 0.05)}px ${accent}`,
-                        opacity: 0.7
-                    }
-                })
-            ]
-        });
-    }
-    if (preset === "floating-orbs") {
-        const orbs = [
-            {
-                size: 0.34,
-                x: 24,
-                y: 26,
-                phase: 0,
-                color: accent
-            },
-            {
-                size: 0.24,
-                x: 76,
-                y: 32,
-                phase: 1.4,
-                color: secondary
-            },
-            {
-                size: 0.2,
-                x: 62,
-                y: 74,
-                phase: 2.2,
-                color: third
-            },
-            {
-                size: 0.14,
-                x: 32,
-                y: 78,
-                phase: 3.1,
-                color: accent
-            },
-            {
-                size: 0.1,
-                x: 84,
-                y: 62,
-                phase: 4.2,
-                color: secondary
-            }
-        ];
-        return /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: orbs.map((orb, index)=>{
-                const ox = Math.sin(seconds * 0.5 + orb.phase) * minSide * 0.06;
-                const oy = Math.cos(seconds * 0.4 + orb.phase) * minSide * 0.05;
-                const size = minSide * orb.size;
-                return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        left: `${orb.x}%`,
-                        top: `${orb.y}%`,
-                        width: size,
-                        height: size,
-                        marginLeft: -size / 2 + ox,
-                        marginTop: -size / 2 + oy,
-                        borderRadius: "50%",
-                        background: `radial-gradient(circle at 35% 30%, ${theme_alpha(orb.color, 0.75)}, ${theme_alpha(orb.color, 0.16)} 58%, transparent 72%)`,
-                        filter: `blur(${Math.round(minSide * 0.015)}px)`,
-                        boxShadow: `0 0 ${Math.round(size * 0.35)}px ${theme_alpha(orb.color, 0.22)}`
-                    }
-                }, index);
-            })
-        });
-    }
-    if (preset === "deep-wave") {
-        const waves = [
-            0.72,
-            0.8,
-            0.88
-        ].map((base, index)=>{
-            const offset = Math.sin(seconds * 0.5 + index) * height * 0.05;
-            const y = height * base + offset;
-            return `M${-width * 0.2} ${y} C ${width * 0.18} ${y - height * 0.18}, ${width * 0.42} ${y + height * 0.1}, ${width * 0.7} ${y - height * 0.06} S ${width * 1.1} ${y + height * 0.14}, ${width * 1.2} ${y}`;
-        });
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        background: `radial-gradient(ellipse at 50% 108%, ${theme_alpha(accent, 0.35)} 0%, transparent 58%), radial-gradient(ellipse at 12% 96%, ${theme_alpha(secondary, 0.28)} 0%, transparent 50%)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
-                    viewBox: `0 0 ${width} ${height}`,
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        width,
-                        height
-                    },
-                    children: waves.map((d, index)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                            d: d,
-                            fill: "none",
-                            stroke: index === 0 ? theme_alpha(accent, 0.5) : index === 1 ? theme_alpha(secondary, 0.34) : theme_alpha(third, 0.22),
-                            strokeWidth: Math.max(2, minSide * (0.012 - index * 0.003)),
-                            strokeLinecap: "round"
-                        }, index))
-                })
-            ]
-        });
-    }
-    if (preset === "particle-field") {
-        const particles = Array.from({
-            length: 54
-        }, (_, index)=>{
-            const rand = (n)=>{
-                const value = Math.sin((index + 1) * 12.9898 + n * 78.233 + seed) * 43758.5453;
-                return value - Math.floor(value);
-            };
-            const px = rand(1) * width;
-            const py = rand(2) * height;
-            const speed = 6 + rand(3) * 26;
-            const radius = 1.5 + rand(4) * 3.4;
-            const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(seconds * (0.7 + rand(5)) + index));
-            return {
-                x: (px + Math.sin(seconds * 0.25 + index) * 18) % width,
-                y: (py - seconds * speed + height * 4) % height,
-                radius,
-                twinkle,
-                color: index % 3 === 0 ? accent : index % 3 === 1 ? secondary : theme.colors.text
-            };
-        });
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        background: `radial-gradient(circle at 50% 40%, ${theme_alpha(accent, 0.16)} 0%, transparent 55%)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
-                    viewBox: `0 0 ${width} ${height}`,
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        width,
-                        height
-                    },
-                    children: particles.map((particle, index)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                            cx: particle.x,
-                            cy: particle.y,
-                            r: particle.radius,
-                            fill: particle.color,
-                            opacity: particle.twinkle
-                        }, index))
-                })
-            ]
-        });
-    }
-    if (preset === "editorial-paper") {
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-            style: {
-                overflow: "hidden"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        inset: 0,
-                        background: theme.isDark ? `linear-gradient(165deg, ${theme.colors.background} 0%, ${theme.colors.backgroundAlt} 100%)` : `linear-gradient(165deg, ${theme.colors.background} 0%, ${theme.colors.backgroundAlt} 100%)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                    style: {
-                        backgroundImage: `repeating-linear-gradient(0deg, ${theme_alpha(theme.colors.text, 0.06)} 0 1px, transparent 1px ${Math.round(minSide * 0.045)}px)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        right: -width * 0.12 + drift,
-                        top: height * 0.08,
-                        width: width * 0.6,
-                        height: width * 0.6,
-                        borderRadius: "50%",
-                        border: `1.5px solid ${theme_alpha(theme.colors.text, 0.16)}`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        left: -width * 0.18 + driftAlt,
-                        bottom: height * 0.04,
-                        width: width * 0.52,
-                        height: width * 0.52,
-                        borderRadius: "50%",
-                        background: `radial-gradient(circle, ${theme_alpha(accent, 0.18)} 0%, transparent 66%)`
-                    }
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        left: width * 0.08,
-                        top: height * 0.1,
-                        width: Math.round(minSide * 0.14),
-                        height: Math.max(4, minSide * 0.008),
-                        borderRadius: 999,
-                        background: accent
-                    }
-                })
-            ]
-        });
-    }
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-        style: {
-            overflow: "hidden"
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    inset: "-20%",
-                    background: `conic-gradient(from ${seconds * 28}deg at 62% 38%, ${theme_alpha(accent, 0.42)}, transparent 32%, ${theme_alpha(third, 0.36)} 54%, transparent 74%, ${theme_alpha(secondary, 0.4)} 100%)`,
-                    filter: `blur(${Math.round(minSide * 0.08)}px)`,
-                    opacity: 0.8
-                }
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                style: {
-                    backgroundImage: `repeating-linear-gradient(115deg, ${theme_alpha(accent, 0.16)} 0 2px, transparent 2px ${Math.round(minSide * 0.02)}px)`,
-                    transform: `translateX(${Math.sin(seconds * 0.6) * 22}px)`,
-                    opacity: 0.7
-                }
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                style: {
-                    background: `linear-gradient(180deg, transparent 58%, ${theme_alpha(accent, 0.16)} 100%)`
-                }
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    left: "8%",
-                    right: "8%",
-                    bottom: `${18 + Math.sin(seconds * 0.5) * 2}%`,
-                    height: Math.round(minSide * 0.006),
-                    background: accent,
-                    boxShadow: `0 0 ${Math.round(minSide * 0.06)}px ${accent}`,
-                    opacity: 0.75
-                }
-            })
-        ]
-    });
-};
-const Background = ({ theme, preset, seed = 0 })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps, width, height } = (0,esm/* .useVideoConfig */.Bk)();
-    const seconds = frame / fps;
-    const driftX = Math.sin(seconds * 0.28) * width * 0.035;
-    const driftY = Math.cos(seconds * 0.22) * height * 0.025;
-    const driftX2 = Math.cos(seconds * 0.19 + 1.2) * width * 0.04;
-    const driftY2 = Math.sin(seconds * 0.24 + 0.6) * height * 0.03;
-    const minSide = Math.min(width, height);
-    const resolvedPreset = preset ? preset === "ai-free" ? pickAiPreset(seed, theme.id) : preset : undefined;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-        style: {
-            background: `linear-gradient(150deg, ${theme.colors.background} 0%, ${theme.colors.backgroundAlt} 100%)`,
-            overflow: "hidden"
-        },
-        children: [
-            resolvedPreset ? /*#__PURE__*/ (0,jsx_runtime.jsx)(PresetBackground, {
-                theme: theme,
-                preset: resolvedPreset,
-                seed: seed
-            }) : null,
-            !resolvedPreset && theme.id === "modern_dark" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                        style: {
-                            backgroundImage: "linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px)",
-                            backgroundSize: `${Math.round(minSide * 0.075)}px ${Math.round(minSide * 0.075)}px`,
-                            opacity: 0.55,
-                            maskImage: "radial-gradient(circle at 50% 45%, black 20%, transparent 78%)",
-                            WebkitMaskImage: "radial-gradient(circle at 50% 45%, black 20%, transparent 78%)"
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            translate: `${driftX}px ${driftY}px`
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.primary, 0.5),
-                                size: minSide * 0.95,
-                                x: "78%",
-                                y: "16%",
-                                blur: minSide * 0.11,
-                                opacity: 0.6
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.secondary, 0.44),
-                                size: minSide * 0.85,
-                                x: "12%",
-                                y: "78%",
-                                blur: minSide * 0.12,
-                                opacity: 0.55
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.accent, 0.3),
-                                size: minSide * 0.55,
-                                x: "58%",
-                                y: "88%",
-                                blur: minSide * 0.1,
-                                opacity: 0.6
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            width: minSide * 0.72,
-                            height: minSide * 0.72,
-                            borderRadius: "50%",
-                            border: `1px solid ${theme_alpha(theme.colors.primary, 0.18)}`,
-                            left: `${52 + driftX / width * 100}%`,
-                            top: "22%",
-                            translate: "-50% -50%",
-                            boxShadow: `0 0 ${minSide * 0.12}px ${theme_alpha(theme.colors.primary, 0.14)}`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                        style: {
-                            background: "radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.55) 100%)"
-                        }
-                    })
-                ]
-            }) : null,
-            !resolvedPreset && theme.id === "stickman" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                        style: {
-                            backgroundImage: `radial-gradient(circle, ${theme_alpha(theme.colors.text, 0.13)} 1.5px, transparent 1.6px)`,
-                            backgroundSize: `${Math.round(minSide * 0.052)}px ${Math.round(minSide * 0.052)}px`,
-                            opacity: 0.55,
-                            maskImage: "radial-gradient(ellipse at 50% 40%, black 25%, transparent 80%)",
-                            WebkitMaskImage: "radial-gradient(ellipse at 50% 40%, black 25%, transparent 80%)"
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            translate: `${driftX}px ${driftY}px`
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.secondary, 0.5),
-                                size: minSide * 0.8,
-                                x: "82%",
-                                y: "14%",
-                                blur: minSide * 0.08,
-                                opacity: 0.55
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.primary, 0.35),
-                                size: minSide * 0.75,
-                                x: "10%",
-                                y: "82%",
-                                blur: minSide * 0.09,
-                                opacity: 0.5
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Blob, {
-                                color: theme_alpha(theme.colors.accent, 0.18),
-                                size: minSide * 0.45,
-                                x: "52%",
-                                y: "58%",
-                                blur: minSide * 0.07,
-                                opacity: 0.55
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                        viewBox: `0 0 ${width} ${height}`,
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            width,
-                            height,
-                            overflow: "visible"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                d: `M${-width * 0.1} ${height * 0.13} C ${width * 0.25} ${height * 0.02}, ${width * 0.45} ${height * 0.25}, ${width * 0.85} ${height * 0.09}`,
-                                fill: "none",
-                                stroke: theme_alpha(theme.colors.primary, 0.22),
-                                strokeWidth: 3,
-                                strokeDasharray: "2 16",
-                                strokeLinecap: "round"
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                d: `M${-width * 0.05} ${height * 0.86} C ${width * 0.3} ${height * 0.78}, ${width * 0.6} ${height * 0.97}, ${width * 1.05} ${height * 0.82}`,
-                                fill: "none",
-                                stroke: theme_alpha(theme.colors.accent, 0.18),
-                                strokeWidth: 3,
-                                strokeDasharray: "2 18",
-                                strokeLinecap: "round"
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                cx: width * 0.12 + driftX2,
-                                cy: height * 0.18 + driftY2,
-                                r: minSide * 0.045,
-                                fill: "none",
-                                stroke: theme_alpha(theme.colors.primary, 0.4),
-                                strokeWidth: 4
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                cx: width * 0.89 + driftX2,
-                                cy: height * 0.7 + driftY2,
-                                r: minSide * 0.03,
-                                fill: theme_alpha(theme.colors.secondary, 0.5)
-                            })
-                        ]
-                    })
-                ]
-            }) : null,
-            !resolvedPreset && theme.id === "editorial_clean" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                        style: {
-                            backgroundImage: "linear-gradient(rgba(17, 17, 17, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(17, 17, 17, 0.045) 1px, transparent 1px)",
-                            backgroundSize: `${Math.round(minSide * 0.09)}px ${Math.round(minSide * 0.09)}px`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: -width * 0.08,
-                            top: -height * 0.08,
-                            width: width * 0.52,
-                            height: width * 0.52,
-                            borderRadius: "50%",
-                            border: `2px solid ${theme_alpha(theme.colors.text, 0.14)}`,
-                            translate: `${driftX}px ${driftY}px`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            left: -width * 0.16,
-                            bottom: height * 0.1,
-                            width: width * 0.46,
-                            height: width * 0.46,
-                            borderRadius: "50%",
-                            background: `radial-gradient(circle, ${theme_alpha(theme.colors.secondary, 0.22)} 0%, transparent 68%)`,
-                            translate: `${driftX2}px ${driftY2}px`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: 0,
-                            bottom: 0,
-                            width: width * 0.22,
-                            height: height * 0.32,
-                            background: `linear-gradient(180deg, transparent, ${theme_alpha(theme.colors.primary, 0.1)})`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            left: width * 0.065,
-                            top: height * 0.055,
-                            width: width * 0.055,
-                            height: Math.max(4, minSide * 0.008),
-                            background: theme.colors.accent,
-                            borderRadius: 999
-                        }
-                    })
-                ]
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                style: {
-                    background: theme.isDark ? "linear-gradient(180deg, rgba(255,255,255,0.02), transparent 30%, rgba(0,0,0,0.12))" : "linear-gradient(180deg, rgba(255,255,255,0.28), transparent 30%, rgba(0,0,0,0.025))",
-                    pointerEvents: "none"
-                }
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/sfx.ts
-const SFX_FILES = (/* unused pure expression or super */ null && ({
-    "whoosh-fast": "whoosh-fast.wav",
-    "whoosh-deep": "whoosh-deep.wav",
-    "pop-bubble": "pop-bubble.wav",
-    "pop-sharp": "pop-sharp.wav",
-    "ding-success": "ding-success.wav",
-    "alert-warning": "alert-warning.wav",
-    "cash-register": "cash-register.wav",
-    "typing-click": "typing-click.wav",
-    "notification-chime": "notification-chime.wav",
-    "cinematic-hit": "cinematic-hit.wav",
-    "bass-drop": "bass-drop.wav",
-    "riser-build": "riser-build.wav"
-}));
-const SFX_DURATIONS = {
-    "whoosh-fast": 0.62,
-    "whoosh-deep": 1.25,
-    "pop-bubble": 0.34,
-    "pop-sharp": 0.24,
-    "ding-success": 1.55,
-    "alert-warning": 1.15,
-    "cash-register": 1.4,
-    "typing-click": 0.46,
-    "notification-chime": 1.85,
-    "cinematic-hit": 2.2,
-    "bass-drop": 1.85,
-    "riser-build": 2.55
-};
-const DEFAULT_SFX_VOLUME = 0.65;
-const resolveSceneSfxSrc = (scene)=>{
-    var _scene_sfxSrc;
-    const explicit = (_scene_sfxSrc = scene.sfxSrc) === null || _scene_sfxSrc === void 0 ? void 0 : _scene_sfxSrc.trim();
-    if (!explicit || explicit === "none") return null;
-    return explicit.startsWith("/") ? explicit.slice(1) : explicit;
-};
-
-;// CONCATENATED MODULE: ./src/components/AmbientEnvironment.tsx
-
-
-
-const RainStreaks = ({ theme, density = 26, seed = 1 })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps, height } = (0,esm/* .useVideoConfig */.Bk)();
-    const time = frame / fps;
-    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-        style: {
-            position: "absolute",
-            inset: 0,
-            overflow: "hidden"
-        },
-        children: Array.from({
-            length: density
-        }, (_, index)=>{
-            const x = (index * 53 + seed * 17) % 100 + Math.sin(time + index) * 1.5;
-            const speed = 72 + index * 29 % 46;
-            const y = (time * speed + index * 41) % (height + 160) - 80;
-            const length = 24 + index * 13 % 42;
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                style: {
-                    position: "absolute",
-                    left: `${x}%`,
-                    top: y,
-                    width: 2,
-                    height: length,
-                    borderRadius: 999,
-                    background: `linear-gradient(180deg, transparent, ${theme_alpha(theme.colors.accent, 0.55)})`,
-                    opacity: 0.4 + index % 5 / 10,
-                    transform: `rotate(${8 + index % 4}deg)`
-                }
-            }, `rain-${index}`);
-        })
-    });
-};
-const AmbientEnvironment = ({ variant, theme, seed = 3 })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps, width, height } = (0,esm/* .useVideoConfig */.Bk)();
-    const time = frame / fps;
-    if (variant === "none") {
-        return null;
-    }
-    const primary = theme.colors.primary;
-    const accent = theme.colors.accent;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            overflow: "hidden",
-            zIndex: 1
-        },
-        children: [
-            variant === "night-room" || variant === "cozy-desk" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "absolute",
-                            left: "6%",
-                            top: "8%",
-                            width: "34%",
-                            height: "42%",
-                            borderRadius: 18,
-                            border: `2px solid ${theme_alpha(theme.colors.text, 0.16)}`,
-                            background: `linear-gradient(180deg, ${theme_alpha("#0B1220", 0.72)} 0%, ${theme_alpha(accent, 0.08)} 100%)`,
-                            boxShadow: `inset 0 0 60px ${theme_alpha(primary, 0.18)}`,
-                            overflow: "hidden"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    position: "absolute",
-                                    right: "16%",
-                                    top: "16%",
-                                    width: 44,
-                                    height: 44,
-                                    borderRadius: "50%",
-                                    background: theme_alpha("#FDE68A", 0.85),
-                                    boxShadow: `0 0 48px ${theme_alpha("#FDE68A", 0.45)}`
-                                }
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
-                                viewBox: "0 0 200 120",
-                                preserveAspectRatio: "none",
-                                style: {
-                                    position: "absolute",
-                                    inset: 0,
-                                    width: "100%",
-                                    height: "100%"
-                                },
-                                children: Array.from({
-                                    length: 9
-                                }, (_, index)=>{
-                                    const buildingHeight = 20 + (index * 17 + seed * 7) % 58;
-                                    const x = index * 24 - 6;
-                                    return /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                                        x: x,
-                                        y: 120 - buildingHeight,
-                                        width: 18,
-                                        height: buildingHeight,
-                                        fill: theme_alpha(theme.colors.text, 0.18)
-                                    }, `building-${index}`);
-                                })
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    position: "absolute",
-                                    inset: 0,
-                                    background: `linear-gradient(120deg, ${theme_alpha("#FDE68A", 0.08)} 0%, transparent 45%)`,
-                                    transform: `translateX(${Math.sin(time * 0.6) * 8}px)`
-                                }
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    position: "absolute",
-                                    left: "50%",
-                                    top: 0,
-                                    bottom: 0,
-                                    width: 2,
-                                    background: theme_alpha(theme.colors.text, 0.14)
-                                }
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(RainStreaks, {
-                        theme: theme,
-                        density: 18,
-                        seed: seed
-                    })
-                ]
-            }) : null,
-            variant === "desk-lamp" || variant === "cozy-desk" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: "12%",
-                            bottom: "12%",
-                            width: "34%",
-                            height: "46%",
-                            background: `conic-gradient(from 200deg at 80% 10%, ${theme_alpha(primary, 0.32)} 0deg, transparent 58deg)`,
-                            filter: "blur(2px)",
-                            opacity: 0.8 + Math.sin(time * 1.8) * 0.04
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: "18%",
-                            bottom: "20%",
-                            width: 10,
-                            height: "26%",
-                            borderRadius: 999,
-                            background: theme_alpha(theme.colors.text, 0.4)
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: "14%",
-                            bottom: "44%",
-                            width: 58,
-                            height: 34,
-                            borderRadius: "28px 28px 8px 8px",
-                            background: `linear-gradient(180deg, ${primary}, ${theme_alpha(primary, 0.6)})`,
-                            boxShadow: `0 0 40px ${theme_alpha(primary, 0.55)}`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            right: "16%",
-                            bottom: "17%",
-                            width: "18%",
-                            height: 10,
-                            borderRadius: 999,
-                            background: theme_alpha(theme.colors.text, 0.28)
-                        }
-                    })
-                ]
-            }) : null,
-            variant === "rain-window" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: "6% 8%",
-                            borderRadius: 22,
-                            border: `2px solid ${theme_alpha(theme.colors.text, 0.16)}`,
-                            background: `linear-gradient(160deg, ${theme_alpha("#0B1220", 0.7)} 0%, ${theme_alpha(accent, 0.1)} 100%)`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(RainStreaks, {
-                        theme: theme,
-                        density: 38,
-                        seed: seed
-                    })
-                ]
-            }) : null,
-            variant === "clock" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    position: "absolute",
-                    right: "8%",
-                    top: "8%",
-                    width: 140,
-                    height: 140,
-                    borderRadius: "50%",
-                    border: `3px solid ${theme_alpha(theme.colors.text, 0.24)}`,
-                    background: theme_alpha(theme.colors.background, 0.45),
-                    boxShadow: `0 0 30px ${theme_alpha(primary, 0.2)}`
-                },
-                children: [
-                    Array.from({
-                        length: 12
-                    }, (_, index)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                            style: {
-                                position: "absolute",
-                                left: "50%",
-                                top: 8,
-                                width: 2,
-                                height: 10,
-                                background: theme_alpha(theme.colors.text, 0.5),
-                                transformOrigin: "50% 62px",
-                                transform: `translateX(-50%) rotate(${index * 30}deg)`
-                            }
-                        }, `tick-${index}`)),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            position: "absolute",
-                            left: "50%",
-                            top: "50%",
-                            width: 3,
-                            height: 38,
-                            background: primary,
-                            transformOrigin: "50% 100%",
-                            transform: `translate(-50%, -100%) rotate(${time * 6}deg)`,
-                            borderRadius: 999
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            position: "absolute",
-                            left: "50%",
-                            top: "50%",
-                            width: 5,
-                            height: 28,
-                            background: accent,
-                            transformOrigin: "50% 100%",
-                            transform: `translate(-50%, -100%) rotate(${time * 36}deg)`,
-                            borderRadius: 999
-                        }
-                    })
-                ]
-            }) : null,
-            variant === "phone-notifications" ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    right: "10%",
-                    bottom: "14%",
-                    width: Math.min(150, width * 0.16),
-                    height: Math.min(300, height * 0.34),
-                    borderRadius: 26,
-                    border: `2px solid ${theme_alpha(theme.colors.text, 0.22)}`,
-                    background: theme_alpha(theme.colors.background, 0.55),
-                    boxShadow: `0 16px 50px ${theme_alpha("#000000", 0.4)}`,
-                    overflow: "hidden",
-                    transform: `translateY(${Math.sin(time * 1.1) * 6}px)`
-                },
-                children: [
-                    0,
-                    1,
-                    2
-                ].map((index)=>{
-                    const appear = (0,esm/* .interpolate */.GW)((time + index * 0.8) % 3.2, [
-                        0,
-                        0.4,
-                        2.4,
-                        3.2
-                    ], [
-                        0,
-                        1,
-                        1,
-                        0
-                    ], {
-                        extrapolateLeft: "clamp",
-                        extrapolateRight: "clamp"
-                    });
-                    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "absolute",
-                            left: 10,
-                            right: 10,
-                            top: 20 + index * 54,
-                            borderRadius: 12,
-                            padding: "8px 10px",
-                            background: theme_alpha(theme.colors.surface, 0.9),
-                            border: `1px solid ${theme_alpha(accent, 0.4)}`,
-                            opacity: appear,
-                            transform: `translateY(${(1 - appear) * 14}px)`
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    width: "58%",
-                                    height: 6,
-                                    borderRadius: 999,
-                                    background: theme_alpha(theme.colors.text, 0.55)
-                                }
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    marginTop: 6,
-                                    width: "82%",
-                                    height: 4,
-                                    borderRadius: 999,
-                                    background: theme_alpha(theme.colors.muted, 0.55)
-                                }
-                            })
-                        ]
-                    }, `notification-${index}`);
-                })
-            }) : null,
-            variant === "cozy-desk" ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    left: "10%",
-                    bottom: "12%",
-                    width: 70,
-                    height: 84,
-                    borderRadius: "12px 12px 18px 18px",
-                    background: theme_alpha(theme.colors.text, 0.2),
-                    border: `2px solid ${theme_alpha(theme.colors.text, 0.28)}`
-                },
-                children: [
-                    0,
-                    1,
-                    2
-                ].map((index)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            position: "absolute",
-                            left: 18 + index * 16,
-                            top: -22,
-                            width: 6,
-                            height: 24,
-                            borderRadius: 999,
-                            background: theme_alpha("#FFFFFF", 0.16),
-                            transform: `translateY(${Math.sin(time * 2 + index) * 6}px) scaleX(${0.7 + Math.sin(time * 1.4 + index) * 0.3})`
-                        }
-                    }, `steam-${index}`))
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/AmbientMotion.tsx
-
-
-
-const mulberry32 = (seed)=>{
-    let a = seed >>> 0;
-    return ()=>{
-        a = a + 0x6d2b79f5 >>> 0;
-        let t = a;
-        t = Math.imul(t ^ t >>> 15, t | 1);
-        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
-};
-const buildParticles = (seed)=>{
-    const random = mulberry32(seed * 7717 + 97);
-    return Array.from({
-        length: 20
-    }, ()=>({
-            baseX: random() * 100,
-            baseY: random() * 100,
-            radius: 1.2 + random() * 3.6,
-            speed: 0.05 + random() * 0.16,
-            phase: random() * Math.PI * 2,
-            drift: 6 + random() * 34,
-            warm: random() > 0.45
-        }));
-};
-const AmbientMotion = ({ theme, seed = 1, intensity = 1 })=>{
+const FallbackScene = ({ scene, palette, durationInFrames, isRtl })=>{
+    var _scene_title, _scene_caption;
     const frame = (0,esm/* .useCurrentFrame */.UC)();
     const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const seconds = frame / fps;
-    const particles = buildParticles(seed);
-    const orbit = seconds * 18;
-    const sweep = seconds * 24 % 140 - 20;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "absolute",
-            inset: 0,
-            overflow: "hidden",
-            pointerEvents: "none",
-            zIndex: 0,
-            opacity: intensity
-        },
-        children: [
-            particles.map((particle, index)=>{
-                const angle = seconds * particle.speed * Math.PI * 2 + particle.phase;
-                const x = particle.baseX + Math.sin(angle) * particle.drift * 0.45;
-                const y = particle.baseY + Math.cos(angle * 0.8 + particle.phase) * particle.drift * 0.35;
-                const twinkle = 0.18 + 0.42 * (0.5 + 0.5 * Math.sin(angle * 1.7 + particle.phase));
-                const color = particle.warm ? theme.colors.primary : theme.colors.accent;
-                return /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                    style: {
-                        position: "absolute",
-                        left: `${x}%`,
-                        top: `${y}%`,
-                        width: particle.radius * 2,
-                        height: particle.radius * 2,
-                        marginLeft: -particle.radius,
-                        marginTop: -particle.radius,
-                        borderRadius: "50%",
-                        background: color,
-                        opacity: twinkle,
-                        boxShadow: `0 0 ${particle.radius * 4}px ${theme_alpha(color, twinkle * 0.8)}`
-                    }
-                }, `ambient-particle-${index}`);
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                viewBox: "0 0 100 100",
-                preserveAspectRatio: "none",
-                style: {
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%"
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                        cx: "50",
-                        cy: "52",
-                        rx: "42",
-                        ry: "30",
-                        fill: "none",
-                        stroke: theme_alpha(theme.colors.primary, 0.16),
-                        strokeWidth: "0.16",
-                        strokeDasharray: "0.6 1.6",
-                        transform: `rotate(${orbit} 50 52)`
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                        cx: "50",
-                        cy: "52",
-                        rx: "30",
-                        ry: "42",
-                        fill: "none",
-                        stroke: theme_alpha(theme.colors.accent, 0.13),
-                        strokeWidth: "0.14",
-                        strokeDasharray: "0.4 2.2",
-                        transform: `rotate(${-orbit * 0.7} 50 52)`
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                        x1: sweep,
-                        y1: "0",
-                        x2: sweep + 14,
-                        y2: "100",
-                        stroke: theme_alpha(theme.colors.primary, 0.1),
-                        strokeWidth: "3"
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    left: "4%",
-                    top: "10%",
-                    width: 26,
-                    height: 26,
-                    borderLeft: `2px solid ${theme_alpha(theme.colors.primary, 0.32)}`,
-                    borderTop: `2px solid ${theme_alpha(theme.colors.primary, 0.32)}`,
-                    transform: `rotate(${Math.sin(seconds * 0.8) * 8}deg)`
-                }
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    right: "5%",
-                    bottom: "16%",
-                    width: 34,
-                    height: 34,
-                    borderRight: `2px solid ${theme_alpha(theme.colors.accent, 0.28)}`,
-                    borderBottom: `2px solid ${theme_alpha(theme.colors.accent, 0.28)}`,
-                    transform: `rotate(${-Math.sin(seconds * 0.6) * 10}deg)`
-                }
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/AnimatedCaption.tsx
-
-
-
-const RTL_CHARS = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/;
-const isRtlText = (words)=>{
-    if (words.length === 0) {
-        return false;
-    }
-    const rtlCount = words.filter((word)=>RTL_CHARS.test(word)).length;
-    return rtlCount > words.length / 2;
-};
-const AnimatedCaption_clamp = (value, min, max)=>Math.min(max, Math.max(min, value));
-const HARD_STOP = /[.!?؟…]$/;
-const SOFT_STOP = /[,،;؛:]$/;
-const wordWeight = (word)=>{
-    const letters = word.replace(/[^\w\u0600-\u06FF]/g, "").length;
-    let weight = 1 + Math.min(letters, 12) / 16;
-    if (HARD_STOP.test(word)) weight += 0.85;
-    else if (SOFT_STOP.test(word)) weight += 0.35;
-    if (word.length > 8) weight += 0.2;
-    return weight;
-};
-const buildChunks = (wordCount, size)=>{
-    const chunks = [];
-    for(let start = 0; start < wordCount; start += size){
-        chunks.push({
-            start,
-            end: Math.min(wordCount, start + size)
-        });
-    }
-    if (chunks.length > 1) {
-        const last = chunks[chunks.length - 1];
-        if (last.end - last.start < 2) {
-            const previous = chunks[chunks.length - 2];
-            previous.end = last.end;
-            chunks.pop();
-        }
-    }
-    return chunks;
-};
-const AnimatedCaption = ({ text, language, theme, layout, durationInFrames, audioDuration, rtl, animationStyle = "auto", wordsPerScreen = "auto", leadIn, wcag })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const words = (text ?? "").trim().split(/\s+/).filter(Boolean);
-    if (words.length === 0) {
-        return null;
-    }
-    const direction = rtl ?? (language.match(/^(ar|fa|ur|he|yi)/) ? true : isRtlText(words));
-    const fontSize = Math.round(layout.isWide ? layout.width * 0.023 : layout.width * 0.04);
-    const sceneSeconds = durationInFrames / fps;
-    const audioSeconds = typeof audioDuration === "number" && Number.isFinite(audioDuration) ? audioDuration : 0;
-    const hasMeasuredAudio = audioSeconds > 0.4;
-    const leadInSeconds = Math.max(0.2, typeof leadIn === "number" && Number.isFinite(leadIn) ? leadIn : 0.2);
-    const startSeconds = Math.min(leadInSeconds, Math.max(0, sceneSeconds - 0.4));
-    const endSeconds = hasMeasuredAudio ? Math.max(startSeconds + 0.45, Math.min(audioSeconds - 0.06, sceneSeconds - 0.12)) : Math.max(startSeconds + 0.6, sceneSeconds - 0.18);
-    const weights = words.map(wordWeight);
-    const totalWeight = weights.reduce((total, value)=>total + value, 0) || 1;
-    const speechSpan = Math.max(0.2, endSeconds - startSeconds);
-    let cursor = startSeconds;
-    const wordStarts = weights.map((weight)=>{
-        const at = cursor;
-        cursor += weight / totalWeight * speechSpan;
-        return at;
-    });
-    const wordEnds = wordStarts.map((start, index)=>index === words.length - 1 ? endSeconds : wordStarts[index + 1]);
-    const autoChunkSize = words.length <= 4 ? words.length : words.some((word)=>word.length > 10) ? 2 : words.length > 16 ? 3 : 4;
-    const requestedChunk = typeof wordsPerScreen === "number" ? wordsPerScreen : Number.parseInt(String(wordsPerScreen), 10);
-    const chunkSize = AnimatedCaption_clamp(Number.isFinite(requestedChunk) && requestedChunk > 0 ? requestedChunk : autoChunkSize, 2, 5);
-    const chunks = buildChunks(words.length, chunkSize);
-    const time = frame / fps;
-    const firstChunkStart = wordStarts[chunks[0].start];
-    if (time < firstChunkStart) {
-        return null;
-    }
-    let activeChunkIndex = 0;
-    for(let index = 0; index < chunks.length; index += 1){
-        if (time >= wordStarts[chunks[index].start] - 0.001) {
-            activeChunkIndex = index;
-        }
-    }
-    const activeChunk = chunks[activeChunkIndex];
-    const chunkStartSeconds = wordStarts[activeChunk.start];
-    let activeWord = activeChunk.start;
-    for(let index = activeChunk.start; index < activeChunk.end; index += 1){
-        if (time >= wordStarts[index] - 0.001) {
-            activeWord = index;
-        }
-    }
-    const resolvedStyle = animationStyle && animationStyle !== "auto" ? animationStyle : chunkSize >= 4 ? "dynamic_karaoke" : "word_pop_glow";
-    const chunkEnter = (0,esm/* .spring */.oz)({
-        frame: frame - Math.round(chunkStartSeconds * fps),
-        fps,
-        config: {
-            damping: 18,
-            mass: 0.5,
-            stiffness: 170
-        }
-    });
-    const chunkEase = AnimatedCaption_clamp(chunkEnter, 0, 1);
-    const accent = (wcag === null || wcag === void 0 ? void 0 : wcag.captionHighlight) ?? theme.caption.highlight;
-    const captionText = (wcag === null || wcag === void 0 ? void 0 : wcag.captionText) ?? theme.caption.text;
-    const captionBackground = (wcag === null || wcag === void 0 ? void 0 : wcag.captionBg) ?? theme.caption.background;
-    const chunkText = words.slice(activeChunk.start, activeChunk.end).join(" ");
-    const containerBackground = resolvedStyle === "dynamic_karaoke" ? "transparent" : captionBackground;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: Math.round(layout.padding * 0.7),
-            display: "flex",
-            justifyContent: "center",
-            paddingLeft: layout.padding,
-            paddingRight: layout.padding,
-            pointerEvents: "none",
-            zIndex: 20
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                dir: direction ? "rtl" : "ltr",
-                style: {
-                    maxWidth: layout.isWide ? "78%" : "90%",
-                    background: containerBackground,
-                    borderRadius: Math.max(14, theme.radius * 0.8),
-                    border: `1.5px solid ${accent}`,
-                    boxShadow: resolvedStyle === "dynamic_karaoke" ? `0 10px 34px rgba(0, 0, 0, 0.28)` : `0 16px 44px rgba(0, 0, 0, 0.34), 0 0 28px ${theme_alpha(accent, 0.2)}`,
-                    backdropFilter: "blur(16px)",
-                    padding: `${Math.round(fontSize * 0.36)}px ${Math.round(fontSize * 0.62)}px`,
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: `${Math.round(fontSize * 0.16)}px`,
-                    fontFamily: theme.fontFamily,
-                    opacity: chunkEase,
-                    transform: `translateY(${(1 - chunkEase) * 16}px) scale(${0.94 + chunkEase * 0.06})`,
-                    minHeight: Math.round(fontSize * 1.9)
-                },
-                children: words.slice(activeChunk.start, activeChunk.end).map((word, offset)=>{
-                    const index = activeChunk.start + offset;
-                    const wordStart = wordStarts[index];
-                    const wordEnd = wordEnds[index];
-                    const isActive = index === activeWord;
-                    const wordEnter = (0,esm/* .spring */.oz)({
-                        frame: frame - Math.round(wordStart * fps),
-                        fps,
-                        config: {
-                            damping: 16,
-                            mass: 0.45,
-                            stiffness: 190
-                        }
-                    });
-                    const wordEase = AnimatedCaption_clamp(wordEnter, 0, 1);
-                    const wordProgress = AnimatedCaption_clamp((time - wordStart) / Math.max(0.08, wordEnd - wordStart), 0, 1);
-                    const proximity = AnimatedCaption_clamp(1 - Math.abs(time - wordStart) * 2.4, 0, 1);
-                    const highlightBackground = isActive && resolvedStyle === "word_pop_glow" ? accent : "transparent";
-                    const highlightColor = isActive ? accent : captionText;
-                    const baseStyle = {
-                        display: "inline-block",
-                        fontSize: resolvedStyle === "smooth_chunk_slide" ? fontSize : Math.round(fontSize * 1.04),
-                        fontWeight: isActive ? 900 : 750,
-                        lineHeight: 1.2,
-                        padding: `${Math.round(fontSize * 0.05)}px ${Math.round(fontSize * 0.16)}px`,
-                        borderRadius: Math.round(fontSize * 0.24),
-                        whiteSpace: "nowrap",
-                        color: isActive ? accent : captionText,
-                        textShadow: isActive && resolvedStyle === "dynamic_karaoke" ? `0 0 ${Math.round(fontSize * 0.5)}px ${accent}` : undefined
-                    };
-                    if (resolvedStyle === "kinetic_typewriter") {
-                        const visibleChars = time < wordStart ? 0 : Math.ceil(word.length * AnimatedCaption_clamp(wordProgress * 1.35, 0, 1));
-                        const visible = word.slice(0, visibleChars);
-                        return /*#__PURE__*/ (0,jsx_runtime.jsxs)("span", {
-                            style: {
-                                ...baseStyle,
-                                color: highlightColor,
-                                background: "transparent",
-                                opacity: time < wordStart ? 0 : 1,
-                                scale: isActive ? "1.03" : "1"
-                            },
-                            children: [
-                                time < wordStart ? "" : visible,
-                                isActive ? /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                    style: {
-                                        display: "inline-block",
-                                        width: Math.max(2, Math.round(fontSize * 0.06)),
-                                        height: `${fontSize * 0.9}px`,
-                                        marginLeft: Math.round(fontSize * 0.06),
-                                        background: accent,
-                                        opacity: 0.55 + 0.45 * Math.sin(time * 18)
-                                    }
-                                }) : null
-                            ]
-                        }, `${word}-${index}`);
-                    }
-                    if (resolvedStyle === "smooth_chunk_slide") {
-                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                            style: {
-                                ...baseStyle,
-                                color: highlightColor,
-                                background: "transparent",
-                                borderBottom: isActive ? `${Math.max(2, Math.round(fontSize * 0.07))}px solid ${accent}` : "none",
-                                opacity: time < wordStart ? 0 : chunkEase,
-                                transform: `translateY(${(1 - chunkEase) * 10}px)`
-                            },
-                            children: word
-                        }, `${word}-${index}`);
-                    }
-                    return /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            ...baseStyle,
-                            color: isActive ? resolvedStyle === "word_pop_glow" ? theme.caption.highlightText : accent : captionText,
-                            background: highlightBackground,
-                            boxShadow: isActive && resolvedStyle === "word_pop_glow" ? `0 0 ${Math.round(fontSize * 0.8)}px ${theme_alpha(accent, 0.3 + proximity * 0.55)}` : undefined,
-                            opacity: time < wordStart ? 0 : resolvedStyle === "dynamic_karaoke" ? 0.55 + 0.45 * wordEase : wordEase,
-                            scale: isActive ? `${1 + 0.08 * proximity}` : `${0.9 + wordEase * 0.1}`,
-                            translate: resolvedStyle === "dynamic_karaoke" ? "0px" : `0px ${(1 - wordEase) * 12}px`
-                        },
-                        children: word
-                    }, `${word}-${index}`);
-                })
-            }),
-            resolvedStyle === "dynamic_karaoke" ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    bottom: Math.round(layout.padding * 0.7) - Math.round(fontSize * 0.18),
-                    left: "50%",
-                    width: `${AnimatedCaption_clamp(30 + chunkText.length * 1.4, 30, 62)}%`,
-                    height: 3,
-                    transform: "translateX(-50%)",
-                    borderRadius: 999,
-                    background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
-                    opacity: 0.85
-                }
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/Stickman.tsx
-
-
-const POSES = {
-    idle: {
-        headX: 0,
-        headY: 0,
-        headTilt: 0,
-        bodyLean: 0,
-        leftUpper: 8,
-        leftFore: 4,
-        rightUpper: -8,
-        rightFore: -4
-    },
-    walking: {
-        headX: -2,
-        headY: -1,
-        headTilt: -2,
-        bodyLean: -2,
-        leftUpper: 26,
-        leftFore: 10,
-        rightUpper: -30,
-        rightFore: -12
-    },
-    explaining: {
-        headX: -4,
-        headY: -2,
-        headTilt: -4,
-        bodyLean: -1,
-        leftUpper: 16,
-        leftFore: 8,
-        rightUpper: -112,
-        rightFore: -22
-    },
-    thinking: {
-        headX: 4,
-        headY: 2,
-        headTilt: 6,
-        bodyLean: 2,
-        leftUpper: 2,
-        leftFore: 25,
-        rightUpper: -100,
-        rightFore: 180
-    },
-    shocked: {
-        headX: -2,
-        headY: -8,
-        headTilt: -6,
-        bodyLean: -5,
-        leftUpper: 118,
-        leftFore: 24,
-        rightUpper: -118,
-        rightFore: -24
-    },
-    happy: {
-        headX: 0,
-        headY: -6,
-        headTilt: 4,
-        bodyLean: 0,
-        leftUpper: 148,
-        leftFore: 16,
-        rightUpper: -148,
-        rightFore: -16
-    },
-    sad: {
-        headX: 2,
-        headY: 7,
-        headTilt: -10,
-        bodyLean: 5,
-        leftUpper: -2,
-        leftFore: 18,
-        rightUpper: 2,
-        rightFore: -18
-    },
-    pointing: {
-        headX: -6,
-        headY: -2,
-        headTilt: -6,
-        bodyLean: -3,
-        leftUpper: 20,
-        leftFore: 6,
-        rightUpper: -154,
-        rightFore: -8
-    },
-    celebrating: {
-        headX: 0,
-        headY: -10,
-        headTilt: 8,
-        bodyLean: -2,
-        leftUpper: 166,
-        leftFore: 26,
-        rightUpper: -166,
-        rightFore: -26
-    },
-    idea: {
-        headX: -2,
-        headY: -4,
-        headTilt: -2,
-        bodyLean: -1,
-        leftUpper: 10,
-        leftFore: 4,
-        rightUpper: -142,
-        rightFore: 34
-    },
-    facepalm: {
-        headX: 5,
-        headY: 5,
-        headTilt: 12,
-        bodyLean: 4,
-        leftUpper: 8,
-        leftFore: 6,
-        rightUpper: -124,
-        rightFore: 196
-    }
-};
-const Stickman = ({ pose = "idle", color, faceColor, accent, shadow, accessory = "none", delay = 0 })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const localFrame = Math.max(0, frame - delay);
-    const target = POSES[pose] ?? POSES.idle;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: localFrame,
-        fps,
-        config: {
-            damping: 14,
-            mass: 0.7,
-            stiffness: 110
-        }
-    });
-    const ease = Math.min(1, Math.max(0, enter));
-    const seconds = localFrame / fps;
-    const breathe = Math.sin(seconds * Math.PI * 2 / 3.2) * ease;
-    const sway = Math.sin(seconds * Math.PI * 2 / 5.1) * ease;
-    const walking = pose === "walking";
-    const stride = walking ? Math.sin(seconds * Math.PI * 2 * 1.35) : 0;
-    const gesture = pose === "pointing" || pose === "explaining" || pose === "idea";
-    const gesturePulse = gesture ? Math.sin(seconds * Math.PI * 2 * 0.9) * 3.5 : 0;
-    const travel = walking ? Math.sin(seconds * 0.85) * 10 : 0;
-    const headTilt = target.headTilt * ease + sway * 0.9;
-    const bodyLean = target.bodyLean * ease + sway * 0.4 + stride * 1.6;
-    const headX = target.headX * ease + sway * 1.4;
-    const headY = target.headY * ease + breathe * 0.8;
-    const bob = breathe * 1.8 + Math.abs(stride) * 2.2;
-    const leftUpper = target.leftUpper * ease + sway * 1.6 - stride * 12;
-    const leftFore = target.leftFore * ease + sway * 1.2 + stride * 6;
-    const rightUpper = target.rightUpper * ease - sway * 1.6 + stride * 12 + gesturePulse;
-    const rightFore = target.rightFore * ease - sway * 1.2 + gesturePulse * 0.6;
-    const leftShoulder = {
-        x: 122,
-        y: 180
-    };
-    const leftElbow = {
-        x: 104,
-        y: 252
-    };
-    const leftWrist = {
-        x: 110,
-        y: 318
-    };
-    const rightShoulder = {
-        x: 198,
-        y: 180
-    };
-    const rightElbow = {
-        x: 216,
-        y: 252
-    };
-    const rightWrist = {
-        x: 210,
-        y: 318
-    };
-    const leftFootX = 128 + stride * 16;
-    const rightFootX = 192 - stride * 16;
-    const stroke = {
-        stroke: color,
-        strokeWidth: 17,
-        strokeLinecap: "round"
-    };
-    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-        style: {
-            height: "100%",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            scale: (0,esm/* .interpolate */.GW)(ease, [
-                0,
-                1
-            ], [
-                0.92,
-                1
-            ]),
-            translate: `${travel}px ${(0,esm/* .interpolate */.GW)(ease, [
-                0,
-                1
-            ], [
-                28,
-                0
-            ]) + Math.abs(stride) * -2}px`,
-            opacity: Math.min(1, ease * 1.4)
-        },
-        children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-            viewBox: "0 0 320 440",
-            style: {
-                height: "100%",
-                width: "100%",
-                overflow: "visible"
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                    cx: "160",
-                    cy: "424",
-                    rx: 80 * ease,
-                    ry: 14 * ease,
-                    fill: shadow
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                    transform: `rotate(${bodyLean} 160 292)`,
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
-                            transform: `translate(0 ${bob})`,
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                transform: `rotate(${leftUpper} ${leftShoulder.x} ${leftShoulder.y})`,
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                        d: `M${leftShoulder.x} ${leftShoulder.y} L${leftElbow.x} ${leftElbow.y}`,
-                                        fill: "none",
-                                        ...stroke
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                        transform: `rotate(${leftFore} ${leftElbow.x} ${leftElbow.y})`,
-                                        children: [
-                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                                d: `M${leftElbow.x} ${leftElbow.y} L${leftWrist.x} ${leftWrist.y}`,
-                                                fill: "none",
-                                                ...stroke
-                                            }),
-                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                                cx: leftWrist.x,
-                                                cy: leftWrist.y,
-                                                r: "9",
-                                                fill: color
-                                            })
-                                        ]
-                                    })
-                                ]
-                            })
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                            transform: `translate(0 ${breathe * 1.8})`,
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                    d: `M140 282 L${leftFootX - 4} 356 L${leftFootX - 2} 404`,
-                                    fill: "none",
-                                    ...stroke
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                    d: `M180 282 L${rightFootX + 4} 356 L${rightFootX + 2} 404`,
-                                    fill: "none",
-                                    ...stroke
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                                    cx: leftFootX - 2,
-                                    cy: 412,
-                                    rx: "20",
-                                    ry: "11",
-                                    fill: color
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                                    cx: rightFootX + 2,
-                                    cy: 412,
-                                    rx: "20",
-                                    ry: "11",
-                                    fill: color
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                    d: "M160 146 C132 146 118 160 114 184 C109 213 116 249 123 282 L197 282 C204 249 211 213 206 184 C202 160 188 146 160 146 Z",
-                                    fill: color
-                                }),
-                                accessory === "tie" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                            d: "M160 156 L151 166 L160 196 L169 166 Z",
-                                            fill: accent
-                                        }),
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                            d: "M160 196 L155 214 L160 246 L165 214 Z",
-                                            fill: accent,
-                                            opacity: 0.85
-                                        })
-                                    ]
-                                }) : null,
-                                accessory === "badge" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: "194",
-                                            cy: "208",
-                                            r: "11",
-                                            fill: accent
-                                        }),
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: "194",
-                                            cy: "208",
-                                            r: "4.5",
-                                            fill: "none",
-                                            stroke: faceColor,
-                                            strokeWidth: "2.5"
-                                        })
-                                    ]
-                                }) : null,
-                                /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                    transform: `translate(${headX} ${headY + bob}) rotate(${headTilt} 160 96)`,
-                                    shapeRendering: "geometricPrecision",
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                                            x: "149",
-                                            y: "120",
-                                            width: "22",
-                                            height: "46",
-                                            rx: "11",
-                                            fill: color
-                                        }),
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: "160",
-                                            cy: "96",
-                                            r: "50",
-                                            fill: color
-                                        })
-                                    ]
-                                })
-                            ]
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
-                            transform: `translate(0 ${bob})`,
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                transform: `rotate(${rightUpper} ${rightShoulder.x} ${rightShoulder.y})`,
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                        d: `M${rightShoulder.x} ${rightShoulder.y} L${rightElbow.x} ${rightElbow.y}`,
-                                        fill: "none",
-                                        ...stroke
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                        transform: `rotate(${rightFore} ${rightElbow.x} ${rightElbow.y})`,
-                                        children: [
-                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                                d: `M${rightElbow.x} ${rightElbow.y} L${rightWrist.x} ${rightWrist.y}`,
-                                                fill: "none",
-                                                ...stroke
-                                            }),
-                                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                                cx: rightWrist.x,
-                                                cy: rightWrist.y,
-                                                r: "9",
-                                                fill: color
-                                            })
-                                        ]
-                                    })
-                                ]
-                            })
-                        })
-                    ]
-                })
-            ]
-        })
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/CharacterStage.tsx
-
-
-
-
-const CharacterStage = ({ characters, theme, layout, isRtl, characterLayout, durationInFrames, sceneIndex })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const visible = characters.slice(0, 3);
-    const direction = characterLayout ?? (layout.isPortrait ? "top-bottom" : "side-by-side");
-    const isRow = direction === "side-by-side";
-    const localTime = frame / fps;
-    const progress = durationInFrames > 0 ? frame / durationInFrames : 0;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            flexDirection: isRow ? "row" : "column",
-            alignItems: "stretch",
-            justifyContent: "center",
-            gap: Math.round(layout.unit * 10),
-            minHeight: 0
-        },
-        children: [
-            visible.map((character, index)=>{
-                const enter = (0,esm/* .spring */.oz)({
-                    frame: frame - Math.round(fps * (0.18 + index * 0.16)),
-                    fps,
-                    config: {
-                        damping: 16,
-                        mass: 0.65,
-                        stiffness: 130
-                    }
-                });
-                const eased = Math.min(1, Math.max(0, enter));
-                const side = character.side === "left" || character.side === "right" ? character.side : index === 0 ? isRtl ? "right" : "left" : isRtl ? "left" : "right";
-                const sway = Math.sin(localTime * 1.4 + index + sceneIndex) * 4;
-                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        position: "relative",
-                        flex: 1,
-                        minWidth: 0,
-                        minHeight: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: theme.card.radius,
-                        background: `linear-gradient(160deg, ${theme_alpha(theme.colors.primary, index === 0 ? 0.1 : 0.05)} 0%, transparent 68%)`,
-                        border: `1px solid ${theme_alpha(theme.colors.primary, 0.18)}`,
-                        overflow: "hidden",
-                        opacity: eased,
-                        transform: `translateY(${(1 - eased) * 24}px) scale(${0.94 + eased * 0.06})`
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "absolute",
-                                inset: 0,
-                                background: `radial-gradient(circle at 50% 35%, ${theme_alpha(theme.colors.primary, 0.16)} 0%, transparent 68%)`,
-                                pointerEvents: "none"
-                            }
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "relative",
-                                width: "100%",
-                                height: "100%",
-                                maxWidth: layout.characterWidth,
-                                transform: `translateX(${sway}px) scaleX(${side === "left" ? 1 : -1})`,
-                                transformOrigin: "50% 70%"
-                            },
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
-                                pose: character.pose ?? "idle",
-                                color: theme.character.body,
-                                faceColor: theme.character.face,
-                                accent: theme.character.accent,
-                                shadow: theme.character.shadow,
-                                accessory: character.accessory ?? "none",
-                                delay: Math.round(fps * (0.22 + index * 0.12))
-                            })
-                        }),
-                        character.label ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "absolute",
-                                bottom: Math.round(layout.unit * 14),
-                                left: "50%",
-                                transform: "translateX(-50%)",
-                                padding: `${Math.round(layout.unit * 5)}px ${Math.round(layout.unit * 16)}px`,
-                                borderRadius: 999,
-                                background: theme_alpha(theme.colors.background, 0.7),
-                                border: `1px solid ${theme_alpha(theme.colors.primary, 0.45)}`,
-                                color: theme.colors.text,
-                                fontFamily: theme.fontFamily,
-                                fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                                fontWeight: 800,
-                                whiteSpace: "nowrap"
-                            },
-                            children: character.label
-                        }) : null
-                    ]
-                }, `staged-character-${index}`);
-            }),
-            visible.length > 1 ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    left: isRow ? "50%" : "8%",
-                    right: isRow ? undefined : "8%",
-                    top: isRow ? "8%" : "50%",
-                    bottom: isRow ? "8%" : undefined,
-                    width: isRow ? Math.max(2, Math.round(layout.unit * 3)) : undefined,
-                    height: isRow ? undefined : Math.max(2, Math.round(layout.unit * 3)),
-                    transform: isRow ? "translateX(-50%)" : "translateY(-50%)",
-                    borderRadius: 999,
-                    background: `linear-gradient(${isRow ? "180deg" : "90deg"}, transparent, ${theme_alpha(theme.colors.primary, 0.6)}, transparent)`,
-                    opacity: 0.65 + Math.sin(localTime * 2 + progress * 4) * 0.2,
-                    pointerEvents: "none"
-                }
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/Icon.tsx
-
-const ICONS = {
-    money: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: "2.5",
-                y: "6",
-                width: "19",
-                height: "12",
-                rx: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M6 9.5v5M18 9.5v5"
-            })
-        ]
-    }),
-    chart: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 20V4"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 20h16"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M7.5 15.5l4-4 3 3 5-6.5"
-            })
-        ]
-    }),
-    heart: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-        d: "M20.8 5.9a5.4 5.4 0 0 0-7.7 0L12 7l-1.1-1.1a5.4 5.4 0 1 0-7.7 7.7L12 22l8.8-8.4a5.4 5.4 0 0 0 0-7.7Z"
-    }),
-    clock: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "9"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 7v5l3.5 2"
-            })
-        ]
-    }),
-    brain: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M9.5 4.5A3 3 0 0 0 6.6 8a3 3 0 0 0-1.3 5.3A3.2 3.2 0 0 0 8 18.6a3 3 0 0 0 4 1.9V4.5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M14.5 4.5A3 3 0 0 1 17.4 8a3 3 0 0 1 1.3 5.3 3.2 3.2 0 0 1-2.7 5.3 3 3 0 0 1-4 1.9V4.5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M9 9h1.5M13.5 9H15M9 13.5h1.5M13.5 13.5H15"
-            })
-        ]
-    }),
-    shield: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 3 4.5 6v5.5c0 4.6 3 7.8 7.5 9.5 4.5-1.7 7.5-4.9 7.5-9.5V6L12 3Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m8.8 12 2.2 2.2 4.2-4.4"
-            })
-        ]
-    }),
-    rocket: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M13.5 4.5c2.9-2.3 6.6-2 6.6-2s.3 3.7-2 6.6l-4.3 5.4-6.3-6.3 6-3.7Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "15.5",
-                cy: "8.5",
-                r: "1.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8.5 15.5 5 19M7 12l-3 1 1 3M12 17l-1 3 3 1"
-            })
-        ]
-    }),
-    target: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "8.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "4.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "1"
-            })
-        ]
-    }),
-    wallet: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M3.5 7.5A2.5 2.5 0 0 1 6 5h11.5A2.5 2.5 0 0 1 20 7.5v10a2.5 2.5 0 0 1-2.5 2.5H6a2.5 2.5 0 0 1-2.5-2.5v-10Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M3.5 8.5h16"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M16 12h4.5v4H16a2 2 0 0 1 0-4Z"
-            })
-        ]
-    }),
-    piggybank: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 13.5c0-3.6 3.4-6.5 7.8-6.5 4.1 0 7.2 2.4 7.2 5.5 0 1.7-1 3.2-2.5 4.2V20h-3v-2h-4v2H6.5v-3.2A6.2 6.2 0 0 1 4 13.5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M17.5 10.5 21 9v4l-2 .8"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M9 5.5 10 4h4l1 1.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8 13h.01"
-            })
-        ]
-    }),
-    trend: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M3 17.5 9 11l3.5 3.5L21 6"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M15.5 6H21v5.5"
-            })
-        ]
-    }),
-    alert: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 3.5 22 20H2L12 3.5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 9v5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 17h.01"
-            })
-        ]
-    }),
-    check: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-        d: "m4.5 12.5 5 5 10-11"
-    }),
-    x: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-        d: "M6 6l12 12M18 6 6 18"
-    }),
-    lock: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: "4.5",
-                y: "10",
-                width: "15",
-                height: "11",
-                rx: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8 10V7.5a4 4 0 0 1 8 0V10"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 14.5v2.5"
-            })
-        ]
-    }),
-    book: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M5 4.5h5a3 3 0 0 1 3 3V20a2.5 2.5 0 0 0-2.5-2.5H5V4.5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M19 4.5h-5a3 3 0 0 0-3 3V20a2.5 2.5 0 0 1 2.5-2.5H19V4.5Z"
-            })
-        ]
-    }),
-    bulb: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M9 17.5h6"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M10 21h4"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8.5 14.5A6 6 0 1 1 15.5 14.5c-.7.6-1 1.4-1 2.5h-5c0-1.1-.3-1.9-1-2.5Z"
-            })
-        ]
-    }),
-    calendar: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: "3.5",
-                y: "5",
-                width: "17",
-                height: "16",
-                rx: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M7.5 3v4M16.5 3v4M3.5 10h17"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8 14h2M14 14h2M8 17.5h2"
-            })
-        ]
-    }),
-    coin: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "8.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "4"
-            })
-        ]
-    }),
-    home: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m3.5 11 8.5-7 8.5 7"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M5.5 9.8V20h13V9.8"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M10 20v-5h4v5"
-            })
-        ]
-    }),
-    car: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m5 12 1.5-4.5A2 2 0 0 1 8.4 6h7.2a2 2 0 0 1 1.9 1.5L19 12"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 12h16v5H4v-5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "7.5",
-                cy: "17.5",
-                r: "1.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "16.5",
-                cy: "17.5",
-                r: "1.5"
-            })
-        ]
-    }),
-    trophy: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8 4h8v4.5a4 4 0 0 1-8 0V4Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M8 5.5H4.5V8a3 3 0 0 0 3.5 3M16 5.5h3.5V8a3 3 0 0 1-3.5 3"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 12.5V17M8.5 20h7M10 17h4"
-            })
-        ]
-    }),
-    globe: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "12",
-                cy: "12",
-                r: "9"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M3 12h18"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 3c2.5 2.5 3.5 5.6 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.6-3.5-9S9.5 5.5 12 3Z"
-            })
-        ]
-    }),
-    users: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "9",
-                cy: "8",
-                r: "3.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M2.5 20v-1.5A5.5 5.5 0 0 1 8 13h2a5.5 5.5 0 0 1 5.5 5.5V20"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M15.5 4.8a3.5 3.5 0 0 1 0 6.4M17 13a5 5 0 0 1 4.5 4.5V20"
-            })
-        ]
-    }),
-    phone: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: "6",
-                y: "2.5",
-                width: "12",
-                height: "19",
-                rx: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M10.5 5.5h3M11 18.5h2"
-            })
-        ]
-    }),
-    star: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-        d: "m12 3 2.7 5.7 6.3.9-4.5 4.4 1 6.2-5.5-3-5.5 3 1-6.2L3 9.6l6.3-.9L12 3Z"
-    }),
-    arrow: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 12h16"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m14 6 6 6-6 6"
-            })
-        ]
-    }),
-    spark: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 3v4M12 17v4M3 12h4M17 12h4"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m6 6 2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"
-            })
-        ]
-    }),
-    scale: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M12 4v16M7 20h10"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 7h16M4 7l-2 5a3 3 0 0 0 6 0L6 7M20 7l-2 5a3 3 0 0 0 6 0l-2-5"
-            })
-        ]
-    }),
-    bank: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m3 9 9-5 9 5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 9h16v2H4V9ZM6 11v6M10 11v6M14 11v6M18 11v6"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M3.5 20h17"
-            })
-        ]
-    }),
-    graduation: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m2.5 9 9.5-5 9.5 5-9.5 5-9.5-5Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M6.5 11.5V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M21.5 9v5"
-            })
-        ]
-    }),
-    coffee: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M17 9h1.5a2.5 2.5 0 0 1 0 5H17"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M7 3v2M11 3v2M15 3v2"
-            })
-        ]
-    }),
-    briefcase: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: "3",
-                y: "7",
-                width: "18",
-                height: "13",
-                rx: "2.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12h18"
-            })
-        ]
-    }),
-    key: /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: "8",
-                cy: "15",
-                r: "3.5"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "m10.5 12.5 8-8M16 4l4 4M14 6l2 2"
-            })
-        ]
-    }),
-    cloud: /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-        d: "M6.5 19A4.5 4.5 0 0 1 6 10a6 6 0 0 1 11.5-1A4 4 0 0 1 18 19H6.5Z"
-    })
-};
-const Icon = ({ name = "spark", size, color = "currentColor", strokeWidth = 1.8 })=>{
-    return /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
-        viewBox: "0 0 24 24",
-        width: size,
-        height: size,
-        fill: "none",
-        stroke: color,
-        strokeWidth: strokeWidth,
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        style: {
-            display: "block",
-            flexShrink: 0
-        },
-        children: ICONS[name] ?? ICONS.spark
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/BulletList.tsx
-
-
-
-
-const BulletList = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const palette = [
-        theme.colors.primary,
-        theme.colors.secondary,
-        theme.colors.success,
-        theme.colors.accent
-    ];
-    const items = el.items.slice(0, 6);
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.35)
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: Math.round(layout.gap * 0.5),
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.95)),
-                    fontWeight: 800,
-                    color: theme.colors.muted,
-                    marginBottom: Math.round(layout.unit * 6)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                        name: el.icon ?? "check",
-                        size: Math.round(layout.unit * 28),
-                        color: theme.colors.primary
-                    }),
-                    el.title
-                ]
-            }) : null,
-            items.map((item, index)=>{
-                const color = palette[index % palette.length];
-                const enter = (0,esm/* .spring */.oz)({
-                    frame: frame - delay - index * Math.round(fps * 0.1),
-                    fps,
-                    config: {
-                        damping: 200,
-                        mass: 0.6,
-                        stiffness: 130
-                    }
-                });
-                const eased = Math.min(1, Math.max(0, enter));
-                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: Math.round(layout.gap * 0.55),
-                        fontFamily: theme.fontFamily,
-                        fontSize: Math.max(30, Math.round(layout.smallSize * 1.05)),
-                        fontWeight: 700,
-                        color: theme.colors.text,
-                        lineHeight: 1.45,
-                        opacity: eased,
-                        translate: `${(1 - eased) * layout.unit * 26}px 0px`
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                            style: {
-                                width: Math.round(layout.unit * 34),
-                                height: Math.round(layout.unit * 34),
-                                borderRadius: "50%",
-                                background: theme_alpha(color, 0.16),
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flexShrink: 0,
-                                marginTop: Math.round(layout.unit * 2)
-                            },
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                name: "check",
-                                size: Math.round(layout.unit * 19),
-                                color: color,
-                                strokeWidth: 2.6
-                            })
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                            style: {
-                                minWidth: 0
-                            },
-                            children: item
-                        })
-                    ]
-                }, `${item}-${index}`);
-            })
-        ]
-    });
-};
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(6540);
-;// CONCATENATED MODULE: ./node_modules/@remotion/paths/dist/esm/index.mjs
-// src/helpers/bezier-values.ts
-var tValues = [
-  [],
-  [],
-  [
-    -0.5773502691896257,
-    0.5773502691896257
-  ],
-  [
-    0,
-    -0.7745966692414834,
-    0.7745966692414834
-  ],
-  [
-    -0.33998104358485626,
-    0.33998104358485626,
-    -0.8611363115940526,
-    0.8611363115940526
-  ],
-  [
-    0,
-    -0.5384693101056831,
-    0.5384693101056831,
-    -0.906179845938664,
-    0.906179845938664
-  ],
-  [
-    0.6612093864662645,
-    -0.6612093864662645,
-    -0.2386191860831969,
-    0.2386191860831969,
-    -0.932469514203152,
-    0.932469514203152
-  ],
-  [
-    0,
-    0.4058451513773972,
-    -0.4058451513773972,
-    -0.7415311855993945,
-    0.7415311855993945,
-    -0.9491079123427585,
-    0.9491079123427585
-  ],
-  [
-    -0.1834346424956498,
-    0.1834346424956498,
-    -0.525532409916329,
-    0.525532409916329,
-    -0.7966664774136267,
-    0.7966664774136267,
-    -0.9602898564975363,
-    0.9602898564975363
-  ],
-  [
-    0,
-    -0.8360311073266358,
-    0.8360311073266358,
-    -0.9681602395076261,
-    0.9681602395076261,
-    -0.3242534234038089,
-    0.3242534234038089,
-    -0.6133714327005904,
-    0.6133714327005904
-  ],
-  [
-    -0.14887433898163122,
-    0.14887433898163122,
-    -0.4333953941292472,
-    0.4333953941292472,
-    -0.6794095682990244,
-    0.6794095682990244,
-    -0.8650633666889845,
-    0.8650633666889845,
-    -0.9739065285171717,
-    0.9739065285171717
-  ],
-  [
-    0,
-    -0.26954315595234496,
-    0.26954315595234496,
-    -0.5190961292068118,
-    0.5190961292068118,
-    -0.7301520055740494,
-    0.7301520055740494,
-    -0.8870625997680953,
-    0.8870625997680953,
-    -0.978228658146057,
-    0.978228658146057
-  ],
-  [
-    -0.1252334085114689,
-    0.1252334085114689,
-    -0.3678314989981802,
-    0.3678314989981802,
-    -0.5873179542866175,
-    0.5873179542866175,
-    -0.7699026741943047,
-    0.7699026741943047,
-    -0.9041172563704749,
-    0.9041172563704749,
-    -0.9815606342467192,
-    0.9815606342467192
-  ],
-  [
-    0,
-    -0.2304583159551348,
-    0.2304583159551348,
-    -0.44849275103644687,
-    0.44849275103644687,
-    -0.6423493394403402,
-    0.6423493394403402,
-    -0.8015780907333099,
-    0.8015780907333099,
-    -0.9175983992229779,
-    0.9175983992229779,
-    -0.9841830547185881,
-    0.9841830547185881
-  ],
-  [
-    -0.10805494870734367,
-    0.10805494870734367,
-    -0.31911236892788974,
-    0.31911236892788974,
-    -0.5152486363581541,
-    0.5152486363581541,
-    -0.6872929048116855,
-    0.6872929048116855,
-    -0.827201315069765,
-    0.827201315069765,
-    -0.9284348836635735,
-    0.9284348836635735,
-    -0.9862838086968123,
-    0.9862838086968123
-  ],
-  [
-    0,
-    -0.20119409399743451,
-    0.20119409399743451,
-    -0.3941513470775634,
-    0.3941513470775634,
-    -0.5709721726085388,
-    0.5709721726085388,
-    -0.7244177313601701,
-    0.7244177313601701,
-    -0.8482065834104272,
-    0.8482065834104272,
-    -0.937273392400706,
-    0.937273392400706,
-    -0.9879925180204854,
-    0.9879925180204854
-  ],
-  [
-    -0.09501250983763744,
-    0.09501250983763744,
-    -0.2816035507792589,
-    0.2816035507792589,
-    -0.45801677765722737,
-    0.45801677765722737,
-    -0.6178762444026438,
-    0.6178762444026438,
-    -0.755404408355003,
-    0.755404408355003,
-    -0.8656312023878318,
-    0.8656312023878318,
-    -0.9445750230732326,
-    0.9445750230732326,
-    -0.9894009349916499,
-    0.9894009349916499
-  ],
-  [
-    0,
-    -0.17848418149584785,
-    0.17848418149584785,
-    -0.3512317634538763,
-    0.3512317634538763,
-    -0.5126905370864769,
-    0.5126905370864769,
-    -0.6576711592166907,
-    0.6576711592166907,
-    -0.7815140038968014,
-    0.7815140038968014,
-    -0.8802391537269859,
-    0.8802391537269859,
-    -0.9506755217687678,
-    0.9506755217687678,
-    -0.9905754753144174,
-    0.9905754753144174
-  ],
-  [
-    -0.0847750130417353,
-    0.0847750130417353,
-    -0.2518862256915055,
-    0.2518862256915055,
-    -0.41175116146284263,
-    0.41175116146284263,
-    -0.5597708310739475,
-    0.5597708310739475,
-    -0.6916870430603532,
-    0.6916870430603532,
-    -0.8037049589725231,
-    0.8037049589725231,
-    -0.8926024664975557,
-    0.8926024664975557,
-    -0.9558239495713977,
-    0.9558239495713977,
-    -0.9915651684209309,
-    0.9915651684209309
-  ],
-  [
-    0,
-    -0.16035864564022537,
-    0.16035864564022537,
-    -0.31656409996362983,
-    0.31656409996362983,
-    -0.46457074137596094,
-    0.46457074137596094,
-    -0.600545304661681,
-    0.600545304661681,
-    -0.7209661773352294,
-    0.7209661773352294,
-    -0.8227146565371428,
-    0.8227146565371428,
-    -0.9031559036148179,
-    0.9031559036148179,
-    -0.96020815213483,
-    0.96020815213483,
-    -0.9924068438435844,
-    0.9924068438435844
-  ],
-  [
-    -0.07652652113349734,
-    0.07652652113349734,
-    -0.22778585114164507,
-    0.22778585114164507,
-    -0.37370608871541955,
-    0.37370608871541955,
-    -0.5108670019508271,
-    0.5108670019508271,
-    -0.636053680726515,
-    0.636053680726515,
-    -0.7463319064601508,
-    0.7463319064601508,
-    -0.8391169718222188,
-    0.8391169718222188,
-    -0.912234428251326,
-    0.912234428251326,
-    -0.9639719272779138,
-    0.9639719272779138,
-    -0.9931285991850949,
-    0.9931285991850949
-  ],
-  [
-    0,
-    -0.1455618541608951,
-    0.1455618541608951,
-    -0.2880213168024011,
-    0.2880213168024011,
-    -0.4243421202074388,
-    0.4243421202074388,
-    -0.5516188358872198,
-    0.5516188358872198,
-    -0.6671388041974123,
-    0.6671388041974123,
-    -0.7684399634756779,
-    0.7684399634756779,
-    -0.8533633645833173,
-    0.8533633645833173,
-    -0.9200993341504008,
-    0.9200993341504008,
-    -0.9672268385663063,
-    0.9672268385663063,
-    -0.9937521706203895,
-    0.9937521706203895
-  ],
-  [
-    -0.06973927331972223,
-    0.06973927331972223,
-    -0.20786042668822127,
-    0.20786042668822127,
-    -0.34193582089208424,
-    0.34193582089208424,
-    -0.469355837986757,
-    0.469355837986757,
-    -0.5876404035069116,
-    0.5876404035069116,
-    -0.6944872631866827,
-    0.6944872631866827,
-    -0.7878168059792081,
-    0.7878168059792081,
-    -0.8658125777203002,
-    0.8658125777203002,
-    -0.926956772187174,
-    0.926956772187174,
-    -0.9700604978354287,
-    0.9700604978354287,
-    -0.9942945854823992,
-    0.9942945854823992
-  ],
-  [
-    0,
-    -0.1332568242984661,
-    0.1332568242984661,
-    -0.26413568097034495,
-    0.26413568097034495,
-    -0.3903010380302908,
-    0.3903010380302908,
-    -0.5095014778460075,
-    0.5095014778460075,
-    -0.6196098757636461,
-    0.6196098757636461,
-    -0.7186613631319502,
-    0.7186613631319502,
-    -0.8048884016188399,
-    0.8048884016188399,
-    -0.8767523582704416,
-    0.8767523582704416,
-    -0.9329710868260161,
-    0.9329710868260161,
-    -0.9725424712181152,
-    0.9725424712181152,
-    -0.9947693349975522,
-    0.9947693349975522
-  ],
-  [
-    -0.06405689286260563,
-    0.06405689286260563,
-    -0.1911188674736163,
-    0.1911188674736163,
-    -0.3150426796961634,
-    0.3150426796961634,
-    -0.4337935076260451,
-    0.4337935076260451,
-    -0.5454214713888396,
-    0.5454214713888396,
-    -0.6480936519369755,
-    0.6480936519369755,
-    -0.7401241915785544,
-    0.7401241915785544,
-    -0.820001985973903,
-    0.820001985973903,
-    -0.8864155270044011,
-    0.8864155270044011,
-    -0.9382745520027328,
-    0.9382745520027328,
-    -0.9747285559713095,
-    0.9747285559713095,
-    -0.9951872199970213,
-    0.9951872199970213
-  ]
-];
-var cValues = [
-  [],
-  [],
-  [1, 1],
-  [
-    0.8888888888888888,
-    0.5555555555555556,
-    0.5555555555555556
-  ],
-  [
-    0.6521451548625461,
-    0.6521451548625461,
-    0.34785484513745385,
-    0.34785484513745385
-  ],
-  [
-    0.5688888888888889,
-    0.47862867049936647,
-    0.47862867049936647,
-    0.23692688505618908,
-    0.23692688505618908
-  ],
-  [
-    0.3607615730481386,
-    0.3607615730481386,
-    0.46791393457269104,
-    0.46791393457269104,
-    0.17132449237917036,
-    0.17132449237917036
-  ],
-  [
-    0.4179591836734694,
-    0.3818300505051189,
-    0.3818300505051189,
-    0.27970539148927664,
-    0.27970539148927664,
-    0.1294849661688697,
-    0.1294849661688697
-  ],
-  [
-    0.362683783378362,
-    0.362683783378362,
-    0.31370664587788727,
-    0.31370664587788727,
-    0.22238103445337448,
-    0.22238103445337448,
-    0.10122853629037626,
-    0.10122853629037626
-  ],
-  [
-    0.3302393550012598,
-    0.1806481606948574,
-    0.1806481606948574,
-    0.08127438836157441,
-    0.08127438836157441,
-    0.31234707704000286,
-    0.31234707704000286,
-    0.26061069640293544,
-    0.26061069640293544
-  ],
-  [
-    0.29552422471475287,
-    0.29552422471475287,
-    0.26926671930999635,
-    0.26926671930999635,
-    0.21908636251598204,
-    0.21908636251598204,
-    0.1494513491505806,
-    0.1494513491505806,
-    0.06667134430868814,
-    0.06667134430868814
-  ],
-  [
-    0.2729250867779006,
-    0.26280454451024665,
-    0.26280454451024665,
-    0.23319376459199048,
-    0.23319376459199048,
-    0.18629021092773426,
-    0.18629021092773426,
-    0.1255803694649046,
-    0.1255803694649046,
-    0.05566856711617366,
-    0.05566856711617366
-  ],
-  [
-    0.24914704581340277,
-    0.24914704581340277,
-    0.2334925365383548,
-    0.2334925365383548,
-    0.20316742672306592,
-    0.20316742672306592,
-    0.16007832854334622,
-    0.16007832854334622,
-    0.10693932599531843,
-    0.10693932599531843,
-    0.04717533638651183,
-    0.04717533638651183
-  ],
-  [
-    0.2325515532308739,
-    0.22628318026289723,
-    0.22628318026289723,
-    0.2078160475368885,
-    0.2078160475368885,
-    0.17814598076194574,
-    0.17814598076194574,
-    0.13887351021978725,
-    0.13887351021978725,
-    0.09212149983772845,
-    0.09212149983772845,
-    0.04048400476531588,
-    0.04048400476531588
-  ],
-  [
-    0.2152638534631578,
-    0.2152638534631578,
-    0.2051984637212956,
-    0.2051984637212956,
-    0.18553839747793782,
-    0.18553839747793782,
-    0.15720316715819355,
-    0.15720316715819355,
-    0.12151857068790319,
-    0.12151857068790319,
-    0.08015808715976021,
-    0.08015808715976021,
-    0.03511946033175186,
-    0.03511946033175186
-  ],
-  [
-    0.2025782419255613,
-    0.19843148532711158,
-    0.19843148532711158,
-    0.1861610000155622,
-    0.1861610000155622,
-    0.16626920581699392,
-    0.16626920581699392,
-    0.13957067792615432,
-    0.13957067792615432,
-    0.10715922046717194,
-    0.10715922046717194,
-    0.07036604748810812,
-    0.07036604748810812,
-    0.03075324199611727,
-    0.03075324199611727
-  ],
-  [
-    0.1894506104550685,
-    0.1894506104550685,
-    0.18260341504492358,
-    0.18260341504492358,
-    0.16915651939500254,
-    0.16915651939500254,
-    0.14959598881657674,
-    0.14959598881657674,
-    0.12462897125553388,
-    0.12462897125553388,
-    0.09515851168249279,
-    0.09515851168249279,
-    0.062253523938647894,
-    0.062253523938647894,
-    0.027152459411754096,
-    0.027152459411754096
-  ],
-  [
-    0.17944647035620653,
-    0.17656270536699264,
-    0.17656270536699264,
-    0.16800410215645004,
-    0.16800410215645004,
-    0.15404576107681028,
-    0.15404576107681028,
-    0.13513636846852548,
-    0.13513636846852548,
-    0.11188384719340397,
-    0.11188384719340397,
-    0.08503614831717918,
-    0.08503614831717918,
-    0.0554595293739872,
-    0.0554595293739872,
-    0.02414830286854793,
-    0.02414830286854793
-  ],
-  [
-    0.1691423829631436,
-    0.1691423829631436,
-    0.16427648374583273,
-    0.16427648374583273,
-    0.15468467512626524,
-    0.15468467512626524,
-    0.14064291467065065,
-    0.14064291467065065,
-    0.12255520671147846,
-    0.12255520671147846,
-    0.10094204410628717,
-    0.10094204410628717,
-    0.07642573025488905,
-    0.07642573025488905,
-    0.0497145488949698,
-    0.0497145488949698,
-    0.02161601352648331,
-    0.02161601352648331
-  ],
-  [
-    0.1610544498487837,
-    0.15896884339395434,
-    0.15896884339395434,
-    0.15276604206585967,
-    0.15276604206585967,
-    0.1426067021736066,
-    0.1426067021736066,
-    0.12875396253933621,
-    0.12875396253933621,
-    0.11156664554733399,
-    0.11156664554733399,
-    0.09149002162245,
-    0.09149002162245,
-    0.06904454273764123,
-    0.06904454273764123,
-    0.0448142267656996,
-    0.0448142267656996,
-    0.019461788229726478,
-    0.019461788229726478
-  ],
-  [
-    0.15275338713072584,
-    0.15275338713072584,
-    0.14917298647260374,
-    0.14917298647260374,
-    0.14209610931838204,
-    0.14209610931838204,
-    0.13168863844917664,
-    0.13168863844917664,
-    0.11819453196151841,
-    0.11819453196151841,
-    0.10193011981724044,
-    0.10193011981724044,
-    0.08327674157670475,
-    0.08327674157670475,
-    0.06267204833410907,
-    0.06267204833410907,
-    0.04060142980038694,
-    0.04060142980038694,
-    0.017614007139152118,
-    0.017614007139152118
-  ],
-  [
-    0.14608113364969041,
-    0.14452440398997005,
-    0.14452440398997005,
-    0.13988739479107315,
-    0.13988739479107315,
-    0.13226893863333747,
-    0.13226893863333747,
-    0.12183141605372853,
-    0.12183141605372853,
-    0.10879729916714838,
-    0.10879729916714838,
-    0.09344442345603386,
-    0.09344442345603386,
-    0.0761001136283793,
-    0.0761001136283793,
-    0.057134425426857205,
-    0.057134425426857205,
-    0.036953789770852494,
-    0.036953789770852494,
-    0.016017228257774335,
-    0.016017228257774335
-  ],
-  [
-    0.13925187285563198,
-    0.13925187285563198,
-    0.13654149834601517,
-    0.13654149834601517,
-    0.13117350478706238,
-    0.13117350478706238,
-    0.12325237681051242,
-    0.12325237681051242,
-    0.11293229608053922,
-    0.11293229608053922,
-    0.10041414444288096,
-    0.10041414444288096,
-    0.08594160621706773,
-    0.08594160621706773,
-    0.06979646842452049,
-    0.06979646842452049,
-    0.052293335152683286,
-    0.052293335152683286,
-    0.03377490158481415,
-    0.03377490158481415,
-    0.0146279952982722,
-    0.0146279952982722
-  ],
-  [
-    0.13365457218610619,
-    0.1324620394046966,
-    0.1324620394046966,
-    0.12890572218808216,
-    0.12890572218808216,
-    0.12304908430672953,
-    0.12304908430672953,
-    0.11499664022241136,
-    0.11499664022241136,
-    0.10489209146454141,
-    0.10489209146454141,
-    0.09291576606003515,
-    0.09291576606003515,
-    0.07928141177671895,
-    0.07928141177671895,
-    0.06423242140852585,
-    0.06423242140852585,
-    0.04803767173108467,
-    0.04803767173108467,
-    0.030988005856979445,
-    0.030988005856979445,
-    0.013411859487141771,
-    0.013411859487141771
-  ],
-  [
-    0.12793819534675216,
-    0.12793819534675216,
-    0.1258374563468283,
-    0.1258374563468283,
-    0.12167047292780339,
-    0.12167047292780339,
-    0.1155056680537256,
-    0.1155056680537256,
-    0.10744427011596563,
-    0.10744427011596563,
-    0.09761865210411388,
-    0.09761865210411388,
-    0.08619016153195327,
-    0.08619016153195327,
-    0.0733464814110803,
-    0.0733464814110803,
-    0.05929858491543678,
-    0.05929858491543678,
-    0.04427743881741981,
-    0.04427743881741981,
-    0.028531388628933663,
-    0.028531388628933663,
-    0.0123412297999872,
-    0.0123412297999872
-  ]
-];
-
-// src/helpers/bezier-functions.ts
-var cubicPoint = (xs, ys, t) => {
-  const x = (1 - t) * (1 - t) * (1 - t) * xs[0] + 3 * (1 - t) * (1 - t) * t * xs[1] + 3 * (1 - t) * t * t * xs[2] + t * t * t * xs[3];
-  const y = (1 - t) * (1 - t) * (1 - t) * ys[0] + 3 * (1 - t) * (1 - t) * t * ys[1] + 3 * (1 - t) * t * t * ys[2] + t * t * t * ys[3];
-  return { x, y };
-};
-var getCubicArcLength = ({
-  sx,
-  sy,
-  t
-}) => {
-  const v0x = 3 * (sx[1] - sx[0]);
-  const v1x = 3 * (sx[2] - sx[1]);
-  const v2x = 3 * (sx[3] - sx[2]);
-  const v0y = 3 * (sy[1] - sy[0]);
-  const v1y = 3 * (sy[2] - sy[1]);
-  const v2y = 3 * (sy[3] - sy[2]);
-  let correctedT;
-  const n = 20;
-  const z = t / 2;
-  let sum = 0;
-  for (let i = 0;i < n; i++) {
-    correctedT = z * tValues[n][i] + z;
-    const mt = 1 - correctedT;
-    const xbase = mt * mt * v0x + 2 * mt * correctedT * v1x + correctedT * correctedT * v2x;
-    const ybase = mt * mt * v0y + 2 * mt * correctedT * v1y + correctedT * correctedT * v2y;
-    sum += cValues[n][i] * Math.sqrt(xbase * xbase + ybase * ybase);
-  }
-  return z * sum;
-};
-var quadraticPoint = (xs, ys, t) => {
-  const x = (1 - t) * (1 - t) * xs[0] + 2 * (1 - t) * t * xs[1] + t * t * xs[2];
-  const y = (1 - t) * (1 - t) * ys[0] + 2 * (1 - t) * t * ys[1] + t * t * ys[2];
-  return { x, y };
-};
-var cubicDerivative = (xs, ys, t) => {
-  const v0x = 3 * (xs[1] - xs[0]);
-  const v1x = 3 * (xs[2] - xs[1]);
-  const v2x = 3 * (xs[3] - xs[2]);
-  const v0y = 3 * (ys[1] - ys[0]);
-  const v1y = 3 * (ys[2] - ys[1]);
-  const v2y = 3 * (ys[3] - ys[2]);
-  const mt = 1 - t;
-  return {
-    x: mt * mt * v0x + 2 * mt * t * v1x + t * t * v2x,
-    y: mt * mt * v0y + 2 * mt * t * v1y + t * t * v2y
-  };
-};
-var getQuadraticArcLength = (xs, ys, t) => {
-  if (t === undefined) {
-    t = 1;
-  }
-  const ax = xs[0] - 2 * xs[1] + xs[2];
-  const ay = ys[0] - 2 * ys[1] + ys[2];
-  const bx = 2 * xs[1] - 2 * xs[0];
-  const by = 2 * ys[1] - 2 * ys[0];
-  const A = 4 * (ax * ax + ay * ay);
-  const B = 4 * (ax * bx + ay * by);
-  const C = bx * bx + by * by;
-  if (A === 0) {
-    return t * Math.sqrt((xs[2] - xs[0]) ** 2 + (ys[2] - ys[0]) ** 2);
-  }
-  const b = B / (2 * A);
-  const c = C / A;
-  const u = t + b;
-  const k = c - b * b;
-  const uuk = u * u + k > 0 ? Math.sqrt(u * u + k) : 0;
-  const bbk = b * b + k > 0 ? Math.sqrt(b * b + k) : 0;
-  const term = b + Math.sqrt(b * b + k) === 0 ? 0 : k * Math.log(Math.abs((u + uuk) / (b + bbk)));
-  return Math.sqrt(A) / 2 * (u * uuk - b * bbk + term);
-};
-var quadraticDerivative = (xs, ys, t) => {
-  return {
-    x: (1 - t) * 2 * (xs[1] - xs[0]) + t * 2 * (xs[2] - xs[1]),
-    y: (1 - t) * 2 * (ys[1] - ys[0]) + t * 2 * (ys[2] - ys[1])
-  };
-};
-var t2length = ({
-  length,
-  totalLength,
-  func
-}) => {
-  let error = 1;
-  let t = length / totalLength;
-  let step = (length - func(t)) / totalLength;
-  let numIterations = 0;
-  while (error > 0.001) {
-    const increasedTLength = func(t + step);
-    const increasedTError = Math.abs(length - increasedTLength) / totalLength;
-    if (increasedTError < error) {
-      error = increasedTError;
-      t += step;
-    } else {
-      const decreasedTLength = func(t - step);
-      const decreasedTError = Math.abs(length - decreasedTLength) / totalLength;
-      if (decreasedTError < error) {
-        error = decreasedTError;
-        t -= step;
-      } else {
-        step /= 2;
-      }
-    }
-    numIterations++;
-    if (numIterations > 500) {
-      break;
-    }
-  }
-  return t;
-};
-
-// src/cut-instruction.ts
-var cutLInstruction = ({
-  instruction,
-  lastPoint,
-  progress
-}) => {
-  const x = lastPoint.x + (instruction.x - lastPoint.x) * progress;
-  const y = lastPoint.y + (instruction.y - lastPoint.y) * progress;
-  return {
-    type: "L",
-    x,
-    y
-  };
-};
-function interpolatePoint(pA, pB, factor) {
-  return {
-    x: pA.x + (pB.x - pA.x) * factor,
-    y: pA.y + (pB.y - pA.y) * factor
-  };
-}
-function cutCInstruction({
-  progress,
-  lastPoint,
-  instruction
-}) {
-  const p0 = { x: lastPoint.x, y: lastPoint.y };
-  const p1 = { x: instruction.cp1x, y: instruction.cp1y };
-  const p2 = { x: instruction.cp2x, y: instruction.cp2y };
-  const p3 = { x: instruction.x, y: instruction.y };
-  const sx = [p0.x, p1.x, p2.x, p3.x];
-  const sy = [p0.y, p1.y, p2.y, p3.y];
-  const totalLength = getCubicArcLength({ sx, sy, t: 1 });
-  const u = t2length({
-    length: progress * totalLength,
-    totalLength,
-    func: (t) => getCubicArcLength({ sx, sy, t })
-  });
-  const p01 = interpolatePoint(p0, p1, u);
-  const p12 = interpolatePoint(p1, p2, u);
-  const p23 = interpolatePoint(p2, p3, u);
-  const p012 = interpolatePoint(p01, p12, u);
-  const p123 = interpolatePoint(p12, p23, u);
-  const p0123 = interpolatePoint(p012, p123, u);
-  return {
-    type: "C",
-    cp1x: p01.x,
-    cp1y: p01.y,
-    cp2x: p012.x,
-    cp2y: p012.y,
-    x: p0123.x,
-    y: p0123.y
-  };
-}
-var cutInstruction = ({
-  instruction,
-  lastPoint,
-  progress
-}) => {
-  if (instruction.type === "M") {
-    return instruction;
-  }
-  if (instruction.type === "L") {
-    return cutLInstruction({ instruction, lastPoint, progress });
-  }
-  if (instruction.type === "C") {
-    return cutCInstruction({ instruction, lastPoint, progress });
-  }
-  if (instruction.type === "Z") {
-    return instruction;
-  }
-  throw new TypeError(`${instruction.type} is not supported.`);
-};
-
-// src/helpers/bezier.ts
-var makeQuadratic = ({
-  startX,
-  startY,
-  cpx,
-  cpy,
-  x,
-  y
-}) => {
-  const a = { x: startX, y: startY };
-  const b = { x: cpx, y: cpy };
-  const c = { x, y };
-  const length = getQuadraticArcLength([a.x, b.x, c.x, 0], [a.y, b.y, c.y, 0], 1);
-  const getTotalLength = () => {
-    return length;
-  };
-  const getPointAtLength = (len) => {
-    const xs = [a.x, b.x, c.x, 0];
-    const xy = [a.y, b.y, c.y, 0];
-    const t = t2length({
-      length: len,
-      totalLength: length,
-      func: (i) => getQuadraticArcLength(xs, xy, i)
-    });
-    return quadraticPoint(xs, xy, t);
-  };
-  const getTangentAtLength = (len) => {
-    const xs = [a.x, b.x, c.x, 0];
-    const xy = [a.y, b.y, c.y, 0];
-    const t = t2length({
-      length: len,
-      totalLength: length,
-      func: (i) => getQuadraticArcLength(xs, xy, i)
-    });
-    const derivative = quadraticDerivative(xs, xy, t);
-    const mdl = Math.sqrt(derivative.x * derivative.x + derivative.y * derivative.y);
-    let tangent;
-    if (mdl > 0) {
-      tangent = { x: derivative.x / mdl, y: derivative.y / mdl };
-    } else {
-      tangent = { x: 0, y: 0 };
-    }
-    return tangent;
-  };
-  const getC = () => {
-    return c;
-  };
-  return {
-    getPointAtLength,
-    getTangentAtLength,
-    getTotalLength,
-    getC,
-    type: "quadratic-bezier",
-    getD: () => ({ x: 0, y: 0 })
-  };
-};
-var makeCubic = ({
-  startX,
-  startY,
-  cp1x,
-  cp1y,
-  cp2x,
-  cp2y,
-  x,
-  y
-}) => {
-  const a = { x: startX, y: startY };
-  const b = { x: cp1x, y: cp1y };
-  const c = { x: cp2x, y: cp2y };
-  const d = { x, y };
-  const length = getCubicArcLength({
-    sx: [a.x, b.x, c.x, d.x],
-    sy: [a.y, b.y, c.y, d.y],
-    t: 1
-  });
-  const getTotalLength = () => {
-    return length;
-  };
-  const getPointAtLength = (len) => {
-    const sx = [a.x, b.x, c.x, d.x];
-    const sy = [a.y, b.y, c.y, d.y];
-    const t = t2length({
-      length: len,
-      totalLength: length,
-      func: (i) => {
-        return getCubicArcLength({ sx, sy, t: i });
-      }
-    });
-    return cubicPoint(sx, sy, t);
-  };
-  const getTangentAtLength = (len) => {
-    const xs = [a.x, b.x, c.x, d.x];
-    const xy = [a.y, b.y, c.y, d.y];
-    const t = t2length({
-      length: len,
-      totalLength: length,
-      func: (i) => getCubicArcLength({ sx: xs, sy: xy, t: i })
-    });
-    const derivative = cubicDerivative(xs, xy, t);
-    const mdl = Math.sqrt(derivative.x * derivative.x + derivative.y * derivative.y);
-    let tangent;
-    if (mdl > 0) {
-      tangent = { x: derivative.x / mdl, y: derivative.y / mdl };
-    } else {
-      tangent = { x: 0, y: 0 };
-    }
-    return tangent;
-  };
-  const getC = () => {
-    return c;
-  };
-  const getD = () => {
-    return d;
-  };
-  return {
-    getPointAtLength,
-    getTangentAtLength,
-    getTotalLength,
-    getC,
-    getD,
-    type: "cubic-bezier"
-  };
-};
-
-// src/helpers/linear.ts
-var makeLinearPosition = ({
-  x0,
-  x1,
-  y0,
-  y1
-}) => {
-  return {
-    getTotalLength: () => {
-      return Math.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2);
-    },
-    getPointAtLength: (pos) => {
-      let fraction = pos / Math.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2);
-      fraction = Number.isNaN(fraction) ? 1 : fraction;
-      const newDeltaX = (x1 - x0) * fraction;
-      const newDeltaY = (y1 - y0) * fraction;
-      return { x: x0 + newDeltaX, y: y0 + newDeltaY };
-    },
-    getTangentAtLength: () => {
-      const module = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-      return { x: (x1 - x0) / module, y: (y1 - y0) / module };
-    },
-    type: "linear"
-  };
-};
-
-// src/helpers/reduced-analysis.ts
-var conductAnalysis = (instructions) => {
-  let currentPoint = { x: 0, y: 0 };
-  let moveStart = { x: 0, y: 0 };
-  const segments = [];
-  for (let i = 0;i < instructions.length; i++) {
-    const instruction = instructions[i];
-    if (instruction.type === "M") {
-      currentPoint = { x: instruction.x, y: instruction.y };
-      moveStart = { x: currentPoint.x, y: currentPoint.y };
-      segments.push({
-        startPoint: { x: instruction.x, y: instruction.y },
-        instructionsAndInfo: [
-          {
-            instruction,
-            function: null,
-            length: 0,
-            startPoint: currentPoint
-          }
-        ]
-      });
-    }
-    if (instruction.type === "L") {
-      if (segments.length > 0) {
-        const length = Math.sqrt((currentPoint.x - instruction.x) ** 2 + (currentPoint.y - instruction.y) ** 2);
-        segments[segments.length - 1].instructionsAndInfo.push({
-          instruction,
-          length,
-          function: makeLinearPosition({
-            x0: currentPoint.x,
-            x1: instruction.x,
-            y0: currentPoint.y,
-            y1: instruction.y
-          }),
-          startPoint: currentPoint
-        });
-      }
-      currentPoint = { x: instruction.x, y: instruction.y };
-    }
-    if (instruction.type === "Z") {
-      if (segments.length > 0) {
-        const length = Math.sqrt((segments[segments.length - 1].startPoint.x - currentPoint.x) ** 2 + (segments[segments.length - 1].startPoint.y - currentPoint.y) ** 2);
-        segments[segments.length - 1].instructionsAndInfo.push({
-          instruction,
-          function: makeLinearPosition({
-            x0: currentPoint.x,
-            x1: moveStart.x,
-            y0: currentPoint.y,
-            y1: moveStart.y
-          }),
-          length,
-          startPoint: { ...currentPoint }
-        });
-      }
-      currentPoint = { x: moveStart.x, y: moveStart.y };
-    }
-    if (instruction.type === "C") {
-      const curve = makeCubic({
-        startX: currentPoint.x,
-        startY: currentPoint.y,
-        cp1x: instruction.cp1x,
-        cp1y: instruction.cp1y,
-        cp2x: instruction.cp2x,
-        cp2y: instruction.cp2y,
-        x: instruction.x,
-        y: instruction.y
-      });
-      const length = curve.getTotalLength();
-      if (segments.length > 0) {
-        segments[segments.length - 1].instructionsAndInfo.push({
-          instruction,
-          length,
-          function: curve,
-          startPoint: { ...currentPoint }
-        });
-      }
-      currentPoint = { x: instruction.x, y: instruction.y };
-    }
-  }
-  return segments;
-};
-
-// src/parse-path.ts
-var esm_length = {
-  a: 7,
-  A: 7,
-  C: 6,
-  c: 6,
-  H: 1,
-  h: 1,
-  L: 2,
-  l: 2,
-  M: 2,
-  m: 2,
-  Q: 4,
-  q: 4,
-  S: 4,
-  s: 4,
-  T: 2,
-  t: 2,
-  V: 1,
-  v: 1,
-  Z: 0,
-  z: 0
-};
-var chunkExact = (array, instruction) => {
-  const chunks = [];
-  const expectedSize = esm_length[instruction];
-  if (array.length % expectedSize !== 0) {
-    throw new Error(`Expected number of arguments of SVG instruction "${instruction} ${array.join(" ")}" to be a multiple of ${expectedSize}`);
-  }
-  for (let i = 0;i < array.length; i += expectedSize) {
-    chunks.push(array.slice(i, i + expectedSize));
-  }
-  return chunks;
-};
-var makeInstructions = (arr, instruction, cb) => {
-  return chunkExact(arr, instruction).map((args) => {
-    return cb(args);
-  });
-};
-var segmentRegExp = /([astvzqmhlc])([^astvzqmhlc]*)/gi;
-var numberRegExp = /-?[0-9]*\.?[0-9]+(?:e[-+]?\d+)?/gi;
-var arcNumberRegExp = /[\s,]*([-+]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:e[-+]?\d+)?)/iy;
-var arcFlagRegExp = /[\s,]*([01])/y;
-var parseValues = (args, instructionType) => {
-  let numbers;
-  if (instructionType === "A" || instructionType === "a") {
-    numbers = [];
-    let match;
-    let lastIndex = 0;
-    do {
-      const regExp = numbers.length % 7 === 3 || numbers.length % 7 === 4 ? arcFlagRegExp : arcNumberRegExp;
-      regExp.lastIndex = lastIndex;
-      match = regExp.exec(args);
-      if (match) {
-        numbers.push(match[1]);
-        lastIndex = regExp.lastIndex;
-      }
-    } while (match);
-    const rest = args.slice(lastIndex);
-    if (!/^[\s,]*$/.test(rest)) {
-      throw new Error(`Malformed path data: ${instructionType} has an invalid value at "${rest.trim()}"`);
-    }
-  } else {
-    numbers = args.match(numberRegExp);
-  }
-  if (!numbers || numbers.length === 0) {
-    if (instructionType === "Z" || instructionType === "z") {
-      return [];
-    }
-    throw new Error(`Malformed path data: ${instructionType} was expected to have numbers afterwards`);
-  }
-  const expectedArguments = esm_length[instructionType];
-  if (numbers.length % expectedArguments !== 0) {
-    throw new Error(`Malformed path data: ${instructionType} was expected to have a multiple of ${expectedArguments} numbers, but got "${instructionType} ${numbers.join(" ")} instead"`);
-  }
-  return numbers.map(Number);
-};
-var parsePath = (path) => {
-  if (!path) {
-    throw new Error("No path provided");
-  }
-  const segments = path.match(segmentRegExp);
-  if (!segments) {
-    throw new Error(`No path elements found in string ${path}`);
-  }
-  return segments.map((segmentString) => {
-    const command = segmentString.charAt(0);
-    const args = parseValues(segmentString.substring(1), command);
-    if (command === "M" && args.length > 2) {
-      const segmentsArray = [];
-      segmentsArray.push({
-        type: command,
-        x: args[0],
-        y: args[1]
-      });
-      segmentsArray.push(...makeInstructions(args.slice(2), "L", (numbers) => ({
-        type: "L",
-        x: numbers[0],
-        y: numbers[1]
-      })));
-      return segmentsArray;
-    }
-    if (command === "m" && args.length > 2) {
-      const segmentsArray = [];
-      segmentsArray.push({
-        type: command,
-        dx: args[0],
-        dy: args[1]
-      });
-      segmentsArray.push(...makeInstructions(args.slice(2), "l", (numbers) => ({
-        type: "l",
-        dx: numbers[0],
-        dy: numbers[1]
-      })));
-      return segmentsArray;
-    }
-    if (command === "Z" || command === "z") {
-      return [
-        {
-          type: "Z"
-        }
-      ];
-    }
-    if (command === "A") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        rx: numbers[0],
-        ry: numbers[1],
-        xAxisRotation: numbers[2],
-        largeArcFlag: numbers[3] === 1,
-        sweepFlag: numbers[4] === 1,
-        x: numbers[5],
-        y: numbers[6]
-      }));
-    }
-    if (command === "a") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        rx: numbers[0],
-        ry: numbers[1],
-        xAxisRotation: numbers[2],
-        largeArcFlag: numbers[3] === 1,
-        sweepFlag: numbers[4] === 1,
-        dx: numbers[5],
-        dy: numbers[6]
-      }));
-    }
-    if (command === "C") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cp1x: numbers[0],
-        cp1y: numbers[1],
-        cp2x: numbers[2],
-        cp2y: numbers[3],
-        x: numbers[4],
-        y: numbers[5]
-      }));
-    }
-    if (command === "c") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cp1dx: numbers[0],
-        cp1dy: numbers[1],
-        cp2dx: numbers[2],
-        cp2dy: numbers[3],
-        dx: numbers[4],
-        dy: numbers[5]
-      }));
-    }
-    if (command === "S") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cpx: numbers[0],
-        cpy: numbers[1],
-        x: numbers[2],
-        y: numbers[3]
-      }));
-    }
-    if (command === "s") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cpdx: numbers[0],
-        cpdy: numbers[1],
-        dx: numbers[2],
-        dy: numbers[3]
-      }));
-    }
-    if (command === "H") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        x: numbers[0]
-      }));
-    }
-    if (command === "h") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        dx: numbers[0]
-      }));
-    }
-    if (command === "V") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        y: numbers[0]
-      }));
-    }
-    if (command === "v") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        dy: numbers[0]
-      }));
-    }
-    if (command === "L") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        x: numbers[0],
-        y: numbers[1]
-      }));
-    }
-    if (command === "M") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        x: numbers[0],
-        y: numbers[1]
-      }));
-    }
-    if (command === "m") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        dx: numbers[0],
-        dy: numbers[1]
-      }));
-    }
-    if (command === "l") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        dx: numbers[0],
-        dy: numbers[1]
-      }));
-    }
-    if (command === "Q") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cpx: numbers[0],
-        cpy: numbers[1],
-        x: numbers[2],
-        y: numbers[3]
-      }));
-    }
-    if (command === "q") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        cpdx: numbers[0],
-        cpdy: numbers[1],
-        dx: numbers[2],
-        dy: numbers[3]
-      }));
-    }
-    if (command === "T") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        x: numbers[0],
-        y: numbers[1]
-      }));
-    }
-    if (command === "t") {
-      return makeInstructions(args, command, (numbers) => ({
-        type: command,
-        dx: numbers[0],
-        dy: numbers[1]
-      }));
-    }
-    throw new Error(`Invalid path element ${segmentString}`);
-  }, []).flat(1);
-};
-
-// src/helpers/convert-q-to-c-instruction.ts
-var convertQToCInstruction = (instruction, startPoint) => {
-  const cp1x = startPoint.x + 2 / 3 * (instruction.cpx - startPoint.x);
-  const cp1y = startPoint.y + 2 / 3 * (instruction.cpy - startPoint.y);
-  const cp2x = instruction.x + 2 / 3 * (instruction.cpx - instruction.x);
-  const cp2y = instruction.y + 2 / 3 * (instruction.cpy - instruction.y);
-  return {
-    type: "C",
-    cp1x,
-    cp1y,
-    cp2x,
-    cp2y,
-    x: instruction.x,
-    y: instruction.y
-  };
-};
-
-// src/helpers/iterate.ts
-var iterateOverSegments = ({
-  segments,
-  iterate
-}) => {
-  let x = 0;
-  let y = 0;
-  let initialX = 0;
-  let initialY = 0;
-  let cpX = null;
-  let cpY = null;
-  const newSegments = segments.map((s, i) => {
-    const newSeg = iterate({
-      segment: s,
-      x,
-      y,
-      prevSegment: segments[i - 1] ?? null,
-      initialX,
-      initialY,
-      cpX,
-      cpY
-    });
-    switch (s.type) {
-      case "M":
-        initialX = s.x;
-        initialY = s.y;
-        x = s.x;
-        y = s.y;
-        cpX = null;
-        cpY = null;
-        break;
-      case "Q":
-        x = s.x;
-        y = s.y;
-        cpX = s.cpx;
-        cpY = s.cpy;
-        break;
-      case "A":
-        x = s.x;
-        y = s.y;
-        cpX = null;
-        cpY = null;
-        break;
-      case "C":
-        x = s.x;
-        y = s.y;
-        cpX = s.cp2x;
-        cpY = s.cp2y;
-        break;
-      case "S":
-        x = s.x;
-        y = s.y;
-        cpX = s.cpx;
-        cpY = s.cpy;
-        break;
-      case "T": {
-        const prevSegment = segments[i - 1];
-        if (cpX !== null && cpY !== null && (prevSegment?.type === "Q" || prevSegment?.type === "T")) {
-          cpX = x - (cpX - x);
-          cpY = y - (cpY - y);
-        } else {
-          cpX = x;
-          cpY = y;
-        }
-        x = s.x;
-        y = s.y;
-        break;
-      }
-      case "L":
-        x = s.x;
-        y = s.y;
-        cpX = null;
-        cpY = null;
-        break;
-      case "V":
-        y = s.y;
-        cpX = null;
-        cpY = null;
-        break;
-      case "H":
-        x = s.x;
-        cpX = null;
-        cpY = null;
-        break;
-      case "Z":
-        x = initialX;
-        y = initialY;
-        cpX = null;
-        cpY = null;
-        break;
-      default:
-        throw new Error(`Unexpected instruction ${s.type}`);
-    }
-    return newSeg;
-  });
-  return newSegments.flat(1);
-};
-
-// src/helpers/remove-a-s-t-curves.ts
-var TAU = (/* unused pure expression or super */ null && (Math.PI * 2));
-function approximate_unit_arc(theta1, delta_theta) {
-  const alpha = 4 / 3 * Math.tan(delta_theta / 4);
-  const x1 = Math.cos(theta1);
-  const y1 = Math.sin(theta1);
-  const x2 = Math.cos(theta1 + delta_theta);
-  const y2 = Math.sin(theta1 + delta_theta);
-  return [
-    x1,
-    y1,
-    x1 - y1 * alpha,
-    y1 + x1 * alpha,
-    x2 + y2 * alpha,
-    y2 - x2 * alpha,
-    x2,
-    y2
-  ];
-}
-function unit_vector_angle(ux, uy, vx, vy) {
-  const sign = ux * vy - uy * vx < 0 ? -1 : 1;
-  let dot = ux * vx + uy * vy;
-  if (dot > 1) {
-    dot = 1;
-  }
-  if (dot < -1) {
-    dot = -1;
-  }
-  return sign * Math.acos(dot);
-}
-function get_arc_center({
-  x1,
-  y1,
-  x2,
-  y2,
-  largeArcFlag,
-  sweepFlag,
-  rx,
-  ry,
-  sin_phi,
-  cos_phi
-}) {
-  const x1p = cos_phi * (x1 - x2) / 2 + sin_phi * (y1 - y2) / 2;
-  const y1p = -sin_phi * (x1 - x2) / 2 + cos_phi * (y1 - y2) / 2;
-  const rx_sq = rx * rx;
-  const ry_sq = ry * ry;
-  const x1p_sq = x1p * x1p;
-  const y1p_sq = y1p * y1p;
-  let radicant = rx_sq * ry_sq - rx_sq * y1p_sq - ry_sq * x1p_sq;
-  if (radicant < 0) {
-    radicant = 0;
-  }
-  radicant /= rx_sq * y1p_sq + ry_sq * x1p_sq;
-  radicant = Math.sqrt(radicant) * (largeArcFlag === sweepFlag ? -1 : 1);
-  const cxp = radicant * rx / ry * y1p;
-  const cyp = radicant * -ry / rx * x1p;
-  const cx = cos_phi * cxp - sin_phi * cyp + (x1 + x2) / 2;
-  const cy = sin_phi * cxp + cos_phi * cyp + (y1 + y2) / 2;
-  const v1x = (x1p - cxp) / rx;
-  const v1y = (y1p - cyp) / ry;
-  const v2x = (-x1p - cxp) / rx;
-  const v2y = (-y1p - cyp) / ry;
-  const theta1 = unit_vector_angle(1, 0, v1x, v1y);
-  let delta_theta = unit_vector_angle(v1x, v1y, v2x, v2y);
-  if (sweepFlag === false && delta_theta > 0) {
-    delta_theta -= TAU;
-  }
-  if (sweepFlag === true && delta_theta < 0) {
-    delta_theta += TAU;
-  }
-  return [cx, cy, theta1, delta_theta];
-}
-function arcToCircle({
-  x1,
-  y1,
-  x2,
-  y2,
-  largeArcFlag,
-  sweepFlag,
-  rx,
-  ry,
-  phi
-}) {
-  const sin_phi = Math.sin(phi * TAU / 360);
-  const cos_phi = Math.cos(phi * TAU / 360);
-  const x1p = cos_phi * (x1 - x2) / 2 + sin_phi * (y1 - y2) / 2;
-  const y1p = -sin_phi * (x1 - x2) / 2 + cos_phi * (y1 - y2) / 2;
-  if (x1p === 0 && y1p === 0) {
-    return [];
-  }
-  if (rx === 0 || ry === 0) {
-    return [];
-  }
-  rx = Math.abs(rx);
-  ry = Math.abs(ry);
-  const lambda = x1p * x1p / (rx * rx) + y1p * y1p / (ry * ry);
-  if (lambda > 1) {
-    rx *= Math.sqrt(lambda);
-    ry *= Math.sqrt(lambda);
-  }
-  const cc = get_arc_center({
-    x1,
-    y1,
-    x2,
-    y2,
-    largeArcFlag,
-    sweepFlag,
-    rx,
-    ry,
-    sin_phi,
-    cos_phi
-  });
-  const result = [];
-  let theta1 = cc[2];
-  let delta_theta = cc[3];
-  const segments = Math.max(Math.ceil(Math.abs(delta_theta) / (TAU / 4)), 1);
-  delta_theta /= segments;
-  for (let i = 0;i < segments; i++) {
-    result.push(approximate_unit_arc(theta1, delta_theta));
-    theta1 += delta_theta;
-  }
-  return result.map((curve) => {
-    for (let i = 0;i < curve.length; i += 2) {
-      let x = curve[i + 0];
-      let y = curve[i + 1];
-      x *= rx;
-      y *= ry;
-      const xp = cos_phi * x - sin_phi * y;
-      const yp = sin_phi * x + cos_phi * y;
-      curve[i + 0] = xp + cc[0];
-      curve[i + 1] = yp + cc[1];
-    }
-    return curve;
-  });
-}
-var removeATSHVQInstructions = (segments) => {
-  return iterateOverSegments({
-    segments,
-    iterate: ({ segment, prevSegment, x, y, cpX, cpY }) => {
-      if (segment.type === "H") {
-        return [{ type: "L", x: segment.x, y }];
-      }
-      if (segment.type === "V") {
-        return [{ type: "L", x, y: segment.y }];
-      }
-      if (segment.type === "A") {
-        const nextX = segment.x;
-        const nextY = segment.y;
-        const new_segments = arcToCircle({
-          x1: x,
-          y1: y,
-          x2: nextX,
-          y2: nextY,
-          largeArcFlag: segment.largeArcFlag,
-          sweepFlag: segment.sweepFlag,
-          rx: segment.rx,
-          ry: segment.ry,
-          phi: segment.xAxisRotation
-        });
-        if (new_segments.length === 0) {
-          return [
-            {
-              type: "L",
-              x: segment.x,
-              y: segment.y
-            }
-          ];
-        }
-        const result = new_segments.map((_s) => {
-          return {
-            type: "C",
-            cp1x: _s[2],
-            cp1y: _s[3],
-            cp2x: _s[4],
-            cp2y: _s[5],
-            x: _s[6],
-            y: _s[7]
-          };
-        });
-        return result;
-      }
-      if (segment.type === "T") {
-        let prevControlX = 0;
-        let prevControlY = 0;
-        if (prevSegment && (prevSegment.type === "Q" || prevSegment.type === "T")) {
-          prevControlX = cpX;
-          prevControlY = cpY;
-        } else {
-          prevControlX = x;
-          prevControlY = y;
-        }
-        const vectorX = prevControlX - x;
-        const vectorY = prevControlY - y;
-        const newControlX = x - vectorX;
-        const newControlY = y - vectorY;
-        return [
-          convertQToCInstruction({
-            type: "Q",
-            cpx: newControlX,
-            cpy: newControlY,
-            x: segment.x,
-            y: segment.y
-          }, { x, y })
-        ];
-      }
-      if (segment.type === "S") {
-        let prevControlX = 0;
-        let prevControlY = 0;
-        if (prevSegment && prevSegment.type === "C") {
-          prevControlX = prevSegment.cp2x;
-          prevControlY = prevSegment.cp2y;
-        } else if (prevSegment && prevSegment.type === "S") {
-          prevControlX = prevSegment.cpx;
-          prevControlY = prevSegment.cpy;
-        } else {
-          prevControlX = x;
-          prevControlY = y;
-        }
-        const vectorX = prevControlX - x;
-        const vectorY = prevControlY - y;
-        const newControlX = x - vectorX;
-        const newControlY = y - vectorY;
-        return [
-          {
-            type: "C",
-            cp1x: newControlX,
-            cp1y: newControlY,
-            cp2x: segment.cpx,
-            cp2y: segment.cpy,
-            x: segment.x,
-            y: segment.y
-          }
-        ];
-      }
-      if (segment.type === "Q") {
-        return [convertQToCInstruction(segment, { x, y })];
-      }
-      return [segment];
-    }
-  });
-};
-
-// src/serialize-instructions.ts
-var serializeInstruction = (instruction) => {
-  if (instruction.type === "A") {
-    return `A ${instruction.rx} ${instruction.ry} ${instruction.xAxisRotation} ${Number(instruction.largeArcFlag)} ${Number(instruction.sweepFlag)} ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "a") {
-    return `a ${instruction.rx} ${instruction.ry} ${instruction.xAxisRotation} ${Number(instruction.largeArcFlag)} ${Number(instruction.sweepFlag)} ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "C") {
-    return `C ${instruction.cp1x} ${instruction.cp1y} ${instruction.cp2x} ${instruction.cp2y} ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "c") {
-    return `c ${instruction.cp1dx} ${instruction.cp1dy} ${instruction.cp2dx} ${instruction.cp2dy} ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "S") {
-    return `S ${instruction.cpx} ${instruction.cpy} ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "s") {
-    return `s ${instruction.cpdx} ${instruction.cpdy} ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "Q") {
-    return `Q ${instruction.cpx} ${instruction.cpy} ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "q") {
-    return `q ${instruction.cpdx} ${instruction.cpdy} ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "Z") {
-    return "Z";
-  }
-  if (instruction.type === "H") {
-    return `H ${instruction.x}`;
-  }
-  if (instruction.type === "h") {
-    return `h ${instruction.dx}`;
-  }
-  if (instruction.type === "V") {
-    return `V ${instruction.y}`;
-  }
-  if (instruction.type === "v") {
-    return `v ${instruction.dy}`;
-  }
-  if (instruction.type === "L") {
-    return `L ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "l") {
-    return `l ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "M") {
-    return `M ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "m") {
-    return `m ${instruction.dx} ${instruction.dy}`;
-  }
-  if (instruction.type === "T") {
-    return `T ${instruction.x} ${instruction.y}`;
-  }
-  if (instruction.type === "t") {
-    return `t ${instruction.dx} ${instruction.dy}`;
-  }
-  throw new Error(`Unknown instruction type: ${instruction.type}`);
-};
-var serializeInstructions = (path) => {
-  return path.map((p) => {
-    return serializeInstruction(p);
-  }).join(" ");
-};
-
-// src/normalize-path.ts
-var normalizeInstructions = (instructions) => {
-  const normalized = [];
-  let x = 0;
-  let y = 0;
-  let moveX = 0;
-  let moveY = 0;
-  for (let i = 0;i < instructions.length; i++) {
-    const instruction = instructions[i];
-    if (instruction.type === "M") {
-      moveX = instruction.x;
-      moveY = instruction.y;
-    } else if (instruction.type === "m") {
-      moveX = x + instruction.dx;
-      moveY = y + instruction.dy;
-    }
-    if (instruction.type === "A" || instruction.type === "C" || instruction.type === "L" || instruction.type === "M" || instruction.type === "Q" || instruction.type === "S" || instruction.type === "T") {
-      normalized.push(instruction);
-      x = instruction.x;
-      y = instruction.y;
-      continue;
-    }
-    if (instruction.type === "a" || instruction.type === "c" || instruction.type === "l" || instruction.type === "m" || instruction.type === "q" || instruction.type === "s" || instruction.type === "t") {
-      const currentX = x;
-      const currentY = y;
-      x += instruction.dx;
-      y += instruction.dy;
-      if (instruction.type === "a") {
-        normalized.push({
-          type: "A",
-          largeArcFlag: instruction.largeArcFlag,
-          rx: instruction.rx,
-          ry: instruction.ry,
-          sweepFlag: instruction.sweepFlag,
-          xAxisRotation: instruction.xAxisRotation,
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "c") {
-        normalized.push({
-          type: "C",
-          cp1x: instruction.cp1dx + currentX,
-          cp1y: instruction.cp1dy + currentY,
-          cp2x: instruction.cp2dx + currentX,
-          cp2y: instruction.cp2dy + currentY,
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "l") {
-        normalized.push({
-          type: "L",
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "m") {
-        normalized.push({
-          type: "M",
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "q") {
-        normalized.push({
-          type: "Q",
-          cpx: instruction.cpdx + currentX,
-          cpy: instruction.cpdy + currentY,
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "s") {
-        normalized.push({
-          type: "S",
-          cpx: instruction.cpdx + currentX,
-          cpy: instruction.cpdy + currentY,
-          x,
-          y
-        });
-        continue;
-      }
-      if (instruction.type === "t") {
-        normalized.push({
-          type: "T",
-          x,
-          y
-        });
-        continue;
-      }
-    }
-    if (instruction.type === "H") {
-      normalized.push(instruction);
-      x = instruction.x;
-      continue;
-    }
-    if (instruction.type === "V") {
-      normalized.push(instruction);
-      y = instruction.y;
-      continue;
-    }
-    if (instruction.type === "Z") {
-      normalized.push(instruction);
-      x = moveX;
-      y = moveY;
-      continue;
-    }
-    if (instruction.type === "h") {
-      x += instruction.dx;
-      normalized.push({
-        type: "H",
-        x
-      });
-      continue;
-    }
-    if (instruction.type === "v") {
-      y += instruction.dy;
-      normalized.push({
-        type: "V",
-        y
-      });
-      continue;
-    }
-    throw new Error("Unknown instruction type: " + instruction.type);
-  }
-  return normalized;
-};
-var normalizePath = (path) => {
-  const instructions = parsePath(path);
-  const normalized = normalizeInstructions(instructions);
-  return serializeInstructions(normalized);
-};
-
-// src/reduce-instructions.ts
-var reduceInstructions = (instruction) => {
-  const simplified = normalizeInstructions(instruction);
-  return removeATSHVQInstructions(simplified);
-};
-
-// src/cut-path.ts
-var cutPath = (d, length) => {
-  const parsed = parsePath(d);
-  const reduced = reduceInstructions(parsed);
-  const constructed = conductAnalysis(reduced);
-  const newInstructions = [];
-  let summedUpLength = 0;
-  for (const segment of constructed) {
-    for (const instructionAndInfo of segment.instructionsAndInfo) {
-      if (summedUpLength + instructionAndInfo.length > length) {
-        const remainingLength = length - summedUpLength;
-        const progress = remainingLength / instructionAndInfo.length;
-        const { instruction } = instructionAndInfo;
-        const cut = cutInstruction({
-          instruction: instruction.type === "Z" ? { type: "L", x: segment.startPoint.x, y: segment.startPoint.y } : instruction,
-          lastPoint: instructionAndInfo.startPoint,
-          progress
-        });
-        newInstructions.push(cut);
-        return serializeInstructions(newInstructions);
-      }
-      summedUpLength += instructionAndInfo.length;
-      newInstructions.push(instructionAndInfo.instruction);
-      if (summedUpLength === length) {
-        return serializeInstructions(newInstructions);
-      }
-    }
-  }
-  return serializeInstructions(newInstructions);
-};
-
-// src/debug-path.ts
-var debugPath = (d) => {
-  const instructions = normalizeInstructions(parsePath(d));
-  return instructions.map((inst, i) => {
-    if (inst.type === "Z") {
-      return null;
-    }
-    if (inst.type === "H" || inst.type === "V") {
-      return null;
-    }
-    const topLeft = [inst.x - 5, inst.y - 5];
-    const topRight = [inst.x + 5, inst.y - 5];
-    const bottomLeft = [inst.x - 5, inst.y + 5];
-    const bottomRight = [inst.x + 5, inst.y + 5];
-    const triangle = [
-      {
-        type: "M",
-        x: topLeft[0],
-        y: topLeft[1]
-      },
-      {
-        type: "L",
-        x: topRight[0],
-        y: topRight[1]
-      },
-      {
-        type: "L",
-        x: bottomRight[0],
-        y: bottomRight[1]
-      },
-      {
-        type: "L",
-        x: bottomLeft[0],
-        y: bottomLeft[1]
-      },
-      {
-        type: "Z"
-      }
-    ];
-    return {
-      d: serializeInstructions(triangle),
-      color: i === instructions.length - 1 ? "red" : inst.type === "M" ? "blue" : "green"
-    };
-  }).filter(Boolean);
-};
-
-// src/get-bounding-box.ts
-var CBEZIER_MINMAX_EPSILON = 0.00000001;
-function minmaxQ(A) {
-  const min = Math.min(A[0], A[2]);
-  const max = Math.max(A[0], A[2]);
-  if ((A[1] - A[0]) * (A[2] - A[1]) >= 0) {
-    return [min, max];
-  }
-  const E = (A[0] * A[2] - A[1] * A[1]) / (A[0] - 2 * A[1] + A[2]);
-  return [Math.min(min, E), Math.max(max, E)];
-}
-function minmaxC(A) {
-  const K = A[0] - 3 * A[1] + 3 * A[2] - A[3];
-  if (Math.abs(K) < CBEZIER_MINMAX_EPSILON) {
-    if (A[0] === A[3] && A[0] === A[1]) {
-      return [A[0], A[3]];
-    }
-    return minmaxQ([
-      A[0],
-      -0.5 * A[0] + 1.5 * A[1],
-      A[0] - 3 * A[1] + 3 * A[2]
-    ]);
-  }
-  const T = -A[0] * A[2] + A[0] * A[3] - A[1] * A[2] - A[1] * A[3] + A[1] * A[1] + A[2] * A[2];
-  if (T <= 0) {
-    return [Math.min(A[0], A[3]), Math.max(A[0], A[3])];
-  }
-  const S = Math.sqrt(T);
-  let min = Math.min(A[0], A[3]);
-  let max = Math.max(A[0], A[3]);
-  const L = A[0] - 2 * A[1] + A[2];
-  for (let R = (L + S) / K, i = 1;i <= 2; R = (L - S) / K, i++) {
-    if (R > 0 && R < 1) {
-      const Q = A[0] * (1 - R) * (1 - R) * (1 - R) + A[1] * 3 * (1 - R) * (1 - R) * R + A[2] * 3 * (1 - R) * R * R + A[3] * R * R * R;
-      if (Q < min) {
-        min = Q;
-      }
-      if (Q > max) {
-        max = Q;
-      }
-    }
-  }
-  return [min, max];
-}
-var getBoundingBoxFromInstructions = (instructions) => {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  let x = 0;
-  let y = 0;
-  let lastMoveX = 0;
-  let lastMoveY = 0;
-  for (const seg of instructions) {
-    switch (seg.type) {
-      case "M": {
-        lastMoveX = seg.x;
-        lastMoveY = seg.y;
-        if (minX > seg.x) {
-          minX = seg.x;
-        }
-        if (minY > seg.y) {
-          minY = seg.y;
-        }
-        if (maxX < seg.x) {
-          maxX = seg.x;
-        }
-        if (maxY < seg.y) {
-          maxY = seg.y;
-        }
-        x = seg.x;
-        y = seg.y;
-        break;
-      }
-      case "L": {
-        if (minX > seg.x) {
-          minX = seg.x;
-        }
-        if (minY > seg.y) {
-          minY = seg.y;
-        }
-        if (maxX < seg.x) {
-          maxX = seg.x;
-        }
-        if (maxY < seg.y) {
-          maxY = seg.y;
-        }
-        x = seg.x;
-        y = seg.y;
-        break;
-      }
-      case "C": {
-        const cxMinMax = minmaxC([x, seg.cp1x, seg.cp2x, seg.x]);
-        if (minX > cxMinMax[0]) {
-          minX = cxMinMax[0];
-        }
-        if (maxX < cxMinMax[1]) {
-          maxX = cxMinMax[1];
-        }
-        const cyMinMax = minmaxC([y, seg.cp1y, seg.cp2y, seg.y]);
-        if (minY > cyMinMax[0]) {
-          minY = cyMinMax[0];
-        }
-        if (maxY < cyMinMax[1]) {
-          maxY = cyMinMax[1];
-        }
-        x = seg.x;
-        y = seg.y;
-        break;
-      }
-      case "Z":
-        x = lastMoveX;
-        y = lastMoveY;
-        break;
-      default:
-        throw new Error(`Unknown instruction ${seg.type}`);
-    }
-  }
-  return {
-    x1: minX,
-    y1: minY,
-    x2: maxX,
-    y2: maxY,
-    viewBox: `${minX} ${minY} ${maxX - minX} ${maxY - minY}`,
-    width: maxX - minX,
-    height: maxY - minY
-  };
-};
-var getBoundingBox = (d) => {
-  const parsed = parsePath(d);
-  const unarced = removeATSHVQInstructions(normalizeInstructions(parsed));
-  return getBoundingBoxFromInstructions(unarced);
-};
-
-// src/translate-path.ts
-var translateSegments = (segments, x, y) => {
-  return segments.map((segment, index) => {
-    if (segment.type === "m" && index === 0) {
-      return {
-        type: "m",
-        dx: segment.dx + x,
-        dy: segment.dy + y
-      };
-    }
-    if (segment.type === "a" || segment.type === "c" || segment.type === "v" || segment.type === "s" || segment.type === "h" || segment.type === "l" || segment.type === "m" || segment.type === "q" || segment.type === "t") {
-      return segment;
-    }
-    if (segment.type === "V") {
-      return {
-        type: "V",
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "H") {
-      return {
-        type: "H",
-        x: segment.x + x
-      };
-    }
-    if (segment.type === "A") {
-      return {
-        type: "A",
-        rx: segment.rx,
-        ry: segment.ry,
-        largeArcFlag: segment.largeArcFlag,
-        sweepFlag: segment.sweepFlag,
-        xAxisRotation: segment.xAxisRotation,
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "Z") {
-      return segment;
-    }
-    if (segment.type === "C") {
-      return {
-        type: "C",
-        cp1x: segment.cp1x + x,
-        cp1y: segment.cp1y + y,
-        cp2x: segment.cp2x + x,
-        cp2y: segment.cp2y + y,
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "Q") {
-      return {
-        type: "Q",
-        cpx: segment.cpx + x,
-        cpy: segment.cpy + y,
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "S") {
-      return {
-        type: "S",
-        cpx: segment.cpx + x,
-        cpy: segment.cpy + y,
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "T") {
-      return {
-        type: "T",
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "L") {
-      return {
-        type: "L",
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    if (segment.type === "M") {
-      return {
-        type: "M",
-        x: segment.x + x,
-        y: segment.y + y
-      };
-    }
-    throw new Error(`Unknown segment type: ${segment.type}`);
-  });
-};
-var translatePath = (path, x, y) => {
-  return serializeInstructions(translateSegments(parsePath(path), x, y));
-};
-
-// src/center-path.ts
-var centerPath = (d, target = { x: 0, y: 0 }) => {
-  const box = getBoundingBox(d);
-  const dx = target.x - (box.x1 + box.x2) / 2;
-  const dy = target.y - (box.y1 + box.y2) / 2;
-  return translatePath(d, dx, dy);
-};
-// src/helpers/arc.ts
-
-var mod = (x, m) => {
-  return (x % m + m) % m;
-};
-var toRadians = (angle) => {
-  return angle * (Math.PI / 180);
-};
-var distance = (p0, p1) => {
-  return Math.sqrt((p1.x - p0.x) ** 2 + (p1.y - p0.y) ** 2);
-};
-var esm_clamp = (val, min, max) => {
-  return Math.min(Math.max(val, min), max);
-};
-var angleBetween = (v0, v1) => {
-  const p = v0.x * v1.x + v0.y * v1.y;
-  const n = Math.sqrt((v0.x ** 2 + v0.y ** 2) * (v1.x ** 2 + v1.y ** 2));
-  const sign = v0.x * v1.y - v0.y * v1.x < 0 ? -1 : 1;
-  const angle = sign * Math.acos(Math.max(-1, Math.min(1, p / n)));
-  return angle;
-};
-var pointOnEllipticalArc = ({
-  p0,
-  rx,
-  ry,
-  xAxisRotation,
-  largeArcFlag,
-  sweepFlag,
-  p1,
-  t
-}) => {
-  rx = Math.abs(rx);
-  ry = Math.abs(ry);
-  xAxisRotation = mod(xAxisRotation, 360);
-  const xAxisRotationRadians = toRadians(xAxisRotation);
-  if (p0.x === p1.x && p0.y === p1.y) {
-    return { x: p0.x, y: p0.y, ellipticalArcAngle: 0 };
-  }
-  if (rx === 0 || ry === 0) {
-    return {
-      x: p0.x + (p1.x - p0.x) * t,
-      y: p0.y + (p1.y - p0.y) * t,
-      ellipticalArcAngle: 0
-    };
-  }
-  const dx = (p0.x - p1.x) / 2;
-  const dy = (p0.y - p1.y) / 2;
-  const transformedPoint = {
-    x: Math.cos(xAxisRotationRadians) * dx + Math.sin(xAxisRotationRadians) * dy,
-    y: -Math.sin(xAxisRotationRadians) * dx + Math.cos(xAxisRotationRadians) * dy
-  };
-  const radiiCheck = transformedPoint.x ** 2 / rx ** 2 + transformedPoint.y ** 2 / ry ** 2;
-  if (radiiCheck > 1) {
-    rx *= Math.sqrt(radiiCheck);
-    ry *= Math.sqrt(radiiCheck);
-  }
-  const cSquareNumerator = rx ** 2 * ry ** 2 - rx ** 2 * transformedPoint.y ** 2 - ry ** 2 * transformedPoint.x ** 2;
-  const cSquareRootDenom = rx ** 2 * transformedPoint.y ** 2 + ry ** 2 * transformedPoint.x ** 2;
-  let cRadicand = cSquareNumerator / cSquareRootDenom;
-  cRadicand = cRadicand < 0 ? 0 : cRadicand;
-  const cCoef = (largeArcFlag === sweepFlag ? -1 : 1) * Math.sqrt(cRadicand);
-  const transformedCenter = {
-    x: cCoef * (rx * transformedPoint.y / ry),
-    y: cCoef * (-(ry * transformedPoint.x) / rx)
-  };
-  const center = {
-    x: Math.cos(xAxisRotationRadians) * transformedCenter.x - Math.sin(xAxisRotationRadians) * transformedCenter.y + (p0.x + p1.x) / 2,
-    y: Math.sin(xAxisRotationRadians) * transformedCenter.x + Math.cos(xAxisRotationRadians) * transformedCenter.y + (p0.y + p1.y) / 2
-  };
-  const startVector = {
-    x: (transformedPoint.x - transformedCenter.x) / rx,
-    y: (transformedPoint.y - transformedCenter.y) / ry
-  };
-  const startAngle = angleBetween({
-    x: 1,
-    y: 0
-  }, startVector);
-  const endVector = {
-    x: (-transformedPoint.x - transformedCenter.x) / rx,
-    y: (-transformedPoint.y - transformedCenter.y) / ry
-  };
-  let sweepAngle = angleBetween(startVector, endVector);
-  if (!sweepFlag && sweepAngle > 0) {
-    sweepAngle -= 2 * Math.PI;
-  } else if (sweepFlag && sweepAngle < 0) {
-    sweepAngle += 2 * Math.PI;
-  }
-  sweepAngle %= 2 * Math.PI;
-  const angle = startAngle + sweepAngle * t;
-  const ellipseComponentX = rx * Math.cos(angle);
-  const ellipseComponentY = ry * Math.sin(angle);
-  const point = {
-    x: Math.cos(xAxisRotationRadians) * ellipseComponentX - Math.sin(xAxisRotationRadians) * ellipseComponentY + center.x,
-    y: Math.sin(xAxisRotationRadians) * ellipseComponentX + Math.cos(xAxisRotationRadians) * ellipseComponentY + center.y,
-    ellipticalArcStartAngle: startAngle,
-    ellipticalArcEndAngle: startAngle + sweepAngle,
-    ellipticalArcAngle: angle,
-    ellipticalArcCenter: center,
-    resultantRx: rx,
-    resultantRy: ry
-  };
-  return point;
-};
-var approximateArcLengthOfCurve = (resolution, pointOnCurveFunc) => {
-  resolution = resolution ? resolution : 500;
-  let resultantArcLength = 0;
-  const arcLengthMap = [];
-  const approximationLines = [];
-  let prevPoint = pointOnCurveFunc(0);
-  let nextPoint;
-  for (let i = 0;i < resolution; i++) {
-    const t = esm_clamp(i * (1 / resolution), 0, 1);
-    nextPoint = pointOnCurveFunc(t);
-    resultantArcLength += distance(prevPoint, nextPoint);
-    approximationLines.push([prevPoint, nextPoint]);
-    arcLengthMap.push({
-      t,
-      arcLength: resultantArcLength
-    });
-    prevPoint = nextPoint;
-  }
-  nextPoint = pointOnCurveFunc(1);
-  approximationLines.push([prevPoint, nextPoint]);
-  resultantArcLength += distance(prevPoint, nextPoint);
-  arcLengthMap.push({
-    t: 1,
-    arcLength: resultantArcLength
-  });
-  return {
-    arcLength: resultantArcLength,
-    arcLengthMap,
-    approximationLines
-  };
-};
-var makeArc = ({
-  x0,
-  y0,
-  rx,
-  ry,
-  xAxisRotate,
-  LargeArcFlag,
-  SweepFlag,
-  x1,
-  y1
-}) => {
-  const lengthProperties = approximateArcLengthOfCurve(300, (t) => {
-    return pointOnEllipticalArc({
-      p0: { x: x0, y: y0 },
-      rx,
-      ry,
-      xAxisRotation: xAxisRotate,
-      largeArcFlag: LargeArcFlag,
-      sweepFlag: SweepFlag,
-      p1: { x: x1, y: y1 },
-      t
-    });
-  });
-  const length = lengthProperties.arcLength;
-  const getPointAtLength = (fractionLength) => {
-    if (fractionLength < 0) {
-      fractionLength = 0;
-    } else if (fractionLength > length) {
-      fractionLength = length;
-    }
-    const position = pointOnEllipticalArc({
-      p0: { x: x0, y: y0 },
-      rx,
-      ry,
-      xAxisRotation: xAxisRotate,
-      largeArcFlag: LargeArcFlag,
-      sweepFlag: SweepFlag,
-      p1: { x: x1, y: y1 },
-      t: fractionLength / length
-    });
-    return { x: position.x, y: position.y };
-  };
-  return {
-    getPointAtLength,
-    getTangentAtLength: (fractionLength) => {
-      if (fractionLength < 0) {
-        fractionLength = 0;
-      } else if (fractionLength > length) {
-        fractionLength = length;
-      }
-      const point_dist = 0.05;
-      const p1 = getPointAtLength(fractionLength);
-      let p2;
-      if (fractionLength < 0) {
-        fractionLength = 0;
-      } else if (fractionLength > length) {
-        fractionLength = length;
-      }
-      if (fractionLength < length - point_dist) {
-        p2 = getPointAtLength(fractionLength + point_dist);
-      } else {
-        p2 = getPointAtLength(fractionLength - point_dist);
-      }
-      const xDist = p2.x - p1.x;
-      const yDist = p2.y - p1.y;
-      const dist = Math.sqrt(xDist * xDist + yDist * yDist);
-      const forward = fractionLength < length - point_dist ? 1 : -1;
-      const sign = no_react/* .NoReactInternals.ENABLE_V5_BREAKING_CHANGES */.JC.ENABLE_V5_BREAKING_CHANGES ? forward : -forward;
-      return { x: sign * xDist / dist, y: sign * yDist / dist };
-    },
-    getTotalLength: () => {
-      return length;
-    },
-    type: "arc"
-  };
-};
-
-// src/helpers/construct.ts
-var constructFromInstructions = (instructions) => {
-  let totalLength = 0;
-  const partialLengths = [];
-  const functions = [];
-  let initialPoint = null;
-  let cur = [0, 0];
-  let prev_point = [0, 0];
-  let curve;
-  let ringStart = [0, 0];
-  const segments = [];
-  for (let i = 0;i < instructions.length; i++) {
-    const instruction = instructions[i];
-    if (instruction.type !== "m" && instruction.type !== "M" && segments.length > 0) {
-      segments[segments.length - 1].push(instruction);
-    }
-    if (instruction.type === "M") {
-      cur = [instruction.x, instruction.y];
-      ringStart = [cur[0], cur[1]];
-      segments.push([instruction]);
-      functions.push(null);
-      if (i === 0) {
-        initialPoint = { x: instruction.x, y: instruction.y };
-      }
-    }
-    if (instruction.type === "m") {
-      cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-      ringStart = [cur[0], cur[1]];
-      segments.push([{ type: "M", x: cur[0], y: cur[1] }]);
-      functions.push(null);
-    }
-    if (instruction.type === "L") {
-      totalLength += Math.sqrt((cur[0] - instruction.x) ** 2 + (cur[1] - instruction.y) ** 2);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: instruction.x,
-        y0: cur[1],
-        y1: instruction.y
-      }));
-      cur = [instruction.x, instruction.y];
-    }
-    if (instruction.type === "l") {
-      totalLength += Math.sqrt(instruction.dx ** 2 + instruction.dy ** 2);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: instruction.dx + cur[0],
-        y0: cur[1],
-        y1: instruction.dy + cur[1]
-      }));
-      cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-    }
-    if (instruction.type === "H") {
-      totalLength += Math.abs(cur[0] - instruction.x);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: instruction.x,
-        y0: cur[1],
-        y1: cur[1]
-      }));
-      cur[0] = instruction.x;
-    }
-    if (instruction.type === "h") {
-      totalLength += Math.abs(instruction.dx);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: cur[0] + instruction.dx,
-        y0: cur[1],
-        y1: cur[1]
-      }));
-      cur[0] = instruction.dx + cur[0];
-    } else if (instruction.type === "V") {
-      totalLength += Math.abs(cur[1] - instruction.y);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: cur[0],
-        y0: cur[1],
-        y1: instruction.y
-      }));
-      cur[1] = instruction.y;
-    }
-    if (instruction.type === "v") {
-      totalLength += Math.abs(instruction.dy);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: cur[0],
-        y0: cur[1],
-        y1: cur[1] + instruction.dy
-      }));
-      cur[1] = instruction.dy + cur[1];
-    } else if (instruction.type === "Z") {
-      totalLength += Math.sqrt((ringStart[0] - cur[0]) ** 2 + (ringStart[1] - cur[1]) ** 2);
-      functions.push(makeLinearPosition({
-        x0: cur[0],
-        x1: ringStart[0],
-        y0: cur[1],
-        y1: ringStart[1]
-      }));
-      cur = [ringStart[0], ringStart[1]];
-    }
-    if (instruction.type === "C") {
-      curve = makeCubic({
-        startX: cur[0],
-        startY: cur[1],
-        cp1x: instruction.cp1x,
-        cp1y: instruction.cp1y,
-        cp2x: instruction.cp2x,
-        cp2y: instruction.cp2y,
-        x: instruction.x,
-        y: instruction.y
-      });
-      totalLength += curve.getTotalLength();
-      cur = [instruction.x, instruction.y];
-      functions.push(curve);
-    } else if (instruction.type === "c") {
-      curve = makeCubic({
-        startX: cur[0],
-        startY: cur[1],
-        cp1x: cur[0] + instruction.cp1dx,
-        cp1y: cur[1] + instruction.cp1dy,
-        cp2x: cur[0] + instruction.cp2dx,
-        cp2y: cur[1] + instruction.cp2dy,
-        x: cur[0] + instruction.dx,
-        y: cur[1] + instruction.dy
-      });
-      if (curve.getTotalLength() > 0) {
-        totalLength += curve.getTotalLength();
-        functions.push(curve);
-        cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-      } else {
-        functions.push(makeLinearPosition({ x0: cur[0], x1: cur[0], y0: cur[1], y1: cur[1] }));
-      }
-    }
-    if (instruction.type === "S") {
-      const prev = instructions[i - 1];
-      const prevWasCurve = prev.type === "C" || prev.type === "c" || prev.type === "S" || prev.type === "s";
-      if (i > 0 && prevWasCurve) {
-        if (curve) {
-          const c = curve.getC();
-          curve = makeCubic({
-            startX: cur[0],
-            startY: cur[1],
-            cp1x: 2 * cur[0] - c.x,
-            cp1y: 2 * cur[1] - c.y,
-            cp2x: instruction.cpx,
-            cp2y: instruction.cpy,
-            x: instruction.x,
-            y: instruction.y
-          });
-        }
-      } else {
-        curve = makeCubic({
-          startX: cur[0],
-          startY: cur[1],
-          cp1x: cur[0],
-          cp1y: cur[1],
-          cp2x: instruction.cpx,
-          cp2y: instruction.cpy,
-          x: instruction.x,
-          y: instruction.y
-        });
-      }
-      if (curve) {
-        totalLength += curve.getTotalLength();
-        cur = [instruction.x, instruction.y];
-        functions.push(curve);
-      }
-    }
-    if (instruction.type === "s") {
-      const prev = instructions[i - 1];
-      const prevWasCurve = prev.type === "C" || prev.type === "c" || prev.type === "S" || prev.type === "s";
-      if (i > 0 && prevWasCurve) {
-        if (curve) {
-          const c = curve.getC();
-          const d = curve.getD();
-          curve = makeCubic({
-            startX: cur[0],
-            startY: cur[1],
-            cp1x: cur[0] + d.x - c.x,
-            cp1y: cur[1] + d.y - c.y,
-            cp2x: cur[0] + instruction.cpdx,
-            cp2y: cur[1] + instruction.cpdy,
-            x: cur[0] + instruction.dx,
-            y: cur[1] + instruction.dy
-          });
-        }
-      } else {
-        curve = makeCubic({
-          startX: cur[0],
-          startY: cur[1],
-          cp1x: cur[0],
-          cp1y: cur[1],
-          cp2x: cur[0] + instruction.cpdx,
-          cp2y: cur[1] + instruction.cpdy,
-          x: cur[0] + instruction.dx,
-          y: cur[1] + instruction.dy
-        });
-      }
-      if (curve) {
-        totalLength += curve.getTotalLength();
-        cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-        functions.push(curve);
-      }
-    }
-    if (instruction.type === "Q") {
-      if (cur[0] === instruction.cpx && cur[1] === instruction.cpy) {
-        const linearCurve = makeLinearPosition({
-          x0: instruction.cpx,
-          x1: instruction.x,
-          y0: instruction.cpy,
-          y1: instruction.y
-        });
-        totalLength += linearCurve.getTotalLength();
-        functions.push(linearCurve);
-      } else {
-        curve = makeQuadratic({
-          startX: cur[0],
-          startY: cur[1],
-          cpx: instruction.cpx,
-          cpy: instruction.cpy,
-          x: instruction.x,
-          y: instruction.y
-        });
-        totalLength += curve.getTotalLength();
-        functions.push(curve);
-      }
-      cur = [instruction.x, instruction.y];
-      prev_point = [instruction.cpx, instruction.cpy];
-    }
-    if (instruction.type === "q") {
-      if (instruction.cpdx === 0 && instruction.cpdy === 0) {
-        const linearCurve = makeLinearPosition({
-          x0: cur[0],
-          x1: cur[0] + instruction.dx,
-          y0: cur[1],
-          y1: cur[1] + instruction.dy
-        });
-        totalLength += linearCurve.getTotalLength();
-        functions.push(linearCurve);
-      } else {
-        curve = makeQuadratic({
-          startX: cur[0],
-          startY: cur[1],
-          cpx: cur[0] + instruction.cpdx,
-          cpy: cur[1] + instruction.cpdy,
-          x: cur[0] + instruction.dx,
-          y: cur[1] + instruction.dy
-        });
-        totalLength += curve.getTotalLength();
-        functions.push(curve);
-      }
-      prev_point = [cur[0] + instruction.cpdx, cur[1] + instruction.cpdy];
-      cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-    }
-    if (instruction.type === "T") {
-      const prev = instructions[i - 1];
-      const prevWasQ = prev.type === "Q" || prev.type === "q" || prev.type === "T" || prev.type === "t";
-      if (i > 0 && prevWasQ) {
-        curve = makeQuadratic({
-          startX: cur[0],
-          startY: cur[1],
-          cpx: 2 * cur[0] - prev_point[0],
-          cpy: 2 * cur[1] - prev_point[1],
-          x: instruction.x,
-          y: instruction.y
-        });
-        functions.push(curve);
-        totalLength += curve.getTotalLength();
-      } else {
-        const linearCurve = makeLinearPosition({
-          x0: cur[0],
-          x1: instruction.x,
-          y0: cur[1],
-          y1: instruction.y
-        });
-        functions.push(linearCurve);
-        totalLength += linearCurve.getTotalLength();
-      }
-      prev_point = prevWasQ ? [2 * cur[0] - prev_point[0], 2 * cur[1] - prev_point[1]] : [cur[0], cur[1]];
-      cur = [instruction.x, instruction.y];
-    }
-    if (instruction.type === "t") {
-      const prev = instructions[i - 1];
-      const prevWasQ = prev.type === "Q" || prev.type === "q" || prev.type === "T" || prev.type === "t";
-      if (i > 0 && prevWasQ) {
-        curve = makeQuadratic({
-          startX: cur[0],
-          startY: cur[1],
-          cpx: 2 * cur[0] - prev_point[0],
-          cpy: 2 * cur[1] - prev_point[1],
-          x: cur[0] + instruction.dx,
-          y: cur[1] + instruction.dy
-        });
-        totalLength += curve.getTotalLength();
-        functions.push(curve);
-      } else {
-        const linearCurve = makeLinearPosition({
-          x0: cur[0],
-          x1: cur[0] + instruction.dx,
-          y0: cur[1],
-          y1: cur[1] + instruction.dy
-        });
-        totalLength += linearCurve.getTotalLength();
-        functions.push(linearCurve);
-      }
-      prev_point = prevWasQ ? [2 * cur[0] - prev_point[0], 2 * cur[1] - prev_point[1]] : [cur[0], cur[1]];
-      cur = [instruction.dx + cur[0], instruction.dy + cur[1]];
-    }
-    if (instruction.type === "A") {
-      const arcCurve = makeArc({
-        x0: cur[0],
-        y0: cur[1],
-        rx: instruction.rx,
-        ry: instruction.ry,
-        xAxisRotate: instruction.xAxisRotation,
-        LargeArcFlag: instruction.largeArcFlag,
-        SweepFlag: instruction.sweepFlag,
-        x1: instruction.x,
-        y1: instruction.y
-      });
-      totalLength += arcCurve.getTotalLength();
-      cur = [instruction.x, instruction.y];
-      functions.push(arcCurve);
-    }
-    if (instruction.type === "a") {
-      const arcCurve = makeArc({
-        x0: cur[0],
-        y0: cur[1],
-        rx: instruction.rx,
-        ry: instruction.ry,
-        xAxisRotate: instruction.xAxisRotation,
-        LargeArcFlag: instruction.largeArcFlag,
-        SweepFlag: instruction.sweepFlag,
-        x1: cur[0] + instruction.dx,
-        y1: cur[1] + instruction.dy
-      });
-      totalLength += arcCurve.getTotalLength();
-      cur = [cur[0] + instruction.dx, cur[1] + instruction.dy];
-      functions.push(arcCurve);
-    }
-    partialLengths.push(totalLength);
-  }
-  return {
-    segments,
-    initialPoint,
-    totalLength,
-    partialLengths,
-    functions
-  };
-};
-var construct = (string) => {
-  const parsed = parsePath(string);
-  return constructFromInstructions(parsed);
-};
-
-// src/get-length.ts
-var getLength = (path) => {
-  const constructucted = construct(path);
-  return constructucted.totalLength;
-};
-
-// src/evolve-path.ts
-var evolvePath = (progress, path) => {
-  const length = getLength(path);
-  if (progress === 0) {
-    const extendedLength = length * 1.5;
-    return {
-      strokeDasharray: `${extendedLength} ${extendedLength}`,
-      strokeDashoffset: extendedLength
-    };
-  }
-  const strokeDasharray = `${length} ${length}`;
-  const strokeDashoffset = length - progress * length;
-  return { strokeDasharray, strokeDashoffset };
-};
-// src/extend-viewbox.ts
-var extendViewBox = (currentViewBox, scale) => {
-  const relativeScale = scale - 1;
-  const splitted = currentViewBox.trim().split(/\s*,\s*|\s+/).map((a) => a === "" ? NaN : Number(a));
-  if (splitted.length !== 4) {
-    throw new Error(`currentViewBox must be 4 valid numbers, but got "${currentViewBox}"`);
-  }
-  for (const part of splitted) {
-    if (Number.isNaN(part)) {
-      throw new Error(`currentViewBox must be 4 valid numbers, but got "${currentViewBox}"`);
-    }
-    if (!Number.isFinite(part)) {
-      throw new Error(`currentViewBox must be 4 valid numbers, but got "${currentViewBox}"`);
-    }
-  }
-  const [x, y, width, height] = splitted;
-  if (width <= 0 || height <= 0) {
-    throw new Error(`currentViewBox must have a positive width and height, but got "${currentViewBox}"`);
-  }
-  return [
-    x - relativeScale * width / 2,
-    y - relativeScale * height / 2,
-    width + relativeScale * width,
-    height + relativeScale * height
-  ].join(" ");
-};
-// src/get-instruction-index-at-length.ts
-var getInstructionIndexAtLengthFromConstructed = (constructed, fractionLength) => {
-  if (fractionLength < 0) {
-    throw new Error("Length less than 0 was passed");
-  }
-  if (fractionLength > constructed.totalLength) {
-    fractionLength = constructed.totalLength;
-  }
-  let index = constructed.partialLengths.length - 1;
-  while (constructed.partialLengths[index] >= fractionLength && index > 0) {
-    index--;
-  }
-  return {
-    lengthIntoInstruction: fractionLength - constructed.partialLengths[index],
-    index
-  };
-};
-var getInstructionIndexAtLength = (path, length) => {
-  const constructed = construct(path);
-  if (length > constructed.totalLength) {
-    throw new Error(`A length of ${length} was passed to getInstructionIndexAtLength() but the total length of the path is only ${constructed.totalLength}`);
-  }
-  return getInstructionIndexAtLengthFromConstructed(constructed, length);
-};
-// src/get-point-at-length.ts
-var esm_getPointAtLength = (path, length) => {
-  const constructed = construct(path);
-  if (length > constructed.totalLength) {
-    return null;
-  }
-  const fractionPart = getInstructionIndexAtLengthFromConstructed(constructed, length);
-  const functionAtPart = constructed.functions[fractionPart.index + 1];
-  if (functionAtPart) {
-    return functionAtPart.getPointAtLength(fractionPart.lengthIntoInstruction);
-  }
-  if (constructed.initialPoint) {
-    return constructed.initialPoint;
-  }
-  throw new Error("Wrong function at this part.");
-};
-// src/get-subpaths.ts
-var getSubpaths = (path) => {
-  const parsed = parsePath(path);
-  const { segments } = constructFromInstructions(parsed);
-  return segments.map((seg) => {
-    return serializeInstructions(seg);
-  });
-};
-// src/get-tangent-at-length.ts
-var esm_getTangentAtLength = (path, length) => {
-  const constructed = construct(path);
-  if (length > constructed.totalLength) {
-    return null;
-  }
-  const fractionPart = getInstructionIndexAtLengthFromConstructed(constructed, length);
-  const functionAtPart = constructed.functions[fractionPart.index + 1];
-  if (functionAtPart) {
-    return functionAtPart.getTangentAtLength(fractionPart.lengthIntoInstruction);
-  }
-  if (constructed.initialPoint) {
-    return { x: 0, y: 0 };
-  }
-  throw new Error("Wrong function at this part.");
-};
-// src/get-end-position.ts
-var getEndPosition = (instructions) => {
-  let x = 0;
-  let y = 0;
-  let moveX = 0;
-  let moveY = 0;
-  for (let i = 0;i < instructions.length; i++) {
-    const instruction = instructions[i];
-    if (instruction.type === "M") {
-      moveX = instruction.x;
-      moveY = instruction.y;
-    } else if (instruction.type === "m") {
-      moveX += instruction.dx;
-      moveY += instruction.dy;
-    }
-    if (instruction.type === "A" || instruction.type === "C" || instruction.type === "L" || instruction.type === "M" || instruction.type === "Q" || instruction.type === "S" || instruction.type === "T") {
-      x = instruction.x;
-      y = instruction.y;
-      continue;
-    }
-    if (instruction.type === "a" || instruction.type === "c" || instruction.type === "l" || instruction.type === "m" || instruction.type === "q" || instruction.type === "s" || instruction.type === "t") {
-      x += instruction.dx;
-      y += instruction.dy;
-      continue;
-    }
-    if (instruction.type === "H") {
-      x = instruction.x;
-      continue;
-    }
-    if (instruction.type === "V") {
-      y = instruction.y;
-      continue;
-    }
-    if (instruction.type === "Z") {
-      x = moveX;
-      y = moveY;
-      continue;
-    }
-    if (instruction.type === "h") {
-      x += instruction.dx;
-      continue;
-    }
-    if (instruction.type === "v") {
-      y += instruction.dy;
-      continue;
-    }
-    throw new Error("Unknown instruction type: " + instruction.type);
-  }
-  return {
-    x,
-    y
-  };
-};
-
-// src/interpolate-path/convert-to-same-instruction-type.ts
-var convertToLCommand = (command) => {
-  if (command.type === "M" || command.type === "L" || command.type === "Z") {
-    throw new Error("unexpected");
-  }
-  return {
-    type: "L",
-    x: command.x,
-    y: command.y
-  };
-};
-var convertToCCommand = (command, currentPoint) => {
-  if (command.type === "M" || command.type === "C" || command.type === "Z") {
-    throw new Error("unexpected");
-  }
-  if (command.type === "L") {
-    return {
-      type: "C",
-      cp1x: currentPoint.x,
-      cp1y: currentPoint.y,
-      cp2x: command.x,
-      cp2y: command.y,
-      x: command.x,
-      y: command.y
-    };
-  }
-  throw new Error("all types should be handled");
-};
-function convertToSameInstructionType(aCommand, bCommand, currentPoint) {
-  if (aCommand.type === "M" || bCommand.type === "M") {
-    return { ...aCommand };
-  }
-  if (aCommand.type === bCommand.type) {
-    return { ...aCommand };
-  }
-  if (bCommand.type === "C") {
-    return convertToCCommand(aCommand, currentPoint);
-  }
-  if (bCommand.type === "L") {
-    return convertToLCommand(aCommand);
-  }
-  if (bCommand.type === "Z") {
-    return {
-      type: "Z"
-    };
-  }
-  throw new TypeError("unhandled");
-}
-
-// src/interpolate-path/points-to-command.ts
-function pointsToInstruction(points) {
-  const x = points[points.length - 1][0];
-  const y = points[points.length - 1][1];
-  if (points.length === 4) {
-    const x1 = points[1][0];
-    const y1 = points[1][1];
-    const x2 = points[2][0];
-    const y2 = points[2][1];
-    return {
-      type: "C",
-      cp1x: x1,
-      cp1y: y1,
-      cp2x: x2,
-      cp2y: y2,
-      x,
-      y
-    };
-  }
-  if (points.length === 3) {
-    const x1 = points[1][0];
-    const y1 = points[1][1];
-    return convertQToCInstruction({
-      type: "Q",
-      cpx: x1,
-      cpy: y1,
-      x,
-      y
-    }, {
-      x: points[0][0],
-      y: points[0][1]
-    });
-  }
-  return {
-    type: "L",
-    x,
-    y
-  };
-}
-
-// src/interpolate-path/de-casteljau.ts
-function decasteljau(points, t) {
-  const left = [];
-  const right = [];
-  function decasteljauRecurse(_points, _t) {
-    if (_points.length === 1) {
-      left.push(_points[0]);
-      right.push(_points[0]);
-    } else {
-      const newPoints = Array(_points.length - 1);
-      for (let i = 0;i < newPoints.length; i++) {
-        if (i === 0) {
-          left.push(_points[0]);
-        }
-        if (i === newPoints.length - 1) {
-          right.push(_points[i + 1]);
-        }
-        newPoints[i] = [
-          (1 - _t) * _points[i][0] + _t * _points[i + 1][0],
-          (1 - _t) * _points[i][1] + _t * _points[i + 1][1]
-        ];
-      }
-      decasteljauRecurse(newPoints, _t);
-    }
-  }
-  if (points.length) {
-    decasteljauRecurse(points, t);
-  }
-  return { left, right: right.reverse() };
-}
-
-// src/interpolate-path/split-curve-as-points.ts
-function splitCurveAsPoints(points, segmentCount = 2) {
-  const segments = [];
-  let remainingCurve = points;
-  const tIncrement = 1 / segmentCount;
-  for (let i = 0;i < segmentCount - 1; i++) {
-    const tRelative = tIncrement / (1 - tIncrement * i);
-    const split = decasteljau(remainingCurve, tRelative);
-    segments.push(split.left);
-    remainingCurve = split.right;
-  }
-  segments.push(remainingCurve);
-  return segments;
-}
-
-// src/interpolate-path/split-curve.ts
-var splitCurveInstructions = (instructionStartX, instructionStartY, instructionEnd, segmentCount) => {
-  const points = [[instructionStartX, instructionStartY]];
-  if (instructionEnd.type === "Q") {
-    points.push([instructionEnd.cpx, instructionEnd.cpy]);
-  }
-  if (instructionEnd.type === "C") {
-    points.push([instructionEnd.cp1x, instructionEnd.cp1y]);
-    points.push([instructionEnd.cp2x, instructionEnd.cp2y]);
-  }
-  points.push([instructionEnd.x, instructionEnd.y]);
-  return splitCurveAsPoints(points, segmentCount).map((p) => {
-    return pointsToInstruction(p);
-  });
-};
-
-// src/interpolate-path/split-segment.ts
-function splitSegmentInstructions(commandStart, commandEnd, segmentCount) {
-  let segments = [];
-  if (commandEnd.type === "L" || commandEnd.type === "C") {
-    if (commandStart.type !== "Z") {
-      segments = segments.concat(splitCurveInstructions(commandStart.x, commandStart.y, commandEnd, segmentCount));
-    }
-  } else {
-    const copyCommand = commandStart.type === "M" ? {
-      type: "L",
-      x: commandStart.x,
-      y: commandStart.y
-    } : commandStart;
-    segments = segments.concat(new Array(segmentCount - 1).fill(true).map(() => copyCommand));
-    segments.push(commandEnd);
-  }
-  return segments;
-}
-
-// src/interpolate-path/extend-command.ts
-function extendInstruction(commandsToExtend, referenceCommands) {
-  const numSegmentsToExtend = commandsToExtend.length - 1;
-  const numReferenceSegments = referenceCommands.length - 1;
-  const segmentRatio = numSegmentsToExtend / numReferenceSegments;
-  const countPointsPerSegment = new Array(numReferenceSegments).fill(undefined).reduce((accum, _d, i) => {
-    const insertIndex = Math.floor(segmentRatio * i);
-    accum[insertIndex] = (accum[insertIndex] || 0) + 1;
-    return accum;
-  }, []);
-  const extended = countPointsPerSegment.reduce((_extended, segmentCount, i) => {
-    if (i === commandsToExtend.length - 1) {
-      const lastCommandCopies = new Array(segmentCount).fill({
-        ...commandsToExtend[commandsToExtend.length - 1]
-      });
-      if (lastCommandCopies[0].type === "M") {
-        lastCommandCopies.forEach((d) => {
-          d.type = "L";
-        });
-      }
-      return _extended.concat(lastCommandCopies);
-    }
-    return _extended.concat(splitSegmentInstructions(commandsToExtend[i], commandsToExtend[i + 1], segmentCount));
-  }, []);
-  extended.unshift(commandsToExtend[0]);
-  return extended;
-}
-
-// src/interpolate-path/interpolate-instruction-of-same-kind.ts
-var interpolateLInstruction = (t, first, second) => {
-  return {
-    type: "L",
-    x: (1 - t) * first.x + t * second.x,
-    y: (1 - t) * first.y + t * second.y
-  };
-};
-var interpolateCInstructions = (t, first, second) => {
-  return {
-    type: "C",
-    cp1x: (1 - t) * first.cp1x + t * second.cp1x,
-    cp2x: (1 - t) * first.cp2x + t * second.cp2x,
-    cp1y: (1 - t) * first.cp1y + t * second.cp1y,
-    cp2y: (1 - t) * first.cp2y + t * second.cp2y,
-    x: (1 - t) * first.x + t * second.x,
-    y: (1 - t) * first.y + t * second.y
-  };
-};
-var interpolateMInstructions = (t, first, second) => {
-  return {
-    type: "M",
-    x: (1 - t) * first.x + t * second.x,
-    y: (1 - t) * first.y + t * second.y
-  };
-};
-var interpolateInstructionOfSameKind = (t, first, second) => {
-  if (first.type === "L") {
-    if (second.type !== "L") {
-      throw new Error("mismatch");
-    }
-    return interpolateLInstruction(t, first, second);
-  }
-  if (first.type === "C") {
-    if (second.type !== "C") {
-      throw new Error("mismatch");
-    }
-    return interpolateCInstructions(t, first, second);
-  }
-  if (first.type === "M") {
-    if (second.type !== "M") {
-      throw new Error("mismatch");
-    }
-    return interpolateMInstructions(t, first, second);
-  }
-  if (first.type === "Z") {
-    if (second.type !== "Z") {
-      throw new Error("mismatch");
-    }
-    return {
-      type: "Z"
-    };
-  }
-  throw new Error("mismatch");
-};
-
-// src/interpolate-path/interpolate-instructions.ts
-function interpolateInstructions(aCommandsInput, bCommandsInput) {
-  let aCommands = aCommandsInput.slice();
-  let bCommands = bCommandsInput.slice();
-  if (!aCommands.length && !bCommands.length) {
-    return function() {
-      return [];
-    };
-  }
-  const addZ = (aCommands.length === 0 || aCommands[aCommands.length - 1].type === "Z") && (bCommands.length === 0 || bCommands[bCommands.length - 1].type === "Z");
-  if (aCommands.length > 0 && aCommands[aCommands.length - 1].type === "Z") {
-    aCommands.pop();
-  }
-  if (bCommands.length > 0 && bCommands[bCommands.length - 1].type === "Z") {
-    bCommands.pop();
-  }
-  if (!aCommands.length) {
-    aCommands.push(bCommands[0]);
-  } else if (!bCommands.length) {
-    bCommands.push(aCommands[0]);
-  }
-  const numPointsToExtend = Math.abs(bCommands.length - aCommands.length);
-  if (numPointsToExtend !== 0) {
-    if (bCommands.length > aCommands.length) {
-      aCommands = extendInstruction(aCommands, bCommands);
-    } else if (bCommands.length < aCommands.length) {
-      bCommands = extendInstruction(bCommands, aCommands);
-    }
-  }
-  const aSameType = aCommands.map((aCommand, i) => {
-    const commandsUntilNow = aCommands.slice(0, i);
-    const point = getEndPosition(commandsUntilNow);
-    return convertToSameInstructionType(aCommand, bCommands[i], point);
-  });
-  const interpolatedCommands = [];
-  if (addZ) {
-    aSameType.push({ type: "Z" });
-    bCommands.push({ type: "Z" });
-  }
-  return function(t) {
-    if (t === 1) {
-      return bCommandsInput;
-    }
-    if (t === 0) {
-      return aSameType;
-    }
-    for (let i = 0;i < aSameType.length; ++i) {
-      interpolatedCommands.push(interpolateInstructionOfSameKind(t, aSameType[i], bCommands[i]));
-    }
-    return interpolatedCommands;
-  };
-}
-
-// src/interpolate-path/interpolate-path.ts
-var interpolatePath = (value, firstPath, secondPath) => {
-  if (value === 1) {
-    return secondPath;
-  }
-  if (value === 0) {
-    return firstPath;
-  }
-  const aCommands = reduceInstructions(parsePath(firstPath));
-  if (aCommands.length === 0) {
-    throw new TypeError(`SVG Path "${firstPath}" is not valid`);
-  }
-  const bCommands = reduceInstructions(parsePath(secondPath));
-  if (bCommands.length === 0) {
-    throw new TypeError(`SVG Path "${secondPath}" is not valid`);
-  }
-  const commandInterpolator = interpolateInstructions(aCommands, bCommands);
-  return serializeInstructions(commandInterpolator(value));
-};
-// src/interpolate-paths.ts
-
-var normalizeInterpolatedPath = (path) => {
-  return path.replace(/-?\d*\.?\d+(?:e[+-]?\d+)?/gi, (value) => {
-    const number = Number(value);
-    return Number.isInteger(number) ? value : String(Number(number.toPrecision(15)));
-  });
-};
-var interpolatePaths = (input, inputRange, outputRange, options) => {
-  if (!Array.isArray(outputRange)) {
-    throw new TypeError("outputRange must be an array of SVG path strings");
-  }
-  for (const path of outputRange) {
-    if (typeof path !== "string") {
-      throw new TypeError("outputRange must contain only SVG path strings");
-    }
-  }
-  for (const side of ["extrapolateLeft", "extrapolateRight"]) {
-    const extrapolation = options?.[side];
-    if (extrapolation !== undefined && extrapolation !== "extend" && extrapolation !== "clamp" && extrapolation !== "wrap") {
-      throw new TypeError(`${side} must be "extend", "clamp", or "wrap" for interpolatePaths()`);
-    }
-  }
-  const weights = interpolate(input, inputRange, outputRange.map((_, pathIndex) => outputRange.map((__, index) => index === pathIndex ? 1 : 0)), options);
-  const exactPathIndex = weights.findIndex((weight, index) => weight === 1 && weights.every((otherWeight, otherIndex) => otherIndex === index ? true : otherWeight === 0));
-  if (exactPathIndex !== -1) {
-    return outputRange[exactPathIndex];
-  }
-  const contributingPaths = outputRange.map((path, index) => ({ path, weight: weights[index] })).filter(({ weight }) => weight !== 0);
-  const paths = contributingPaths.map(({ path }) => {
-    const commands = reduceInstructions(parsePath(path));
-    if (commands.length === 0) {
-      throw new TypeError(`SVG Path "${path}" is not valid`);
-    }
-    return commands;
-  });
-  const closed = paths.every((commands) => commands[commands.length - 1].type === "Z");
-  const openPaths = paths.map((commands) => commands[commands.length - 1].type === "Z" ? commands.slice(0, -1) : commands);
-  const reference = openPaths.reduce((longest, commands) => commands.length > longest.length ? commands : longest);
-  const extendedPaths = openPaths.map((commands) => commands.length < reference.length ? extendInstruction(commands, reference) : commands);
-  const result = reference.map((_, instructionIndex) => {
-    const commands = extendedPaths.map((path) => path[instructionIndex]);
-    if (commands.some((command) => command.type === "Z")) {
-      if (commands.every((command) => command.type === "Z")) {
-        return { type: "Z" };
-      }
-      throw new TypeError("Cannot interpolate SVG paths with different subpath structures");
-    }
-    const target = commands.find((command) => command.type === "C") ?? commands[0];
-    const normalized = commands.map((command, pathIndex) => {
-      if (command.type === "M" !== (target.type === "M")) {
-        throw new TypeError("Cannot interpolate SVG paths with different subpath structures");
-      }
-      return convertToSameInstructionType(command, target, getEndPosition(extendedPaths[pathIndex].slice(0, instructionIndex)));
-    });
-    const coordinates = normalized.map((command) => {
-      if (command.type === "Z") {
-        return [];
-      }
-      return command.type === "C" ? [
-        command.x,
-        command.y,
-        command.cp1x,
-        command.cp1y,
-        command.cp2x,
-        command.cp2y
-      ] : [command.x, command.y];
-    });
-    const values = coordinates[0].map((base, coordinateIndex) => {
-      const interpolated = coordinates.reduce((value, path, pathIndex) => value + (path[coordinateIndex] - base) * contributingPaths[pathIndex].weight, base);
-      if (Number.isFinite(interpolated)) {
-        return interpolated;
-      }
-      return coordinates.reduce((sum, path, pathIndex) => sum + path[coordinateIndex] * contributingPaths[pathIndex].weight, 0);
-    });
-    if (target.type === "C") {
-      return {
-        type: "C",
-        x: values[0],
-        y: values[1],
-        cp1x: values[2],
-        cp1y: values[3],
-        cp2x: values[4],
-        cp2y: values[5]
-      };
-    }
-    return { type: target.type, x: values[0], y: values[1] };
-  });
-  if (closed) {
-    result.push({ type: "Z" });
-  }
-  return normalizeInterpolatedPath(serializeInstructions(result));
-};
-// src/reset-path.ts
-var resetPath = (d) => {
-  const box = getBoundingBox(d);
-  return translatePath(d, -box.x1, -box.y1);
-};
-// src/reverse-path.ts
-function reverseNormalizedPath(instructions) {
-  const closeIndex = instructions.findIndex((term) => term.type === "Z");
-  const start = instructions[0];
-  if (closeIndex !== -1 && closeIndex < instructions.length - 1 && start.type === "M") {
-    return [
-      reverseNormalizedPath(instructions.slice(0, closeIndex + 1)),
-      reverseNormalizedPath([
-        { type: "M", x: start.x, y: start.y },
-        ...instructions.slice(closeIndex + 1)
-      ])
-    ].join(" ");
-  }
-  const reversed = [];
-  let nextX = 0;
-  let nextY = 0;
-  for (const term of instructions) {
-    if (term.type === "A") {
-      reversed.unshift({
-        type: "A",
-        largeArcFlag: term.largeArcFlag,
-        rx: term.rx,
-        ry: term.ry,
-        xAxisRotation: term.xAxisRotation,
-        sweepFlag: !term.sweepFlag,
-        x: nextX,
-        y: nextY
-      });
-    } else if (term.type === "C") {
-      reversed.unshift({
-        type: "C",
-        cp1x: term.cp2x,
-        cp1y: term.cp2y,
-        cp2x: term.cp1x,
-        cp2y: term.cp1y,
-        x: nextX,
-        y: nextY
-      });
-    } else if (term.type === "Q") {
-      reversed.unshift({
-        type: "Q",
-        cpx: term.cpx,
-        cpy: term.cpy,
-        x: nextX,
-        y: nextY
-      });
-    } else if (term.type === "L") {
-      reversed.unshift({
-        type: "L",
-        x: nextX,
-        y: nextY
-      });
-    } else if (term.type === "M") {} else if (term.type === "Z") {} else {
-      throw new Error("unnormalized instruction " + term.type);
-    }
-    if (term.type !== "Z") {
-      nextX = term.x;
-      nextY = term.y;
-    }
-  }
-  reversed.unshift({
-    type: "M",
-    x: nextX,
-    y: nextY
-  });
-  let revstring = serializeInstructions(reversed);
-  if (instructions[instructions.length - 1].type === "Z")
-    revstring += "Z";
-  revstring = revstring.replace(/M M/g, "Z M");
-  return revstring;
-}
-var reversePath = (path) => {
-  const parsed = parsePath(path);
-  const normalized = normalizeInstructions(parsed);
-  const reduced = reduceInstructions(normalized);
-  const { segments } = constructFromInstructions(reduced);
-  return segments.map((spath) => {
-    return reverseNormalizedPath(spath);
-  }).join(" ").replace(/ +/g, " ").trim();
-};
-// src/scale-path.ts
-var scalePath = (d, scaleX, scaleY) => {
-  const reduced = reduceInstructions(parsePath(d));
-  const bounded = getBoundingBoxFromInstructions(reduced);
-  const zeroed = translateSegments(reduced, -bounded.x1, -bounded.y1);
-  const mapped = zeroed.map((instruction) => {
-    if (instruction.type === "L") {
-      return {
-        type: "L",
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "C") {
-      return {
-        type: "C",
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y,
-        cp1x: scaleX * instruction.cp1x,
-        cp1y: scaleY * instruction.cp1y,
-        cp2x: scaleX * instruction.cp2x,
-        cp2y: scaleY * instruction.cp2y
-      };
-    }
-    if (instruction.type === "M") {
-      return {
-        type: "M",
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "Q") {
-      return {
-        type: "Q",
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y,
-        cpx: scaleX * instruction.cpx,
-        cpy: scaleY * instruction.cpy
-      };
-    }
-    if (instruction.type === "Z") {
-      return {
-        type: "Z"
-      };
-    }
-    if (instruction.type === "A") {
-      return {
-        type: "A",
-        largeArcFlag: instruction.largeArcFlag,
-        rx: scaleX * instruction.rx,
-        ry: scaleY * instruction.ry,
-        sweepFlag: instruction.sweepFlag,
-        xAxisRotation: instruction.xAxisRotation,
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "H") {
-      return {
-        type: "H",
-        x: scaleX * instruction.x
-      };
-    }
-    if (instruction.type === "S") {
-      return {
-        type: "S",
-        cpx: scaleX * instruction.cpx,
-        cpy: scaleY * instruction.cpy,
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "T") {
-      return {
-        type: "T",
-        x: scaleX * instruction.x,
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "V") {
-      return {
-        type: "V",
-        y: scaleY * instruction.y
-      };
-    }
-    if (instruction.type === "a") {
-      return {
-        type: "a",
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy,
-        largeArcFlag: instruction.largeArcFlag,
-        rx: scaleX * instruction.rx,
-        ry: scaleY * instruction.ry,
-        sweepFlag: instruction.sweepFlag,
-        xAxisRotation: instruction.xAxisRotation
-      };
-    }
-    if (instruction.type === "c") {
-      return {
-        type: "c",
-        cp1dx: scaleX * instruction.cp1dx,
-        cp1dy: scaleY * instruction.cp1dy,
-        cp2dx: scaleX * instruction.cp2dx,
-        cp2dy: scaleY * instruction.cp2dy,
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "h") {
-      return {
-        type: "h",
-        dx: scaleX * instruction.dx
-      };
-    }
-    if (instruction.type === "l") {
-      return {
-        type: "l",
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "m") {
-      return {
-        type: "m",
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "q") {
-      return {
-        type: "q",
-        cpdx: scaleX * instruction.cpdx,
-        cpdy: scaleY * instruction.cpdy,
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "s") {
-      return {
-        type: "s",
-        cpdx: scaleX * instruction.cpdx,
-        cpdy: scaleY * instruction.cpdy,
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "t") {
-      return {
-        type: "t",
-        dx: scaleX * instruction.dx,
-        dy: scaleY * instruction.dy
-      };
-    }
-    if (instruction.type === "v") {
-      return {
-        type: "v",
-        dy: scaleY * instruction.dy
-      };
-    }
-    throw new Error("unexpected function");
-  });
-  return serializeInstructions(translateSegments(mapped, bounded.x1, bounded.y1));
-};
-// src/warp-path/warp-helpers.ts
-var euclideanDistance = (points) => {
-  const startPoint = points[0];
-  const endPoint = points[points.length - 1];
-  let d2 = 0;
-  for (let i = 0;i < startPoint.length; i++) {
-    const d = endPoint[i] - startPoint[i];
-    d2 += d ** 2;
-  }
-  return Math.sqrt(d2);
-};
-function esm_split(p, t = 0.5) {
-  const seg0 = [];
-  const seg1 = [];
-  const orders = [p];
-  while (orders.length < p.length) {
-    const q = orders[orders.length - 1];
-    const r = [];
-    for (let i = 1;i < q.length; i++) {
-      const q0 = q[i - 1];
-      const q1 = q[i];
-      const s = [];
-      const dim = Math.max(q0.length, q1.length);
-      for (let j = 0;j < dim; j++) {
-        const s0 = q0[j] || 0;
-        const s1 = q1[j] || 0;
-        s.push(s0 + (s1 - s0) * t);
-      }
-      r.push(s);
-    }
-    orders.push(r);
-  }
-  for (let i = 0;i < orders.length; i++) {
-    seg0.push(orders[i][0]);
-    seg1.push(orders[orders.length - 1 - i][i]);
-  }
-  return [seg0, seg1];
-}
-function interpolateUntil(points, threshold, deltaFunction = euclideanDistance) {
-  const stack = [points];
-  const segments = [];
-  while (stack.length > 0) {
-    const currentPoints = stack.pop();
-    if (deltaFunction(currentPoints) > threshold) {
-      const newPoints = esm_split(currentPoints);
-      for (let i = newPoints.length - 1;i >= 0; i--) {
-        stack.push(newPoints[i]);
-      }
-    } else {
-      segments.push(currentPoints);
-    }
-  }
-  return segments;
-}
-function createLineSegment(points) {
-  switch (points.length) {
-    case 2:
-      return {
-        type: "L",
-        x: points[1][0],
-        y: points[1][1]
-      };
-    case 3:
-      return convertQToCInstruction({
-        type: "Q",
-        cpx: points[1][0],
-        cpy: points[1][1],
-        x: points[2][0],
-        y: points[2][1]
-      }, {
-        x: points[0][0],
-        y: points[0][1]
-      });
-    case 4:
-      return {
-        type: "C",
-        cp1x: points[1][0],
-        cp1y: points[1][1],
-        cp2x: points[2][0],
-        cp2y: points[2][1],
-        x: points[3][0],
-        y: points[3][1]
-      };
-    default:
-      throw new Error("Expected 2, 3 or 4 points for a line segment, got " + points.length);
-  }
-}
-function warpInterpolate(path, threshold, deltaFunction) {
-  let prexX = 0;
-  let prexY = 0;
-  return path.map((segment) => {
-    const points = [[prexX, prexY]];
-    if (segment.type !== "Z") {
-      prexX = segment.x;
-      prexY = segment.y;
-    }
-    if (segment.type === "C") {
-      points.push([segment.cp1x, segment.cp1y]);
-      points.push([segment.cp2x, segment.cp2y]);
-      points.push([segment.x, segment.y]);
-    }
-    if (segment.type === "L") {
-      points.push([segment.x, segment.y]);
-    }
-    if (segment.type === "C" || segment.type === "L") {
-      return interpolateUntil(points, threshold, deltaFunction).map((rawSegment) => createLineSegment(rawSegment));
-    }
-    return [segment];
-  }).flat(1);
-}
-function svgPathInterpolate(path, threshold) {
-  let didWork = false;
-  const deltaFunction = (points) => {
-    const linearPoints = [
-      points[0].slice(0, 2),
-      points[points.length - 1].slice(0, 2)
-    ];
-    const delta = euclideanDistance(linearPoints);
-    didWork = didWork || delta > threshold;
-    return delta;
-  };
-  return warpInterpolate(path, threshold, deltaFunction);
-}
-var warpTransform = (path, transformer) => {
-  return path.map((segment) => {
-    if (segment.type === "L") {
-      const { x, y } = transformer({ x: segment.x, y: segment.y });
-      return [
-        {
-          type: "L",
-          x,
-          y
-        }
-      ];
-    }
-    if (segment.type === "C") {
-      const { x, y } = transformer({ x: segment.x, y: segment.y });
-      const { x: cp1x, y: cp1y } = transformer({
-        x: segment.cp1x,
-        y: segment.cp1y
-      });
-      const { x: cp2x, y: cp2y } = transformer({
-        x: segment.cp2x,
-        y: segment.cp2y
-      });
-      return [
-        {
-          type: "C",
-          x,
-          y,
-          cp1x,
-          cp1y,
-          cp2x,
-          cp2y
-        }
-      ];
-    }
-    if (segment.type === "M") {
-      const { x, y } = transformer({ x: segment.x, y: segment.y });
-      return [
-        {
-          type: "M",
-          x,
-          y
-        }
-      ];
-    }
-    return [segment];
-  }).flat(1);
-};
-var fixZInstruction = (instructions) => {
-  let prevX = 0;
-  let prevY = 0;
-  return instructions.map((instruction) => {
-    if (instruction.type === "Z") {
-      return [
-        {
-          type: "L",
-          x: prevX,
-          y: prevY
-        },
-        {
-          type: "Z"
-        }
-      ];
-    }
-    if (instruction.type === "M") {
-      prevX = instruction.x;
-      prevY = instruction.y;
-    }
-    return [instruction];
-  }).flat(1);
-};
-
-// src/warp-path/index.ts
-var getDefaultInterpolationThreshold = (instructions) => {
-  const boundingBox = getBoundingBoxFromInstructions(instructions);
-  const longer = Math.max(boundingBox.y2 - boundingBox.y1, boundingBox.x2 - boundingBox.x1);
-  return longer * 0.01;
-};
-var warpPath = (path, transformer, options) => {
-  const reduced = reduceInstructions(parsePath(path));
-  const withZFix = fixZInstruction(reduced);
-  const interpolated = svgPathInterpolate(withZFix, options?.interpolationThreshold ?? getDefaultInterpolationThreshold(withZFix));
-  return serializeInstructions(warpTransform(interpolated, transformer));
-};
-
-// src/index.ts
-var PathInternals = (/* unused pure expression or super */ null && ({
-  getBoundingBoxFromInstructions,
-  debugPath,
-  cutPath
-}));
-
-
-;// CONCATENATED MODULE: ./node_modules/d3-array/dist/d3-array.mjs
-// https://d3js.org/d3-array/ v3.2.5 Copyright 2010-2026 Mike Bostock
-function d3_array_ascending(a, b) {
-  return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-function descending(a, b) {
-  return a == null || b == null ? NaN
-    : b < a ? -1
-    : b > a ? 1
-    : b >= a ? 0
-    : NaN;
-}
-
-function bisector(f) {
-  let compare1, compare2, delta;
-
-  // If an accessor is specified, promote it to a comparator. In this case we
-  // can test whether the search value is (self-) comparable. We can’t do this
-  // for a comparator (except for specific, known comparators) because we can’t
-  // tell if the comparator is symmetric, and an asymmetric comparator can’t be
-  // used to test whether a single value is comparable.
-  if (f.length !== 2) {
-    compare1 = d3_array_ascending;
-    compare2 = (d, x) => d3_array_ascending(f(d), x);
-    delta = (d, x) => f(d) - x;
-  } else {
-    compare1 = f === d3_array_ascending || f === descending ? f : d3_array_zero;
-    compare2 = f;
-    delta = f;
-  }
-
-  function left(a, x, lo = 0, hi = a.length) {
-    if (lo < hi) {
-      if (compare1(x, x) !== 0) return hi;
-      do {
-        const mid = (lo + hi) >>> 1;
-        if (compare2(a[mid], x) < 0) lo = mid + 1;
-        else hi = mid;
-      } while (lo < hi);
-    }
-    return lo;
-  }
-
-  function right(a, x, lo = 0, hi = a.length) {
-    if (lo < hi) {
-      if (compare1(x, x) !== 0) return hi;
-      do {
-        const mid = (lo + hi) >>> 1;
-        if (compare2(a[mid], x) <= 0) lo = mid + 1;
-        else hi = mid;
-      } while (lo < hi);
-    }
-    return lo;
-  }
-
-  function center(a, x, lo = 0, hi = a.length) {
-    const i = left(a, x, lo, hi - 1);
-    return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
-  }
-
-  return {left, center, right};
-}
-
-function d3_array_zero() {
-  return 0;
-}
-
-function d3_array_number(x) {
-  return x === null ? NaN : +x;
-}
-
-function* d3_array_numbers(values, valueof) {
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value != null && (value = +value) >= value) {
-        yield value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-        yield value;
-      }
-    }
-  }
-}
-
-const ascendingBisect = bisector(d3_array_ascending);
-const bisectRight = ascendingBisect.right;
-const bisectLeft = ascendingBisect.left;
-const bisectCenter = bisector(d3_array_number).center;
-
-function d3_array_blur(values, r) {
-  if (!((r = +r) >= 0)) throw new RangeError("invalid r");
-  let length = values.length;
-  if (!((length = Math.floor(length)) >= 0)) throw new RangeError("invalid length");
-  if (!length || !r) return values;
-  const blur = blurf(r);
-  const temp = values.slice();
-  blur(values, temp, 0, length, 1);
-  blur(temp, values, 0, length, 1);
-  blur(values, temp, 0, length, 1);
-  return values;
-}
-
-const blur2 = (/* unused pure expression or super */ null && (Blur2(blurf)));
-
-const blurImage = (/* unused pure expression or super */ null && (Blur2(blurfImage)));
-
-function Blur2(blur) {
-  return function(data, rx, ry = rx) {
-    if (!((rx = +rx) >= 0)) throw new RangeError("invalid rx");
-    if (!((ry = +ry) >= 0)) throw new RangeError("invalid ry");
-    let {data: values, width, height} = data;
-    if (!((width = Math.floor(width)) >= 0)) throw new RangeError("invalid width");
-    if (!((height = Math.floor(height !== undefined ? height : values.length / width)) >= 0)) throw new RangeError("invalid height");
-    if (!width || !height || (!rx && !ry)) return data;
-    const blurx = rx && blur(rx);
-    const blury = ry && blur(ry);
-    const temp = values.slice();
-    if (blurx && blury) {
-      blurh(blurx, temp, values, width, height);
-      blurh(blurx, values, temp, width, height);
-      blurh(blurx, temp, values, width, height);
-      blurv(blury, values, temp, width, height);
-      blurv(blury, temp, values, width, height);
-      blurv(blury, values, temp, width, height);
-    } else if (blurx) {
-      blurh(blurx, values, temp, width, height);
-      blurh(blurx, temp, values, width, height);
-      blurh(blurx, values, temp, width, height);
-    } else if (blury) {
-      blurv(blury, values, temp, width, height);
-      blurv(blury, temp, values, width, height);
-      blurv(blury, values, temp, width, height);
-    }
-    return data;
-  };
-}
-
-function blurh(blur, T, S, w, h) {
-  for (let y = 0, n = w * h; y < n;) {
-    blur(T, S, y, y += w, 1);
-  }
-}
-
-function blurv(blur, T, S, w, h) {
-  for (let x = 0, n = w * h; x < w; ++x) {
-    blur(T, S, x, x + n, w);
-  }
-}
-
-function blurfImage(radius) {
-  const blur = blurf(radius);
-  return (T, S, start, stop, step) => {
-    start <<= 2, stop <<= 2, step <<= 2;
-    blur(T, S, start + 0, stop + 0, step);
-    blur(T, S, start + 1, stop + 1, step);
-    blur(T, S, start + 2, stop + 2, step);
-    blur(T, S, start + 3, stop + 3, step);
-  };
-}
-
-// Given a target array T, a source array S, sets each value T[i] to the average
-// of {S[i - r], …, S[i], …, S[i + r]}, where r = ⌊radius⌋, start <= i < stop,
-// for each i, i + step, i + 2 * step, etc., and where S[j] is clamped between
-// S[start] (inclusive) and S[stop] (exclusive). If the given radius is not an
-// integer, S[i - r - 1] and S[i + r + 1] are added to the sum, each weighted
-// according to r - ⌊radius⌋.
-function blurf(radius) {
-  const radius0 = Math.floor(radius);
-  if (radius0 === radius) return bluri(radius);
-  const t = radius - radius0;
-  const w = 2 * radius + 1;
-  return (T, S, start, stop, step) => { // stop must be aligned!
-    if (!((stop -= step) >= start)) return; // inclusive stop
-    let sum = radius0 * S[start];
-    const s0 = step * radius0;
-    const s1 = s0 + step;
-    for (let i = start, j = start + s0; i < j; i += step) {
-      sum += S[Math.min(stop, i)];
-    }
-    for (let i = start, j = stop; i <= j; i += step) {
-      sum += S[Math.min(stop, i + s0)];
-      T[i] = (sum + t * (S[Math.max(start, i - s1)] + S[Math.min(stop, i + s1)])) / w;
-      sum -= S[Math.max(start, i - s0)];
-    }
-  };
-}
-
-// Like blurf, but optimized for integer radius.
-function bluri(radius) {
-  const w = 2 * radius + 1;
-  return (T, S, start, stop, step) => { // stop must be aligned!
-    if (!((stop -= step) >= start)) return; // inclusive stop
-    let sum = radius * S[start];
-    const s = step * radius;
-    for (let i = start, j = start + s; i < j; i += step) {
-      sum += S[Math.min(stop, i)];
-    }
-    for (let i = start, j = stop; i <= j; i += step) {
-      sum += S[Math.min(stop, i + s)];
-      T[i] = sum / w;
-      sum -= S[Math.max(start, i - s)];
-    }
-  };
-}
-
-function d3_array_count(values, valueof) {
-  let count = 0;
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value != null && (value = +value) >= value) {
-        ++count;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-        ++count;
-      }
-    }
-  }
-  return count;
-}
-
-function length$1(array) {
-  return array.length | 0;
-}
-
-function empty(length) {
-  return !(length > 0);
-}
-
-function arrayify(values) {
-  return typeof values !== "object" || "length" in values ? values : Array.from(values);
-}
-
-function d3_array_reducer(reduce) {
-  return values => reduce(...values);
-}
-
-function cross(...values) {
-  const reduce = typeof values[values.length - 1] === "function" && d3_array_reducer(values.pop());
-  values = values.map(arrayify);
-  const lengths = values.map(length$1);
-  const j = values.length - 1;
-  const index = new Array(j + 1).fill(0);
-  const product = [];
-  if (j < 0 || lengths.some(empty)) return product;
-  while (true) {
-    product.push(index.map((j, i) => values[i][j]));
-    let i = j;
-    while (++index[i] === lengths[i]) {
-      if (i === 0) return reduce ? product.map(reduce) : product;
-      index[i--] = 0;
-    }
-  }
-}
-
-function cumsum(values, valueof) {
-  var sum = 0, index = 0;
-  return Float64Array.from(values, valueof === undefined
-    ? v => (sum += +v || 0)
-    : v => (sum += +valueof(v, index++, values) || 0));
-}
-
-function variance(values, valueof) {
-  let count = 0;
-  let delta;
-  let mean = 0;
-  let sum = 0;
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value != null && (value = +value) >= value) {
-        delta = value - mean;
-        mean += delta / ++count;
-        sum += delta * (value - mean);
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-        delta = value - mean;
-        mean += delta / ++count;
-        sum += delta * (value - mean);
-      }
-    }
-  }
-  if (count > 1) return sum / (count - 1);
-}
-
-function deviation(values, valueof) {
-  const v = variance(values, valueof);
-  return v ? Math.sqrt(v) : v;
-}
-
-function extent(values, valueof) {
-  let min;
-  let max;
-  if (valueof === undefined) {
-    for (const value of values) {
-      if (value != null) {
-        if (min === undefined) {
-          if (value >= value) min = max = value;
-        } else {
-          if (min > value) min = value;
-          if (max < value) max = value;
-        }
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null) {
-        if (min === undefined) {
-          if (value >= value) min = max = value;
-        } else {
-          if (min > value) min = value;
-          if (max < value) max = value;
-        }
-      }
-    }
-  }
-  return [min, max];
-}
-
-// https://github.com/python/cpython/blob/a74eea238f5baba15797e2e8b570d153bc8690a7/Modules/mathmodule.c#L1423
-class Adder {
-  constructor() {
-    this._partials = new Float64Array(32);
-    this._n = 0;
-  }
-  add(x) {
-    const p = this._partials;
-    let i = 0;
-    for (let j = 0; j < this._n && j < 32; j++) {
-      const y = p[j],
-        hi = x + y,
-        lo = Math.abs(x) < Math.abs(y) ? x - (hi - y) : y - (hi - x);
-      if (lo) p[i++] = lo;
-      x = hi;
-    }
-    p[i] = x;
-    this._n = i + 1;
-    return this;
-  }
-  valueOf() {
-    const p = this._partials;
-    let n = this._n, x, y, lo, hi = 0;
-    if (n > 0) {
-      hi = p[--n];
-      while (n > 0) {
-        x = hi;
-        y = p[--n];
-        hi = x + y;
-        lo = y - (hi - x);
-        if (lo) break;
-      }
-      if (n > 0 && ((lo < 0 && p[n - 1] < 0) || (lo > 0 && p[n - 1] > 0))) {
-        y = lo * 2;
-        x = hi + y;
-        if (y == x - hi) hi = x;
-      }
-    }
-    return hi;
-  }
-}
-
-function fsum(values, valueof) {
-  const adder = new Adder();
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value = +value) {
-        adder.add(value);
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if (value = +valueof(value, ++index, values)) {
-        adder.add(value);
-      }
-    }
-  }
-  return +adder;
-}
-
-function fcumsum(values, valueof) {
-  const adder = new Adder();
-  let index = -1;
-  return Float64Array.from(values, valueof === undefined
-      ? v => adder.add(+v || 0)
-      : v => adder.add(+valueof(v, ++index, values) || 0)
-  );
-}
-
-class d3_array_InternMap extends Map {
-  constructor(entries, key = d3_array_keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (entries != null) for (const [key, value] of entries) this.set(key, value);
-  }
-  get(key) {
-    return super.get(intern_get(this, key));
-  }
-  has(key) {
-    return super.has(intern_get(this, key));
-  }
-  set(key, value) {
-    return super.set(intern_set(this, key), value);
-  }
-  delete(key) {
-    return super.delete(intern_delete(this, key));
-  }
-}
-
-class InternSet extends Set {
-  constructor(values, key = d3_array_keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (values != null) for (const value of values) this.add(value);
-  }
-  has(value) {
-    return super.has(intern_get(this, value));
-  }
-  add(value) {
-    return super.add(intern_set(this, value));
-  }
-  delete(value) {
-    return super.delete(intern_delete(this, value));
-  }
-}
-
-function intern_get({_intern, _key}, value) {
-  const key = _key(value);
-  return _intern.has(key) ? _intern.get(key) : value;
-}
-
-function intern_set({_intern, _key}, value) {
-  const key = _key(value);
-  if (_intern.has(key)) return _intern.get(key);
-  _intern.set(key, value);
-  return value;
-}
-
-function intern_delete({_intern, _key}, value) {
-  const key = _key(value);
-  if (_intern.has(key)) {
-    value = _intern.get(key);
-    _intern.delete(key);
-  }
-  return value;
-}
-
-function d3_array_keyof(value) {
-  return value !== null && typeof value === "object" ? value.valueOf() : value;
-}
-
-function identity(x) {
-  return x;
-}
-
-function d3_array_group(values, ...keys) {
-  return nest(values, identity, identity, keys);
-}
-
-function d3_array_groups(values, ...keys) {
-  return nest(values, Array.from, identity, keys);
-}
-
-function flatten$1(groups, keys) {
-  for (let i = 1, n = keys.length; i < n; ++i) {
-    groups = groups.flatMap(g => g.pop().map(([key, value]) => [...g, key, value]));
-  }
-  return groups;
-}
-
-function flatGroup(values, ...keys) {
-  return flatten$1(d3_array_groups(values, ...keys), keys);
-}
-
-function flatRollup(values, reduce, ...keys) {
-  return flatten$1(rollups(values, reduce, ...keys), keys);
-}
-
-function rollup(values, reduce, ...keys) {
-  return nest(values, identity, reduce, keys);
-}
-
-function rollups(values, reduce, ...keys) {
-  return nest(values, Array.from, reduce, keys);
-}
-
-function d3_array_index(values, ...keys) {
-  return nest(values, identity, unique, keys);
-}
-
-function indexes(values, ...keys) {
-  return nest(values, Array.from, unique, keys);
-}
-
-function unique(values) {
-  if (values.length !== 1) throw new Error("duplicate key");
-  return values[0];
-}
-
-function nest(values, map, reduce, keys) {
-  return (function regroup(values, i) {
-    if (i >= keys.length) return reduce(values);
-    const groups = new d3_array_InternMap();
-    const keyof = keys[i++];
-    let index = -1;
-    for (const value of values) {
-      const key = keyof(value, ++index, values);
-      const group = groups.get(key);
-      if (group) group.push(value);
-      else groups.set(key, [value]);
-    }
-    for (const [key, values] of groups) {
-      groups.set(key, regroup(values, i));
-    }
-    return map(groups);
-  })(values, 0);
-}
-
-function permute(source, keys) {
-  return Array.from(keys, key => source[key]);
-}
-
-function sort(values, ...F) {
-  if (typeof values[Symbol.iterator] !== "function") throw new TypeError("values is not iterable");
-  values = Array.from(values);
-  let [f] = F;
-  if ((f && f.length !== 2) || F.length > 1) {
-    const index = Uint32Array.from(values, (d, i) => i);
-    if (F.length > 1) {
-      F = F.map(f => values.map(f));
-      index.sort((i, j) => {
-        for (const f of F) {
-          const c = ascendingDefined(f[i], f[j]);
-          if (c) return c;
-        }
-      });
-    } else {
-      f = values.map(f);
-      index.sort((i, j) => ascendingDefined(f[i], f[j]));
-    }
-    return permute(values, index);
-  }
-  return values.sort(compareDefined(f));
-}
-
-function compareDefined(compare = d3_array_ascending) {
-  if (compare === d3_array_ascending) return ascendingDefined;
-  if (typeof compare !== "function") throw new TypeError("compare is not a function");
-  return (a, b) => {
-    const x = compare(a, b);
-    if (x || x === 0) return x;
-    return (compare(b, b) === 0) - (compare(a, a) === 0);
-  };
-}
-
-function ascendingDefined(a, b) {
-  return (a == null || !(a >= a)) - (b == null || !(b >= b)) || (a < b ? -1 : a > b ? 1 : 0);
-}
-
-function groupSort(values, reduce, key) {
-  return (reduce.length !== 2
-    ? sort(rollup(values, reduce, key), (([ak, av], [bk, bv]) => d3_array_ascending(av, bv) || d3_array_ascending(ak, bk)))
-    : sort(d3_array_group(values, key), (([ak, av], [bk, bv]) => reduce(av, bv) || d3_array_ascending(ak, bk))))
-    .map(([key]) => key);
-}
-
-var d3_array_array = Array.prototype;
-
-var slice = d3_array_array.slice;
-
-function constant(x) {
-  return () => x;
-}
-
-const e10 = Math.sqrt(50),
-    e5 = Math.sqrt(10),
-    e2 = Math.sqrt(2);
-
-function tickSpec(start, stop, count) {
-  const step = (stop - start) / Math.max(0, count),
-      power = Math.floor(Math.log10(step)),
-      error = step / Math.pow(10, power),
-      factor = error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1;
-  let i1, i2, inc;
-  if (power < 0) {
-    inc = Math.pow(10, -power) / factor;
-    i1 = Math.round(start * inc);
-    i2 = Math.round(stop * inc);
-    if (i1 / inc < start) ++i1;
-    if (i2 / inc > stop) --i2;
-    inc = -inc;
-  } else {
-    inc = Math.pow(10, power) * factor;
-    i1 = Math.round(start / inc);
-    i2 = Math.round(stop / inc);
-    if (i1 * inc < start) ++i1;
-    if (i2 * inc > stop) --i2;
-  }
-  if (i2 < i1 && 0.5 <= count && count < 2) return tickSpec(start, stop, count * 2);
-  return [i1, i2, inc];
-}
-
-function d3_array_ticks(start, stop, count) {
-  stop = +stop, start = +start, count = +count;
-  if (!(count > 0)) return [];
-  if (start === stop) return [start];
-  const reverse = stop < start, [i1, i2, inc] = reverse ? tickSpec(stop, start, count) : tickSpec(start, stop, count);
-  if (!(i2 >= i1)) return [];
-  const n = i2 - i1 + 1, ticks = new Array(n);
-  if (reverse) {
-    if (inc < 0) for (let i = 0; i < n; ++i) ticks[i] = (i2 - i) / -inc;
-    else for (let i = 0; i < n; ++i) ticks[i] = (i2 - i) * inc;
-  } else {
-    if (inc < 0) for (let i = 0; i < n; ++i) ticks[i] = (i1 + i) / -inc;
-    else for (let i = 0; i < n; ++i) ticks[i] = (i1 + i) * inc;
-  }
-  return ticks;
-}
-
-function tickIncrement(start, stop, count) {
-  stop = +stop, start = +start, count = +count;
-  return tickSpec(start, stop, count)[2];
-}
-
-function tickStep(start, stop, count) {
-  stop = +stop, start = +start, count = +count;
-  const reverse = stop < start, inc = reverse ? tickIncrement(stop, start, count) : tickIncrement(start, stop, count);
-  return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
-}
-
-function nice(start, stop, count) {
-  let prestep;
-  while (true) {
-    const step = tickIncrement(start, stop, count);
-    if (step === prestep || step === 0 || !isFinite(step)) {
-      return [start, stop];
-    } else if (step > 0) {
-      const i = Math.ceil(start / step);
-      const j = Math.floor(stop / step);
-      start = (i - (i * step > start)) * step;
-      stop = (j + (j * step < stop)) * step;
-    } else if (step < 0) {
-      const s = -step;
-      const i = Math.ceil(start * s);
-      const j = Math.floor(stop * s);
-      start = (i - (i / s > start)) / s;
-      stop = (j + (j / s < stop)) / s;
-    }
-    prestep = step;
-  }
-}
-
-function thresholdSturges(values) {
-  return Math.max(1, Math.ceil(Math.log(d3_array_count(values)) / Math.LN2) + 1);
-}
-
-function d3_array_bin() {
-  var value = identity,
-      domain = extent,
-      threshold = thresholdSturges;
-
-  function histogram(data) {
-    if (!Array.isArray(data)) data = Array.from(data);
-
-    var i,
-        n = data.length,
-        x,
-        step,
-        values = new Array(n);
-
-    for (i = 0; i < n; ++i) {
-      values[i] = value(data[i], i, data);
-    }
-
-    var xz = domain(values),
-        x0 = xz[0],
-        x1 = xz[1],
-        tz = threshold(values, x0, x1);
-
-    // Convert number of thresholds into uniform thresholds, and nice the
-    // default domain accordingly.
-    if (!Array.isArray(tz)) {
-      const max = x1, tn = +tz;
-      if (domain === extent) [x0, x1] = nice(x0, x1, tn);
-      tz = d3_array_ticks(x0, x1, tn);
-
-      // If the domain is aligned with the first tick (which it will by
-      // default), then we can use quantization rather than bisection to bin
-      // values, which is substantially faster.
-      if (tz[0] <= x0) step = tickIncrement(x0, x1, tn);
-
-      // If the last threshold is coincident with the domain’s upper bound, the
-      // last bin will be zero-width. If the default domain is used, and this
-      // last threshold is coincident with the maximum input value, we can
-      // extend the niced upper bound by one tick to ensure uniform bin widths;
-      // otherwise, we simply remove the last threshold. Note that we don’t
-      // coerce values or the domain to numbers, and thus must be careful to
-      // compare order (>=) rather than strict equality (===)!
-      if (tz[tz.length - 1] >= x1) {
-        if (max >= x1 && domain === extent) {
-          const step = tickIncrement(x0, x1, tn);
-          if (isFinite(step)) {
-            if (step > 0) {
-              x1 = (Math.floor(x1 / step) + 1) * step;
-            } else if (step < 0) {
-              x1 = (Math.ceil(x1 * -step) + 1) / -step;
-            }
-          }
-        } else {
-          tz.pop();
-        }
-      }
-    }
-
-    // Remove any thresholds outside the domain.
-    // Be careful not to mutate an array owned by the user!
-    var m = tz.length, a = 0, b = m;
-    while (tz[a] <= x0) ++a;
-    while (tz[b - 1] > x1) --b;
-    if (a || b < m) tz = tz.slice(a, b), m = b - a;
-
-    var bins = new Array(m + 1),
-        bin;
-
-    // Initialize bins.
-    for (i = 0; i <= m; ++i) {
-      bin = bins[i] = [];
-      bin.x0 = i > 0 ? tz[i - 1] : x0;
-      bin.x1 = i < m ? tz[i] : x1;
-    }
-
-    // Assign data to bins by value, ignoring any outside the domain.
-    if (isFinite(step)) {
-      if (step > 0) {
-        for (i = 0; i < n; ++i) {
-          if ((x = values[i]) != null && x0 <= x && x <= x1) {
-            bins[Math.min(m, Math.floor((x - x0) / step))].push(data[i]);
-          }
-        }
-      } else if (step < 0) {
-        for (i = 0; i < n; ++i) {
-          if ((x = values[i]) != null && x0 <= x && x <= x1) {
-            const j = Math.floor((x0 - x) * step);
-            bins[Math.min(m, j + (tz[j] <= x))].push(data[i]); // handle off-by-one due to rounding
-          }
-        }
-      }
-    } else {
-      for (i = 0; i < n; ++i) {
-        if ((x = values[i]) != null && x0 <= x && x <= x1) {
-          bins[bisectRight(tz, x, 0, m)].push(data[i]);
-        }
-      }
-    }
-
-    return bins;
-  }
-
-  histogram.value = function(_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : constant(_), histogram) : value;
-  };
-
-  histogram.domain = function(_) {
-    return arguments.length ? (domain = typeof _ === "function" ? _ : constant([_[0], _[1]]), histogram) : domain;
-  };
-
-  histogram.thresholds = function(_) {
-    return arguments.length ? (threshold = typeof _ === "function" ? _ : constant(Array.isArray(_) ? slice.call(_) : _), histogram) : threshold;
-  };
-
-  return histogram;
-}
-
-function d3_array_max(values, valueof) {
-  let max;
-  if (valueof === undefined) {
-    for (const value of values) {
-      if (value != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value;
-      }
-    }
-  }
-  return max;
-}
-
-function d3_array_maxIndex(values, valueof) {
-  let max;
-  let maxIndex = -1;
-  let index = -1;
-  if (valueof === undefined) {
-    for (const value of values) {
-      ++index;
-      if (value != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value, maxIndex = index;
-      }
-    }
-  } else {
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (max < value || (max === undefined && value >= value))) {
-        max = value, maxIndex = index;
-      }
-    }
-  }
-  return maxIndex;
-}
-
-function d3_array_min(values, valueof) {
-  let min;
-  if (valueof === undefined) {
-    for (const value of values) {
-      if (value != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value;
-      }
-    }
-  }
-  return min;
-}
-
-function d3_array_minIndex(values, valueof) {
-  let min;
-  let minIndex = -1;
-  let index = -1;
-  if (valueof === undefined) {
-    for (const value of values) {
-      ++index;
-      if (value != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value, minIndex = index;
-      }
-    }
-  } else {
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null
-          && (min > value || (min === undefined && value >= value))) {
-        min = value, minIndex = index;
-      }
-    }
-  }
-  return minIndex;
-}
-
-// Based on https://github.com/mourner/quickselect
-// ISC license, Copyright 2018 Vladimir Agafonkin.
-function quickselect(array, k, left = 0, right = Infinity, compare) {
-  k = Math.floor(k);
-  left = Math.floor(Math.max(0, left));
-  right = Math.floor(Math.min(array.length - 1, right));
-
-  if (!(left <= k && k <= right)) return array;
-
-  compare = compare === undefined ? ascendingDefined : compareDefined(compare);
-
-  while (right > left) {
-    if (right - left > 600) {
-      const n = right - left + 1;
-      const m = k - left + 1;
-      const z = Math.log(n);
-      const s = 0.5 * Math.exp(2 * z / 3);
-      const sd = 0.5 * Math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
-      const newLeft = Math.max(left, Math.floor(k - m * s / n + sd));
-      const newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
-      quickselect(array, k, newLeft, newRight, compare);
-    }
-
-    const t = array[k];
-    let i = left;
-    let j = right;
-
-    swap(array, left, k);
-    if (compare(array[right], t) > 0) swap(array, left, right);
-
-    while (i < j) {
-      swap(array, i, j), ++i, --j;
-      while (compare(array[i], t) < 0) ++i;
-      while (compare(array[j], t) > 0) --j;
-    }
-
-    if (compare(array[left], t) === 0) swap(array, left, j);
-    else ++j, swap(array, j, right);
-
-    if (j <= k) left = j + 1;
-    if (k <= j) right = j - 1;
-  }
-
-  return array;
-}
-
-function swap(array, i, j) {
-  const t = array[i];
-  array[i] = array[j];
-  array[j] = t;
-}
-
-function greatest(values, compare = d3_array_ascending) {
-  let max;
-  let defined = false;
-  if (compare.length === 1) {
-    let maxValue;
-    for (const element of values) {
-      const value = compare(element);
-      if (defined
-          ? d3_array_ascending(value, maxValue) > 0
-          : d3_array_ascending(value, value) === 0) {
-        max = element;
-        maxValue = value;
-        defined = true;
-      }
-    }
-  } else {
-    for (const value of values) {
-      if (defined
-          ? compare(value, max) > 0
-          : compare(value, value) === 0) {
-        max = value;
-        defined = true;
-      }
-    }
-  }
-  return max;
-}
-
-function quantile(values, p, valueof) {
-  values = Float64Array.from(d3_array_numbers(values, valueof));
-  if (!(n = values.length) || isNaN(p = +p)) return;
-  if (p <= 0 || n < 2) return d3_array_min(values);
-  if (p >= 1) return d3_array_max(values);
-  var n,
-      i = (n - 1) * p,
-      i0 = Math.floor(i),
-      value0 = d3_array_max(quickselect(values, i0).subarray(0, i0 + 1)),
-      value1 = d3_array_min(values.subarray(i0 + 1));
-  return value0 + (value1 - value0) * (i - i0);
-}
-
-function d3_array_quantileSorted(values, p, valueof = d3_array_number) {
-  if (!(n = values.length) || isNaN(p = +p)) return;
-  if (p <= 0 || n < 2) return +valueof(values[0], 0, values);
-  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-  var n,
-      i = (n - 1) * p,
-      i0 = Math.floor(i),
-      value0 = +valueof(values[i0], i0, values),
-      value1 = +valueof(values[i0 + 1], i0 + 1, values);
-  return value0 + (value1 - value0) * (i - i0);
-}
-
-function quantileIndex(values, p, valueof = d3_array_number) {
-  if (isNaN(p = +p)) return;
-  numbers = Float64Array.from(values, (_, i) => d3_array_number(valueof(values[i], i, values)));
-  if (p <= 0) return d3_array_minIndex(numbers);
-  if (p >= 1) return d3_array_maxIndex(numbers);
-  var numbers,
-      index = Uint32Array.from(values, (_, i) => i),
-      j = numbers.length - 1,
-      i = Math.floor(j * p);
-  quickselect(index, i, 0, j, (i, j) => ascendingDefined(numbers[i], numbers[j]));
-  i = greatest(index.subarray(0, i + 1), (i) => numbers[i]);
-  return i >= 0 ? i : -1;
-}
-
-function thresholdFreedmanDiaconis(values, min, max) {
-  const c = d3_array_count(values), d = quantile(values, 0.75) - quantile(values, 0.25);
-  return c && d ? Math.ceil((max - min) / (2 * d * Math.pow(c, -1 / 3))) : 1;
-}
-
-function thresholdScott(values, min, max) {
-  const c = d3_array_count(values), d = deviation(values);
-  return c && d ? Math.ceil((max - min) * Math.cbrt(c) / (3.49 * d)) : 1;
-}
-
-function d3_array_mean(values, valueof) {
-  let count = 0;
-  let sum = 0;
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value != null && (value = +value) >= value) {
-        ++count, sum += value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-        ++count, sum += value;
-      }
-    }
-  }
-  if (count) return sum / count;
-}
-
-function median(values, valueof) {
-  return quantile(values, 0.5, valueof);
-}
-
-function medianIndex(values, valueof) {
-  return quantileIndex(values, 0.5, valueof);
-}
-
-function* flatten(arrays) {
-  for (const array of arrays) {
-    yield* array;
-  }
-}
-
-function merge(arrays) {
-  return Array.from(flatten(arrays));
-}
-
-function mode(values, valueof) {
-  const counts = new d3_array_InternMap();
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value != null && value >= value) {
-        counts.set(value, (counts.get(value) || 0) + 1);
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && value >= value) {
-        counts.set(value, (counts.get(value) || 0) + 1);
-      }
-    }
-  }
-  let modeValue;
-  let modeCount = 0;
-  for (const [value, count] of counts) {
-    if (count > modeCount) {
-      modeCount = count;
-      modeValue = value;
-    }
-  }
-  return modeValue;
-}
-
-function d3_array_pairs(values, pairof = pair) {
-  const pairs = [];
-  let previous;
-  let first = false;
-  for (const value of values) {
-    if (first) pairs.push(pairof(previous, value));
-    previous = value;
-    first = true;
-  }
-  return pairs;
-}
-
-function pair(a, b) {
-  return [a, b];
-}
-
-function d3_array_range(start, stop, step) {
-  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-  var i = -1,
-      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-      range = new Array(n);
-
-  while (++i < n) {
-    range[i] = start + i * step;
-  }
-
-  return range;
-}
-
-function rank(values, valueof = d3_array_ascending) {
-  if (typeof values[Symbol.iterator] !== "function") throw new TypeError("values is not iterable");
-  let V = Array.from(values);
-  const R = new Float64Array(V.length);
-  if (valueof.length !== 2) V = V.map(valueof), valueof = d3_array_ascending;
-  const compareIndex = (i, j) => valueof(V[i], V[j]);
-  let k, r;
-  values = Uint32Array.from(V, (_, i) => i);
-  // Risky chaining due to Safari 14 https://github.com/d3/d3-array/issues/123
-  values.sort(valueof === d3_array_ascending ? (i, j) => ascendingDefined(V[i], V[j]) : compareDefined(compareIndex));
-  values.forEach((j, i) => {
-      const c = compareIndex(j, k === undefined ? j : k);
-      if (c >= 0) {
-        if (k === undefined || c > 0) k = j, r = i;
-        R[j] = r;
-      } else {
-        R[j] = NaN;
-      }
-    });
-  return R;
-}
-
-function least(values, compare = d3_array_ascending) {
-  let min;
-  let defined = false;
-  if (compare.length === 1) {
-    let minValue;
-    for (const element of values) {
-      const value = compare(element);
-      if (defined
-          ? d3_array_ascending(value, minValue) < 0
-          : d3_array_ascending(value, value) === 0) {
-        min = element;
-        minValue = value;
-        defined = true;
-      }
-    }
-  } else {
-    for (const value of values) {
-      if (defined
-          ? compare(value, min) < 0
-          : compare(value, value) === 0) {
-        min = value;
-        defined = true;
-      }
-    }
-  }
-  return min;
-}
-
-function leastIndex(values, compare = d3_array_ascending) {
-  if (compare.length === 1) return d3_array_minIndex(values, compare);
-  let minValue;
-  let min = -1;
-  let index = -1;
-  for (const value of values) {
-    ++index;
-    if (min < 0
-        ? compare(value, value) === 0
-        : compare(value, minValue) < 0) {
-      minValue = value;
-      min = index;
-    }
-  }
-  return min;
-}
-
-function greatestIndex(values, compare = d3_array_ascending) {
-  if (compare.length === 1) return d3_array_maxIndex(values, compare);
-  let maxValue;
-  let max = -1;
-  let index = -1;
-  for (const value of values) {
-    ++index;
-    if (max < 0
-        ? compare(value, value) === 0
-        : compare(value, maxValue) > 0) {
-      maxValue = value;
-      max = index;
-    }
-  }
-  return max;
-}
-
-function scan(values, compare) {
-  const index = leastIndex(values, compare);
-  return index < 0 ? undefined : index;
-}
-
-var d3_array_shuffle = (/* unused pure expression or super */ null && (shuffler(Math.random)));
-
-function shuffler(random) {
-  return function shuffle(array, i0 = 0, i1 = array.length) {
-    let m = i1 - (i0 = +i0);
-    while (m) {
-      const i = random() * m-- | 0, t = array[m + i0];
-      array[m + i0] = array[i + i0];
-      array[i + i0] = t;
-    }
-    return array;
-  };
-}
-
-function d3_array_sum(values, valueof) {
-  let sum = 0;
-  if (valueof === undefined) {
-    for (let value of values) {
-      if (value = +value) {
-        sum += value;
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if (value = +valueof(value, ++index, values)) {
-        sum += value;
-      }
-    }
-  }
-  return sum;
-}
-
-function d3_array_transpose(matrix) {
-  if (!(n = matrix.length)) return [];
-  for (var i = -1, m = d3_array_min(matrix, d3_array_length), transpose = new Array(m); ++i < m;) {
-    for (var j = -1, n, row = transpose[i] = new Array(n); ++j < n;) {
-      row[j] = matrix[j][i];
-    }
-  }
-  return transpose;
-}
-
-function d3_array_length(d) {
-  return d.length;
-}
-
-function zip() {
-  return d3_array_transpose(arguments);
-}
-
-function every(values, test) {
-  if (typeof test !== "function") throw new TypeError("test is not a function");
-  let index = -1;
-  for (const value of values) {
-    if (!test(value, ++index, values)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function some(values, test) {
-  if (typeof test !== "function") throw new TypeError("test is not a function");
-  let index = -1;
-  for (const value of values) {
-    if (test(value, ++index, values)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function filter(values, test) {
-  if (typeof test !== "function") throw new TypeError("test is not a function");
-  const array = [];
-  let index = -1;
-  for (const value of values) {
-    if (test(value, ++index, values)) {
-      array.push(value);
-    }
-  }
-  return array;
-}
-
-function d3_array_map(values, mapper) {
-  if (typeof values[Symbol.iterator] !== "function") throw new TypeError("values is not iterable");
-  if (typeof mapper !== "function") throw new TypeError("mapper is not a function");
-  return Array.from(values, (value, index) => mapper(value, index, values));
-}
-
-function d3_array_reduce(values, reducer, value) {
-  if (typeof reducer !== "function") throw new TypeError("reducer is not a function");
-  const iterator = values[Symbol.iterator]();
-  let done, next, index = -1;
-  if (arguments.length < 3) {
-    ({done, value} = iterator.next());
-    if (done) return;
-    ++index;
-  }
-  while (({done, value: next} = iterator.next()), !done) {
-    value = reducer(value, next, ++index, values);
-  }
-  return value;
-}
-
-function d3_array_reverse(values) {
-  if (typeof values[Symbol.iterator] !== "function") throw new TypeError("values is not iterable");
-  return Array.from(values).reverse();
-}
-
-function difference(values, ...others) {
-  values = new InternSet(values);
-  for (const other of others) {
-    for (const value of other) {
-      values.delete(value);
-    }
-  }
-  return values;
-}
-
-function disjoint(values, other) {
-  const iterator = other[Symbol.iterator](), set = new InternSet();
-  for (const v of values) {
-    if (set.has(v)) return false;
-    let value, done;
-    while (({value, done} = iterator.next())) {
-      if (done) break;
-      if (Object.is(v, value)) return false;
-      set.add(value);
-    }
-  }
-  return true;
-}
-
-function intersection(values, ...others) {
-  values = new InternSet(values);
-  others = others.map(d3_array_set);
-  out: for (const value of values) {
-    for (const other of others) {
-      if (!other.has(value)) {
-        values.delete(value);
-        continue out;
-      }
-    }
-  }
-  return values;
-}
-
-function d3_array_set(values) {
-  return values instanceof InternSet ? values : new InternSet(values);
-}
-
-function superset(values, other) {
-  const iterator = values[Symbol.iterator](), set = new Set();
-  for (const o of other) {
-    const io = intern(o);
-    if (set.has(io)) continue;
-    let value, done;
-    while (({value, done} = iterator.next())) {
-      if (done) return false;
-      const ivalue = intern(value);
-      set.add(ivalue);
-      if (Object.is(io, ivalue)) break;
-    }
-  }
-  return true;
-}
-
-function intern(value) {
-  return value !== null && typeof value === "object" ? value.valueOf() : value;
-}
-
-function d3_array_subset(values, other) {
-  return superset(other, values);
-}
-
-function union(...others) {
-  const set = new InternSet();
-  for (const other of others) {
-    for (const o of other) {
-      set.add(o);
-    }
-  }
-  return set;
-}
-
-
-
-;// CONCATENATED MODULE: ./node_modules/d3-color/dist/d3-color.mjs
-// https://d3js.org/d3-color/ v3.1.1 Copyright 2010-2026 Mike Bostock
-function d3_color_define(constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype;
-  prototype.constructor = constructor;
-}
-
-function extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-  for (var key in definition) prototype[key] = definition[key];
-  return prototype;
-}
-
-function Color() {}
-
-var darker = 0.7;
-var brighter = 1 / darker;
-
-var reI = "\\s*([+-]?\\d+)\\s*",
-    reN = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    reP = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    reHex = /^#([0-9a-f]{3,8})$/,
-    reRgbInteger = new RegExp(`^rgb\\(${reI},${reI},${reI}\\)$`),
-    reRgbPercent = new RegExp(`^rgb\\(${reP},${reP},${reP}\\)$`),
-    reRgbaInteger = new RegExp(`^rgba\\(${reI},${reI},${reI},${reN}\\)$`),
-    reRgbaPercent = new RegExp(`^rgba\\(${reP},${reP},${reP},${reN}\\)$`),
-    reHslPercent = new RegExp(`^hsl\\(${reN},${reP},${reP}\\)$`),
-    reHslaPercent = new RegExp(`^hsla\\(${reN},${reP},${reP},${reN}\\)$`);
-
-var named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 0x00ffff,
-  aquamarine: 0x7fffd4,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0x000000,
-  blanchedalmond: 0xffebcd,
-  blue: 0x0000ff,
-  blueviolet: 0x8a2be2,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 0x5f9ea0,
-  chartreuse: 0x7fff00,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 0x6495ed,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 0x00ffff,
-  darkblue: 0x00008b,
-  darkcyan: 0x008b8b,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 0x006400,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 0x8b008b,
-  darkolivegreen: 0x556b2f,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 0x8b0000,
-  darksalmon: 0xe9967a,
-  darkseagreen: 0x8fbc8f,
-  darkslateblue: 0x483d8b,
-  darkslategray: 0x2f4f4f,
-  darkslategrey: 0x2f4f4f,
-  darkturquoise: 0x00ced1,
-  darkviolet: 0x9400d3,
-  deeppink: 0xff1493,
-  deepskyblue: 0x00bfff,
-  dimgray: 0x696969,
-  dimgrey: 0x696969,
-  dodgerblue: 0x1e90ff,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 0x228b22,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 0x808080,
-  green: 0x008000,
-  greenyellow: 0xadff2f,
-  grey: 0x808080,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 0x4b0082,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 0x7cfc00,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 0x90ee90,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 0x20b2aa,
-  lightskyblue: 0x87cefa,
-  lightslategray: 0x778899,
-  lightslategrey: 0x778899,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 0x00ff00,
-  limegreen: 0x32cd32,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 0x800000,
-  mediumaquamarine: 0x66cdaa,
-  mediumblue: 0x0000cd,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 0x9370db,
-  mediumseagreen: 0x3cb371,
-  mediumslateblue: 0x7b68ee,
-  mediumspringgreen: 0x00fa9a,
-  mediumturquoise: 0x48d1cc,
-  mediumvioletred: 0xc71585,
-  midnightblue: 0x191970,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 0x000080,
-  oldlace: 0xfdf5e6,
-  olive: 0x808000,
-  olivedrab: 0x6b8e23,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 0x800080,
-  rebeccapurple: 0x663399,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 0x4169e1,
-  saddlebrown: 0x8b4513,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 0x2e8b57,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 0x87ceeb,
-  slateblue: 0x6a5acd,
-  slategray: 0x708090,
-  slategrey: 0x708090,
-  snow: 0xfffafa,
-  springgreen: 0x00ff7f,
-  steelblue: 0x4682b4,
-  tan: 0xd2b48c,
-  teal: 0x008080,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 0x40e0d0,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-
-d3_color_define(Color, d3_color_color, {
-  copy(channels) {
-    return Object.assign(new this.constructor, this, channels);
-  },
-  displayable() {
-    return this.rgb().displayable();
-  },
-  hex: color_formatHex, // Deprecated! Use color.formatHex.
-  formatHex: color_formatHex,
-  formatHex8: color_formatHex8,
-  formatHsl: color_formatHsl,
-  formatRgb: color_formatRgb,
-  toString: color_formatRgb
-});
-
-function color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function color_formatHex8() {
-  return this.rgb().formatHex8();
-}
-
-function color_formatHsl() {
-  return hslConvert(this).formatHsl();
-}
-
-function color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function d3_color_color(format) {
-  var m, l;
-  format = (format + "").trim().toLowerCase();
-  return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
-      : l === 3 ? new Rgb((m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1) // #f00
-      : l === 8 ? d3_color_rgba(m >> 24 & 0xff, m >> 16 & 0xff, m >> 8 & 0xff, (m & 0xff) / 0xff) // #ff000000
-      : l === 4 ? d3_color_rgba((m >> 12 & 0xf) | (m >> 8 & 0xf0), (m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), (((m & 0xf) << 4) | (m & 0xf)) / 0xff) // #f000
-      : null) // invalid hex
-      : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-      : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-      : (m = reRgbaInteger.exec(format)) ? d3_color_rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-      : (m = reRgbaPercent.exec(format)) ? d3_color_rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-      : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-      : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-      : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
-      : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
-      : null;
-}
-
-function rgbn(n) {
-  return new Rgb(n >> 16 & 0xff, n >> 8 & 0xff, n & 0xff, 1);
-}
-
-function d3_color_rgba(r, g, b, a) {
-  if (a <= 0) r = g = b = NaN;
-  return new Rgb(r, g, b, a);
-}
-
-function rgbConvert(o) {
-  if (!(o instanceof Color)) o = d3_color_color(o);
-  if (!o) return new Rgb;
-  o = o.rgb();
-  return new Rgb(o.r, o.g, o.b, o.opacity);
-}
-
-function d3_color_rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? rgbConvert(r) : new Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-
-function Rgb(r, g, b, opacity) {
-  this.r = +r;
-  this.g = +g;
-  this.b = +b;
-  this.opacity = +opacity;
-}
-
-d3_color_define(Rgb, d3_color_rgb, extend(Color, {
-  brighter(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb() {
-    return this;
-  },
-  clamp() {
-    return new Rgb(clampi(this.r), clampi(this.g), clampi(this.b), clampa(this.opacity));
-  },
-  displayable() {
-    return (-0.5 <= this.r && this.r < 255.5)
-        && (-0.5 <= this.g && this.g < 255.5)
-        && (-0.5 <= this.b && this.b < 255.5)
-        && (0 <= this.opacity && this.opacity <= 1);
-  },
-  hex: rgb_formatHex, // Deprecated! Use color.formatHex.
-  formatHex: rgb_formatHex,
-  formatHex8: rgb_formatHex8,
-  formatRgb: rgb_formatRgb,
-  toString: rgb_formatRgb
-}));
-
-function rgb_formatHex() {
-  return `#${d3_color_hex(this.r)}${d3_color_hex(this.g)}${d3_color_hex(this.b)}`;
-}
-
-function rgb_formatHex8() {
-  return `#${d3_color_hex(this.r)}${d3_color_hex(this.g)}${d3_color_hex(this.b)}${d3_color_hex((isNaN(this.opacity) ? 1 : this.opacity) * 255)}`;
-}
-
-function rgb_formatRgb() {
-  const a = clampa(this.opacity);
-  return `${a === 1 ? "rgb(" : "rgba("}${clampi(this.r)}, ${clampi(this.g)}, ${clampi(this.b)}${a === 1 ? ")" : `, ${a})`}`;
-}
-
-function clampa(opacity) {
-  return isNaN(opacity) ? 1 : Math.max(0, Math.min(1, opacity));
-}
-
-function clampi(value) {
-  return Math.max(0, Math.min(255, Math.round(value) || 0));
-}
-
-function d3_color_hex(value) {
-  value = clampi(value);
-  return (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function hsla(h, s, l, a) {
-  if (a <= 0) h = s = l = NaN;
-  else if (l <= 0 || l >= 1) h = s = NaN;
-  else if (s <= 0) h = NaN;
-  return new Hsl(h, s, l, a);
-}
-
-function hslConvert(o) {
-  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
-  if (!(o instanceof Color)) o = d3_color_color(o);
-  if (!o) return new Hsl;
-  if (o instanceof Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  if (s) {
-    if (r === max) h = (g - b) / s + (g < b) * 6;
-    else if (g === max) h = (b - r) / s + 2;
-    else h = (r - g) / s + 4;
-    s /= l < 0.5 ? max + min : 2 - max - min;
-    h *= 60;
-  } else {
-    s = l > 0 && l < 1 ? 0 : h;
-  }
-  return new Hsl(h, s, l, o.opacity);
-}
-
-function hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function Hsl(h, s, l, opacity) {
-  this.h = +h;
-  this.s = +s;
-  this.l = +l;
-  this.opacity = +opacity;
-}
-
-d3_color_define(Hsl, hsl, extend(Color, {
-  brighter(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb() {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < 0.5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new Rgb(
-      hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2),
-      hsl2rgb(h, m1, m2),
-      hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2),
-      this.opacity
-    );
-  },
-  clamp() {
-    return new Hsl(clamph(this.h), clampt(this.s), clampt(this.l), clampa(this.opacity));
-  },
-  displayable() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s))
-        && (0 <= this.l && this.l <= 1)
-        && (0 <= this.opacity && this.opacity <= 1);
-  },
-  formatHsl() {
-    const a = clampa(this.opacity);
-    return `${a === 1 ? "hsl(" : "hsla("}${clamph(this.h)}, ${clampt(this.s) * 100}%, ${clampt(this.l) * 100}%${a === 1 ? ")" : `, ${a})`}`;
-  }
-}));
-
-function clamph(value) {
-  value = (value || 0) % 360;
-  return value < 0 ? value + 360 : value;
-}
-
-function clampt(value) {
-  return Math.max(0, Math.min(1, value || 0));
-}
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60
-      : h < 180 ? m2
-      : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60
-      : m1) * 255;
-}
-
-const radians = Math.PI / 180;
-const degrees = 180 / Math.PI;
-
-// https://observablehq.com/@mbostock/lab-and-rgb
-const d3_color_K = 18,
-    Xn = 0.96422,
-    Yn = 1,
-    Zn = 0.82521,
-    d3_color_t0 = 4 / 29,
-    d3_color_t1 = 6 / 29,
-    d3_color_t2 = 3 * d3_color_t1 * d3_color_t1,
-    d3_color_t3 = d3_color_t1 * d3_color_t1 * d3_color_t1;
-
-function labConvert(o) {
-  if (o instanceof Lab) return new Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof Hcl) return hcl2lab(o);
-  if (!(o instanceof Rgb)) o = rgbConvert(o);
-  var r = rgb2lrgb(o.r),
-      g = rgb2lrgb(o.g),
-      b = rgb2lrgb(o.b),
-      y = xyz2lab((0.2225045 * r + 0.7168786 * g + 0.0606169 * b) / Yn), x, z;
-  if (r === g && g === b) x = z = y; else {
-    x = xyz2lab((0.4360747 * r + 0.3850649 * g + 0.1430804 * b) / Xn);
-    z = xyz2lab((0.0139322 * r + 0.0971045 * g + 0.7141733 * b) / Zn);
-  }
-  return new Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
-}
-
-function gray(l, opacity) {
-  return new Lab(l, 0, 0, opacity == null ? 1 : opacity);
-}
-
-function lab(l, a, b, opacity) {
-  return arguments.length === 1 ? labConvert(l) : new Lab(l, a, b, opacity == null ? 1 : opacity);
-}
-
-function Lab(l, a, b, opacity) {
-  this.l = +l;
-  this.a = +a;
-  this.b = +b;
-  this.opacity = +opacity;
-}
-
-d3_color_define(Lab, lab, extend(Color, {
-  brighter(k) {
-    return new Lab(this.l + d3_color_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  darker(k) {
-    return new Lab(this.l - d3_color_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  rgb() {
-    var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
-    x = Xn * lab2xyz(x);
-    y = Yn * lab2xyz(y);
-    z = Zn * lab2xyz(z);
-    return new Rgb(
-      lrgb2rgb( 3.1338561 * x - 1.6168667 * y - 0.4906146 * z),
-      lrgb2rgb(-0.9787684 * x + 1.9161415 * y + 0.0334540 * z),
-      lrgb2rgb( 0.0719453 * x - 0.2289914 * y + 1.4052427 * z),
-      this.opacity
-    );
-  }
-}));
-
-function xyz2lab(t) {
-  return t > d3_color_t3 ? Math.pow(t, 1 / 3) : t / d3_color_t2 + d3_color_t0;
-}
-
-function lab2xyz(t) {
-  return t > d3_color_t1 ? t * t * t : d3_color_t2 * (t - d3_color_t0);
-}
-
-function lrgb2rgb(x) {
-  return 255 * (x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055);
-}
-
-function rgb2lrgb(x) {
-  return (x /= 255) <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
-}
-
-function hclConvert(o) {
-  if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
-  if (!(o instanceof Lab)) o = labConvert(o);
-  if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-  var h = Math.atan2(o.b, o.a) * degrees;
-  return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
-}
-
-function lch(l, c, h, opacity) {
-  return arguments.length === 1 ? hclConvert(l) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-
-function hcl(h, c, l, opacity) {
-  return arguments.length === 1 ? hclConvert(h) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-
-function Hcl(h, c, l, opacity) {
-  this.h = +h;
-  this.c = +c;
-  this.l = +l;
-  this.opacity = +opacity;
-}
-
-function hcl2lab(o) {
-  if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
-  var h = o.h * radians;
-  return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-}
-
-d3_color_define(Hcl, hcl, extend(Color, {
-  brighter(k) {
-    return new Hcl(this.h, this.c, this.l + d3_color_K * (k == null ? 1 : k), this.opacity);
-  },
-  darker(k) {
-    return new Hcl(this.h, this.c, this.l - d3_color_K * (k == null ? 1 : k), this.opacity);
-  },
-  rgb() {
-    return hcl2lab(this).rgb();
-  }
-}));
-
-var d3_color_A = -0.14861,
-    d3_color_B = 1.78277,
-    d3_color_C = -0.29227,
-    d3_color_D = -0.90649,
-    d3_color_E = 1.97294,
-    ED = d3_color_E * d3_color_D,
-    EB = d3_color_E * d3_color_B,
-    BC_DA = d3_color_B * d3_color_C - d3_color_D * d3_color_A;
-
-function cubehelixConvert(o) {
-  if (o instanceof Cubehelix) return new Cubehelix(o.h, o.s, o.l, o.opacity);
-  if (!(o instanceof Rgb)) o = rgbConvert(o);
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      l = (BC_DA * b + ED * r - EB * g) / (BC_DA + ED - EB),
-      bl = b - l,
-      k = (d3_color_E * (g - l) - d3_color_C * bl) / d3_color_D,
-      s = Math.sqrt(k * k + bl * bl) / (d3_color_E * l * (1 - l)), // NaN if l=0 or l=1
-      h = s ? Math.atan2(k, bl) * degrees - 120 : NaN;
-  return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
-}
-
-function d3_color_cubehelix(h, s, l, opacity) {
-  return arguments.length === 1 ? cubehelixConvert(h) : new Cubehelix(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function Cubehelix(h, s, l, opacity) {
-  this.h = +h;
-  this.s = +s;
-  this.l = +l;
-  this.opacity = +opacity;
-}
-
-d3_color_define(Cubehelix, d3_color_cubehelix, extend(Color, {
-  brighter(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * radians,
-        l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
-        cosh = Math.cos(h),
-        sinh = Math.sin(h);
-    return new Rgb(
-      255 * (l + a * (d3_color_A * cosh + d3_color_B * sinh)),
-      255 * (l + a * (d3_color_C * cosh + d3_color_D * sinh)),
-      255 * (l + a * (d3_color_E * cosh)),
-      this.opacity
-    );
-  }
-}));
-
-
-
-;// CONCATENATED MODULE: ./node_modules/d3-interpolate/dist/d3-interpolate.mjs
-// https://d3js.org/d3-interpolate/ v3.0.2 Copyright 2010-2026 Mike Bostock
-
-
-function basis(t1, v0, v1, v2, v3) {
-  var t2 = t1 * t1, t3 = t2 * t1;
-  return ((1 - 3 * t1 + 3 * t2 - t3) * v0
-      + (4 - 6 * t2 + 3 * t3) * v1
-      + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2
-      + t3 * v3) / 6;
-}
-
-function basis$1(values) {
-  var n = values.length - 1;
-  return function(t) {
-    var i = t <= 0 ? (t = 0) : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
-    return basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-}
-
-function basisClosed(values) {
-  var n = values.length;
-  return function(t) {
-    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
-    return basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-}
-
-var d3_interpolate_constant = x => () => x;
-
-function linear(a, d) {
-  return function(t) {
-    return a + t * d;
-  };
-}
-
-function exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function(t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function hue$1(a, b) {
-  var d = b - a;
-  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : d3_interpolate_constant(isNaN(a) ? b : a);
-}
-
-function gamma(y) {
-  return (y = +y) === 1 ? nogamma : function(a, b) {
-    return b - a ? exponential(a, b, y) : d3_interpolate_constant(isNaN(a) ? b : a);
-  };
-}
-
-function nogamma(a, b) {
-  var d = b - a;
-  return d ? linear(a, d) : d3_interpolate_constant(isNaN(a) ? b : a);
-}
-
-var d3_interpolate_rgb = (function rgbGamma(y) {
-  var color = gamma(y);
-
-  function rgb(start, end) {
-    var r = color((start = d3_color_rgb(start)).r, (end = d3_color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function(t) {
-      start.r = r(t);
-      start.g = g(t);
-      start.b = b(t);
-      start.opacity = opacity(t);
-      return start + "";
-    };
-  }
-
-  rgb.gamma = rgbGamma;
-
-  return rgb;
-})(1);
-
-function rgbSpline(spline) {
-  return function(colors) {
-    var n = colors.length,
-        r = new Array(n),
-        g = new Array(n),
-        b = new Array(n),
-        i, color;
-    for (i = 0; i < n; ++i) {
-      color = rgb$1(colors[i]);
-      r[i] = color.r || 0;
-      g[i] = color.g || 0;
-      b[i] = color.b || 0;
-    }
-    r = spline(r);
-    g = spline(g);
-    b = spline(b);
-    color.opacity = 1;
-    return function(t) {
-      color.r = r(t);
-      color.g = g(t);
-      color.b = b(t);
-      return color + "";
-    };
-  };
-}
-
-var rgbBasis = (/* unused pure expression or super */ null && (rgbSpline(basis$1)));
-var rgbBasisClosed = (/* unused pure expression or super */ null && (rgbSpline(basisClosed)));
-
-function numberArray(a, b) {
-  if (!b) b = [];
-  var n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice(),
-      i;
-  return function(t) {
-    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
-    return c;
-  };
-}
-
-function isNumberArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-
-function d3_interpolate_array(a, b) {
-  return (isNumberArray(b) ? numberArray : genericArray)(a, b);
-}
-
-function genericArray(a, b) {
-  var nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = new Array(na),
-      c = new Array(nb),
-      i;
-
-  for (i = 0; i < na; ++i) x[i] = d3_interpolate_value(a[i], b[i]);
-  for (; i < nb; ++i) c[i] = b[i];
-
-  return function(t) {
-    for (i = 0; i < na; ++i) c[i] = x[i](t);
-    return c;
-  };
-}
-
-function d3_interpolate_date(a, b) {
-  var d = new Date;
-  return a = +a, b = +b, function(t) {
-    return d.setTime(a * (1 - t) + b * t), d;
-  };
-}
-
-function d3_interpolate_number(a, b) {
-  return a = +a, b = +b, function(t) {
-    return a * (1 - t) + b * t;
-  };
-}
-
-function object(a, b) {
-  var i = {},
-      c = {},
-      k;
-
-  if (a === null || typeof a !== "object") a = {};
-  if (b === null || typeof b !== "object") b = {};
-
-  for (k in b) {
-    if (k in a) {
-      i[k] = d3_interpolate_value(a[k], b[k]);
-    } else {
-      c[k] = b[k];
-    }
-  }
-
-  return function(t) {
-    for (k in i) c[k] = i[k](t);
-    return c;
-  };
-}
-
-var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    reB = new RegExp(reA.source, "g");
-
-function d3_interpolate_zero(b) {
-  return function() {
-    return b;
-  };
-}
-
-function one(b) {
-  return function(t) {
-    return b(t) + "";
-  };
-}
-
-function d3_interpolate_string(a, b) {
-  var bi = reA.lastIndex = reB.lastIndex = 0, // scan index for next number in b
-      am, // current match in a
-      bm, // current match in b
-      bs, // string preceding current number in b, if any
-      i = -1, // index in s
-      s = [], // string constants and placeholders
-      q = []; // number interpolators
-
-  // Coerce inputs to strings.
-  a = a + "", b = b + "";
-
-  // Interpolate pairs of numbers in a & b.
-  while ((am = reA.exec(a))
-      && (bm = reB.exec(b))) {
-    if ((bs = bm.index) > bi) { // a string precedes the next number in b
-      bs = b.slice(bi, bs);
-      if (s[i]) s[i] += bs; // coalesce with previous string
-      else s[++i] = bs;
-    }
-    if ((am = am[0]) === (bm = bm[0])) { // numbers in a & b match
-      if (s[i]) s[i] += bm; // coalesce with previous string
-      else s[++i] = bm;
-    } else { // interpolate non-matching numbers
-      s[++i] = null;
-      q.push({i: i, x: d3_interpolate_number(am, bm)});
-    }
-    bi = reB.lastIndex;
-  }
-
-  // Add remains of b.
-  if (bi < b.length) {
-    bs = b.slice(bi);
-    if (s[i]) s[i] += bs; // coalesce with previous string
-    else s[++i] = bs;
-  }
-
-  // Special optimization for only a single match.
-  // Otherwise, interpolate each of the numbers and rejoin the string.
-  return s.length < 2 ? (q[0]
-      ? one(q[0].x)
-      : d3_interpolate_zero(b))
-      : (b = q.length, function(t) {
-          for (var i = 0, o; i < b; ++i) s[(o = q[i]).i] = o.x(t);
-          return s.join("");
-        });
-}
-
-function d3_interpolate_value(a, b) {
-  var t = typeof b, c;
-  return b == null || t === "boolean" ? d3_interpolate_constant(b)
-      : (t === "number" ? d3_interpolate_number
-      : t === "string" ? ((c = d3_color_color(b)) ? (b = c, d3_interpolate_rgb) : d3_interpolate_string)
-      : b instanceof d3_color_color ? d3_interpolate_rgb
-      : b instanceof Date ? d3_interpolate_date
-      : isNumberArray(b) ? numberArray
-      : Array.isArray(b) ? genericArray
-      : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object
-      : d3_interpolate_number)(a, b);
-}
-
-function discrete(range) {
-  var n = range.length;
-  return function(t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-}
-
-function d3_interpolate_hue(a, b) {
-  var i = hue$1(+a, +b);
-  return function(t) {
-    var x = i(t);
-    return x - 360 * Math.floor(x / 360);
-  };
-}
-
-function d3_interpolate_round(a, b) {
-  return a = +a, b = +b, function(t) {
-    return Math.round(a * (1 - t) + b * t);
-  };
-}
-
-var d3_interpolate_degrees = 180 / Math.PI;
-
-var d3_interpolate_identity = {
-  translateX: 0,
-  translateY: 0,
-  rotate: 0,
-  skewX: 0,
-  scaleX: 1,
-  scaleY: 1
-};
-
-function decompose(a, b, c, d, e, f) {
-  var scaleX, scaleY, skewX;
-  if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
-  if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
-  if (scaleY = Math.sqrt(c * c + d * d)) c /= scaleY, d /= scaleY, skewX /= scaleY;
-  if (a * d < b * c) a = -a, b = -b, skewX = -skewX, scaleX = -scaleX;
-  return {
-    translateX: e,
-    translateY: f,
-    rotate: Math.atan2(b, a) * d3_interpolate_degrees,
-    skewX: Math.atan(skewX) * d3_interpolate_degrees,
-    scaleX: scaleX,
-    scaleY: scaleY
-  };
-}
-
-var svgNode;
-
-/* eslint-disable no-undef */
-function parseCss(value) {
-  const m = new (typeof DOMMatrix === "function" ? DOMMatrix : WebKitCSSMatrix)(value + "");
-  return m.isIdentity ? d3_interpolate_identity : decompose(m.a, m.b, m.c, m.d, m.e, m.f);
-}
-
-function parseSvg(value) {
-  if (value == null) return d3_interpolate_identity;
-  if (!svgNode) svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  svgNode.setAttribute("transform", value);
-  if (!(value = svgNode.transform.baseVal.consolidate())) return d3_interpolate_identity;
-  value = value.matrix;
-  return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
-}
-
-function interpolateTransform(parse, pxComma, pxParen, degParen) {
-
-  function pop(s) {
-    return s.length ? s.pop() + " " : "";
-  }
-
-  function translate(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({i: i - 4, x: d3_interpolate_number(xa, xb)}, {i: i - 2, x: d3_interpolate_number(ya, yb)});
-    } else if (xb || yb) {
-      s.push("translate(" + xb + pxComma + yb + pxParen);
-    }
-  }
-
-  function rotate(a, b, s, q) {
-    if (a !== b) {
-      if (a - b > 180) b += 360; else if (b - a > 180) a += 360; // shortest path
-      q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: d3_interpolate_number(a, b)});
-    } else if (b) {
-      s.push(pop(s) + "rotate(" + b + degParen);
-    }
-  }
-
-  function skewX(a, b, s, q) {
-    if (a !== b) {
-      q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: d3_interpolate_number(a, b)});
-    } else if (b) {
-      s.push(pop(s) + "skewX(" + b + degParen);
-    }
-  }
-
-  function scale(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({i: i - 4, x: d3_interpolate_number(xa, xb)}, {i: i - 2, x: d3_interpolate_number(ya, yb)});
-    } else if (xb !== 1 || yb !== 1) {
-      s.push(pop(s) + "scale(" + xb + "," + yb + ")");
-    }
-  }
-
-  return function(a, b) {
-    var s = [], // string constants and placeholders
-        q = []; // number interpolators
-    a = parse(a), b = parse(b);
-    translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q);
-    rotate(a.rotate, b.rotate, s, q);
-    skewX(a.skewX, b.skewX, s, q);
-    scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q);
-    a = b = null; // gc
-    return function(t) {
-      var i = -1, n = q.length, o;
-      while (++i < n) s[(o = q[i]).i] = o.x(t);
-      return s.join("");
-    };
-  };
-}
-
-var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
-var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
-
-var epsilon2 = 1e-12;
-
-function d3_interpolate_cosh(x) {
-  return ((x = Math.exp(x)) + 1 / x) / 2;
-}
-
-function d3_interpolate_sinh(x) {
-  return ((x = Math.exp(x)) - 1 / x) / 2;
-}
-
-function tanh(x) {
-  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
-}
-
-var d3_interpolate_zoom = (function zoomRho(rho, rho2, rho4) {
-
-  // p0 = [ux0, uy0, w0]
-  // p1 = [ux1, uy1, w1]
-  function zoom(p0, p1) {
-    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2],
-        ux1 = p1[0], uy1 = p1[1], w1 = p1[2],
-        dx = ux1 - ux0,
-        dy = uy1 - uy0,
-        d2 = dx * dx + dy * dy,
-        i,
-        S;
-
-    // Special case for u0 ≅ u1.
-    if (d2 < epsilon2) {
-      S = Math.log(w1 / w0) / rho;
-      i = function(t) {
-        return [
-          ux0 + t * dx,
-          uy0 + t * dy,
-          w0 * Math.exp(rho * t * S)
-        ];
-      };
-    }
-
-    // General case.
-    else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / rho;
-      i = function(t) {
-        var s = t * S,
-            coshr0 = d3_interpolate_cosh(r0),
-            u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - d3_interpolate_sinh(r0));
-        return [
-          ux0 + u * dx,
-          uy0 + u * dy,
-          w0 * coshr0 / d3_interpolate_cosh(rho * s + r0)
-        ];
-      };
-    }
-
-    i.duration = Math.abs(S) * 1000 * rho / Math.SQRT2;
-
-    return i;
-  }
-
-  zoom.rho = function(_) {
-    var _1 = Math.max(1e-3, +_), _2 = _1 * _1, _4 = _2 * _2;
-    return zoomRho(_1, _2, _4);
-  };
-
-  return zoom;
-})(Math.SQRT2, 2, 4);
-
-function d3_interpolate_hsl(hue) {
-  return function(start, end) {
-    var h = hue((start = hsl$1(start)).h, (end = hsl$1(end)).h),
-        s = nogamma(start.s, end.s),
-        l = nogamma(start.l, end.l),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function(t) {
-      start.h = h(t);
-      start.s = s(t);
-      start.l = l(t);
-      start.opacity = opacity(t);
-      return start + "";
-    };
-  }
-}
-
-var hsl_default = (/* unused pure expression or super */ null && (d3_interpolate_hsl(hue$1)));
-var hslLong = (/* unused pure expression or super */ null && (d3_interpolate_hsl(nogamma)));
-
-function d3_interpolate_lab(start, end) {
-  var l = nogamma((start = lab$1(start)).l, (end = lab$1(end)).l),
-      a = nogamma(start.a, end.a),
-      b = nogamma(start.b, end.b),
-      opacity = nogamma(start.opacity, end.opacity);
-  return function(t) {
-    start.l = l(t);
-    start.a = a(t);
-    start.b = b(t);
-    start.opacity = opacity(t);
-    return start + "";
-  };
-}
-
-function d3_interpolate_hcl(hue) {
-  return function(start, end) {
-    var h = hue((start = hcl$1(start)).h, (end = hcl$1(end)).h),
-        c = nogamma(start.c, end.c),
-        l = nogamma(start.l, end.l),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function(t) {
-      start.h = h(t);
-      start.c = c(t);
-      start.l = l(t);
-      start.opacity = opacity(t);
-      return start + "";
-    };
-  }
-}
-
-var hcl_default = (/* unused pure expression or super */ null && (d3_interpolate_hcl(hue$1)));
-var hclLong = (/* unused pure expression or super */ null && (d3_interpolate_hcl(nogamma)));
-
-function d3_interpolate_cubehelix(hue) {
-  return (function cubehelixGamma(y) {
-    y = +y;
-
-    function cubehelix(start, end) {
-      var h = hue((start = d3_color_cubehelix(start)).h, (end = d3_color_cubehelix(end)).h),
-          s = nogamma(start.s, end.s),
-          l = nogamma(start.l, end.l),
-          opacity = nogamma(start.opacity, end.opacity);
-      return function(t) {
-        start.h = h(t);
-        start.s = s(t);
-        start.l = l(Math.pow(t, y));
-        start.opacity = opacity(t);
-        return start + "";
-      };
-    }
-
-    cubehelix.gamma = cubehelixGamma;
-
-    return cubehelix;
-  })(1);
-}
-
-var cubehelix_default = d3_interpolate_cubehelix(hue$1);
-var cubehelixLong = d3_interpolate_cubehelix(nogamma);
-
-function d3_interpolate_piecewise(interpolate, values) {
-  if (values === undefined) values = interpolate, interpolate = d3_interpolate_value;
-  var i = 0, n = values.length - 1, v = values[0], I = new Array(n < 0 ? 0 : n);
-  while (i < n) I[i] = interpolate(v, v = values[++i]);
-  return function(t) {
-    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
-    return I[i](t - i);
-  };
-}
-
-function quantize(interpolator, n) {
-  var samples = new Array(n);
-  for (var i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
-  return samples;
-}
-
-
-
-;// CONCATENATED MODULE: ./node_modules/d3-format/dist/d3-format.mjs
-// https://d3js.org/d3-format/ v3.1.3 Copyright 2010-2026 Mike Bostock
-function formatDecimal(x) {
-  return Math.abs(x = Math.round(x)) >= 1e21
-      ? x.toLocaleString("en").replace(/,/g, "")
-      : x.toString(10);
-}
-
-// Computes the decimal coefficient and exponent of the specified number x with
-// significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimalParts(1.23) returns ["123", 0].
-function formatDecimalParts(x, p) {
-  if (!isFinite(x) || x === 0) return null; // NaN, ±Infinity, ±0
-  var i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e"), coefficient = x.slice(0, i);
-
-  // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
-  // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
-  return [
-    coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
-    +x.slice(i + 1)
-  ];
-}
-
-function d3_format_exponent(x) {
-  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
-}
-
-function formatGroup(grouping, thousands) {
-  return function(value, width) {
-    var i = value.length,
-        t = [],
-        j = 0,
-        g = grouping[0],
-        length = 0;
-
-    while (i > 0 && g > 0) {
-      if (length + g + 1 > width) g = Math.max(1, width - length);
-      t.push(value.substring(i -= g, i + g));
-      if ((length += g + 1) > width) break;
-      g = grouping[j = (j + 1) % grouping.length];
-    }
-
-    return t.reverse().join(thousands);
-  };
-}
-
-function formatNumerals(numerals) {
-  return function(value) {
-    return value.replace(/[0-9]/g, function(i) {
-      return numerals[+i];
-    });
-  };
-}
-
-// [[fill]align][sign][symbol][0][width][,][.precision][~][type]
-var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
-
-function d3_format_formatSpecifier(specifier) {
-  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-  var match;
-  return new FormatSpecifier({
-    fill: match[1],
-    align: match[2],
-    sign: match[3],
-    symbol: match[4],
-    zero: match[5],
-    width: match[6],
-    comma: match[7],
-    precision: match[8] && match[8].slice(1),
-    trim: match[9],
-    type: match[10]
-  });
-}
-
-d3_format_formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
-
-function FormatSpecifier(specifier) {
-  this.fill = specifier.fill === undefined ? " " : specifier.fill + "";
-  this.align = specifier.align === undefined ? ">" : specifier.align + "";
-  this.sign = specifier.sign === undefined ? "-" : specifier.sign + "";
-  this.symbol = specifier.symbol === undefined ? "" : specifier.symbol + "";
-  this.zero = !!specifier.zero;
-  this.width = specifier.width === undefined ? undefined : +specifier.width;
-  this.comma = !!specifier.comma;
-  this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
-  this.trim = !!specifier.trim;
-  this.type = specifier.type === undefined ? "" : specifier.type + "";
-}
-
-FormatSpecifier.prototype.toString = function() {
-  return this.fill
-      + this.align
-      + this.sign
-      + this.symbol
-      + (this.zero ? "0" : "")
-      + (this.width === undefined ? "" : Math.max(1, this.width | 0))
-      + (this.comma ? "," : "")
-      + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0))
-      + (this.trim ? "~" : "")
-      + this.type;
-};
-
-// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
-function formatTrim(s) {
-  out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
-    switch (s[i]) {
-      case ".": i0 = i1 = i; break;
-      case "0": if (i0 === 0) i0 = i; i1 = i; break;
-      default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break;
-    }
-  }
-  return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
-}
-
-var prefixExponent;
-
-function formatPrefixAuto(x, p) {
-  var d = formatDecimalParts(x, p);
-  if (!d) return prefixExponent = undefined, x.toPrecision(p);
-  var coefficient = d[0],
-      exponent = d[1],
-      i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
-      n = coefficient.length;
-  return i === n ? coefficient
-      : i > n ? coefficient + new Array(i - n + 1).join("0")
-      : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
-      : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
-}
-
-function formatRounded(x, p) {
-  var d = formatDecimalParts(x, p);
-  if (!d) return x + "";
-  var coefficient = d[0],
-      exponent = d[1];
-  return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient
-      : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1)
-      : coefficient + new Array(exponent - coefficient.length + 2).join("0");
-}
-
-var formatTypes = {
-  "%": (x, p) => (x * 100).toFixed(p),
-  "b": (x) => Math.round(x).toString(2),
-  "c": (x) => x + "",
-  "d": formatDecimal,
-  "e": (x, p) => x.toExponential(p),
-  "f": (x, p) => x.toFixed(p),
-  "g": (x, p) => x.toPrecision(p),
-  "o": (x) => Math.round(x).toString(8),
-  "p": (x, p) => formatRounded(x * 100, p),
-  "r": formatRounded,
-  "s": formatPrefixAuto,
-  "X": (x) => Math.round(x).toString(16).toUpperCase(),
-  "x": (x) => Math.round(x).toString(16)
-};
-
-function d3_format_identity(x) {
-  return x;
-}
-
-var d3_format_map = Array.prototype.map,
-    prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
-
-function formatLocale(locale) {
-  var group = locale.grouping === undefined || locale.thousands === undefined ? d3_format_identity : formatGroup(d3_format_map.call(locale.grouping, Number), locale.thousands + ""),
-      currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
-      currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
-      decimal = locale.decimal === undefined ? "." : locale.decimal + "",
-      numerals = locale.numerals === undefined ? d3_format_identity : formatNumerals(d3_format_map.call(locale.numerals, String)),
-      percent = locale.percent === undefined ? "%" : locale.percent + "",
-      minus = locale.minus === undefined ? "−" : locale.minus + "",
-      nan = locale.nan === undefined ? "NaN" : locale.nan + "";
-
-  function newFormat(specifier, options) {
-    specifier = d3_format_formatSpecifier(specifier);
-
-    var fill = specifier.fill,
-        align = specifier.align,
-        sign = specifier.sign,
-        symbol = specifier.symbol,
-        zero = specifier.zero,
-        width = specifier.width,
-        comma = specifier.comma,
-        precision = specifier.precision,
-        trim = specifier.trim,
-        type = specifier.type;
-
-    // The "n" type is an alias for ",g".
-    if (type === "n") comma = true, type = "g";
-
-    // The "" type, and any invalid type, is an alias for ".12~g".
-    else if (!formatTypes[type]) precision === undefined && (precision = 12), trim = true, type = "g";
-
-    // If zero fill is specified, padding goes after sign and before digits.
-    if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
-
-    // Compute the prefix and suffix.
-    // For SI-prefix, the suffix is lazily computed.
-    var prefix = (options && options.prefix !== undefined ? options.prefix : "") + (symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : ""),
-        suffix = (symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "") + (options && options.suffix !== undefined ? options.suffix : "");
-
-    // What format function should we use?
-    // Is this an integer type?
-    // Can this type generate exponential notation?
-    var formatType = formatTypes[type],
-        maybeSuffix = /[defgprs%]/.test(type);
-
-    // Set the default precision if not specified,
-    // or clamp the specified precision to the supported range.
-    // For significant precision, it must be in [1, 21].
-    // For fixed precision, it must be in [0, 20].
-    precision = precision === undefined ? 6
-        : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
-        : Math.max(0, Math.min(20, precision));
-
-    function format(value) {
-      var valuePrefix = prefix,
-          valueSuffix = suffix,
-          i, n, c;
-
-      if (type === "c") {
-        valueSuffix = formatType(value) + valueSuffix;
-        value = "";
-      } else {
-        value = +value;
-
-        // Determine the sign. -0 is not less than 0, but 1 / -0 is!
-        var valueNegative = value < 0 || 1 / value < 0;
-
-        // Perform the initial formatting.
-        value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
-
-        // Trim insignificant zeros.
-        if (trim) value = formatTrim(value);
-
-        // If a negative value rounds to zero after formatting, and no explicit positive sign is requested, hide the sign.
-        if (valueNegative && +value === 0 && sign !== "+") valueNegative = false;
-
-        // Compute the prefix and suffix.
-        valuePrefix = (valueNegative ? (sign === "(" ? sign : minus) : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = (type === "s" && !isNaN(value) && prefixExponent !== undefined ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
-
-        // Break the formatted value into the integer “value” part that can be
-        // grouped, and fractional or exponential “suffix” part that is not.
-        if (maybeSuffix) {
-          i = -1, n = value.length;
-          while (++i < n) {
-            if (c = value.charCodeAt(i), 48 > c || c > 57) {
-              valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
-              value = value.slice(0, i);
-              break;
-            }
-          }
-        }
-      }
-
-      // If the fill character is not "0", grouping is applied before padding.
-      if (comma && !zero) value = group(value, Infinity);
-
-      // Compute the padding.
-      var length = valuePrefix.length + value.length + valueSuffix.length,
-          padding = length < width ? new Array(width - length + 1).join(fill) : "";
-
-      // If the fill character is "0", grouping is applied after padding.
-      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
-
-      // Reconstruct the final output based on the desired alignment.
-      switch (align) {
-        case "<": value = valuePrefix + value + valueSuffix + padding; break;
-        case "=": value = valuePrefix + padding + value + valueSuffix; break;
-        case "^": value = padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length); break;
-        default: value = padding + valuePrefix + value + valueSuffix; break;
-      }
-
-      return numerals(value);
-    }
-
-    format.toString = function() {
-      return specifier + "";
-    };
-
-    return format;
-  }
-
-  function formatPrefix(specifier, value) {
-    var e = Math.max(-8, Math.min(8, Math.floor(d3_format_exponent(value) / 3))) * 3,
-        k = Math.pow(10, -e),
-        f = newFormat((specifier = d3_format_formatSpecifier(specifier), specifier.type = "f", specifier), {suffix: prefixes[8 + e / 3]});
-    return function(value) {
-      return f(k * value);
-    };
-  }
-
-  return {
-    format: newFormat,
-    formatPrefix: formatPrefix
-  };
-}
-
-var d3_format_locale;
-var d3_format_format;
-var d3_format_formatPrefix;
-
-defaultLocale({
-  thousands: ",",
-  grouping: [3],
-  currency: ["$", ""]
-});
-
-function defaultLocale(definition) {
-  d3_format_locale = formatLocale(definition);
-  d3_format_format = d3_format_locale.format;
-  d3_format_formatPrefix = d3_format_locale.formatPrefix;
-  return d3_format_locale;
-}
-
-function precisionFixed(step) {
-  return Math.max(0, -d3_format_exponent(Math.abs(step)));
-}
-
-function precisionPrefix(step, value) {
-  return Math.max(0, Math.max(-8, Math.min(8, Math.floor(d3_format_exponent(value) / 3))) * 3 - d3_format_exponent(Math.abs(step)));
-}
-
-function precisionRound(step, max) {
-  step = Math.abs(step), max = Math.abs(max) - step;
-  return Math.max(0, d3_format_exponent(max) - d3_format_exponent(step)) + 1;
-}
-
-
-
-;// CONCATENATED MODULE: ./node_modules/d3-scale/dist/d3-scale.mjs
-// https://d3js.org/d3-scale/ v4.0.3 Copyright 2010-2026 Mike Bostock
-
-
-
-
-
-
-function initRange(domain, range) {
-  switch (arguments.length) {
-    case 0: break;
-    case 1: this.range(domain); break;
-    default: this.range(range).domain(domain); break;
-  }
-  return this;
-}
-
-function initInterpolator(domain, interpolator) {
-  switch (arguments.length) {
-    case 0: break;
-    case 1: {
-      if (typeof domain === "function") this.interpolator(domain);
-      else this.range(domain);
-      break;
-    }
-    default: {
-      this.domain(domain);
-      if (typeof interpolator === "function") this.interpolator(interpolator);
-      else this.range(interpolator);
-      break;
-    }
-  }
-  return this;
-}
-
-const implicit = Symbol("implicit");
-
-function ordinal() {
-  var index = new InternMap(),
-      domain = [],
-      range = [],
-      unknown = implicit;
-
-  function scale(d) {
-    let i = index.get(d);
-    if (i === undefined) {
-      if (unknown !== implicit) return unknown;
-      index.set(d, i = domain.push(d) - 1);
-    }
-    return range[i % range.length];
-  }
-
-  scale.domain = function(_) {
-    if (!arguments.length) return domain.slice();
-    domain = [], index = new InternMap();
-    for (const value of _) {
-      if (index.has(value)) continue;
-      index.set(value, domain.push(value) - 1);
-    }
-    return scale;
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), scale) : range.slice();
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.copy = function() {
-    return ordinal(domain, range).unknown(unknown);
-  };
-
-  initRange.apply(scale, arguments);
-
-  return scale;
-}
-
-function band() {
-  var scale = ordinal().unknown(undefined),
-      domain = scale.domain,
-      ordinalRange = scale.range,
-      r0 = 0,
-      r1 = 1,
-      step,
-      bandwidth,
-      round = false,
-      paddingInner = 0,
-      paddingOuter = 0,
-      align = 0.5;
-
-  delete scale.unknown;
-
-  function rescale() {
-    var n = domain().length,
-        reverse = r1 < r0,
-        start = reverse ? r1 : r0,
-        stop = reverse ? r0 : r1;
-    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2);
-    if (round) step = Math.floor(step);
-    start += (stop - start - step * (n - paddingInner)) * align;
-    bandwidth = step * (1 - paddingInner);
-    if (round) start = Math.round(start), bandwidth = Math.round(bandwidth);
-    var values = range(n).map(function(i) { return start + step * i; });
-    return ordinalRange(reverse ? values.reverse() : values);
-  }
-
-  scale.domain = function(_) {
-    return arguments.length ? (domain(_), rescale()) : domain();
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? ([r0, r1] = _, r0 = +r0, r1 = +r1, rescale()) : [r0, r1];
-  };
-
-  scale.rangeRound = function(_) {
-    return [r0, r1] = _, r0 = +r0, r1 = +r1, round = true, rescale();
-  };
-
-  scale.bandwidth = function() {
-    return bandwidth;
-  };
-
-  scale.step = function() {
-    return step;
-  };
-
-  scale.round = function(_) {
-    return arguments.length ? (round = !!_, rescale()) : round;
-  };
-
-  scale.padding = function(_) {
-    return arguments.length ? (paddingInner = Math.min(1, paddingOuter = +_), rescale()) : paddingInner;
-  };
-
-  scale.paddingInner = function(_) {
-    return arguments.length ? (paddingInner = Math.min(1, _), rescale()) : paddingInner;
-  };
-
-  scale.paddingOuter = function(_) {
-    return arguments.length ? (paddingOuter = +_, rescale()) : paddingOuter;
-  };
-
-  scale.align = function(_) {
-    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
-  };
-
-  scale.copy = function() {
-    return band(domain(), [r0, r1])
-        .round(round)
-        .paddingInner(paddingInner)
-        .paddingOuter(paddingOuter)
-        .align(align);
-  };
-
-  return initRange.apply(rescale(), arguments);
-}
-
-function pointish(scale) {
-  var copy = scale.copy;
-
-  scale.padding = scale.paddingOuter;
-  delete scale.paddingInner;
-  delete scale.paddingOuter;
-
-  scale.copy = function() {
-    return pointish(copy());
-  };
-
-  return scale;
-}
-
-function d3_scale_point() {
-  return pointish(band.apply(null, arguments).paddingInner(1));
-}
-
-function constants(x) {
-  return function() {
-    return x;
-  };
-}
-
-function number$1(x) {
-  return +x;
-}
-
-var d3_scale_unit = [0, 1];
-
-function identity$1(x) {
-  return x;
-}
-
-function normalize(a, b) {
-  return (b -= (a = +a))
-      ? function(x) { return (x - a) / b; }
-      : constants(isNaN(b) ? NaN : 0.5);
-}
-
-function clamper(a, b) {
-  var t;
-  if (a > b) t = a, a = b, b = t;
-  return function(x) { return Math.max(a, Math.min(b, x)); };
-}
-
-// normalize(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
-// interpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding range value x in [a,b].
-function bimap(domain, range, interpolate) {
-  var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-  if (d1 < d0) d0 = normalize(d1, d0), r0 = interpolate(r1, r0);
-  else d0 = normalize(d0, d1), r0 = interpolate(r0, r1);
-  return function(x) { return r0(d0(x)); };
-}
-
-function polymap(domain, range, interpolate) {
-  var j = Math.min(domain.length, range.length) - 1,
-      d = new Array(j),
-      r = new Array(j),
-      i = -1;
-
-  // Reverse descending domains.
-  if (domain[j] < domain[0]) {
-    domain = domain.slice().reverse();
-    range = range.slice().reverse();
-  }
-
-  while (++i < j) {
-    d[i] = normalize(domain[i], domain[i + 1]);
-    r[i] = interpolate(range[i], range[i + 1]);
-  }
-
-  return function(x) {
-    var i = bisectRight(domain, x, 1, j) - 1;
-    return r[i](d[i](x));
-  };
-}
-
-function copy$1(source, target) {
-  return target
-      .domain(source.domain())
-      .range(source.range())
-      .interpolate(source.interpolate())
-      .clamp(source.clamp())
-      .unknown(source.unknown());
-}
-
-function transformer$2() {
-  var domain = d3_scale_unit,
-      range = d3_scale_unit,
-      interpolate$1 = d3_interpolate_value,
-      transform,
-      untransform,
-      unknown,
-      clamp = identity$1,
-      piecewise,
-      output,
-      input;
-
-  function rescale() {
-    var n = Math.min(domain.length, range.length);
-    if (clamp !== identity$1) clamp = clamper(domain[0], domain[n - 1]);
-    piecewise = n > 2 ? polymap : bimap;
-    output = input = null;
-    return scale;
-  }
-
-  function scale(x) {
-    return x == null || isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate$1)))(transform(clamp(x)));
-  }
-
-  scale.invert = function(y) {
-    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), d3_interpolate_number)))(y)));
-  };
-
-  scale.domain = function(_) {
-    return arguments.length ? (domain = Array.from(_, number$1), rescale()) : domain.slice();
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
-  };
-
-  scale.rangeRound = function(_) {
-    return range = Array.from(_), interpolate$1 = d3_interpolate_round, rescale();
-  };
-
-  scale.clamp = function(_) {
-    return arguments.length ? (clamp = _ ? true : identity$1, rescale()) : clamp !== identity$1;
-  };
-
-  scale.interpolate = function(_) {
-    return arguments.length ? (interpolate$1 = _, rescale()) : interpolate$1;
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  return function(t, u) {
-    transform = t, untransform = u;
-    return rescale();
-  };
-}
-
-function continuous() {
-  return transformer$2()(identity$1, identity$1);
-}
-
-function d3_scale_tickFormat(start, stop, count, specifier) {
-  var step = tickStep(start, stop, count),
-      precision;
-  specifier = d3_format_formatSpecifier(specifier == null ? ",f" : specifier);
-  switch (specifier.type) {
-    case "s": {
-      var value = Math.max(Math.abs(start), Math.abs(stop));
-      if (specifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) specifier.precision = precision;
-      return d3_format_formatPrefix(specifier, value);
-    }
-    case "":
-    case "e":
-    case "g":
-    case "p":
-    case "r": {
-      if (specifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) specifier.precision = precision - (specifier.type === "e");
-      break;
-    }
-    case "f":
-    case "%": {
-      if (specifier.precision == null && !isNaN(precision = precisionFixed(step))) specifier.precision = precision - (specifier.type === "%") * 2;
-      break;
-    }
-  }
-  return d3_format_format(specifier);
-}
-
-function linearish(scale) {
-  var domain = scale.domain;
-
-  scale.ticks = function(count) {
-    var d = domain();
-    return d3_array_ticks(d[0], d[d.length - 1], count == null ? 10 : count);
-  };
-
-  scale.tickFormat = function(count, specifier) {
-    var d = domain();
-    return d3_scale_tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
-  };
-
-  scale.nice = function(count) {
-    if (count == null) count = 10;
-
-    var d = domain();
-    var i0 = 0;
-    var i1 = d.length - 1;
-    var start = d[i0];
-    var stop = d[i1];
-    var prestep;
-    var step;
-    var maxIter = 10;
-
-    if (stop < start) {
-      step = start, start = stop, stop = step;
-      step = i0, i0 = i1, i1 = step;
-    }
-    
-    while (maxIter-- > 0) {
-      step = tickIncrement(start, stop, count);
-      if (step === prestep) {
-        d[i0] = start;
-        d[i1] = stop;
-        return domain(d);
-      } else if (step > 0) {
-        start = Math.floor(start / step) * step;
-        stop = Math.ceil(stop / step) * step;
-      } else if (step < 0) {
-        start = Math.ceil(start * step) / step;
-        stop = Math.floor(stop * step) / step;
-      } else {
-        break;
-      }
-      prestep = step;
-    }
-
-    return scale;
-  };
-
-  return scale;
-}
-
-function d3_scale_linear() {
-  var scale = continuous();
-
-  scale.copy = function() {
-    return copy$1(scale, d3_scale_linear());
-  };
-
-  initRange.apply(scale, arguments);
-
-  return linearish(scale);
-}
-
-function d3_scale_identity(domain) {
-  var unknown;
-
-  function scale(x) {
-    return x == null || isNaN(x = +x) ? unknown : x;
-  }
-
-  scale.invert = scale;
-
-  scale.domain = scale.range = function(_) {
-    return arguments.length ? (domain = Array.from(_, number$1), scale) : domain.slice();
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.copy = function() {
-    return d3_scale_identity(domain).unknown(unknown);
-  };
-
-  domain = arguments.length ? Array.from(domain, number$1) : [0, 1];
-
-  return linearish(scale);
-}
-
-function d3_scale_nice(domain, interval) {
-  domain = domain.slice();
-
-  var i0 = 0,
-      i1 = domain.length - 1,
-      x0 = domain[i0],
-      x1 = domain[i1],
-      t;
-
-  if (x1 < x0) {
-    t = i0, i0 = i1, i1 = t;
-    t = x0, x0 = x1, x1 = t;
-  }
-
-  domain[i0] = interval.floor(x0);
-  domain[i1] = interval.ceil(x1);
-  return domain;
-}
-
-function transformLog(x) {
-  return Math.log(x);
-}
-
-function transformExp(x) {
-  return Math.exp(x);
-}
-
-function transformLogn(x) {
-  return -Math.log(-x);
-}
-
-function transformExpn(x) {
-  return -Math.exp(-x);
-}
-
-function pow10(x) {
-  return isFinite(x) ? +("1e" + x) : x < 0 ? 0 : x;
-}
-
-function powp(base) {
-  return base === 10 ? pow10
-      : base === Math.E ? Math.exp
-      : x => Math.pow(base, x);
-}
-
-function logp(base) {
-  return base === Math.E ? Math.log
-      : base === 10 && Math.log10
-      || base === 2 && Math.log2
-      || (base = Math.log(base), x => Math.log(x) / base);
-}
-
-function reflect(f) {
-  return (x, k) => -f(-x, k);
-}
-
-function loggish(transform) {
-  const scale = transform(transformLog, transformExp);
-  const domain = scale.domain;
-  let base = 10;
-  let logs;
-  let pows;
-
-  function rescale() {
-    logs = logp(base), pows = powp(base);
-    if (domain()[0] < 0) {
-      logs = reflect(logs), pows = reflect(pows);
-      transform(transformLogn, transformExpn);
-    } else {
-      transform(transformLog, transformExp);
-    }
-    return scale;
-  }
-
-  scale.base = function(_) {
-    return arguments.length ? (base = +_, rescale()) : base;
-  };
-
-  scale.domain = function(_) {
-    return arguments.length ? (domain(_), rescale()) : domain();
-  };
-
-  scale.ticks = count => {
-    const d = domain();
-    let u = d[0];
-    let v = d[d.length - 1];
-    const r = v < u;
-
-    if (r) ([u, v] = [v, u]);
-
-    let i = logs(u);
-    let j = logs(v);
-    let k;
-    let t;
-    const n = count == null ? 10 : +count;
-    let z = [];
-
-    if (!(base % 1) && j - i < n) {
-      i = Math.floor(i), j = Math.ceil(j);
-      if (u > 0) for (; i <= j; ++i) {
-        for (k = 1; k < base; ++k) {
-          t = i < 0 ? k / pows(-i) : k * pows(i);
-          if (t < u) continue;
-          if (t > v) break;
-          z.push(t);
-        }
-      } else for (; i <= j; ++i) {
-        for (k = base - 1; k >= 1; --k) {
-          t = i > 0 ? k / pows(-i) : k * pows(i);
-          if (t < u) continue;
-          if (t > v) break;
-          z.push(t);
-        }
-      }
-      if (z.length * 2 < n) z = ticks(u, v, n);
-    } else {
-      z = ticks(i, j, Math.min(j - i, n)).map(pows);
-    }
-    return r ? z.reverse() : z;
-  };
-
-  scale.tickFormat = (count, specifier) => {
-    if (count == null) count = 10;
-    if (specifier == null) specifier = base === 10 ? "s" : ",";
-    if (typeof specifier !== "function") {
-      if (!(base % 1) && (specifier = formatSpecifier(specifier)).precision == null) specifier.trim = true;
-      specifier = format(specifier);
-    }
-    if (count === Infinity) return specifier;
-    const k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
-    return d => {
-      let i = d / pows(Math.round(logs(d)));
-      if (i * base < base - 0.5) i *= base;
-      return i <= k ? specifier(d) : "";
-    };
-  };
-
-  scale.nice = () => {
-    return domain(d3_scale_nice(domain(), {
-      floor: x => pows(Math.floor(logs(x))),
-      ceil: x => pows(Math.ceil(logs(x)))
-    }));
-  };
-
-  return scale;
-}
-
-function log() {
-  const scale = loggish(transformer$2()).domain([1, 10]);
-  scale.copy = () => copy$1(scale, log()).base(scale.base());
-  initRange.apply(scale, arguments);
-  return scale;
-}
-
-function transformSymlog(c) {
-  return function(x) {
-    return Math.sign(x) * Math.log1p(Math.abs(x / c));
-  };
-}
-
-function transformSymexp(c) {
-  return function(x) {
-    return Math.sign(x) * Math.expm1(Math.abs(x)) * c;
-  };
-}
-
-function symlogish(transform) {
-  var c = 1, scale = transform(transformSymlog(c), transformSymexp(c));
-
-  scale.constant = function(_) {
-    return arguments.length ? transform(transformSymlog(c = +_), transformSymexp(c)) : c;
-  };
-
-  return linearish(scale);
-}
-
-function symlog() {
-  var scale = symlogish(transformer$2());
-
-  scale.copy = function() {
-    return copy$1(scale, symlog()).constant(scale.constant());
-  };
-
-  return initRange.apply(scale, arguments);
-}
-
-function transformPow(exponent) {
-  return function(x) {
-    return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
-  };
-}
-
-function transformSqrt(x) {
-  return x < 0 ? -Math.sqrt(-x) : Math.sqrt(x);
-}
-
-function transformSquare(x) {
-  return x < 0 ? -x * x : x * x;
-}
-
-function powish(transform) {
-  var scale = transform(identity$1, identity$1),
-      exponent = 1;
-
-  function rescale() {
-    return exponent === 1 ? transform(identity$1, identity$1)
-        : exponent === 0.5 ? transform(transformSqrt, transformSquare)
-        : transform(transformPow(exponent), transformPow(1 / exponent));
-  }
-
-  scale.exponent = function(_) {
-    return arguments.length ? (exponent = +_, rescale()) : exponent;
-  };
-
-  return linearish(scale);
-}
-
-function pow() {
-  var scale = powish(transformer$2());
-
-  scale.copy = function() {
-    return copy$1(scale, pow()).exponent(scale.exponent());
-  };
-
-  initRange.apply(scale, arguments);
-
-  return scale;
-}
-
-function sqrt() {
-  return pow.apply(null, arguments).exponent(0.5);
-}
-
-function square(x) {
-  return Math.sign(x) * x * x;
-}
-
-function unsquare(x) {
-  return Math.sign(x) * Math.sqrt(Math.abs(x));
-}
-
-function radial() {
-  var squared = continuous(),
-      range = [0, 1],
-      round = false,
-      unknown;
-
-  function scale(x) {
-    var y = unsquare(squared(x));
-    return isNaN(y) ? unknown : round ? Math.round(y) : y;
-  }
-
-  scale.invert = function(y) {
-    return squared.invert(square(y));
-  };
-
-  scale.domain = function(_) {
-    return arguments.length ? (squared.domain(_), scale) : squared.domain();
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (squared.range((range = Array.from(_, number$1)).map(square)), scale) : range.slice();
-  };
-
-  scale.rangeRound = function(_) {
-    return scale.range(_).round(true);
-  };
-
-  scale.round = function(_) {
-    return arguments.length ? (round = !!_, scale) : round;
-  };
-
-  scale.clamp = function(_) {
-    return arguments.length ? (squared.clamp(_), scale) : squared.clamp();
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.copy = function() {
-    return radial(squared.domain(), range)
-        .round(round)
-        .clamp(squared.clamp())
-        .unknown(unknown);
-  };
-
-  initRange.apply(scale, arguments);
-
-  return linearish(scale);
-}
-
-function d3_scale_quantile() {
-  var domain = [],
-      range = [],
-      thresholds = [],
-      unknown;
-
-  function rescale() {
-    var i = 0, n = Math.max(1, range.length);
-    thresholds = new Array(n - 1);
-    while (++i < n) thresholds[i - 1] = quantileSorted(domain, i / n);
-    return scale;
-  }
-
-  function scale(x) {
-    return x == null || isNaN(x = +x) ? unknown : range[bisect(thresholds, x)];
-  }
-
-  scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN] : [
-      i > 0 ? thresholds[i - 1] : domain[0],
-      i < thresholds.length ? thresholds[i] : domain[domain.length - 1]
-    ];
-  };
-
-  scale.domain = function(_) {
-    if (!arguments.length) return domain.slice();
-    domain = [];
-    for (let d of _) if (d != null && !isNaN(d = +d)) domain.push(d);
-    domain.sort(ascending);
-    return rescale();
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.quantiles = function() {
-    return thresholds.slice();
-  };
-
-  scale.copy = function() {
-    return d3_scale_quantile()
-        .domain(domain)
-        .range(range)
-        .unknown(unknown);
-  };
-
-  return initRange.apply(scale, arguments);
-}
-
-function d3_scale_quantize() {
-  var x0 = 0,
-      x1 = 1,
-      n = 1,
-      domain = [0.5],
-      range = [0, 1],
-      unknown;
-
-  function scale(x) {
-    return x != null && x <= x ? range[bisect(domain, x, 0, n)] : unknown;
-  }
-
-  function rescale() {
-    var i = -1;
-    domain = new Array(n);
-    while (++i < n) domain[i] = ((i + 1) * x1 - (i - n) * x0) / (n + 1);
-    return scale;
-  }
-
-  scale.domain = function(_) {
-    return arguments.length ? ([x0, x1] = _, x0 = +x0, x1 = +x1, rescale()) : [x0, x1];
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (n = (range = Array.from(_)).length - 1, rescale()) : range.slice();
-  };
-
-  scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN]
-        : i < 1 ? [x0, domain[0]]
-        : i >= n ? [domain[n - 1], x1]
-        : [domain[i - 1], domain[i]];
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : scale;
-  };
-
-  scale.thresholds = function() {
-    return domain.slice();
-  };
-
-  scale.copy = function() {
-    return d3_scale_quantize()
-        .domain([x0, x1])
-        .range(range)
-        .unknown(unknown);
-  };
-
-  return initRange.apply(linearish(scale), arguments);
-}
-
-function d3_scale_threshold() {
-  var domain = [0.5],
-      range = [0, 1],
-      unknown,
-      n = 1;
-
-  function scale(x) {
-    return x != null && x <= x ? range[bisect(domain, x, 0, n)] : unknown;
-  }
-
-  scale.domain = function(_) {
-    return arguments.length ? (domain = Array.from(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
-  };
-
-  scale.range = function(_) {
-    return arguments.length ? (range = Array.from(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
-  };
-
-  scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
-    return [domain[i - 1], domain[i]];
-  };
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  scale.copy = function() {
-    return d3_scale_threshold()
-        .domain(domain)
-        .range(range)
-        .unknown(unknown);
-  };
-
-  return initRange.apply(scale, arguments);
-}
-
-function d3_scale_date(t) {
-  return new Date(t);
-}
-
-function d3_scale_number(t) {
-  return t instanceof Date ? +t : Math.round(t);
-}
-
-function calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format) {
-  var scale = continuous(),
-      invert = scale.invert,
-      domain = scale.domain;
-
-  var formatMillisecond = format(".%L"),
-      formatSecond = format(":%S"),
-      formatMinute = format("%I:%M"),
-      formatHour = format("%I %p"),
-      formatDay = format("%a %d"),
-      formatWeek = format("%b %d"),
-      formatMonth = format("%B"),
-      formatYear = format("%Y");
-
-  function tickFormat(date) {
-    return (second(date) < date ? formatMillisecond
-        : minute(date) < date ? formatSecond
-        : hour(date) < date ? formatMinute
-        : day(date) < date ? formatHour
-        : month(date) < date ? (week(date) < date ? formatDay : formatWeek)
-        : year(date) < date ? formatMonth
-        : formatYear)(date);
-  }
-
-  scale.invert = function(y) {
-    return new Date(Math.round(invert(y)));
-  };
-
-  scale.domain = function(_) {
-    return arguments.length ? domain(Array.from(_, d3_scale_number)) : domain().map(d3_scale_date);
-  };
-
-  scale.ticks = function(interval) {
-    var d = domain();
-    return ticks(d[0], d[d.length - 1], interval == null ? 10 : interval);
-  };
-
-  scale.tickFormat = function(count, specifier) {
-    return specifier == null ? tickFormat : format(specifier);
-  };
-
-  scale.nice = function(interval) {
-    var d = domain();
-    if (!interval || typeof interval.range !== "function") interval = tickInterval(d[0], d[d.length - 1], interval == null ? 10 : interval);
-    return interval ? domain(d3_scale_nice(d, interval)) : scale;
-  };
-
-  scale.copy = function() {
-    return copy$1(scale, calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format));
-  };
-
-  return scale;
-}
-
-function d3_scale_time() {
-  return initRange.apply(calendar(timeTicks, timeTickInterval, timeYear, timeMonth, timeWeek, timeDay, timeHour, timeMinute, timeSecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
-}
-
-function utcTime() {
-  return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcWeek, utcDay, utcHour, utcMinute, utcSecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]), arguments);
-}
-
-function transformer$1() {
-  var x0 = 0,
-      x1 = 1,
-      t0,
-      t1,
-      k10,
-      transform,
-      interpolator = identity$1,
-      clamp = false,
-      unknown;
-
-  function scale(x) {
-    return x == null || isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  scale.domain = function(_) {
-    return arguments.length ? ([x0, x1] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
-  };
-
-  scale.clamp = function(_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
-  };
-
-  scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  };
-
-  function range(interpolate) {
-    return function(_) {
-      var r0, r1;
-      return arguments.length ? ([r0, r1] = _, interpolator = interpolate(r0, r1), scale) : [interpolator(0), interpolator(1)];
-    };
-  }
-
-  scale.range = range(interpolate);
-
-  scale.rangeRound = range(interpolateRound);
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  return function(t) {
-    transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
-    return scale;
-  };
-}
-
-function d3_scale_copy(source, target) {
-  return target
-      .domain(source.domain())
-      .interpolator(source.interpolator())
-      .clamp(source.clamp())
-      .unknown(source.unknown());
-}
-
-function sequential() {
-  var scale = linearish(transformer$1()(identity$1));
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, sequential());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function sequentialLog() {
-  var scale = loggish(transformer$1()).domain([1, 10]);
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, sequentialLog()).base(scale.base());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function sequentialSymlog() {
-  var scale = symlogish(transformer$1());
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, sequentialSymlog()).constant(scale.constant());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function sequentialPow() {
-  var scale = powish(transformer$1());
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, sequentialPow()).exponent(scale.exponent());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function sequentialSqrt() {
-  return sequentialPow.apply(null, arguments).exponent(0.5);
-}
-
-function sequentialQuantile() {
-  var domain = [],
-      interpolator = identity$1;
-
-  function scale(x) {
-    if (x != null && !isNaN(x = +x)) return interpolator((bisect(domain, x, 1) - 1) / (domain.length - 1));
-  }
-
-  scale.domain = function(_) {
-    if (!arguments.length) return domain.slice();
-    domain = [];
-    for (let d of _) if (d != null && !isNaN(d = +d)) domain.push(d);
-    domain.sort(ascending);
-    return scale;
-  };
-
-  scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  };
-
-  scale.range = function() {
-    return domain.map((d, i) => interpolator(i / (domain.length - 1)));
-  };
-
-  scale.quantiles = function(n) {
-    return Array.from({length: n + 1}, (_, i) => quantile$1(domain, i / n));
-  };
-
-  scale.copy = function() {
-    return sequentialQuantile(interpolator).domain(domain);
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function d3_scale_transformer() {
-  var x0 = 0,
-      x1 = 0.5,
-      x2 = 1,
-      s = 1,
-      t0,
-      t1,
-      t2,
-      k10,
-      k21,
-      interpolator = identity$1,
-      transform,
-      clamp = false,
-      unknown;
-
-  function scale(x) {
-    return x == null || isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (s * x < s * t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  scale.domain = function(_) {
-    return arguments.length ? ([x0, x1, x2] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale) : [x0, x1, x2];
-  };
-
-  scale.clamp = function(_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
-  };
-
-  scale.interpolator = function(_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  };
-
-  function range(interpolate) {
-    return function(_) {
-      var r0, r1, r2;
-      return arguments.length ? ([r0, r1, r2] = _, interpolator = piecewise(interpolate, [r0, r1, r2]), scale) : [interpolator(0), interpolator(0.5), interpolator(1)];
-    };
-  }
-
-  scale.range = range(interpolate);
-
-  scale.rangeRound = range(interpolateRound);
-
-  scale.unknown = function(_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  };
-
-  return function(t) {
-    transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1;
-    return scale;
-  };
-}
-
-function diverging() {
-  var scale = linearish(d3_scale_transformer()(identity$1));
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, diverging());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function divergingLog() {
-  var scale = loggish(d3_scale_transformer()).domain([0.1, 1, 10]);
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, divergingLog()).base(scale.base());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function divergingSymlog() {
-  var scale = symlogish(d3_scale_transformer());
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, divergingSymlog()).constant(scale.constant());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function divergingPow() {
-  var scale = powish(d3_scale_transformer());
-
-  scale.copy = function() {
-    return d3_scale_copy(scale, divergingPow()).exponent(scale.exponent());
-  };
-
-  return initInterpolator.apply(scale, arguments);
-}
-
-function divergingSqrt() {
-  return divergingPow.apply(null, arguments).exponent(0.5);
-}
-
-
-
-;// CONCATENATED MODULE: ./src/components/elements/Charts.tsx
-
-
-
-
-
-
-
-const syncWindow = (frameOffset, fps, totalFrames, sfxAt, sfxFrames)=>{
-    if (typeof sfxAt === "number" && Number.isFinite(sfxAt)) {
-        const start = Math.round(Math.max(0, sfxAt) * fps);
-        const duration = Math.max(Math.round(fps * 0.7), Math.min(totalFrames, sfxFrames ?? Math.round(fps * 1.15)));
-        return [
-            start,
-            start + duration
-        ];
-    }
-    return [
-        frameOffset,
-        frameOffset + Math.round(fps * 1.1)
-    ];
-};
-const buildSmoothPath = (points)=>{
-    if (points.length === 0) return "";
-    if (points.length === 1) {
-        return `M ${points[0][0]} ${points[0][1]}`;
-    }
-    let d = `M ${points[0][0]} ${points[0][1]}`;
-    for(let index = 0; index < points.length - 1; index += 1){
-        const p0 = points[Math.max(0, index - 1)];
-        const p1 = points[index];
-        const p2 = points[index + 1];
-        const p3 = points[Math.min(points.length - 1, index + 2)];
-        const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
-        const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
-        const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
-        const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
-        d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2[0]} ${p2[1]}`;
-    }
-    return d;
-};
-const BarChart = ({ el, theme, layout, delay, sfxAt, sfxFrames, durationInFrames })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const items = el.items.slice(0, 7);
-    const max = el.max && el.max > 0 ? el.max : Math.max(...items.map((item)=>item.value), 1);
-    const palette = [
-        theme.colors.primary,
-        theme.colors.secondary,
-        theme.colors.accent,
-        theme.colors.success
-    ];
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.7,
-            stiffness: 110
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const chartHeight = Math.round(layout.unit * 260);
-    const valueScale = d3_scale_linear().domain([
-        0,
-        Math.max(1, max)
-    ]).range([
-        0,
-        chartHeight
-    ]);
-    const totalFrames = Math.max(1, durationInFrames ?? Math.round(layout.height * 2));
-    const [syncStart, syncEnd] = syncWindow(delay + Math.round(fps * 0.15), fps, totalFrames, sfxAt, sfxFrames);
-    const reveal = (0,esm/* .interpolate */.GW)(frame, [
-        syncStart,
-        syncEnd
-    ], [
-        0,
-        1
-    ], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: esm/* .Easing.out */.GS.out(esm/* .Easing.cubic */.GS.cubic)
-    });
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 36}px`
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.95)),
-                    fontWeight: 800,
-                    color: theme.colors.muted,
-                    marginBottom: Math.round(layout.unit * 16)
-                },
-                children: el.title
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "flex-end",
-                    justifyContent: "space-around",
-                    gap: Math.round(layout.unit * 16),
-                    height: chartHeight
-                },
-                children: items.map((item, index)=>{
-                    const color = palette[index % palette.length];
-                    const height = Math.max(12, valueScale(Math.min(max, Math.max(0, item.value))) * reveal);
-                    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            flex: 1,
-                            minWidth: 0,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            gap: Math.round(layout.unit * 8),
-                            height: "100%"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                                style: {
-                                    fontFamily: theme.displayFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.95)),
-                                    fontWeight: 900,
-                                    color,
-                                    direction: "ltr"
-                                },
-                                children: [
-                                    item.value,
-                                    el.suffix ?? ""
-                                ]
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    width: "100%",
-                                    maxWidth: Math.round(layout.unit * 120),
-                                    height,
-                                    borderRadius: Math.round(layout.unit * 14),
-                                    background: `linear-gradient(180deg, ${color}, ${theme_alpha(color, 0.55)})`,
-                                    boxShadow: `0 0 ${Math.round(layout.unit * 22)}px ${theme_alpha(color, 0.35)}`
-                                }
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.78)),
-                                    fontWeight: 700,
-                                    color: theme.colors.muted,
-                                    textAlign: "center",
-                                    lineHeight: 1.3
-                                },
-                                children: item.label
-                            })
-                        ]
-                    }, `${item.label}-${index}`);
-                })
-            })
-        ]
-    });
-};
-const LineChart = ({ el, theme, layout, delay, sfxAt, sfxFrames, durationInFrames })=>{
-    var _el_xLabels;
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const gradientId = `line-${(0,react.useId)().replace(/[:]/g, "")}`;
-    const points = el.points.length > 1 ? el.points : [
-        0,
-        25,
-        45,
-        70,
-        100
-    ];
-    const max = Math.max(...points, 1);
-    const min = Math.min(...points, 0);
-    const width = 100;
-    const height = 52;
-    const xScale = d3_scale_linear().domain([
-        0,
-        Math.max(1, points.length - 1)
-    ]).range([
-        0,
-        width
-    ]);
-    const yScale = d3_scale_linear().domain([
-        min,
-        max
-    ]).range([
-        height,
-        0
-    ]);
-    const coords = points.map((point, index)=>[
-            xScale(index),
-            yScale(point)
-        ]);
-    const linePath = buildSmoothPath(coords);
-    const area = `${buildSmoothPath([
-        [
-            0,
-            height
-        ],
-        ...coords,
-        [
-            width,
-            height
-        ]
-    ])} Z`;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.7,
-            stiffness: 110
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const totalFrames = Math.max(1, durationInFrames ?? Math.round(layout.height * 2));
-    const [syncStart, syncEnd] = syncWindow(delay + Math.round(fps * 0.15), fps, totalFrames, sfxAt, sfxFrames);
-    const draw = (0,esm/* .interpolate */.GW)(frame, [
-        syncStart,
-        syncEnd
-    ], [
-        0,
-        1
-    ], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: esm/* .Easing.out */.GS.out(esm/* .Easing.cubic */.GS.cubic)
-    });
-    const evolved = evolvePath(draw, linePath);
-    const headPosition = points.length - 1;
-    const rawHead = draw * headPosition;
-    const headIndex = Math.min(points.length - 1, Math.floor(rawHead));
-    const headNext = Math.min(points.length - 1, headIndex + 1);
-    const headMix = rawHead - headIndex;
-    const headX = coords[headIndex][0] + (coords[headNext][0] - coords[headIndex][0]) * headMix;
-    const headY = coords[headIndex][1] + (coords[headNext][1] - coords[headIndex][1]) * headMix;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 36}px`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: Math.round(layout.gap * 0.5),
-                    marginBottom: Math.round(layout.unit * 10)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 0.95)),
-                            fontWeight: 800,
-                            color: theme.colors.muted
-                        },
-                        children: el.title ?? el.label
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: Math.round(layout.unit * 6),
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize * 0.8)),
-                            fontWeight: 800,
-                            color: theme.colors.success
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                name: "trend",
-                                size: Math.round(layout.unit * 24),
-                                color: theme.colors.success
-                            }),
-                            points[points.length - 1],
-                            el.suffix ?? ""
-                        ]
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                viewBox: `0 0 ${width} ${height}`,
-                preserveAspectRatio: "none",
-                style: {
-                    width: "100%",
-                    height: Math.round(layout.unit * 220),
-                    overflow: "visible"
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("defs", {
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("linearGradient", {
-                            id: gradientId,
-                            x1: "0",
-                            y1: "0",
-                            x2: "0",
-                            y2: "1",
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                    offset: "0%",
-                                    stopColor: theme.colors.primary,
-                                    stopOpacity: 0.42
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                    offset: "100%",
-                                    stopColor: theme.colors.primary,
-                                    stopOpacity: 0
-                                })
-                            ]
-                        })
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                        d: area,
-                        fill: `url(#${gradientId})`,
-                        opacity: draw
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                        d: linePath,
-                        fill: "none",
-                        stroke: theme.colors.primary,
-                        strokeWidth: 2.4,
-                        strokeLinejoin: "round",
-                        strokeLinecap: "round",
-                        strokeDasharray: evolved.strokeDasharray,
-                        strokeDashoffset: evolved.strokeDashoffset,
-                        vectorEffect: "non-scaling-stroke"
-                    }),
-                    points.map((point, index)=>{
-                        const [x, y] = coords[index];
-                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                            cx: x,
-                            cy: y,
-                            r: draw > index / Math.max(1, points.length - 1) ? 1.6 : 0,
-                            fill: theme.colors.secondary,
-                            stroke: theme.colors.background,
-                            strokeWidth: 0.5
-                        }, `${point}-${index}`);
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                        cx: headX,
-                        cy: headY,
-                        r: draw > 0.01 ? 2.2 : 0,
-                        fill: theme.colors.secondary,
-                        stroke: theme.colors.background,
-                        strokeWidth: 0.8,
-                        style: {
-                            filter: `drop-shadow(0 0 4px ${theme_alpha(theme.colors.secondary, 0.85)})`
-                        }
-                    })
-                ]
-            }),
-            ((_el_xLabels = el.xLabels) === null || _el_xLabels === void 0 ? void 0 : _el_xLabels.length) ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: Math.round(layout.unit * 8),
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.72)),
-                    fontWeight: 700,
-                    color: theme.colors.muted
-                },
-                children: el.xLabels.slice(0, points.length).map((label, index)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        children: label
-                    }, `${label}-${index}`))
-            }) : null
-        ]
-    });
-};
-const CircularGauge = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const max = el.max && el.max > 0 ? el.max : 100;
-    const ratio = Math.min(1, Math.max(0, el.value / max));
-    const radius = 42;
-    const circumference = 2 * Math.PI * radius;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.7,
-            stiffness: 110
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const fill = (0,esm/* .interpolate */.GW)(frame, [
-        delay + Math.round(fps * 0.2),
-        delay + Math.round(fps * 1.15)
-    ], [
-        0,
-        ratio
-    ], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: esm/* .Easing.out */.GS.out(esm/* .Easing.cubic */.GS.cubic)
-    });
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            alignItems: "center",
-            gap: Math.round(layout.gap * 0.9),
-            opacity: eased,
-            scale: `${0.95 + eased * 0.05}`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    position: "relative",
-                    width: Math.round(layout.unit * 210),
-                    height: Math.round(layout.unit * 210),
-                    flexShrink: 0
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                        viewBox: "0 0 100 100",
-                        style: {
-                            width: "100%",
-                            height: "100%"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                cx: 50,
-                                cy: 50,
-                                r: radius,
-                                fill: "none",
-                                stroke: theme_alpha(theme.colors.text, theme.isDark ? 0.14 : 0.09),
-                                strokeWidth: 8
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                cx: 50,
-                                cy: 50,
-                                r: radius,
-                                fill: "none",
-                                stroke: theme.colors.primary,
-                                strokeWidth: 8,
-                                strokeLinecap: "round",
-                                strokeDasharray: `${fill * circumference} ${circumference}`,
-                                transform: "rotate(-90 50 50)",
-                                style: {
-                                    filter: `drop-shadow(0 0 ${Math.round(layout.unit * 8)}px ${theme_alpha(theme.colors.primary, 0.5)})`
-                                }
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: theme.displayFamily,
-                            fontWeight: 900,
-                            color: theme.colors.primary,
-                            fontSize: Math.round(layout.bigNumberSize * 0.62),
-                            lineHeight: 1,
-                            direction: "ltr"
-                        },
-                        children: [
-                            Math.round(fill * max),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                style: {
-                                    fontSize: "0.5em",
-                                    color: theme.colors.muted
-                                },
-                                children: el.suffix ?? "%"
-                            })
-                        ]
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    minWidth: 0
-                },
-                children: [
-                    el.icon ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            width: Math.round(layout.unit * 54),
-                            height: Math.round(layout.unit * 54),
-                            borderRadius: "50%",
-                            background: theme_alpha(theme.colors.primary, 0.14),
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginBottom: Math.round(layout.unit * 12)
-                        },
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                            name: el.icon,
-                            size: Math.round(layout.unit * 30),
-                            color: theme.colors.primary
-                        })
-                    }) : null,
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.3)),
-                            fontWeight: 900,
-                            color: theme.colors.text,
-                            lineHeight: 1.3
-                        },
-                        children: el.title
-                    }),
-                    el.label ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize)),
-                            fontWeight: 600,
-                            color: theme.colors.muted,
-                            lineHeight: 1.5,
-                            marginTop: Math.round(layout.unit * 6)
-                        },
-                        children: el.label
-                    }) : null
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/ComparisonBox.tsx
-
-
-
-
-const ComparisonBox = ({ el, theme, layout, delay, durationInFrames = 120, wcag })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const totalFrames = Math.max(1, durationInFrames);
-    const leftBeat = delay;
-    const rightBeat = delay + Math.max(Math.round(fps * 0.55), Math.round(totalFrames * 0.2));
-    const sideBeat = (index)=>index === 0 ? leftBeat : rightBeat;
-    const pulse = 0.5 + 0.5 * Math.sin(frame / fps * Math.PI * 2 * 1.4);
-    const renderSide = (side, index, sideLabel)=>{
-        var _side_points;
-        const tone = side.tone === "positive" ? theme.colors.success : side.tone === "negative" ? theme.colors.danger : theme.colors.primary;
-        const pointIcon = side.tone === "negative" ? "x" : "check";
-        const enter = (0,esm/* .spring */.oz)({
-            frame: frame - sideBeat(index),
-            fps,
-            config: {
-                damping: 18,
-                mass: 0.6,
-                stiffness: 150
-            }
-        });
-        const eased = Math.min(1, Math.max(0, enter));
-        const isActive = index === 0 ? frame < rightBeat : frame >= rightBeat - Math.round(fps * 0.1);
-        return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-            style: {
-                position: "relative",
-                overflow: "hidden",
-                flex: 1,
-                minWidth: 0,
-                background: theme.card.background,
-                backgroundImage: `linear-gradient(145deg, ${theme_alpha(tone, 0.16)} 0%, transparent 52%)`,
-                border: `${Math.max(2, Math.round(layout.unit * 2))}px solid ${theme_alpha(tone, 0.45)}`,
-                borderRadius: theme.card.radius,
-                boxShadow: isActive ? `${theme.card.shadow}, 0 0 ${Math.round(layout.unit * (26 + pulse * 22))}px ${theme_alpha(tone, 0.4)}, inset 0 0 0 ${Math.max(2, Math.round(layout.unit * 3))}px ${theme_alpha(tone, 0.35 + pulse * 0.35)}` : theme.card.shadow,
-                backdropFilter: theme.card.backdropFilter,
-                padding: layout.cardPadding,
-                display: "flex",
-                flexDirection: "column",
-                gap: Math.round(layout.gap * 0.7),
-                opacity: eased,
-                translate: `0px ${(1 - eased) * layout.unit * 44}px`,
-                scale: `${0.94 + eased * 0.06}`
-            },
-            children: [
-                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        position: "absolute",
-                        left: Math.round(-layout.unit * 18),
-                        bottom: Math.round(-layout.unit * 34),
-                        opacity: 0.07,
-                        pointerEvents: "none"
-                    },
-                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                        name: side.icon,
-                        size: Math.round(layout.unit * 190),
-                        color: tone,
-                        strokeWidth: 1.2
-                    })
-                }),
-                /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: Math.round(layout.gap * 0.6),
-                        flexDirection: "row"
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                width: Math.round(layout.unit * 58),
-                                height: Math.round(layout.unit * 58),
-                                borderRadius: "50%",
-                                background: theme_alpha(tone, 0.16),
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flexShrink: 0
-                            },
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                name: side.icon,
-                                size: Math.round(layout.unit * 32),
-                                color: tone,
-                                strokeWidth: 2
-                            })
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                minWidth: 0
-                            },
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.displayFamily,
-                                        fontSize: Math.max(30, Math.round(layout.bodySize * 1.25)),
-                                        fontWeight: 800,
-                                        color: theme.colors.text,
-                                        lineHeight: 1.3
-                                    },
-                                    children: side.title
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.fontFamily,
-                                        fontSize: Math.max(30, Math.round(layout.smallSize * 0.9)),
-                                        fontWeight: 700,
-                                        color: tone,
-                                        letterSpacing: "0.02em",
-                                        lineHeight: 1.4
-                                    },
-                                    children: side.subtitle ?? sideLabel
-                                })
-                            ]
-                        })
-                    ]
-                }),
-                ((_side_points = side.points) === null || _side_points === void 0 ? void 0 : _side_points.length) ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: Math.round(layout.unit * 12)
-                    },
-                    children: side.points.map((point, pointIndex)=>{
-                        const pointEnter = (0,esm/* .spring */.oz)({
-                            frame: frame - sideBeat(index) - Math.round(fps * 0.16) - pointIndex * Math.round(fps * 0.08),
-                            fps,
-                            config: {
-                                damping: 200,
-                                mass: 0.5,
-                                stiffness: 140
-                            }
-                        });
-                        const pointEase = Math.min(1, Math.max(0, pointEnter));
-                        return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                display: "flex",
-                                alignItems: "center",
-                                gap: Math.round(layout.gap * 0.45),
-                                fontFamily: theme.fontFamily,
-                                fontSize: Math.max(30, Math.round(layout.smallSize * 1.02)),
-                                fontWeight: 600,
-                                color: (wcag === null || wcag === void 0 ? void 0 : wcag.primaryText) ?? theme.colors.text,
-                                lineHeight: 1.45,
-                                opacity: pointEase,
-                                translate: `${(1 - pointEase) * layout.unit * 18}px 0px`
-                            },
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                    style: {
-                                        width: Math.round(layout.unit * 26),
-                                        height: Math.round(layout.unit * 26),
-                                        borderRadius: "50%",
-                                        background: theme_alpha(tone, 0.16),
-                                        color: tone,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        flexShrink: 0
-                                    },
-                                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                        name: pointIcon,
-                                        size: Math.round(layout.unit * 15),
-                                        color: tone,
-                                        strokeWidth: 2.6
-                                    })
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                    children: point
-                                })
-                            ]
-                        }, `${point}-${pointIndex}`);
-                    })
-                }) : null
-            ]
-        });
-    };
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.7),
-            width: "100%"
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.85)),
-                    fontWeight: 800,
-                    color: (wcag === null || wcag === void 0 ? void 0 : wcag.secondaryText) ?? theme.colors.muted,
-                    lineHeight: 1.3
-                },
-                children: el.title
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    flexDirection: layout.isPortrait ? "column" : "row",
-                    gap: Math.round(layout.gap * 0.9),
-                    width: "100%"
-                },
-                children: [
-                    renderSide(el.left, 0, "الخيار الأول"),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            position: "relative",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexShrink: 0,
-                            width: layout.isPortrait ? "100%" : Math.round(layout.unit * 48),
-                            height: layout.isPortrait ? Math.round(layout.unit * 48) : "auto"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("svg", {
-                                width: "100%",
-                                height: "100%",
-                                viewBox: "0 0 48 48",
-                                preserveAspectRatio: "none",
-                                style: {
-                                    position: "absolute",
-                                    inset: 0,
-                                    transform: layout.isPortrait ? "rotate(90deg)" : undefined
-                                },
-                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                                    x1: "2",
-                                    y1: "24",
-                                    x2: "46",
-                                    y2: "24",
-                                    stroke: theme_alpha(theme.colors.primary, 0.55),
-                                    strokeWidth: "2",
-                                    strokeDasharray: "5 7",
-                                    strokeLinecap: "round",
-                                    strokeDashoffset: -(frame / fps * 26)
-                                })
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                style: {
-                                    position: "relative",
-                                    width: Math.round(layout.unit * 36),
-                                    height: Math.round(layout.unit * 36),
-                                    borderRadius: "50%",
-                                    background: theme.colors.primary,
-                                    color: theme.isDark ? theme.colors.background : "#FFFFFF",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: theme.displayFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                                    fontWeight: 900,
-                                    transform: `scale(${0.7 + pulse * 0.3})`,
-                                    boxShadow: `0 0 ${Math.round(layout.unit * 22)}px ${theme_alpha(theme.colors.primary, 0.5)}`
-                                },
-                                children: "VS"
-                            })
-                        ]
-                    }),
-                    renderSide(el.right, 1, "الخيار الثاني")
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/generated/CustomScene_scene_6e63c750_0.tsx
-
-
-
-const WARM = "#e8a13a";
-const COLD = "#5fd0e6";
-const RED = "#d94a4a";
-const CHARCOAL = "#14161a";
-const Clock = ({ frame, cx, cy, r, textColor, accentColor })=>{
-    const secondAngle = frame * 6 % 360;
-    const minuteAngle = 345 + frame / 30 * 0.5;
-    const hourAngle = 345 + frame / 3600 * 0.5;
-    const ticks = [];
-    for(let i = 0; i < 12; i++){
-        const a = i * 30 * Math.PI / 180;
-        const r1 = r * 0.82;
-        const r2 = r * 0.9;
-        ticks.push(/*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-            x1: cx + Math.sin(a) * r1,
-            y1: cy - Math.cos(a) * r1,
-            x2: cx + Math.sin(a) * r2,
-            y2: cy - Math.cos(a) * r2,
-            stroke: textColor,
-            strokeWidth: 1.2,
-            opacity: 0.55
-        }, i));
-    }
-    const hand = (angle, len, w, color)=>{
-        const a = angle * Math.PI / 180;
-        return /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-            x1: cx,
-            y1: cy,
-            x2: cx + Math.sin(a) * len,
-            y2: cy - Math.cos(a) * len,
-            stroke: color,
-            strokeWidth: w,
-            strokeLinecap: "round"
-        });
-    };
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: cx,
-                cy: cy,
-                r: r,
-                fill: CHARCOAL,
-                stroke: textColor,
-                strokeWidth: 1.5,
-                opacity: 0.95
-            }),
-            ticks,
-            hand(hourAngle, r * 0.5, 3.2, textColor),
-            hand(minuteAngle, r * 0.72, 2.2, textColor),
-            hand(secondAngle, r * 0.78, 1.2, accentColor),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: cx,
-                cy: cy,
-                r: 3,
-                fill: accentColor
-            })
-        ]
-    });
-};
-const DeskFigure = ({ breathe, color, shadow })=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-        transform: `translate(0 ${breathe})`,
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                cx: 0,
-                cy: 78,
-                rx: 34,
-                ry: 6,
-                fill: shadow,
-                opacity: 0.5
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M -22 70 Q -22 20 -14 6 Q 0 -6 14 6 Q 22 20 22 70 Z",
-                fill: color
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: 0,
-                cy: -14,
-                r: 13,
-                fill: color
-            })
-        ]
-    });
-const LyingFigure = ({ breathe, color, shadow })=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-        transform: `translate(0 ${breathe})`,
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                cx: 0,
-                cy: 34,
-                rx: 62,
-                ry: 5,
-                fill: shadow,
-                opacity: 0.5
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                x: -58,
-                y: 6,
-                width: 116,
-                height: 26,
-                rx: 10,
-                fill: color
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                cx: -62,
-                cy: 16,
-                r: 13,
-                fill: color
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                d: "M 10 6 Q 34 -6 46 -22",
-                stroke: color,
-                strokeWidth: 9,
-                strokeLinecap: "round",
-                fill: "none"
-            })
-        ]
-    });
-const CustomScene_scene_6e63c750_0 = ({ accentColor, bgColor, textColor, mutedColor, characterShadow, isRtl, title, text })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps, width, height, durationInFrames } = (0,esm/* .useVideoConfig */.Bk)();
-    const midX = width / 2;
-    const dividerProgress = (0,esm/* .spring */.oz)({
-        frame,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.6
-        },
-        durationInFrames: Math.round(0.6 * fps)
-    });
-    const dividerTop = height * 0.06;
-    const dividerBottom = height * 0.78;
-    const dividerY2 = dividerTop + (dividerBottom - dividerTop) * dividerProgress;
-    const breathe = Math.sin(frame / fps * Math.PI * 1.4) * 2;
-    const breatheL = Math.sin(frame / fps * Math.PI * 1.2) * 2;
-    const drops = (0,react.useMemo)(()=>{
-        const arr = [];
-        let seed = 7;
-        const rnd = ()=>{
-            seed = (seed * 9301 + 49297) % 233280;
-            return seed / 233280;
-        };
-        for(let i = 0; i < 14; i++){
-            arr.push({
-                x: rnd() * width,
-                y: rnd() * height,
-                speed: 0.6 + rnd() * 1.6,
-                size: 2 + rnd() * 3,
-                delay: rnd() * 120
-            });
-        }
-        return arr;
-    }, [
-        width,
-        height
-    ]);
-    const badgeCount = Math.min(5, Math.floor((0,esm/* .interpolate */.GW)(frame, [
-        30,
-        120
-    ], [
-        0,
-        5
-    ], {
-        extrapolateRight: "clamp"
-    })));
-    const clockR = Math.min(width * 0.11, 64);
-    const clockCx = midX;
-    const clockCy = height * 0.13;
-    const titleOpacity = (0,esm/* .interpolate */.GW)(frame, [
-        0,
-        20
-    ], [
-        0,
-        1
-    ], {
-        extrapolateRight: "clamp"
-    });
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
-        style: {
-            backgroundColor: bgColor
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                width: width,
-                height: height,
-                viewBox: `0 0 ${width} ${height}`,
-                style: {
-                    position: "absolute"
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("defs", {
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("radialGradient", {
-                                id: "lampGlow",
-                                cx: "50%",
-                                cy: "60%",
-                                r: "60%",
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "0%",
-                                        stopColor: WARM,
-                                        stopOpacity: 0.55
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "55%",
-                                        stopColor: WARM,
-                                        stopOpacity: 0.12
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "100%",
-                                        stopColor: WARM,
-                                        stopOpacity: 0
-                                    })
-                                ]
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("radialGradient", {
-                                id: "phoneGlow",
-                                cx: "50%",
-                                cy: "50%",
-                                r: "50%",
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "0%",
-                                        stopColor: COLD,
-                                        stopOpacity: 0.6
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "100%",
-                                        stopColor: COLD,
-                                        stopOpacity: 0
-                                    })
-                                ]
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("linearGradient", {
-                                id: "leftBg",
-                                x1: "0",
-                                y1: "0",
-                                x2: "0",
-                                y2: "1",
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "0%",
-                                        stopColor: "#1a1712"
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "100%",
-                                        stopColor: "#0d0b08"
-                                    })
-                                ]
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsxs)("linearGradient", {
-                                id: "rightBg",
-                                x1: "0",
-                                y1: "0",
-                                x2: "0",
-                                y2: "1",
-                                children: [
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "0%",
-                                        stopColor: "#0a0c10"
-                                    }),
-                                    /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                        offset: "100%",
-                                        stopColor: "#050608"
-                                    })
-                                ]
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: 0,
-                        y: 0,
-                        width: midX,
-                        height: height,
-                        fill: "url(#leftBg)"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                        cx: midX * 0.55,
-                        cy: height * 0.62,
-                        rx: midX * 0.7,
-                        ry: height * 0.32,
-                        fill: "url(#lampGlow)"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 0.12,
-                        y: height * 0.63,
-                        width: midX * 0.78,
-                        height: 6,
-                        fill: "#3a2f22",
-                        rx: 2
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 0.2,
-                        y: height * 0.5,
-                        width: midX * 0.28,
-                        height: height * 0.13,
-                        rx: 4,
-                        fill: "#2b2b2b",
-                        stroke: "#4a4034",
-                        strokeWidth: 1.5
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 0.22,
-                        y: height * 0.52,
-                        width: midX * 0.24,
-                        height: height * 0.09,
-                        rx: 2,
-                        fill: "#3c3830",
-                        opacity: 0.7
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                        x1: midX * 0.56,
-                        y1: height * 0.625,
-                        x2: midX * 0.68,
-                        y2: height * 0.615,
-                        stroke: WARM,
-                        strokeWidth: 3,
-                        strokeLinecap: "round"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 0.58,
-                        y: height * 0.56,
-                        width: midX * 0.22,
-                        height: height * 0.07,
-                        rx: 2,
-                        fill: "#e8dfc8",
-                        opacity: 0.85
-                    }),
-                    [
-                        0,
-                        1,
-                        2
-                    ].map((i)=>/*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                            x1: midX * 0.6,
-                            y1: height * (0.575 + i * 0.015),
-                            x2: midX * 0.77,
-                            y2: height * (0.575 + i * 0.015),
-                            stroke: "#8a7a5a",
-                            strokeWidth: 1
-                        }, i)),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
-                        transform: `translate(${midX * 0.42} ${height * 0.63})`,
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(DeskFigure, {
-                            breathe: breatheL,
-                            color: "#2a2620",
-                            shadow: characterShadow
-                        })
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX,
-                        y: 0,
-                        width: midX,
-                        height: height,
-                        fill: "url(#rightBg)"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 1.15,
-                        y: height * 0.66,
-                        width: midX * 0.7,
-                        height: 8,
-                        rx: 3,
-                        fill: "#1c2028"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 1.2,
-                        y: height * 0.6,
-                        width: midX * 0.6,
-                        height: height * 0.06,
-                        rx: 6,
-                        fill: "#232833",
-                        opacity: 0.9
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                        cx: midX * 1.42,
-                        cy: height * 0.5,
-                        r: height * 0.09,
-                        fill: "url(#phoneGlow)"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("g", {
-                        transform: `translate(${midX * 1.45} ${height * 0.56})`,
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(LyingFigure, {
-                            breathe: breathe,
-                            color: "#20242c",
-                            shadow: characterShadow
-                        })
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                        x: midX * 1.62,
-                        y: height * 0.44,
-                        width: 18,
-                        height: 30,
-                        rx: 3,
-                        fill: COLD,
-                        opacity: 0.9
-                    }),
-                    Array.from({
-                        length: badgeCount
-                    }).map((_, i)=>/*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                            transform: `translate(${midX * 1.66 + i * 12} ${height * 0.41 - i * 10})`,
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                    r: 7,
-                                    fill: RED
-                                }),
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("text", {
-                                    x: 0,
-                                    y: 3.5,
-                                    textAnchor: "middle",
-                                    fontSize: 9,
-                                    fill: "#fff",
-                                    fontWeight: 700,
-                                    children: i + 1
-                                })
-                            ]
-                        }, i)),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                        opacity: 0.18,
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                                x: width * 0.06,
-                                y: height * 0.08,
-                                width: width * 0.2,
-                                height: height * 0.32,
-                                stroke: textColor,
-                                strokeWidth: 1,
-                                fill: "none"
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                                x1: width * 0.16,
-                                y1: height * 0.08,
-                                x2: width * 0.16,
-                                y2: height * 0.4,
-                                stroke: textColor,
-                                strokeWidth: 1
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("rect", {
-                                x: width * 0.74,
-                                y: height * 0.08,
-                                width: width * 0.2,
-                                height: height * 0.32,
-                                stroke: textColor,
-                                strokeWidth: 1,
-                                fill: "none"
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                                x1: width * 0.84,
-                                y1: height * 0.08,
-                                x2: width * 0.84,
-                                y2: height * 0.4,
-                                stroke: textColor,
-                                strokeWidth: 1
-                            })
-                        ]
-                    }),
-                    drops.map((d, i)=>{
-                        const t = (frame + d.delay) * d.speed;
-                        const y = (d.y + t) % (height * 0.8);
-                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                            cx: d.x,
-                            cy: y,
-                            rx: d.size * 0.6,
-                            ry: d.size,
-                            fill: COLD,
-                            opacity: 0.35
-                        }, i);
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                        x1: midX,
-                        y1: dividerTop,
-                        x2: midX,
-                        y2: dividerY2,
-                        stroke: "#ffffff",
-                        strokeWidth: 1.5,
-                        opacity: 0.85
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("line", {
-                        x1: midX,
-                        y1: dividerTop,
-                        x2: midX,
-                        y2: dividerY2,
-                        stroke: accentColor,
-                        strokeWidth: 3,
-                        opacity: 0.25
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(Clock, {
-                        frame: frame,
-                        cx: clockCx,
-                        cy: clockCy,
-                        r: clockR,
-                        textColor: textColor,
-                        accentColor: accentColor
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("text", {
-                        x: midX,
-                        y: height * 0.22,
-                        textAnchor: "middle",
-                        fontSize: Math.min(width * 0.05, 68),
-                        fontWeight: 700,
-                        fill: textColor,
-                        opacity: titleOpacity,
-                        direction: isRtl ? "rtl" : "ltr",
-                        children: title ?? "انقسام الحادية عشرة والنصف"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("text", {
-                        x: midX,
-                        y: height * 0.26,
-                        textAnchor: "middle",
-                        fontSize: Math.min(width * 0.04, 34),
-                        fill: mutedColor,
-                        opacity: titleOpacity,
-                        direction: isRtl ? "rtl" : "ltr",
-                        children: "11:30 ليلاً"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("text", {
-                        x: midX * 0.5,
-                        y: height * 0.72,
-                        textAnchor: "middle",
-                        fontSize: Math.min(width * 0.04, 34),
-                        fill: WARM,
-                        opacity: 0.9,
-                        direction: isRtl ? "rtl" : "ltr",
-                        children: "مكتب دافئ"
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("text", {
-                        x: midX * 1.5,
-                        y: height * 0.72,
-                        textAnchor: "middle",
-                        fontSize: Math.min(width * 0.04, 34),
-                        fill: COLD,
-                        opacity: 0.9,
-                        direction: isRtl ? "rtl" : "ltr",
-                        children: "غرفة مظلمة"
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                style: {
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    paddingBottom: height * 0.22,
-                    pointerEvents: "none"
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        color: mutedColor,
-                        fontSize: 30,
-                        fontFamily: "system-ui, sans-serif",
-                        opacity: (0,esm/* .interpolate */.GW)(frame, [
-                            durationInFrames - 30,
-                            durationInFrames - 5
-                        ], [
-                            1,
-                            0
-                        ], {
-                            extrapolateLeft: "clamp",
-                            extrapolateRight: "clamp"
-                        }),
-                        direction: isRtl ? "rtl" : "ltr"
-                    },
-                    children: text ?? "نقطة الانقسام"
-                })
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/generated/index.ts
-
-const GENERATED_SCENES = {
-    "CustomScene_scene_6e63c750_0": CustomScene_scene_6e63c750_0
-};
-
-;// CONCATENATED MODULE: ./src/components/GeneratedSceneBoundary.tsx
-
-class GeneratedSceneBoundary extends react.Component {
-    state = {
-        hasError: false
-    };
-    static getDerivedStateFromError() {
-        return {
-            hasError: true
-        };
-    }
-    componentDidCatch() {
-    // The declarative fallback below keeps the render alive.
-    }
-    render() {
-        if (this.state.hasError) {
-            return this.props.fallback;
-        }
-        return this.props.children;
-    }
-}
-
-;// CONCATENATED MODULE: ./src/components/elements/CustomVisual.tsx
-
-
-
-
-const CustomVisual = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 105
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const svgSrc = el.svg ? `data:image/svg+xml;utf8,${encodeURIComponent(el.svg)}` : null;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: theme.card.background,
-            backgroundImage: `linear-gradient(135deg, ${theme_alpha(theme.colors.primary, 0.18)} 0%, transparent 62%)`,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.45),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 42}px`,
-            scale: `${0.96 + eased * 0.04}`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: Math.round(layout.gap * 0.55)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            width: Math.round(layout.unit * 56),
-                            height: Math.round(layout.unit * 56),
-                            borderRadius: Math.round(layout.unit * 16),
-                            background: theme_alpha(theme.colors.primary, 0.15),
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexShrink: 0
-                        },
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                            name: el.icon ?? "spark",
-                            size: Math.round(layout.unit * 30),
-                            color: theme.colors.primary
-                        })
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            minWidth: 0,
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.2)),
-                            fontWeight: 900,
-                            color: theme.colors.text,
-                            lineHeight: 1.3
-                        },
-                        children: el.title
-                    })
-                ]
-            }),
-            svgSrc ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: `${Math.round(layout.unit * 8)}px 0`
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Img */.E9, {
-                    src: svgSrc,
-                    alt: el.title,
-                    style: {
-                        width: "100%",
-                        maxHeight: Math.round(layout.unit * 320),
-                        objectFit: "contain"
-                    }
-                })
-            }) : null,
-            el.text ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize * 1.02)),
-                    fontWeight: 600,
-                    color: theme.colors.muted,
-                    lineHeight: 1.5
-                },
-                children: el.text
-            }) : null,
-            el.prompt ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.72)),
-                    fontWeight: 600,
-                    color: theme.colors.muted,
-                    fontStyle: "italic",
-                    lineHeight: 1.4
-                },
-                children: el.prompt
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/EditorialQuote.tsx
-
-
-
-const EditorialQuote = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 100
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: `${Math.round(layout.cardPadding * 1.05)}px ${Math.round(layout.cardPadding * 1.15)}px`,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.45),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 40}px`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.round(layout.unit * 150),
-                    fontWeight: 900,
-                    lineHeight: 0.7,
-                    color: theme_alpha(theme.colors.primary, 0.24),
-                    height: Math.round(layout.unit * 68)
-                },
-                children: "“"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 1.5)),
-                    fontWeight: 800,
-                    fontStyle: "italic",
-                    color: theme.colors.text,
-                    lineHeight: 1.42,
-                    textWrap: "balance"
-                },
-                children: el.quote
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    height: Math.max(3, Math.round(layout.unit * 4)),
-                    width: Math.round(layout.unit * 84),
-                    borderRadius: 999,
-                    background: theme.colors.primary,
-                    marginTop: Math.round(layout.unit * 4)
-                }
-            }),
-            el.author || el.source ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: Math.round(layout.unit * 3)
-                },
-                children: [
-                    el.author ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize * 1.05)),
-                            fontWeight: 800,
-                            color: theme.colors.text
-                        },
-                        children: el.author
-                    }) : null,
-                    el.source ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                            fontWeight: 600,
-                            color: theme.colors.muted
-                        },
-                        children: el.source
-                    }) : null
-                ]
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/GenerativeScene.tsx
-
-
-
-const MOTIFS = {
-    orbit: [
-        {
-            x: 360,
-            y: 70
-        },
-        {
-            x: 610,
-            y: 220
-        },
-        {
-            x: 360,
-            y: 372
-        },
-        {
-            x: 108,
-            y: 220
-        },
-        {
-            x: 524,
-            y: 96
-        }
-    ],
-    network: [
-        {
-            x: 128,
-            y: 108
-        },
-        {
-            x: 356,
-            y: 58
-        },
-        {
-            x: 592,
-            y: 122
-        },
-        {
-            x: 218,
-            y: 306
-        },
-        {
-            x: 492,
-            y: 326
-        }
-    ],
-    flow: [
-        {
-            x: 96,
-            y: 216
-        },
-        {
-            x: 246,
-            y: 130
-        },
-        {
-            x: 402,
-            y: 268
-        },
-        {
-            x: 560,
-            y: 150
-        },
-        {
-            x: 650,
-            y: 282
-        }
-    ],
-    funnel: [
-        {
-            x: 126,
-            y: 92
-        },
-        {
-            x: 592,
-            y: 100
-        },
-        {
-            x: 246,
-            y: 210
-        },
-        {
-            x: 470,
-            y: 218
-        },
-        {
-            x: 360,
-            y: 340
-        }
-    ],
-    cycle: [
-        {
-            x: 360,
-            y: 54
-        },
-        {
-            x: 612,
-            y: 206
-        },
-        {
-            x: 500,
-            y: 366
-        },
-        {
-            x: 218,
-            y: 366
-        },
-        {
-            x: 108,
-            y: 206
-        }
-    ],
-    constellation: [
-        {
-            x: 104,
-            y: 298
-        },
-        {
-            x: 248,
-            y: 82
-        },
-        {
-            x: 420,
-            y: 246
-        },
-        {
-            x: 566,
-            y: 96
-        },
-        {
-            x: 630,
-            y: 330
-        }
-    ]
-};
-const MOTIF_ORDER = [
-    "orbit",
-    "network",
-    "flow",
-    "funnel",
-    "cycle",
-    "constellation"
-];
-const GenerativeScene_isDarkColor = (color)=>{
-    if (!color.startsWith("#") || color.length !== 7 && color.length !== 4) return false;
-    const hex = color.length === 4 ? color.slice(1).split("").map((char)=>char + char).join("") : color.slice(1);
-    const value = parseInt(hex, 16);
-    const r = value >> 16 & 255;
-    const g = value >> 8 & 255;
-    const b = value & 255;
-    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.5;
-};
-const hashText = (text)=>{
-    return Array.from(text).reduce((total, char, index)=>(total + char.charCodeAt(0) * (index + 3)) % 100000, 0);
-};
-const GenerativeScene = ({ el, theme, layout, delay, durationInFrames, sceneIndex = 0 })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const local = Math.max(0, frame - delay);
-    const seed = hashText(`${el.headline}${el.title ?? ""}`);
-    const motif = el.motif ?? MOTIF_ORDER[seed % MOTIF_ORDER.length];
-    const points = MOTIFS[motif];
-    const keywords = el.keywords.length > 0 ? el.keywords.slice(0, 5) : [
-        el.headline
-    ];
-    const headlineWords = el.headline.split(/\s+/).filter(Boolean).slice(0, 7);
-    const darkCanvas = GenerativeScene_isDarkColor(theme.colors.background);
-    const readableText = darkCanvas ? "#F8FAFC" : theme.colors.text;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: local,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.8,
-            stiffness: 100
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const pulse = 0.5 + 0.5 * Math.sin(local / fps * Math.PI * 2 * 0.8);
-    const totalFrames = durationInFrames && durationInFrames > 0 ? durationInFrames : 120;
-    const revealStart = Math.round(fps * 0.26);
-    const revealEnd = Math.max(revealStart + Math.round(fps * 1.5), totalFrames - Math.round(fps * 0.35));
-    const segment = Math.max(1, (revealEnd - revealStart) / points.length);
-    const nodeBeat = (index)=>revealStart + index * segment;
-    const connectorProgress = (index)=>(0,esm/* .interpolate */.GW)(local, [
-            nodeBeat(index),
-            nodeBeat(index) + segment * 0.92
-        ], [
-            0,
-            1
-        ], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp"
-        });
-    const activeNode = local < revealStart ? -1 : Math.min(points.length - 1, Math.floor((local - revealStart) / segment));
-    const flow = local / fps * 42 + sceneIndex * 17;
-    const connectorPath = (from, to)=>{
-        const midX = (from.x + to.x) / 2;
-        const midY = (from.y + to.y) / 2;
-        return `M${from.x} ${from.y} Q${midX} ${midY - 34} ${to.x} ${to.y}`;
-    };
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.5),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 34}px`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: Math.round(layout.unit * 12),
-                    flexWrap: "wrap"
-                },
-                children: [
-                    el.badge ? /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.kickerSize * 0.82)),
-                            fontWeight: 800,
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            color: theme.colors.primary,
-                            background: theme_alpha(theme.colors.primary, 0.12),
-                            border: `1px solid ${theme_alpha(theme.colors.primary, 0.32)}`,
-                            borderRadius: 999,
-                            padding: `${Math.round(layout.unit * 5)}px ${Math.round(layout.unit * 14)}px`
-                        },
-                        children: el.badge
-                    }) : null,
-                    el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize * 0.94)),
-                            fontWeight: 700,
-                            color: theme.colors.muted
-                        },
-                        children: el.title
-                    }) : null
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: Math.round(layout.unit * 6),
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.round(layout.subtitleSize * 1.08),
-                    fontWeight: 900,
-                    lineHeight: 1.24,
-                    color: readableText,
-                    letterSpacing: "-0.01em"
-                },
-                children: headlineWords.map((word, index)=>{
-                    const wordEnter = (0,esm/* .spring */.oz)({
-                        frame: local - Math.round(fps * 0.12) - index * Math.round(fps * 0.06),
-                        fps,
-                        config: {
-                            damping: 18,
-                            mass: 0.6,
-                            stiffness: 140
-                        }
-                    });
-                    const wordEase = Math.min(1, Math.max(0, wordEnter));
-                    return /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            display: "inline-block",
-                            opacity: wordEase,
-                            transform: `translateY(${(1 - wordEase) * 18}px) scale(${0.9 + wordEase * 0.1})`,
-                            color: index === headlineWords.length - 1 ? theme.colors.primary : readableText
-                        },
-                        children: word
-                    }, `${word}-${index}`);
-                })
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    position: "relative",
-                    width: "100%",
-                    aspectRatio: "16 / 9.4",
-                    marginTop: Math.round(layout.unit * 4)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: "6% 8%",
-                            borderRadius: "50%",
-                            background: `radial-gradient(ellipse at 50% 50%, ${theme_alpha(theme.colors.primary, 0.16 + pulse * 0.08)} 0%, transparent 66%)`,
-                            filter: `blur(${Math.round(layout.unit * 26)}px)`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
-                        viewBox: "0 0 720 420",
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            width: "100%",
-                            height: "100%",
-                            overflow: "visible"
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("defs", {
-                                children: /*#__PURE__*/ (0,jsx_runtime.jsxs)("linearGradient", {
-                                    id: `gen-line-${seed}`,
-                                    x1: "0",
-                                    y1: "0",
-                                    x2: "1",
-                                    y2: "1",
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                            offset: "0%",
-                                            stopColor: theme.colors.primary,
-                                            stopOpacity: "0.85"
-                                        }),
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("stop", {
-                                            offset: "100%",
-                                            stopColor: theme.colors.accent,
-                                            stopOpacity: "0.35"
-                                        })
-                                    ]
-                                })
-                            }),
-                            points.map((point, index)=>{
-                                const next = points[(index + 1) % points.length];
-                                const path = connectorPath(point, next);
-                                const progress = connectorProgress(index);
-                                const isActive = index === activeNode;
-                                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                            d: path,
-                                            fill: "none",
-                                            stroke: `url(#gen-line-${seed})`,
-                                            strokeWidth: 2.4,
-                                            strokeLinecap: "round",
-                                            pathLength: 1,
-                                            strokeDasharray: 1,
-                                            strokeDashoffset: 1 - progress,
-                                            opacity: 0.12 + progress * 0.35
-                                        }),
-                                        progress > 0.02 ? /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
-                                            d: path,
-                                            fill: "none",
-                                            stroke: isActive ? theme.colors.primary : theme.colors.accent,
-                                            strokeWidth: isActive ? 3.2 : 1.8,
-                                            strokeLinecap: "round",
-                                            strokeDasharray: "7 11",
-                                            strokeDashoffset: -(flow + index * 14),
-                                            opacity: isActive ? 0.9 : 0.45
-                                        }) : null
-                                    ]
-                                }, `line-${index}`);
-                            }),
-                            motif === "orbit" || motif === "cycle" ? /*#__PURE__*/ (0,jsx_runtime.jsx)("ellipse", {
-                                cx: "360",
-                                cy: "216",
-                                rx: 250 - pulse * 8,
-                                ry: 146 - pulse * 5,
-                                fill: "none",
-                                stroke: theme_alpha(theme.colors.primary, 0.28),
-                                strokeWidth: 1.6,
-                                strokeDasharray: "4 12",
-                                transform: `rotate(${local * 0.35} 360 216)`
-                            }) : null,
-                            points.map((point, index)=>{
-                                const nodeEnter = (0,esm/* .spring */.oz)({
-                                    frame: local - nodeBeat(index),
-                                    fps,
-                                    config: {
-                                        damping: 16,
-                                        mass: 0.7,
-                                        stiffness: 130
-                                    }
-                                });
-                                const nodeEase = Math.min(1, Math.max(0, nodeEnter));
-                                const isActive = index === activeNode;
-                                const color = index % 2 === 0 ? theme.colors.primary : theme.colors.accent;
-                                const ringPulse = 0.5 + 0.5 * Math.sin(local / fps * Math.PI * 2 * 1.5 + index * 1.3);
-                                const orbitAngle = local / fps * 1.8 + index;
-                                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("g", {
-                                    opacity: nodeEase,
-                                    children: [
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: point.x,
-                                            cy: point.y,
-                                            r: 34 + nodeEase * 8,
-                                            fill: theme_alpha(color, 0.1)
-                                        }),
-                                        isActive ? /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
-                                            children: [
-                                                /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                                    cx: point.x,
-                                                    cy: point.y,
-                                                    r: 22 + ringPulse * 9,
-                                                    fill: "none",
-                                                    stroke: color,
-                                                    strokeWidth: 2.4,
-                                                    opacity: 0.7 - ringPulse * 0.3
-                                                }),
-                                                /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                                    cx: point.x,
-                                                    cy: point.y,
-                                                    r: 40 + ringPulse * 16,
-                                                    fill: "none",
-                                                    stroke: color,
-                                                    strokeWidth: 1.4,
-                                                    opacity: 0.42 - ringPulse * 0.28
-                                                })
-                                            ]
-                                        }) : null,
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: point.x,
-                                            cy: point.y,
-                                            r: 8 + (isActive ? ringPulse * 2.2 : 0),
-                                            fill: color
-                                        }),
-                                        /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
-                                            cx: point.x + Math.cos(orbitAngle) * 27,
-                                            cy: point.y + Math.sin(orbitAngle) * 27,
-                                            r: 2.6,
-                                            fill: color,
-                                            opacity: 0.8
-                                        })
-                                    ]
-                                }, `node-${index}`);
-                            })
-                        ]
-                    }),
-                    points.map((point, index)=>{
-                        if (index >= keywords.length) return null;
-                        const nodeEnter = (0,esm/* .spring */.oz)({
-                            frame: local - nodeBeat(index),
-                            fps,
-                            config: {
-                                damping: 16,
-                                mass: 0.7,
-                                stiffness: 130
-                            }
-                        });
-                        const nodeEase = Math.min(1, Math.max(0, nodeEnter));
-                        const label = keywords[index];
-                        return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "absolute",
-                                left: `${point.x / 720 * 100}%`,
-                                top: `${point.y / 420 * 100}%`,
-                                transform: `translate(-50%, -50%) translateY(${(1 - nodeEase) * 14}px)`,
-                                opacity: nodeEase,
-                                maxWidth: "42%",
-                                padding: `${Math.round(layout.unit * 6)}px ${Math.round(layout.unit * 12)}px`,
-                                borderRadius: 999,
-                                background: darkCanvas ? theme_alpha("#0B1220", 0.82) : theme_alpha("#FFFFFF", 0.9),
-                                border: `1px solid ${theme_alpha(index % 2 === 0 ? theme.colors.primary : theme.colors.accent, 0.48)}`,
-                                boxShadow: `0 ${Math.round(layout.unit * 8)}px ${Math.round(layout.unit * 22)}px ${theme_alpha(darkCanvas ? "#000000" : theme.colors.text, 0.12)}`,
-                                fontFamily: theme.fontFamily,
-                                fontSize: Math.max(30, Math.round(layout.smallSize * 0.84)),
-                                fontWeight: 700,
-                                color: readableText,
-                                textAlign: "center",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis"
-                            },
-                            children: label
-                        }, `label-${index}`);
-                    })
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/GridNodes.tsx
-
-
-
-
-const GridNodes = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const count = el.items.length;
-    const columns = count <= 2 ? Math.max(1, count) : count === 3 ? 3 : layout.isPortrait || layout.isSquare ? 2 : Math.min(count, 4);
-    const palette = [
-        theme.colors.primary,
-        theme.colors.secondary,
-        theme.colors.accent,
-        theme.colors.success
-    ];
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.6),
-            width: "100%"
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.85)),
-                    fontWeight: 800,
-                    color: theme.colors.muted,
-                    lineHeight: 1.3
-                },
-                children: el.title
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-                    gap: Math.round(layout.gap * 0.65),
-                    width: "100%"
-                },
-                children: el.items.map((node, index)=>{
-                    const color = palette[index % palette.length];
-                    const enter = (0,esm/* .spring */.oz)({
-                        frame: frame - delay - index * Math.round(fps * 0.1),
-                        fps,
-                        config: {
-                            damping: 15,
-                            mass: 0.7,
-                            stiffness: 130
-                        }
-                    });
-                    const eased = Math.min(1, Math.max(0, enter));
-                    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            minWidth: 0,
-                            height: "100%",
-                            boxSizing: "border-box",
-                            background: theme.card.background,
-                            border: theme.card.border,
-                            borderRadius: theme.card.radius,
-                            boxShadow: theme.card.shadow,
-                            backdropFilter: theme.card.backdropFilter,
-                            padding: Math.round(layout.cardPadding * 0.72),
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            textAlign: "center",
-                            gap: Math.round(layout.unit * 10),
-                            opacity: eased,
-                            scale: `${0.72 + eased * 0.28}`,
-                            translate: `0px ${(1 - eased) * layout.unit * 24}px`
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    width: Math.round(layout.unit * 62),
-                                    height: Math.round(layout.unit * 62),
-                                    borderRadius: "50%",
-                                    background: theme_alpha(color, 0.15),
-                                    border: `1px solid ${theme_alpha(color, 0.3)}`,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    flexShrink: 0
-                                },
-                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                    name: node.icon,
-                                    size: Math.round(layout.unit * 34),
-                                    color: color,
-                                    strokeWidth: 1.9
-                                })
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.displayFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 1.06)),
-                                    fontWeight: 800,
-                                    color: theme.colors.text,
-                                    lineHeight: 1.35
-                                },
-                                children: node.label
-                            }),
-                            node.caption ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                                    fontWeight: 600,
-                                    color: theme.colors.muted,
-                                    lineHeight: 1.4
-                                },
-                                children: node.caption
-                            }) : null,
-                            node.value ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.displayFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 1.1)),
-                                    fontWeight: 900,
-                                    color,
-                                    lineHeight: 1.3
-                                },
-                                children: node.value
-                            }) : null
-                        ]
-                    }, `${node.label}-${index}`);
-                })
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/HeroTitle.tsx
-
-
-
-const HeroTitle = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 100
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const line = (0,esm/* .spring */.oz)({
-        frame: frame - delay - Math.round(fps * 0.2),
-        fps,
-        config: {
-            damping: 20,
-            mass: 0.8,
-            stiffness: 80
-        }
-    });
-    const lineEased = Math.min(1, Math.max(0, line));
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: theme.card.background,
-            backgroundImage: `linear-gradient(135deg, ${theme_alpha(theme.colors.primary, 0.24)} 0%, transparent 58%)`,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: `${Math.round(layout.cardPadding * 1.05)}px ${Math.round(layout.cardPadding * 1.15)}px`,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.55),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 48}px`,
-            scale: `${0.95 + eased * 0.05}`
-        },
-        children: [
-            el.badge || el.kicker ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "inline-flex",
-                    alignSelf: "flex-start",
-                    alignItems: "center",
-                    gap: Math.round(layout.unit * 8),
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.85)),
-                    fontWeight: 800,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: theme.colors.primary,
-                    background: theme_alpha(theme.colors.primary, 0.12),
-                    borderRadius: 999,
-                    padding: `${Math.round(layout.unit * 5)}px ${Math.round(layout.unit * 18)}px`
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            width: Math.round(layout.unit * 8),
-                            height: Math.round(layout.unit * 8),
-                            borderRadius: "50%",
-                            background: theme.colors.primary
-                        }
-                    }),
-                    el.badge ?? el.kicker
-                ]
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.round(layout.titleSize * 0.72),
-                    fontWeight: 900,
-                    color: theme.colors.text,
-                    lineHeight: 1.15,
-                    textWrap: "balance"
-                },
-                children: el.title
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    height: Math.max(5, Math.round(layout.unit * 6)),
-                    width: `${lineEased * 38}%`,
-                    borderRadius: 999,
-                    background: `linear-gradient(90deg, ${theme.colors.primary}, ${theme.colors.secondary})`,
-                    boxShadow: `0 0 ${Math.round(layout.unit * 20)}px ${theme_alpha(theme.colors.primary, 0.4)}`
-                }
-            }),
-            el.subtitle ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.95)),
-                    fontWeight: 600,
-                    color: theme.colors.muted,
-                    lineHeight: 1.5
-                },
-                children: el.subtitle
-            }) : null
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/HighlightCard.tsx
-
-
-
-
-const HighlightCard = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const accent = theme.colors.accent;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 110
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: theme.card.background,
-            backgroundImage: `linear-gradient(125deg, ${theme_alpha(accent, 0.16)} 0%, transparent 65%)`,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            gap: Math.round(layout.gap * 0.7),
-            alignItems: "flex-start",
-            opacity: eased,
-            translate: `${(1 - eased) * layout.unit * 42}px 0px`,
-            scale: `${0.97 + eased * 0.03}`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    right: Math.round(layout.unit * 12),
-                    bottom: -Math.round(layout.unit * 42),
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.round(layout.unit * 160),
-                    fontWeight: 900,
-                    color: theme_alpha(accent, 0.08),
-                    lineHeight: 1,
-                    pointerEvents: "none"
-                },
-                children: "”"
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    width: Math.round(layout.unit * 62),
-                    height: Math.round(layout.unit * 62),
-                    borderRadius: Math.round(layout.unit * 18),
-                    background: theme_alpha(accent, 0.16),
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                    name: el.icon ?? "bulb",
-                    size: Math.round(layout.unit * 34),
-                    color: accent
-                })
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    minWidth: 0,
-                    position: "relative"
-                },
-                children: [
-                    el.badge ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            display: "inline-block",
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize * 0.78)),
-                            fontWeight: 800,
-                            color: accent,
-                            background: theme_alpha(accent, 0.12),
-                            borderRadius: 999,
-                            padding: `${Math.round(layout.unit * 4)}px ${Math.round(layout.unit * 16)}px`,
-                            marginBottom: Math.round(layout.unit * 8),
-                            lineHeight: 1.3
-                        },
-                        children: el.badge
-                    }) : null,
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.22)),
-                            fontWeight: 900,
-                            color: theme.colors.text,
-                            lineHeight: 1.35
-                        },
-                        children: el.title
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.02)),
-                            fontWeight: 600,
-                            color: theme.colors.muted,
-                            lineHeight: 1.55,
-                            marginTop: Math.round(layout.unit * 6)
-                        },
-                        children: el.text
-                    })
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/LayerStack.tsx
-
-
-
-const parseItem = (raw)=>{
-    const parts = raw.split(/\s*[|·]\s*/).filter(Boolean);
-    return {
-        title: parts[0] ?? raw,
-        description: parts.slice(1).join(" · ")
-    };
-};
-const LayerStack = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const colors = [
-        theme.colors.primary,
-        theme.colors.secondary,
-        theme.colors.success,
-        theme.colors.accent
-    ];
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.55),
-            width: "100%"
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.85)),
-                    fontWeight: 800,
-                    color: theme.colors.muted,
-                    lineHeight: 1.3
-                },
-                children: el.title
-            }) : null,
-            el.items.map((rawItem, index)=>{
-                const item = parseItem(rawItem);
-                const color = colors[index % colors.length];
-                const enter = (0,esm/* .spring */.oz)({
-                    frame: frame - delay - index * Math.round(fps * 0.16),
-                    fps,
-                    config: {
-                        damping: 200,
-                        mass: 0.7,
-                        stiffness: 120
-                    }
-                });
-                const eased = Math.min(1, Math.max(0, enter));
-                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        position: "relative",
-                        overflow: "hidden",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: Math.round(layout.gap * 0.7),
-                        background: theme.card.background,
-                        backgroundImage: `linear-gradient(90deg, ${theme_alpha(color, 0.14)} 0%, transparent 58%)`,
-                        border: theme.card.border,
-                        borderInlineStart: `${Math.max(6, Math.round(layout.unit * 7))}px solid ${color}`,
-                        borderRadius: theme.card.radius,
-                        boxShadow: theme.card.shadow,
-                        backdropFilter: theme.card.backdropFilter,
-                        padding: `${Math.round(layout.cardPadding * 0.78)}px ${Math.round(layout.cardPadding)}px`,
-                        opacity: eased,
-                        translate: `${(1 - eased) * layout.unit * 56}px 0px`
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "absolute",
-                                left: Math.round(layout.cardPadding * 0.4),
-                                bottom: Math.round(-layout.unit * 34),
-                                fontFamily: theme.displayFamily,
-                                fontSize: Math.round(layout.unit * 150),
-                                fontWeight: 900,
-                                lineHeight: 1,
-                                color: theme_alpha(color, 0.07),
-                                pointerEvents: "none"
-                            },
-                            children: index + 1
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                width: Math.round(layout.unit * 64),
-                                height: Math.round(layout.unit * 64),
-                                borderRadius: Math.round(layout.unit * 18),
-                                background: color,
-                                color: theme.isDark ? theme.colors.background : "#FFFFFF",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontFamily: theme.displayFamily,
-                                fontSize: Math.max(30, Math.round(layout.bodySize * 1.2)),
-                                fontWeight: 900,
-                                flexShrink: 0,
-                                boxShadow: `0 8px 24px ${theme_alpha(color, 0.35)}`
-                            },
-                            children: index + 1
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                minWidth: 0,
-                                flex: 1
-                            },
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.displayFamily,
-                                        fontSize: Math.max(30, Math.round(layout.bodySize * 1.18)),
-                                        fontWeight: 800,
-                                        color: theme.colors.text,
-                                        lineHeight: 1.35
-                                    },
-                                    children: item.title
-                                }),
-                                item.description ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.fontFamily,
-                                        fontSize: Math.max(30, Math.round(layout.smallSize)),
-                                        fontWeight: 600,
-                                        color: theme.colors.muted,
-                                        lineHeight: 1.5,
-                                        marginTop: Math.round(layout.unit * 4)
-                                    },
-                                    children: item.description
-                                }) : null
-                            ]
-                        })
-                    ]
-                }, `${rawItem}-${index}`);
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/ProgressBar.tsx
-
-
-
-
-const ProgressBar = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const max = el.max && el.max > 0 ? el.max : 100;
-    const targetPercent = Math.min(100, Math.max(0, el.value / max * 100));
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.7,
-            stiffness: 100
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const fill = (0,esm/* .spring */.oz)({
-        frame: frame - delay - Math.round(fps * 0.25),
-        fps,
-        config: {
-            damping: 18,
-            mass: 1.1,
-            stiffness: 70
-        }
-    });
-    const fillEased = Math.min(1, Math.max(0, fill));
-    const shownPercent = Math.round(targetPercent * fillEased);
-    const suffix = el.suffix ?? "%";
-    const trackHeight = Math.round(layout.unit * 28);
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: `${Math.round(layout.cardPadding * 0.8)}px ${Math.round(layout.cardPadding)}px`,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.5),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 32}px`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: Math.round(layout.gap * 0.6)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "flex",
-                            alignItems: "center",
-                            gap: Math.round(layout.gap * 0.45),
-                            minWidth: 0
-                        },
-                        children: [
-                            el.icon ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    width: Math.round(layout.unit * 48),
-                                    height: Math.round(layout.unit * 48),
-                                    borderRadius: "50%",
-                                    background: theme_alpha(theme.colors.primary, 0.14),
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    flexShrink: 0
-                                },
-                                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                    name: el.icon,
-                                    size: Math.round(layout.unit * 26),
-                                    color: theme.colors.primary
-                                })
-                            }) : null,
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 1.05)),
-                                    fontWeight: 700,
-                                    color: theme.colors.text,
-                                    lineHeight: 1.4
-                                },
-                                children: el.label
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.4)),
-                            fontWeight: 900,
-                            color: theme.colors.primary,
-                            direction: "ltr",
-                            flexShrink: 0
-                        },
-                        children: [
-                            shownPercent,
-                            suffix
-                        ]
-                    })
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    position: "relative",
-                    width: "100%",
-                    height: trackHeight,
-                    borderRadius: 999,
-                    background: theme_alpha(theme.colors.text, theme.isDark ? 0.12 : 0.08),
-                    overflow: "hidden"
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            inset: 0,
-                            width: `${targetPercent * fillEased}%`,
-                            borderRadius: 999,
-                            background: `linear-gradient(90deg, ${theme.colors.primary}, ${theme.colors.secondary})`,
-                            boxShadow: `0 0 ${Math.round(layout.unit * 26)}px ${theme_alpha(theme.colors.primary, 0.5)}`
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            position: "absolute",
-                            top: "50%",
-                            left: `${targetPercent * fillEased}%`,
-                            width: Math.round(trackHeight * 0.72),
-                            height: Math.round(trackHeight * 0.72),
-                            borderRadius: "50%",
-                            background: theme.isDark ? theme.colors.text : "#FFFFFF",
-                            border: `${Math.max(2, Math.round(layout.unit * 3))}px solid ${theme.colors.primary}`,
-                            translate: "-50% -50%",
-                            opacity: fillEased > 0.02 ? 1 : 0
-                        }
-                    })
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/StatNumber.tsx
-
-
-
-
-const formatNumber = (value, decimals)=>{
-    return new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-    }).format(value);
-};
-const StatNumber = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const local = Math.max(0, frame - delay);
-    const enter = (0,esm/* .spring */.oz)({
-        frame: local,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.8,
-            stiffness: 90
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const decimals = el.decimals ?? 0;
-    const progress = (0,esm/* .interpolate */.GW)(local, [
-        0,
-        Math.round(fps * 1.25)
-    ], [
-        0,
-        1
-    ], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: esm/* .Easing.out */.GS.out(esm/* .Easing.cubic */.GS.cubic)
-    });
-    const display = typeof el.value === "number" ? formatNumber(el.value * progress, decimals) : String(el.value);
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            background: theme.card.background,
-            backgroundImage: `linear-gradient(125deg, ${theme_alpha(theme.colors.primary, 0.16)} 0%, transparent 62%)`,
-            border: theme.card.border,
-            borderInlineStart: `${Math.max(7, Math.round(layout.unit * 8))}px solid ${theme.colors.primary}`,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: `${Math.round(layout.cardPadding * 0.9)}px ${Math.round(layout.cardPadding)}px`,
-            display: "flex",
-            alignItems: "center",
-            gap: Math.round(layout.gap * 0.8),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 36}px`,
-            scale: `${0.96 + eased * 0.04}`
-        },
-        children: [
-            el.icon ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    width: Math.round(layout.unit * 92),
-                    height: Math.round(layout.unit * 92),
-                    borderRadius: Math.round(layout.unit * 26),
-                    background: theme_alpha(theme.colors.primary, 0.14),
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                    name: el.icon,
-                    size: Math.round(layout.unit * 48),
-                    color: theme.colors.primary,
-                    strokeWidth: 1.8
-                })
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    minWidth: 0
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "flex",
-                            alignItems: "baseline",
-                            direction: "ltr",
-                            justifyContent: "flex-start",
-                            gap: Math.round(layout.unit * 2),
-                            fontFamily: theme.displayFamily,
-                            fontSize: layout.bigNumberSize,
-                            fontWeight: 900,
-                            lineHeight: 1,
-                            color: theme.colors.primary,
-                            letterSpacing: "-0.02em",
-                            textShadow: `0 ${Math.round(layout.unit * 6)}px ${Math.round(layout.unit * 26)}px ${theme_alpha(theme.colors.primary, 0.22)}`
-                        },
-                        children: [
-                            el.prefix ? /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                children: el.prefix
-                            }) : null,
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                children: display
-                            }),
-                            el.suffix ? /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                children: el.suffix
-                            }) : null
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 0.98)),
-                            fontWeight: 700,
-                            color: theme.colors.muted,
-                            lineHeight: 1.5,
-                            marginTop: Math.round(layout.unit * 8)
-                        },
-                        children: el.label
-                    })
-                ]
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/elements/StoryCards.tsx
-
-
-
-
-const StepTimeline = ({ el, theme, layout, delay, durationInFrames = 120, wcag })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const steps = el.steps.slice(0, 5);
-    const totalFrames = Math.max(1, durationInFrames);
-    const revealSpan = Math.max(Math.round(fps * 0.9), totalFrames - delay - Math.round(fps * 0.5));
-    const stepGap = revealSpan / Math.max(1, steps.length);
-    const stepBeat = (index)=>delay + index * stepGap;
-    const activeStep = frame < delay ? -1 : Math.min(steps.length - 1, Math.floor((frame - delay) / Math.max(1, stepGap)));
-    const pulse = 0.5 + 0.5 * Math.sin(frame / fps * Math.PI * 2 * 1.5);
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: theme.card.border,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.3)
-        },
-        children: [
-            el.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.92)),
-                    fontWeight: 800,
-                    color: (wcag === null || wcag === void 0 ? void 0 : wcag.secondaryText) ?? theme.colors.muted,
-                    marginBottom: Math.round(layout.unit * 8)
-                },
-                children: el.title
-            }) : null,
-            steps.map((step, index)=>{
-                const enter = (0,esm/* .spring */.oz)({
-                    frame: frame - stepBeat(index),
-                    fps,
-                    config: {
-                        damping: 18,
-                        mass: 0.55,
-                        stiffness: 150
-                    }
-                });
-                const eased = Math.min(1, Math.max(0, enter));
-                const isLast = index === steps.length - 1;
-                const isActive = index === activeStep;
-                return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: Math.round(layout.gap * 0.7),
-                        opacity: eased,
-                        translate: `${(1 - eased) * layout.unit * 34}px 0px`
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                flexShrink: 0
-                            },
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        width: Math.round(layout.unit * 58),
-                                        height: Math.round(layout.unit * 58),
-                                        borderRadius: "50%",
-                                        background: theme.colors.primary,
-                                        color: theme.isDark ? theme.colors.background : "#FFFFFF",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontFamily: theme.displayFamily,
-                                        fontSize: Math.max(30, Math.round(layout.bodySize * 1.05)),
-                                        fontWeight: 900,
-                                        scale: isActive ? `${1 + pulse * 0.08}` : "1",
-                                        boxShadow: isActive ? `0 0 ${Math.round(layout.unit * (22 + pulse * 20))}px ${theme_alpha(theme.colors.primary, 0.55)}, 0 0 0 ${Math.max(2, Math.round(layout.unit * 3))}px ${theme_alpha(theme.colors.primary, 0.4)}` : `0 0 ${Math.round(layout.unit * 20)}px ${theme_alpha(theme.colors.primary, 0.4)}`
-                                    },
-                                    children: index + 1
-                                }),
-                                !isLast ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        width: Math.max(2, Math.round(layout.unit * 3)),
-                                        height: Math.round(layout.unit * 48),
-                                        borderRadius: 999,
-                                        backgroundImage: `repeating-linear-gradient(180deg, ${theme.colors.primary} 0 ${Math.round(layout.unit * 8)}px, transparent ${Math.round(layout.unit * 8)}px ${Math.round(layout.unit * 18)}px)`,
-                                        backgroundPositionY: `${frame / fps * 26}px`,
-                                        opacity: 0.7
-                                    }
-                                }) : null
-                            ]
-                        }),
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                minWidth: 0,
-                                flex: 1,
-                                paddingTop: Math.round(layout.unit * 4),
-                                paddingBottom: isLast ? 0 : Math.round(layout.unit * 12)
-                            },
-                            children: [
-                                /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.displayFamily,
-                                        fontSize: Math.max(30, Math.round(layout.bodySize * 1.15)),
-                                        fontWeight: 800,
-                                        color: theme.colors.text,
-                                        lineHeight: 1.3
-                                    },
-                                    children: step.label
-                                }),
-                                step.caption ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                    style: {
-                                        fontFamily: theme.fontFamily,
-                                        fontSize: Math.max(30, Math.round(layout.smallSize)),
-                                        fontWeight: 600,
-                                        color: (wcag === null || wcag === void 0 ? void 0 : wcag.secondaryText) ?? theme.colors.muted,
-                                        lineHeight: 1.5,
-                                        marginTop: Math.round(layout.unit * 4)
-                                    },
-                                    children: step.caption
-                                }) : null
-                            ]
-                        }),
-                        step.value ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                fontFamily: theme.displayFamily,
-                                fontSize: Math.max(30, Math.round(layout.bodySize * 1.1)),
-                                fontWeight: 900,
-                                color: theme.colors.primary,
-                                flexShrink: 0,
-                                paddingTop: Math.round(layout.unit * 8),
-                                direction: "ltr"
-                            },
-                            children: step.value
-                        }) : null
-                    ]
-                }, `${step.label}-${index}`);
-            })
-        ]
-    });
-};
-const NotificationCard = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const tone = el.tone === "success" ? theme.colors.success : el.tone === "warning" ? theme.colors.secondary : theme.colors.primary;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 16,
-            mass: 0.8,
-            stiffness: 120
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            width: "100%",
-            background: theme.card.background,
-            border: `${Math.max(1, Math.round(layout.unit * 2))}px solid ${theme_alpha(tone, 0.4)}`,
-            borderRadius: Math.max(18, Math.round(layout.unit * 26)),
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: `${Math.round(layout.cardPadding * 0.78)}px ${Math.round(layout.cardPadding)}px`,
-            display: "flex",
-            alignItems: "flex-start",
-            gap: Math.round(layout.gap * 0.65),
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 40}px`,
-            scale: `${0.96 + eased * 0.04}`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    width: Math.round(layout.unit * 64),
-                    height: Math.round(layout.unit * 64),
-                    borderRadius: Math.round(layout.unit * 18),
-                    background: tone,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    boxShadow: `0 0 ${Math.round(layout.unit * 20)}px ${theme_alpha(tone, 0.4)}`
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                    name: el.icon ?? "spark",
-                    size: Math.round(layout.unit * 34),
-                    color: theme.isDark ? theme.colors.background : "#FFFFFF",
-                    strokeWidth: 2
-                })
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    minWidth: 0,
-                    flex: 1
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: Math.round(layout.unit * 8)
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                                    fontWeight: 800,
-                                    letterSpacing: "0.05em",
-                                    textTransform: "uppercase",
-                                    color: tone
-                                },
-                                children: el.app ?? "ZOF STUDIO"
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.75)),
-                                    fontWeight: 600,
-                                    color: theme.colors.muted
-                                },
-                                children: el.time ?? "now"
-                            })
-                        ]
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.displayFamily,
-                            fontSize: Math.max(30, Math.round(layout.bodySize * 1.08)),
-                            fontWeight: 800,
-                            color: theme.colors.text,
-                            lineHeight: 1.35,
-                            marginTop: Math.round(layout.unit * 5)
-                        },
-                        children: el.title
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize)),
-                            fontWeight: 600,
-                            color: theme.colors.muted,
-                            lineHeight: 1.5,
-                            marginTop: Math.round(layout.unit * 4)
-                        },
-                        children: el.message
-                    })
-                ]
-            })
-        ]
-    });
-};
-const WarningCard = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const tone = el.tone === "myth" ? theme.colors.secondary : el.tone === "danger" ? theme.colors.danger : theme.colors.accent;
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 115
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: theme.card.background,
-            backgroundImage: `linear-gradient(135deg, ${theme_alpha(tone, 0.2)} 0%, transparent 60%)`,
-            border: `${Math.max(2, Math.round(layout.unit * 2))}px solid ${theme_alpha(tone, 0.48)}`,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            backdropFilter: theme.card.backdropFilter,
-            padding: layout.cardPadding,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.5),
-            opacity: eased,
-            translate: `${(1 - eased) * layout.unit * 36}px 0px`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: Math.round(layout.gap * 0.55)
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                        style: {
-                            width: Math.round(layout.unit * 60),
-                            height: Math.round(layout.unit * 60),
-                            borderRadius: "50%",
-                            background: theme_alpha(tone, 0.18),
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexShrink: 0
-                        },
-                        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                            name: "alert",
-                            size: Math.round(layout.unit * 34),
-                            color: tone,
-                            strokeWidth: 2.2
-                        })
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            minWidth: 0
-                        },
-                        children: [
-                            el.badge ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.fontFamily,
-                                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.78)),
-                                    fontWeight: 800,
-                                    letterSpacing: "0.08em",
-                                    textTransform: "uppercase",
-                                    color: tone
-                                },
-                                children: el.badge
-                            }) : null,
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    fontFamily: theme.displayFamily,
-                                    fontSize: Math.max(30, Math.round(layout.bodySize * 1.22)),
-                                    fontWeight: 900,
-                                    color: theme.colors.text,
-                                    lineHeight: 1.3
-                                },
-                                children: el.title
-                            })
-                        ]
-                    })
-                ]
-            }),
-            el.myth || el.truth ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: Math.round(layout.unit * 10)
-                },
-                children: [
-                    el.myth ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "flex",
-                            alignItems: "flex-start",
-                            gap: Math.round(layout.gap * 0.45),
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize)),
-                            fontWeight: 600,
-                            color: theme.colors.muted,
-                            lineHeight: 1.45
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                name: "x",
-                                size: Math.round(layout.unit * 22),
-                                color: theme.colors.danger,
-                                strokeWidth: 2.4
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                children: el.myth
-                            })
-                        ]
-                    }) : null,
-                    el.truth ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                        style: {
-                            display: "flex",
-                            alignItems: "flex-start",
-                            gap: Math.round(layout.gap * 0.45),
-                            fontFamily: theme.fontFamily,
-                            fontSize: Math.max(30, Math.round(layout.smallSize)),
-                            fontWeight: 700,
-                            color: theme.colors.text,
-                            lineHeight: 1.45
-                        },
-                        children: [
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                                name: "check",
-                                size: Math.round(layout.unit * 22),
-                                color: theme.colors.success,
-                                strokeWidth: 2.6
-                            }),
-                            /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                                children: el.truth
-                            })
-                        ]
-                    }) : null
-                ]
-            }) : null,
-            el.text ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize)),
-                    fontWeight: 600,
-                    color: theme.colors.muted,
-                    lineHeight: 1.5
-                },
-                children: el.text
-            }) : null
-        ]
-    });
-};
-const CallToAction = ({ el, theme, layout, delay })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const enter = (0,esm/* .spring */.oz)({
-        frame: frame - delay,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.75,
-            stiffness: 110
-        }
-    });
-    const eased = Math.min(1, Math.max(0, enter));
-    const pulse = 1 + Math.sin(Math.max(0, frame - delay) / Math.max(1, fps) * 4) * 0.02;
-    return /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            overflow: "hidden",
-            background: `linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%)`,
-            borderRadius: theme.card.radius,
-            boxShadow: theme.card.shadow,
-            padding: `${Math.round(layout.cardPadding * 1.1)}px ${Math.round(layout.cardPadding * 1.15)}px`,
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.45),
-            color: theme.isDark ? theme.colors.background : "#FFFFFF",
-            opacity: eased,
-            translate: `0px ${(1 - eased) * layout.unit * 44}px`,
-            scale: `${0.95 + eased * 0.05}`
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    right: Math.round(-layout.unit * 20),
-                    top: Math.round(-layout.unit * 30),
-                    opacity: 0.18,
-                    pointerEvents: "none"
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                    name: "rocket",
-                    size: Math.round(layout.unit * 210),
-                    color: "#FFFFFF",
-                    strokeWidth: 1.2
-                })
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "inline-flex",
-                    alignSelf: "flex-start",
-                    alignItems: "center",
-                    gap: Math.round(layout.unit * 8),
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.smallSize * 0.82)),
-                    fontWeight: 800,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    background: "rgba(255,255,255,0.2)",
-                    borderRadius: 999,
-                    padding: `${Math.round(layout.unit * 5)}px ${Math.round(layout.unit * 16)}px`
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)(Icon, {
-                        name: el.icon ?? "spark",
-                        size: Math.round(layout.unit * 20),
-                        color: theme.isDark ? theme.colors.background : "#FFFFFF"
-                    }),
-                    el.buttonLabel ?? "START NOW"
-                ]
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.round(layout.titleSize * 0.64),
-                    fontWeight: 900,
-                    lineHeight: 1.15,
-                    textWrap: "balance",
-                    position: "relative"
-                },
-                children: el.title
-            }),
-            el.subtitle ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 0.98)),
-                    fontWeight: 600,
-                    lineHeight: 1.45,
-                    opacity: 0.92,
-                    position: "relative"
-                },
-                children: el.subtitle
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    alignSelf: "flex-start",
-                    marginTop: Math.round(layout.unit * 8),
-                    padding: `${Math.round(layout.unit * 12)}px ${Math.round(layout.unit * 34)}px`,
-                    borderRadius: 999,
-                    background: theme.isDark ? theme.colors.background : "#FFFFFF",
-                    color: theme.isDark ? theme.colors.text : theme.colors.primary,
-                    fontFamily: theme.displayFamily,
-                    fontSize: Math.max(30, Math.round(layout.bodySize * 1.02)),
-                    fontWeight: 900,
-                    boxShadow: `0 10px 30px ${theme_alpha(theme.colors.background, 0.25)}`,
-                    scale: `${pulse}`
-                },
-                children: el.buttonLabel ?? "START NOW"
-            })
-        ]
-    });
-};
-
-;// CONCATENATED MODULE: ./src/components/ElementRenderer.tsx
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const ElementRenderer = ({ element, theme, layout, delay, durationInFrames = 120, sceneIndex = 0, isRtl = false, language = "ar", sceneTitle, sceneCaption, showCharacter = true, sfxAt, sfxFrames, wcag })=>{
-    switch(element.type){
-        case "hero_title":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(HeroTitle, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "stat_number":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(StatNumber, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "comparison_box":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(ComparisonBox, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay,
-                durationInFrames: durationInFrames,
-                wcag: wcag
-            });
-        case "bar_chart":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(BarChart, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay,
-                sfxAt: sfxAt,
-                sfxFrames: sfxFrames,
-                durationInFrames: durationInFrames
-            });
-        case "line_chart":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(LineChart, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay,
-                sfxAt: sfxAt,
-                sfxFrames: sfxFrames,
-                durationInFrames: durationInFrames
-            });
-        case "circular_gauge":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(CircularGauge, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "step_timeline":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(StepTimeline, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay,
-                durationInFrames: durationInFrames,
-                wcag: wcag
-            });
-        case "notification_card":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(NotificationCard, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "warning_card":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(WarningCard, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "editorial_quote":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(EditorialQuote, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "bullet_list":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(BulletList, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "cta":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(CallToAction, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "custom_visual":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(CustomVisual, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "layer_stack":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(LayerStack, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "grid_nodes":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(GridNodes, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "progress_bar":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(ProgressBar, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "highlight_card":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(HighlightCard, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay
-            });
-        case "generative_scene":
-            return /*#__PURE__*/ (0,jsx_runtime.jsx)(GenerativeScene, {
-                el: element,
-                theme: theme,
-                layout: layout,
-                delay: delay,
-                durationInFrames: durationInFrames,
-                sceneIndex: sceneIndex
-            });
-        case "custom_tsx":
-            {
-                const GeneratedComponent = GENERATED_SCENES[element.component];
-                if (!GeneratedComponent) {
-                    return /*#__PURE__*/ (0,jsx_runtime.jsx)(GenerativeScene, {
-                        el: {
-                            type: "generative_scene",
-                            title: element.title,
-                            headline: element.text || element.title || "Custom scene",
-                            keywords: element.keywords && element.keywords.length > 0 ? element.keywords : [
-                                "Idea",
-                                "Mechanism",
-                                "Action"
-                            ],
-                            motif: "flow"
-                        },
-                        theme: theme,
-                        layout: layout,
-                        delay: delay,
-                        durationInFrames: durationInFrames,
-                        sceneIndex: sceneIndex
-                    });
-                }
-                return /*#__PURE__*/ (0,jsx_runtime.jsx)(GeneratedSceneBoundary, {
-                    fallback: /*#__PURE__*/ (0,jsx_runtime.jsx)(GenerativeScene, {
-                        el: {
-                            type: "generative_scene",
-                            title: element.title,
-                            headline: element.text || element.title || "Custom scene",
-                            keywords: element.keywords && element.keywords.length > 0 ? element.keywords : [
-                                "Idea",
-                                "Mechanism",
-                                "Action"
-                            ],
-                            motif: "flow"
-                        },
-                        theme: theme,
-                        layout: layout,
-                        delay: delay,
-                        durationInFrames: durationInFrames,
-                        sceneIndex: sceneIndex
-                    }),
-                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)(GeneratedComponent, {
-                        accentColor: theme.colors.primary,
-                        bgColor: theme.colors.background,
-                        textColor: theme.colors.text,
-                        mutedColor: theme.colors.muted,
-                        characterBody: theme.character.body,
-                        characterFace: theme.character.face,
-                        characterAccent: theme.character.accent,
-                        characterShadow: theme.character.shadow,
-                        isRtl: isRtl,
-                        language: language,
-                        title: element.title ?? sceneTitle,
-                        text: element.text ?? sceneCaption,
-                        keywords: element.keywords,
-                        data: element.data,
-                        durationInFrames: durationInFrames,
-                        showCharacter: showCharacter
-                    })
-                });
-            }
-        default:
-            return null;
-    }
-};
-
-;// CONCATENATED MODULE: ./src/components/Scene.tsx
-
-
-
-
-
-
-
-
-
-
-
-
-const DATA_HEAVY_ELEMENTS = new Set([
-    "generative_scene",
-    "comparison_box",
-    "bar_chart",
-    "line_chart",
-    "circular_gauge",
-    "grid_nodes",
-    "step_timeline",
-    "progress_bar"
-]);
-const resolveShowCharacter = (style, scene, index)=>{
-    var _scene_character, _scene_elements_, _scene_elements;
-    if (style === "modern_dark" || style === "editorial_clean") {
-        return false;
-    }
-    if (style === "stickman") {
-        var _scene_character1;
-        return ((_scene_character1 = scene.character) === null || _scene_character1 === void 0 ? void 0 : _scene_character1.enabled) !== false;
-    }
-    if (typeof ((_scene_character = scene.character) === null || _scene_character === void 0 ? void 0 : _scene_character.enabled) === "boolean") {
-        return scene.character.enabled;
-    }
-    if (scene.character) {
-        return true;
-    }
-    const firstType = ((_scene_elements = scene.elements) === null || _scene_elements === void 0 ? void 0 : (_scene_elements_ = _scene_elements[0]) === null || _scene_elements_ === void 0 ? void 0 : _scene_elements_.type) ?? "";
-    if (DATA_HEAVY_ELEMENTS.has(firstType)) {
-        return false;
-    }
-    return index % 2 === 0;
-};
-const Scene = ({ scene, index, theme: baseTheme, layout, durationInFrames, isRtl, language, sfxVolume, style, captionConfig })=>{
-    var _scene_sfxSrc, _scene_character, _scene_character1, _scene_character2, _scene_character3, _scene_character4, _scene_character5;
-    const scenePalette = resolveWcagPalette({
-        bgColor: baseTheme.wcag.bgColor,
-        accentColor: baseTheme.wcag.safeAccent,
-        moodText: [
-            scene.title,
-            scene.caption,
-            scene.ambientScene,
-            scene.background
-        ].filter(Boolean).join(" ")
-    });
-    const theme = withWcagPalette(baseTheme, scenePalette);
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
-    const sfxSrc = sfxVolume > 0 ? resolveSceneSfxSrc(scene) : null;
-    const sfxId = (_scene_sfxSrc = scene.sfxSrc) === null || _scene_sfxSrc === void 0 ? void 0 : _scene_sfxSrc.replace(/^\/?sfx\//, "").replace(/\.[a-z0-9]+$/i, "");
-    const sfxAudioSeconds = sfxId ? SFX_DURATIONS[sfxId] : undefined;
-    const sfxFrames = Math.round(Math.max(0.45, Math.min(durationInFrames / fps, sfxAudioSeconds ?? Math.min(1.25, durationInFrames / fps * 0.4))) * fps);
-    const sfxSyncAt = sfxSrc ? scene.sfxAt ?? 0.2 : undefined;
-    const sceneEnter = (0,esm/* .spring */.oz)({
-        frame,
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.8,
-            stiffness: 90
-        }
-    });
-    const sceneEase = Math.min(1, Math.max(0, sceneEnter));
-    const exit = (0,esm/* .interpolate */.GW)(frame, [
-        Math.max(0, durationInFrames - Math.round(fps * 0.45)),
-        durationInFrames
-    ], [
-        1,
-        0
-    ], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp"
-    });
-    const headerEnter = (0,esm/* .spring */.oz)({
-        frame: frame - Math.round(fps * 0.08),
-        fps,
-        config: {
-            damping: 200,
-            mass: 0.7,
-            stiffness: 110
-        }
-    });
-    const headerEase = Math.min(1, Math.max(0, headerEnter));
-    const direction = isRtl ? "rtl" : "ltr";
-    const textAlign = isRtl ? "right" : "left";
-    const side = ((_scene_character = scene.character) === null || _scene_character === void 0 ? void 0 : _scene_character.side) ?? "auto";
-    const characterOnLeft = side === "left" || side === "auto" && isRtl;
-    const contentOrder = characterOnLeft ? 2 : 1;
-    const characterOrder = characterOnLeft ? 1 : 2;
-    const elements = scene.elements ?? [];
-    const exclusiveStage = elements.some((element)=>element.type === "custom_tsx" || element.type === "comparison_box");
-    const elementRepeatsTitle = elements.some((element)=>"title" in element && typeof element.title === "string" && element.title.trim() === (scene.title ?? "").trim());
-    const sideBySide = layout.isWide || layout.isSquare;
-    const portraitCharacterHeight = Math.round(layout.characterHeight * (elements.length > 1 ? 0.88 : 1));
-    let sceneLayout = scene.layout ?? (layout.isPortrait ? index % 3 === 1 ? "overlay" : index % 3 === 2 ? "centered" : "stacked" : index % 3 === 0 ? "overlay" : index % 3 === 1 ? "split" : "centered");
-    const resolvedCharacters = scene.characters && scene.characters.length > 0 ? scene.characters : scene.character ? [
-        scene.character
-    ] : [];
-    const styleAllowsCharacters = style === "stickman" || style === "smart_mix";
-    const multiCharacter = styleAllowsCharacters && resolvedCharacters.length > 1 && !(style === "smart_mix" && ((_scene_character1 = scene.character) === null || _scene_character1 === void 0 ? void 0 : _scene_character1.enabled) === false);
-    const showCharacter = exclusiveStage ? false : multiCharacter ? true : resolveShowCharacter(style, scene, index);
-    const hasDataHeavyElement = elements.some((element)=>DATA_HEAVY_ELEMENTS.has(element.type));
-    if (showCharacter && hasDataHeavyElement && sceneLayout === "overlay") {
-        sceneLayout = layout.isPortrait ? "stacked" : "split";
-    }
-    const camera = scene.camera ?? "slow-zoom-in";
-    const cameraProgress = (0,esm/* .interpolate */.GW)(frame, [
+    const progress = (0,esm/* .interpolate */.GW)(frame, [
         0,
         Math.max(1, durationInFrames - 1)
     ], [
@@ -35225,640 +22918,308 @@ const Scene = ({ scene, index, theme: baseTheme, layout, durationInFrames, isRtl
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp"
     });
-    const cameraEase = 0.5 - 0.5 * Math.cos(cameraProgress * Math.PI);
-    const stageTwo = Math.max(0, (cameraProgress - 0.5) * 2);
-    const microX = Math.sin(frame / fps * 0.9 + index * 1.7) * 0.18;
-    const microY = Math.cos(frame / fps * 0.7 + index) * 0.14;
-    const cameraTransform = (()=>{
-        const drift = Math.sin(cameraProgress * Math.PI * 2) * 0.6;
-        const settle = Math.sin(cameraProgress * Math.PI * 3 + index) * 0.12;
-        switch(camera){
-            case "slow-zoom-out":
-                return `scale(${1.09 - cameraEase * 0.07 + settle * 0.004}) translate(${microX}%, ${microY}%)`;
-            case "pan-left":
-                return `scale(${1.03 + cameraEase * 0.03}) translate(${2.2 - cameraProgress * 3.4 + microX}%, ${microY}%) rotate(${-0.4 + cameraProgress * 0.7}deg)`;
-            case "pan-right":
-                return `scale(${1.03 + cameraEase * 0.03}) translate(${-2.2 + cameraProgress * 3.4 + microX}%, ${microY}%) rotate(${0.4 - cameraProgress * 0.7}deg)`;
-            case "push-in":
-                return `scale(${1 + cameraEase * 0.06 + stageTwo * 0.055}) translate(${drift * 0.8 + microX}%, ${-microY * 0.6}%)`;
-            case "static":
-                return `scale(${1.01 + Math.sin(cameraProgress * Math.PI) * 0.012}) translate(${microX}%, ${microY}%)`;
-            default:
-                return `scale(${1 + cameraEase * 0.055 + stageTwo * 0.02 + settle * 0.004}) translate(${drift * 0.6 + microX}%, ${microY}%)`;
-        }
-    })();
-    const poseName = ((_scene_character2 = scene.character) === null || _scene_character2 === void 0 ? void 0 : _scene_character2.pose) ?? "idle";
-    const walkTime = frame / fps * Math.PI * 2;
-    const walkDrift = poseName === "walking" ? Math.sin(walkTime * 0.55) * layout.unit * 26 : Math.sin(walkTime * 0.22 + index) * layout.unit * 4;
-    const leaning = poseName === "pointing" || poseName === "explaining";
-    const characterFlip = characterOnLeft ? 1 : -1;
-    const header = /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.55),
-            textAlign,
-            alignItems: isRtl ? "flex-end" : "flex-start",
-            opacity: headerEase,
-            translate: `0px ${(1 - headerEase) * layout.unit * 34}px`,
-            width: "100%"
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                style: {
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: Math.round(layout.unit * 10),
-                    background: theme_alpha(theme.colors.primary, 0.14),
-                    border: `1px solid ${theme_alpha(theme.colors.primary, 0.25)}`,
-                    color: theme.colors.primary,
-                    padding: `${Math.round(layout.unit * 7)}px ${Math.round(layout.unit * 20)}px`,
-                    borderRadius: 999,
-                    fontFamily: theme.fontFamily,
-                    fontSize: layout.kickerSize,
-                    fontWeight: 800,
-                    lineHeight: 1.3
-                },
-                children: [
-                    /*#__PURE__*/ (0,jsx_runtime.jsx)("span", {
-                        style: {
-                            width: Math.round(layout.unit * 10),
-                            height: Math.round(layout.unit * 10),
-                            borderRadius: "50%",
-                            background: theme.colors.primary,
-                            boxShadow: `0 0 ${Math.round(layout.unit * 14)}px ${theme.colors.primary}`,
-                            flexShrink: 0
-                        }
-                    }),
-                    /*#__PURE__*/ (0,jsx_runtime.jsxs)("span", {
-                        children: [
-                            String(index + 1).padStart(2, "0"),
-                            scene.kicker ? ` · ${scene.kicker}` : ""
-                        ]
-                    })
-                ]
-            }),
-            scene.title && !elementRepeatsTitle ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.displayFamily,
-                    fontSize: layout.titleSize,
-                    fontWeight: 900,
-                    color: theme.colors.text,
-                    lineHeight: 1.18,
-                    letterSpacing: isRtl ? "0em" : "-0.02em",
-                    textWrap: "balance",
-                    maxWidth: "100%"
-                },
-                children: scene.title
-            }) : null,
-            scene.subtitle && scene.subtitle !== scene.kicker && scene.subtitle !== scene.title ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    fontFamily: theme.fontFamily,
-                    fontSize: layout.subtitleSize,
-                    fontWeight: 600,
-                    color: theme.colors.muted,
-                    lineHeight: 1.55,
-                    maxWidth: sideBySide ? "94%" : "100%"
-                },
-                children: scene.subtitle
-            }) : null
-        ]
+    const rise = (0,esm/* .interpolate */.GW)(progress, [
+        0,
+        0.22
+    ], [
+        0,
+        1
+    ], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp"
     });
-    const elementList = /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-        style: {
-            display: "flex",
-            flexDirection: "column",
-            gap: Math.round(layout.gap * 0.8),
-            width: "100%"
-        },
-        children: elements.map((element, elementIndex)=>/*#__PURE__*/ (0,jsx_runtime.jsx)(ElementRenderer, {
-                element: element,
-                theme: theme,
-                layout: layout,
-                durationInFrames: durationInFrames,
-                sceneIndex: index,
-                isRtl: isRtl,
-                language: language,
-                sceneTitle: scene.title,
-                sceneCaption: scene.caption,
-                showCharacter: showCharacter,
-                sfxAt: sfxSyncAt,
-                sfxFrames: sfxFrames,
-                wcag: scenePalette,
-                delay: Math.round(fps * 0.3) + elementIndex * Math.round(fps * 0.24)
-            }, `${element.type}-${elementIndex}`))
-    });
-    const character = /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-        style: {
-            position: "relative",
-            width: "100%",
-            height: multiCharacter ? sideBySide || sceneLayout === "overlay" ? "100%" : Math.max(Math.round(layout.height * 0.34), portraitCharacterHeight) : sideBySide || sceneLayout === "overlay" ? "100%" : sceneLayout === "centered" ? Math.round(portraitCharacterHeight * 0.85) : portraitCharacterHeight,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            minHeight: 0
-        },
-        children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    position: "absolute",
-                    width: "78%",
-                    height: "78%",
-                    maxWidth: layout.characterWidth,
-                    borderRadius: "50%",
-                    background: `radial-gradient(circle, ${theme_alpha(theme.colors.primary, 0.18)} 0%, transparent 68%)`,
-                    filter: `blur(${Math.round(layout.unit * 28)}px)`
-                }
-            }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                style: {
-                    width: sideBySide ? "100%" : layout.characterWidth,
-                    height: "100%",
-                    maxWidth: layout.characterWidth,
-                    scale: ((_scene_character3 = scene.character) === null || _scene_character3 === void 0 ? void 0 : _scene_character3.scale) ?? 1,
-                    transform: `translateX(${walkDrift}px) scaleX(${characterFlip})`,
-                    transformOrigin: "50% 70%",
-                    filter: leaning ? `drop-shadow(0 ${Math.round(layout.unit * 10)}px ${Math.round(layout.unit * 24)}px ${theme_alpha(theme.colors.primary, 0.16)})` : undefined
-                },
-                children: multiCharacter ? /*#__PURE__*/ (0,jsx_runtime.jsx)(CharacterStage, {
-                    characters: resolvedCharacters,
-                    theme: theme,
-                    layout: layout,
-                    isRtl: isRtl,
-                    characterLayout: scene.characterLayout,
-                    durationInFrames: durationInFrames,
-                    sceneIndex: index
-                }) : /*#__PURE__*/ (0,jsx_runtime.jsx)(Stickman, {
-                    pose: (_scene_character4 = scene.character) === null || _scene_character4 === void 0 ? void 0 : _scene_character4.pose,
-                    color: theme.character.body,
-                    faceColor: theme.character.face,
-                    accent: theme.character.accent,
-                    shadow: theme.character.shadow,
-                    accessory: (_scene_character5 = scene.character) === null || _scene_character5 === void 0 ? void 0 : _scene_character5.accessory,
-                    delay: Math.round(fps * 0.22)
-                })
-            })
-        ]
-    });
+    const drift = Math.sin(frame / Math.max(1, fps) * 1.2) * 8;
+    const title = ((_scene_title = scene.title) === null || _scene_title === void 0 ? void 0 : _scene_title.trim()) || "Zof Studio";
+    const caption = ((_scene_caption = scene.caption) === null || _scene_caption === void 0 ? void 0 : _scene_caption.trim()) || "";
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
         style: {
-            padding: layout.padding,
-            paddingBottom: layout.captionSpace,
-            direction,
-            opacity: Math.min(1, sceneEase * 1.2) * exit,
+            background: palette.background,
+            color: palette.text,
+            fontFamily: FONT_FAMILY,
+            direction: isRtl ? "rtl" : "ltr",
             overflow: "hidden"
         },
         children: [
-            scene.backgroundPreset ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
+            /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
                 style: {
-                    opacity: 0.96,
-                    pointerEvents: "none"
-                },
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Background, {
-                    theme: theme,
-                    preset: scene.backgroundPreset,
-                    seed: scene.backgroundSeed ?? index
-                })
-            }) : null,
-            scene.background ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .AbsoluteFill */.H1, {
-                style: {
-                    background: scene.background,
-                    opacity: 0.32,
-                    pointerEvents: "none"
+                    background: `radial-gradient(circle at 50% 18%, ${withAlpha(palette.accent, 0.28)} 0%, transparent 58%)`,
+                    opacity: 0.9
                 }
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(AmbientMotion, {
-                theme: theme,
-                seed: (scene.backgroundSeed ?? index) + 11,
-                intensity: showCharacter ? 0.85 : 1
             }),
-            scene.ambientScene && scene.ambientScene !== "none" ? /*#__PURE__*/ (0,jsx_runtime.jsx)(AmbientEnvironment, {
-                variant: scene.ambientScene,
-                theme: theme,
-                seed: (scene.backgroundSeed ?? index) + 23
-            }) : null,
-            scene.audioSrc ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Audio */.fP, {
-                src: (0,esm/* .staticFile */.dQ)(scene.audioSrc)
-            }) : null,
-            sfxSrc ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Sequence */.gd, {
-                from: Math.max(0, Math.round((scene.sfxAt ?? 0) * fps)),
-                durationInFrames: Math.max(1, Math.round(durationInFrames * 0.4)),
-                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Audio */.fP, {
-                    src: (0,esm/* .staticFile */.dQ)(sfxSrc),
-                    volume: sfxVolume
-                })
-            }) : null,
-            /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("svg", {
+                viewBox: "0 0 1080 1920",
                 style: {
-                    position: "relative",
-                    zIndex: 2,
-                    flex: 1,
-                    minHeight: 0,
+                    position: "absolute",
+                    inset: 0,
                     width: "100%",
-                    transform: cameraTransform,
-                    transformOrigin: "center"
+                    height: "100%"
                 },
-                children: exclusiveStage ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                    style: {
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        flex: 1,
-                        minHeight: 0,
-                        height: "100%",
-                        width: "100%"
-                    },
-                    children: elementList
-                }) : sceneLayout === "overlay" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        position: "relative",
-                        flex: 1,
-                        minHeight: 0,
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center"
-                    },
-                    children: [
-                        showCharacter ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                position: "absolute",
-                                inset: 0,
-                                display: "flex",
-                                alignItems: "flex-end",
-                                justifyContent: characterOnLeft ? "flex-start" : "flex-end",
-                                opacity: multiCharacter ? 0.78 : 0.5,
-                                pointerEvents: "none"
-                            },
-                            children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                                style: {
-                                    width: multiCharacter ? "84%" : "62%",
-                                    height: "100%"
-                                },
-                                children: character
-                            })
-                        }) : null,
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                position: "relative",
-                                zIndex: 2,
-                                width: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                gap: Math.round(layout.gap * 0.9)
-                            },
-                            children: [
-                                header,
-                                elementList
-                            ]
-                        })
-                    ]
-                }) : sceneLayout === "split" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "stretch",
-                        gap: Math.round(layout.gap * 1.4),
-                        flex: 1,
-                        minHeight: 0,
-                        height: "100%"
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                            style: {
-                                order: contentOrder,
-                                flex: multiCharacter ? 1 : showCharacter ? 1.25 : 1,
-                                minWidth: 0,
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                gap: Math.round(layout.gap * 0.9)
-                            },
-                            children: [
-                                header,
-                                elementList
-                            ]
-                        }),
-                        showCharacter ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                order: characterOrder,
-                                flex: multiCharacter ? 1 : 0.75,
-                                minWidth: 0,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            },
-                            children: character
-                        }) : null
-                    ]
-                }) : sceneLayout === "centered" ? /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: Math.round(layout.gap * 0.7),
-                        flex: 1,
-                        minHeight: 0,
-                        height: "100%"
-                    },
-                    children: [
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                width: "100%",
-                                maxWidth: "94%"
-                            },
-                            children: header
-                        }),
-                        showCharacter ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            },
-                            children: character
-                        }) : null,
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                width: "100%",
-                                maxWidth: "94%"
-                            },
-                            children: elementList
-                        })
-                    ]
-                }) : /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
-                    style: {
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: Math.round(layout.gap * 0.6),
-                        flex: 1,
-                        minHeight: 0,
-                        height: "100%"
-                    },
-                    children: [
-                        header,
-                        showCharacter ? character : null,
-                        /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-                            style: {
-                                display: "flex",
-                                flexDirection: "column",
-                                flex: 1,
-                                justifyContent: "center",
-                                minHeight: 0
-                            },
-                            children: elementList
-                        })
-                    ]
-                })
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("path", {
+                        d: `M 120 ${900 + drift} C 360 ${620 - drift}, 720 ${1180 + drift}, 960 ${760 + drift}`,
+                        fill: "none",
+                        stroke: palette.accent,
+                        strokeWidth: 6,
+                        strokeLinecap: "round",
+                        strokeDasharray: "1600",
+                        strokeDashoffset: 1600 * (1 - progress),
+                        opacity: 0.7
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("circle", {
+                        cx: 540 + drift * 2,
+                        cy: 820,
+                        r: 220 + Math.sin(progress * Math.PI) * 26,
+                        fill: "none",
+                        stroke: withAlpha(palette.accent, 0.35),
+                        strokeWidth: 3
+                    })
+                ]
             }),
-            (captionConfig === null || captionConfig === void 0 ? void 0 : captionConfig.enabled) !== false ? /*#__PURE__*/ (0,jsx_runtime.jsx)(AnimatedCaption, {
-                wcag: scenePalette,
-                text: scene.caption,
-                language: language,
-                theme: theme,
-                layout: layout,
-                durationInFrames: durationInFrames,
-                audioDuration: scene.audioDuration,
-                rtl: isRtl,
-                animationStyle: captionConfig === null || captionConfig === void 0 ? void 0 : captionConfig.animation_style,
-                wordsPerScreen: captionConfig === null || captionConfig === void 0 ? void 0 : captionConfig.words_per_screen,
-                leadIn: captionConfig === null || captionConfig === void 0 ? void 0 : captionConfig.lead_in
-            }) : null
+            /*#__PURE__*/ (0,jsx_runtime.jsxs)("div", {
+                style: {
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    gap: 28,
+                    padding: "0 10%",
+                    textAlign: isRtl ? "right" : "left",
+                    transform: `translateY(${(1 - rise) * 42}px)`,
+                    opacity: rise
+                },
+                children: [
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            alignSelf: isRtl ? "flex-end" : "flex-start",
+                            padding: "10px 20px",
+                            borderRadius: 999,
+                            border: `1px solid ${withAlpha(palette.accent, 0.5)}`,
+                            background: withAlpha(palette.accent, 0.14),
+                            color: palette.accent,
+                            fontSize: 26,
+                            fontWeight: 800,
+                            letterSpacing: "0.06em"
+                        },
+                        children: "ZOF STUDIO"
+                    }),
+                    /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontSize: 84,
+                            fontWeight: 900,
+                            lineHeight: 1.1
+                        },
+                        children: title
+                    }),
+                    caption ? /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+                        style: {
+                            fontSize: 38,
+                            fontWeight: 600,
+                            lineHeight: 1.5,
+                            color: palette.muted,
+                            maxWidth: "86%"
+                        },
+                        children: caption
+                    }) : null
+                ]
+            })
         ]
     });
 };
-
-;// CONCATENATED MODULE: ./src/data.json
-var data_namespaceObject = /*#__PURE__*/JSON.parse('{"meta":{"title":"انقسام الحادية عشرة والنصف","topic":"لماذا تفشل معظم العادات الجديدة بعد 14 يوماً؟","description":"انقسام الحادية عشرة والنصف · إشعارات ترفع التوتر · آلية المكافأة العشوائية · مكتب دافئ وشطب هادئ · الساعة تدور إلى الثانية · الخطأ الشائع · مسار التسعين يوماً"},"width":1080,"height":1920,"fps":30,"style":"smart_mix","script_language":"ar","script_depth":"condensed","creative_code_mode":"creative","script_pacing":"auto","caption":{"animation_style":"auto","words_per_screen":"auto","lead_in":0.2},"brand_kit":{"name":"ZOF","primary":"#1a85d1","secondary":"#FBBF24","accent":"#1a85d1","success":"#16A34A","danger":"#DC2626","background":"#f2f4f7","watermark":"@ZofStudio","watermark_enabled":false},"sfx":{"enabled":true,"volume":0.65},"scenes":[{"id":"scene-6e63c750","kicker":"11:30 ليلاً","title":"انقسام الحادية عشرة والنصف","subtitle":"11:30 ليلاً","caption":"الساعة 11:30 ليلاً: شاشتان منقسمتان، غرفة مظلمة ومكتب دافئ، والفارق يبدأ الآن.","duration":11.6,"audioSrc":"audio/scene-1795280135305-ea4674a6.mp3","audioDuration":11.154,"sfxSrc":"sfx/pop-bubble.wav","sfxAt":0.4,"layout":"split","camera":"slow-zoom-in","background":"linear-gradient(135deg, rgba(26, 133, 209, 0.22) 0%, transparent 58%)","backgroundPreset":"deep-wave","character":{"pose":"idle","side":"left","accessory":"badge","enabled":true},"characters":[{"pose":"idle","side":"left","accessory":"none","label":"مكتب منظم","enabled":true},{"pose":"idle","side":"right","accessory":"none","label":"غرفة مظلمة","enabled":true}],"characterLayout":"side-by-side","ambientScene":"night-room","elements":[{"type":"custom_tsx","component":"CustomScene_scene_6e63c750_0","title":"11:30 ليلاً","text":"نقطة الانقسام","keywords":["نقطة الانقسام"],"data":{"narration":"الساعة 11:30 ليلاً: شاشتان منقسمتان، غرفة مظلمة ومكتب دافئ، والفارق يبدأ الآن.","visualType":"custom-tsx"}}]},{"id":"scene-d989f90b","kicker":"حلقة الإشعارات","title":"إشعارات ترفع التوتر","subtitle":"حلقة الإشعارات","caption":"كل إشعار أحمر يرفع الكورتيزول ويقطع النوم العميق، فتتحول الساعة إلى خصم.","duration":7.8,"audioSrc":"audio/scene-1795280137949-6c148991.mp3","audioDuration":7.393,"sfxSrc":"sfx/notification-chime.wav","sfxAt":1.1,"layout":"overlay","camera":"push-in","background":"linear-gradient(215deg, rgba(26, 133, 209, 0.16) 0%, transparent 62%)","backgroundPreset":"neon-cyber","character":{"pose":"shocked","side":"right","accessory":"tie","enabled":true},"characters":[{"pose":"shocked","side":"right","accessory":"none","label":"هاتف لا يهدأ","enabled":true}],"characterLayout":"side-by-side","ambientScene":"phone-notifications","elements":[{"type":"notification_card","app":"إشعارات ترفع التوتر","title":"حلقة الإشعارات","message":"كل تنبيه = جرعة توتر","time":"now","icon":"spark","tone":"success"}]},{"id":"scene-5b9eb42f","kicker":"حلقة الدوبامين","title":"آلية المكافأة العشوائية","subtitle":"حلقة الدوبامين","caption":"التصفح اللانهائي يضخ دوبامين متقطعاً بلا إشباع، فيؤجل النوم ساعةً كاملة كل ليلة.","duration":9.2,"audioSrc":"audio/scene-1795280140252-4d088b36.mp3","audioDuration":8.751,"sfxAt":0,"layout":"centered","camera":"slow-zoom-out","background":"radial-gradient(circle at 82% 18%, rgba(26, 133, 209, 0.24) 0%, transparent 46%)","backgroundPreset":"floating-orbs","character":{"pose":"thinking","side":"left","accessory":"tie","enabled":false},"elements":[{"type":"generative_scene","title":"حلقة الدوبامين","headline":"تأجيل النوم 60 دقيقة","keywords":["تمرير","مكافأة عشوائية","دوبامين","تأجيل النوم","إرهاق"],"motif":"cycle","badge":"آلية المكافأة العشوائية"}]},{"id":"scene-f6298e07","kicker":"قائمة تُنجز","title":"مكتب دافئ وشطب هادئ","subtitle":"قائمة تُنجز","caption":"على اليسار، قائمة مهام تُشطب واحدة تلو الأخرى؛ الإنجاز المرئي يهدئ الجهاز العصبي فوراً.","duration":9.6,"audioSrc":"audio/scene-1795280142742-177f249f.mp3","audioDuration":9.247,"sfxAt":0,"layout":"stacked","camera":"pan-right","background":"linear-gradient(160deg, transparent 20%, rgba(26, 133, 209, 0.18) 100%)","backgroundPreset":"editorial-paper","character":{"pose":"happy","side":"right","accessory":"badge","enabled":true},"characters":[{"pose":"happy","side":"left","accessory":"none","label":"إنجاز هادئ","enabled":true}],"characterLayout":"side-by-side","ambientScene":"cozy-desk","elements":[{"type":"step_timeline","title":"قائمة تُنجز","steps":[{"label":"مهمة ← شطب ← هدوء"}]}]},{"id":"scene-07a408d0","kicker":"2:00 فجراً","title":"الساعة تدور إلى الثانية","subtitle":"2:00 فجراً","caption":"عند الثانية فجراً تدور العقارب سريعاً: بطارية 3% مقابل حاسوب يُغلق بهدوء.","duration":9.6,"audioSrc":"audio/scene-1795280145319-2503b435.mp3","audioDuration":9.247,"sfxSrc":"sfx/whoosh-fast.wav","sfxAt":0.6,"layout":"split","camera":"static","background":"linear-gradient(135deg, rgba(26, 133, 209, 0.22) 0%, transparent 58%)","backgroundPreset":"kinetic-grid","character":{"pose":"sad","side":"left","accessory":"tie","enabled":true},"characters":[{"pose":"sad","side":"right","accessory":"none","label":"بطارية 3%","enabled":true},{"pose":"idle","side":"left","accessory":"none","label":"إغلاق الحاسوب","enabled":true}],"characterLayout":"side-by-side","ambientScene":"clock","elements":[{"type":"comparison_box","title":"2:00 فجراً","left":{"title":"3%","icon":"alert","tone":"negative","points":[]},"right":{"title":"نوم عميق","icon":"trend","tone":"positive","points":[]}}]},{"id":"scene-0c760833","kicker":"خطأ متكرر","title":"الخطأ الشائع","subtitle":"خطأ متكرر","caption":"الخطأ الشائع: اعتبار السهر ليلة واحدة بلا ثمن، بينما الدين يتراكم كل يوم.","duration":8.6,"audioSrc":"audio/scene-1795280147631-29e71520.mp3","audioDuration":8.202,"sfxAt":0,"layout":"centered","camera":"slow-zoom-in","background":"linear-gradient(215deg, rgba(26, 133, 209, 0.16) 0%, transparent 62%)","backgroundPreset":"particle-field","character":{"pose":"facepalm","side":"right","accessory":"tie","enabled":false},"elements":[{"type":"warning_card","title":"خطأ متكرر","badge":"الخطأ الشائع","myth":"ليلة واحدة ليست مجانية","text":"الخطأ الشائع: اعتبار السهر ليلة واحدة بلا ثمن، بينما الدين يتراكم كل يوم.","tone":"warning"}]},{"id":"scene-8981ddcb","kicker":"90 يوماً","title":"مسار التسعين يوماً","subtitle":"90 يوماً","caption":"بعد 90 يوماً: طاقة الأول تهبط بحدّة، وإنجاز الثاني يصعد باستمرار — نفس الساعة، مساران.","duration":10.5,"audioSrc":"audio/scene-1795280150623-6f59c47e.mp3","audioDuration":10.109,"sfxSrc":"sfx/riser-build.wav","sfxAt":1.4,"layout":"overlay","camera":"pan-left","background":"radial-gradient(circle at 82% 18%, rgba(26, 133, 209, 0.24) 0%, transparent 46%)","backgroundPreset":"animated-mesh","character":{"pose":"pointing","side":"left","accessory":"badge","enabled":true},"characters":[{"pose":"sad","side":"right","accessory":"none","label":"طاقة هابطة","enabled":true},{"pose":"celebrating","side":"left","accessory":"none","label":"إنجاز صاعد","enabled":true}],"characterLayout":"side-by-side","elements":[{"type":"line_chart","title":"90 يوماً","label":"90 يوماً","points":[20,27,33,40,48],"suffix":""}]}]}')
-;// CONCATENATED MODULE: ./src/config.ts
-
-const videoData = data_namespaceObject;
-const RTL_LANGUAGES = new Set([
-    "ar",
-    "fa",
-    "ur",
-    "he",
-    "yi",
-    "ps",
-    "sd",
-    "ug",
-    "ku",
-    "ckb"
-]);
-const positiveNumber = (value, fallback)=>{
-    return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : fallback;
-};
-const normalizeStyleId = (value)=>{
-    const style = typeof value === "string" ? value.toLowerCase() : "";
-    if (style === "modern_dark" || style === "modern-dark") return "modern_dark";
-    if (style === "editorial_clean" || style === "editorial-clean") return "editorial_clean";
-    if (style === "smart_mix" || style === "smart-mix" || style === "aimix") return "smart_mix";
-    return "stickman";
-};
-const getVideoSettings = (data)=>{
-    var _data_video, _data_video1, _data_video2, _data_video3;
-    const language = (data.script_language ?? data.language ?? "en").slice(0, 3).toLowerCase();
-    return {
-        width: Math.round(positiveNumber(data.width ?? ((_data_video = data.video) === null || _data_video === void 0 ? void 0 : _data_video.width), 1080)),
-        height: Math.round(positiveNumber(data.height ?? ((_data_video1 = data.video) === null || _data_video1 === void 0 ? void 0 : _data_video1.height), 1920)),
-        fps: positiveNumber(data.fps ?? ((_data_video2 = data.video) === null || _data_video2 === void 0 ? void 0 : _data_video2.fps), 60),
-        style: normalizeStyleId(data.style ?? ((_data_video3 = data.video) === null || _data_video3 === void 0 ? void 0 : _data_video3.style)),
-        language,
-        isRtl: RTL_LANGUAGES.has(language.split("-")[0])
-    };
-};
-const getSceneDurationInSeconds = (scene)=>{
-    return positiveNumber(scene.durationInSeconds ?? scene.duration, 6);
-};
-const getSceneTimings = (data, fps)=>{
-    let cursor = 0;
-    const scenes = data.scenes.length > 0 ? data.scenes : [
-        {}
-    ];
-    return scenes.map((scene)=>{
-        const durationInFrames = Math.max(1, Math.round(getSceneDurationInSeconds(scene) * fps));
-        const timing = {
-            from: cursor,
-            durationInFrames
-        };
-        cursor += durationInFrames;
-        return timing;
+const SceneAudio = ({ scene, sfxEnabled, sfxVolume })=>{
+    const { fps } = (0,esm/* .useVideoConfig */.Bk)();
+    const cues = sfxEnabled && scene.sfxCues ? scene.sfxCues : [];
+    return /*#__PURE__*/ (0,jsx_runtime.jsxs)(jsx_runtime.Fragment, {
+        children: [
+            scene.audioSrc ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Audio */.fP, {
+                src: (0,esm/* .staticFile */.dQ)(scene.audioSrc)
+            }) : null,
+            sfxEnabled && scene.sfxSrc ? /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Sequence */.gd, {
+                from: Math.max(0, Math.round((scene.sfxAt ?? 0.15) * fps)),
+                durationInFrames: Math.max(1, Math.round(fps * 1.4)),
+                children: /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Audio */.fP, {
+                    src: (0,esm/* .staticFile */.dQ)(scene.sfxSrc),
+                    volume: sfxVolume
+                })
+            }) : null,
+            cues.map((cue, index)=>{
+                const cueFile = SFX_CUE_FILES[cue.sound];
+                if (!cueFile) return null;
+                const from = Math.max(0, Math.round(cue.frameOffset));
+                const masterGain = Math.min(1, sfxVolume / (/* inlined export .DEFAULT_SFX_VOLUME */0.65));
+                const volume = Math.min(1, Math.max(0, (cue.volume ?? (/* inlined export .DEFAULT_SFX_CUE_VOLUME */0.4)) * masterGain));
+                return /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Sequence */.gd, {
+                    from: from,
+                    durationInFrames: Math.max(1, Math.round(fps)),
+                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Audio */.fP, {
+                        src: (0,esm/* .staticFile */.dQ)(`sfx/${cueFile}`),
+                        volume: volume
+                    })
+                }, `cue-${index}`);
+            })
+        ]
     });
 };
-const getTotalDurationInFrames = (data, fps)=>{
-    return getSceneTimings(data, fps).reduce((total, timing)=>total + timing.durationInFrames, 0);
-};
-const calculateMetadata = ({ props })=>{
-    var _data_meta_title, _data_meta;
-    const data = props.data ?? videoData;
-    const settings = getVideoSettings(data);
-    return {
-        width: settings.width,
-        height: settings.height,
-        fps: settings.fps,
-        durationInFrames: getTotalDurationInFrames(data, settings.fps),
-        defaultOutName: `${((_data_meta = data.meta) === null || _data_meta === void 0 ? void 0 : (_data_meta_title = _data_meta.title) === null || _data_meta_title === void 0 ? void 0 : _data_meta_title.trim()) || "zof-studio"}`
-    };
-};
-
-;// CONCATENATED MODULE: ./src/layout.ts
-const getLayout = (width, height, fps)=>{
-    const unit = Math.min(width, height) / 1080;
-    const ratio = width / height;
-    const isPortrait = ratio < 0.85;
-    const isWide = ratio >= 1.2;
-    const isSquare = !isPortrait && !isWide;
-    const padding = Math.round(Math.min(width, height) * 0.062);
-    const gap = Math.round(Math.min(width, height) * 0.022);
-    const captionSpace = Math.max(220, Math.round(height * (isPortrait ? 0.155 : isSquare ? 0.18 : 0.19)));
-    const rawTitleSize = isWide ? Math.min(width * 0.056, height * 0.11) : isSquare ? Math.min(width * 0.064, height * 0.085) : Math.min(width * 0.078, height * 0.058);
-    const titleSize = isPortrait ? Math.min(68, Math.max(54, Math.round(rawTitleSize))) : Math.round(rawTitleSize);
-    const bodySize = isWide ? width * 0.018 : isSquare ? width * 0.022 : width * 0.029;
-    return {
-        width,
-        height,
-        fps,
-        unit,
-        isPortrait,
-        isWide,
-        isSquare,
-        padding,
-        gap,
-        captionSpace,
-        titleSize,
-        subtitleSize: Math.max(30, Math.round(isWide ? width * 0.021 : isSquare ? width * 0.026 : width * 0.034)),
-        kickerSize: Math.max(26, Math.round(isWide ? width * 0.014 : isSquare ? width * 0.016 : width * 0.019)),
-        bodySize: Math.max(30, Math.round(bodySize)),
-        smallSize: Math.max(30, Math.round(bodySize * 0.82)),
-        bigNumberSize: Math.round(isWide ? width * 0.12 : isSquare ? width * 0.1 : width * 0.155),
-        cardPadding: Math.round(width * (isWide ? 0.018 : isSquare ? 0.02 : 0.034)),
-        characterHeight: Math.round(isWide ? height * 0.72 : isSquare ? height * 0.55 : Math.min(height * 0.22, width * 0.56)),
-        characterWidth: Math.round(isWide ? width * 0.38 : isSquare ? width * 0.32 : Math.min(width * 0.5, height * 0.2))
-    };
-};
-
-;// CONCATENATED MODULE: ./src/Composition.tsx
-
-
-
-
-
-
-
-
-
-const ProgressLine = ({ theme })=>{
-    const frame = (0,esm/* .useCurrentFrame */.UC)();
-    const { durationInFrames, width } = (0,esm/* .useVideoConfig */.Bk)();
-    const height = Math.max(4, Math.round(width / 1920 * 7));
+const Watermark = ({ text, palette, position })=>{
+    if (!text.trim()) return null;
+    const isBottom = position.startsWith("bottom");
+    const isLeft = position.endsWith("left");
     return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
         style: {
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height,
-            background: theme_alpha(theme.colors.text, 0.06),
-            zIndex: 50
-        },
-        children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-            style: {
-                height: "100%",
-                width: `${(0,esm/* .interpolate */.GW)(frame, [
-                    0,
-                    Math.max(1, durationInFrames - 1)
-                ], [
-                    0,
-                    100
-                ], {
-                    extrapolateLeft: "clamp",
-                    extrapolateRight: "clamp"
-                })}%`,
-                background: `linear-gradient(90deg, ${theme.colors.primary}, ${theme.colors.secondary}, ${theme.colors.accent})`,
-                boxShadow: `0 0 ${height * 5}px ${theme.colors.glow}`
-            }
-        })
-    });
-};
-const Watermark = ({ data, theme, isRtl })=>{
-    var _data_brand_kit_watermark, _data_brand_kit, _data_brand_kit1;
-    const text = (_data_brand_kit = data.brand_kit) === null || _data_brand_kit === void 0 ? void 0 : (_data_brand_kit_watermark = _data_brand_kit.watermark) === null || _data_brand_kit_watermark === void 0 ? void 0 : _data_brand_kit_watermark.trim();
-    if (!text || ((_data_brand_kit1 = data.brand_kit) === null || _data_brand_kit1 === void 0 ? void 0 : _data_brand_kit1.watermark_enabled) === false) return null;
-    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
-        style: {
-            position: "absolute",
-            top: Math.round(theme.radius * 1.1),
-            ...isRtl ? {
-                left: Math.round(theme.radius * 1.4)
+            ...isBottom ? {
+                bottom: 54
             } : {
-                right: Math.round(theme.radius * 1.4)
+                top: 34
+            },
+            ...isLeft ? {
+                left: 34
+            } : {
+                right: 34
             },
             zIndex: 40,
-            fontFamily: theme.fontFamily,
-            fontSize: Math.max(26, Math.round(theme.radius * 0.62)),
+            fontFamily: FONT_FAMILY,
+            fontSize: 28,
             fontWeight: 700,
             letterSpacing: "0.04em",
-            color: theme_alpha(theme.colors.text, 0.6),
-            background: theme_alpha(theme.colors.background, 0.35),
-            border: `1px solid ${theme_alpha(theme.colors.text, 0.12)}`,
+            color: withAlpha(palette.text, 0.64),
+            background: withAlpha(palette.background, 0.38),
+            border: `1px solid ${withAlpha(palette.text, 0.14)}`,
             borderRadius: 999,
-            padding: `${Math.round(theme.radius * 0.22)}px ${Math.round(theme.radius * 0.7)}px`,
+            padding: "8px 22px",
             direction: "ltr",
             pointerEvents: "none"
         },
         children: text
     });
 };
+const ProgressLine = ({ palette })=>{
+    const frame = (0,esm/* .useCurrentFrame */.UC)();
+    const { durationInFrames } = (0,esm/* .useVideoConfig */.Bk)();
+    const width = (0,esm/* .interpolate */.GW)(frame, [
+        0,
+        Math.max(1, durationInFrames - 1)
+    ], [
+        0,
+        100
+    ], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp"
+    });
+    return /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+        style: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 6,
+            background: withAlpha(palette.text, 0.08),
+            zIndex: 50
+        },
+        children: /*#__PURE__*/ (0,jsx_runtime.jsx)("div", {
+            style: {
+                height: "100%",
+                width: `${width}%`,
+                background: `linear-gradient(90deg, ${palette.accent}, ${withAlpha(palette.accent, 0.5)})`
+            }
+        })
+    });
+};
+const GeneratedScene = ({ scene, index, durationInFrames, isRtl, language, brandKit, sfxEnabled })=>{
+    var _scene_character;
+    const palette = buildPalette(scene, brandKit);
+    const element = findCustomElement(scene);
+    const componentName = scene.generatedComponent || (element === null || element === void 0 ? void 0 : element.component);
+    const GeneratedComponent = componentName ? GENERATED_SCENES[componentName] : undefined;
+    const fallback = /*#__PURE__*/ (0,jsx_runtime.jsx)(FallbackScene, {
+        scene: scene,
+        palette: palette,
+        durationInFrames: durationInFrames,
+        isRtl: isRtl
+    });
+    if (!GeneratedComponent) {
+        return fallback;
+    }
+    return /*#__PURE__*/ (0,jsx_runtime.jsx)(GeneratedSceneBoundary, {
+        fallback: fallback,
+        children: /*#__PURE__*/ (0,jsx_runtime.jsx)(GeneratedComponent, {
+            accentColor: palette.accent,
+            bgColor: palette.background,
+            textColor: palette.text,
+            mutedColor: palette.muted,
+            characterBody: palette.characterBody,
+            characterFace: palette.characterFace,
+            characterAccent: palette.characterAccent,
+            characterShadow: palette.characterShadow,
+            isRtl: isRtl,
+            language: language,
+            title: (element === null || element === void 0 ? void 0 : element.title) ?? scene.title,
+            text: (element === null || element === void 0 ? void 0 : element.text) ?? scene.caption,
+            keywords: keywordsFor(scene, element),
+            data: {
+                narration: scene.caption ?? "",
+                sceneIndex: index,
+                sfxEnabled
+            },
+            durationInFrames: durationInFrames,
+            showCharacter: ((_scene_character = scene.character) === null || _scene_character === void 0 ? void 0 : _scene_character.enabled) !== false
+        })
+    });
+};
 const MainComposition = ({ data })=>{
     var _data_sfx, _data_sfx1;
     ensureCairoFont();
     const settings = getVideoSettings(data);
-    const layout = getLayout(settings.width, settings.height, settings.fps);
-    const theme = createTheme(settings.style, data.brand_kit);
     const timings = getSceneTimings(data, settings.fps);
-    const rawSfxVolume = (_data_sfx = data.sfx) === null || _data_sfx === void 0 ? void 0 : _data_sfx.volume;
-    const sfxVolume = ((_data_sfx1 = data.sfx) === null || _data_sfx1 === void 0 ? void 0 : _data_sfx1.enabled) === false ? 0 : Math.min(1, Math.max(0, typeof rawSfxVolume === "number" && Number.isFinite(rawSfxVolume) ? rawSfxVolume : (/* inlined export .DEFAULT_SFX_VOLUME */0.65)));
+    const brandKit = data.brand_kit ?? {};
+    const palette = buildPalette({}, brandKit);
+    const sfxEnabled = ((_data_sfx = data.sfx) === null || _data_sfx === void 0 ? void 0 : _data_sfx.enabled) !== false;
+    const rawSfxVolume = (_data_sfx1 = data.sfx) === null || _data_sfx1 === void 0 ? void 0 : _data_sfx1.volume;
+    const sfxVolume = !sfxEnabled ? 0 : Math.min(1, Math.max(0, typeof rawSfxVolume === "number" && Number.isFinite(rawSfxVolume) ? rawSfxVolume : (/* inlined export .DEFAULT_SFX_VOLUME */0.65)));
+    const watermarkText = typeof brandKit.watermark === "string" ? brandKit.watermark : "";
+    const watermarkEnabled = brandKit.watermark_enabled !== false;
+    const watermarkPosition = typeof brandKit.watermark_position === "string" ? brandKit.watermark_position : "top-left";
     return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .AbsoluteFill */.H1, {
         style: {
-            background: theme.colors.background,
-            fontFamily: theme.fontFamily,
-            color: theme.colors.text,
+            background: palette.background,
+            fontFamily: FONT_FAMILY,
+            color: palette.text,
             direction: settings.isRtl ? "rtl" : "ltr"
         },
         children: [
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(Background, {
-                theme: theme
-            }),
             data.scenes.map((scene, index)=>{
                 const timing = timings[index];
-                return /*#__PURE__*/ (0,jsx_runtime.jsx)(esm/* .Sequence */.gd, {
+                if (!timing) return null;
+                return /*#__PURE__*/ (0,jsx_runtime.jsxs)(esm/* .Sequence */.gd, {
                     from: timing.from,
                     durationInFrames: timing.durationInFrames,
                     name: scene.id ?? `Scene ${index + 1}`,
                     premountFor: settings.fps,
-                    children: /*#__PURE__*/ (0,jsx_runtime.jsx)(Scene, {
-                        scene: scene,
-                        index: index,
-                        theme: theme,
-                        layout: layout,
-                        durationInFrames: timing.durationInFrames,
-                        isRtl: settings.isRtl,
-                        language: settings.language,
-                        sfxVolume: sfxVolume,
-                        style: settings.style,
-                        captionConfig: data.caption
-                    })
+                    children: [
+                        /*#__PURE__*/ (0,jsx_runtime.jsx)(SceneAudio, {
+                            scene: scene,
+                            sfxEnabled: sfxEnabled,
+                            sfxVolume: sfxVolume
+                        }),
+                        /*#__PURE__*/ (0,jsx_runtime.jsx)(GeneratedScene, {
+                            scene: scene,
+                            index: index,
+                            durationInFrames: timing.durationInFrames,
+                            isRtl: settings.isRtl,
+                            language: settings.language,
+                            brandKit: brandKit,
+                            sfxEnabled: sfxEnabled
+                        })
+                    ]
                 }, scene.id ?? `scene-${index}`);
             }),
-            /*#__PURE__*/ (0,jsx_runtime.jsx)(Watermark, {
-                data: data,
-                theme: theme,
-                isRtl: settings.isRtl
-            }),
+            watermarkEnabled ? /*#__PURE__*/ (0,jsx_runtime.jsx)(Watermark, {
+                text: watermarkText,
+                palette: palette,
+                position: watermarkPosition
+            }) : null,
             /*#__PURE__*/ (0,jsx_runtime.jsx)(ProgressLine, {
-                theme: theme
+                palette: palette
             })
         ]
     });
@@ -57412,7 +44773,6 @@ __webpack_require__.d(__webpack_exports__, {
   BO: Composition,
   Bk: useVideoConfig,
   Dm: isHtmlInCanvasSupported,
-  E9: Img,
   FZ: Loop,
   Fx: useBufferState,
   H1: AbsoluteFill,
@@ -57549,7 +44909,7 @@ __webpack_require__.u = (chunkId) => {
 })();
 // webpack/runtime/get_full_hash
 (() => {
-__webpack_require__.h = () => ("16efee373856a353")
+__webpack_require__.h = () => ("452f09b83a510879")
 })();
 // webpack/runtime/global
 (() => {
@@ -57767,7 +45127,7 @@ jsonpChunkLoadingGlobal.push = __rspack_jsonp.bind(null, jsonpChunkLoadingGlobal
 // Load entry module and return exports
 __webpack_require__(6507);
 __webpack_require__(3999);
-__webpack_require__(6906);
+__webpack_require__(1704);
 __webpack_require__(3610);
 var __webpack_exports__ = __webpack_require__(3482);
 })()

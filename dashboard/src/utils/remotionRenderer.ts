@@ -7,7 +7,7 @@ import type {
   StickmanPose,
   VisualStyle,
 } from '../types/studio';
-import { resolveSceneSfxUrl } from './sfx';
+import { MAX_SCENE_SFX_VOLUME, resolveSceneSfxUrl } from './sfx';
 
 function isDarkHexColor(color: string): boolean {
   if (!/^#[0-9a-fA-F]{6}$/.test(color)) return true;
@@ -443,7 +443,7 @@ export async function renderScenesToVideo(params: {
             const decoded = await audioCtx.decodeAudioData(arrBuf);
             const source = audioCtx.createBufferSource();
             const gain = audioCtx.createGain();
-            gain.gain.value = Math.min(1, Math.max(0.01, sfx.volume));
+            gain.gain.value = Math.min(MAX_SCENE_SFX_VOLUME, Math.max(0.01, sfx.volume));
             source.buffer = decoded;
             source.connect(gain);
             gain.connect(audioDest);

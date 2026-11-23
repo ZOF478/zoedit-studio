@@ -40,7 +40,7 @@ export function WatermarkPositionPicker({
         onChange={(event) =>
           onChange(event.target.value as WatermarkPosition)
         }
-        className="min-w-0 cursor-pointer bg-transparent text-[11px] font-semibold text-slate-100 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+        className="min-w-0 flex-1 cursor-pointer bg-transparent text-[11px] font-semibold text-slate-100 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
       >
         {WATERMARK_POSITIONS.map((position) => (
           <option

@@ -23,10 +23,30 @@ export type AmbientSceneId =
 
 export type CaptionAnimationStyle =
   | 'auto'
+  | 'word-by-word'
+  | 'karaoke'
+  | 'static'
   | 'word-pop-glow'
   | 'dynamic-karaoke'
   | 'smooth-chunk-slide'
   | 'kinetic-typewriter';
+
+export type CaptionColorSource =
+  | 'background'
+  | 'text'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'custom';
+
+export interface CaptionColors {
+  background: string;
+  text: string;
+  highlight: string;
+  backgroundSource?: CaptionColorSource;
+  textSource?: CaptionColorSource;
+  highlightSource?: CaptionColorSource;
+}
 
 export type WordsPerScreen = 'auto' | '2' | '3' | '4' | '5';
 
@@ -103,7 +123,7 @@ export type VisualElementType =
   | 'custom'
   | 'generative-scene';
 
-export type ScriptLanguage = 'ar' | 'en';
+export type ScriptLanguage = string;
 
 export interface SceneItem {
   id: string;
@@ -165,6 +185,8 @@ export interface ProjectState {
   creativeCodeMode?: CreativeCodeMode;
   scriptPacing?: ScriptPacing;
   captionAnimationStyle?: CaptionAnimationStyle;
+  captionColors?: CaptionColors;
+  captionBottomOffset?: number;
   wordsPerScreen?: WordsPerScreen;
   captionsEnabled: boolean;
   brandKit: BrandKit;
@@ -202,13 +224,15 @@ export interface ElevenLabsModel {
   description: string;
   latencyBadge: string;
   qualityBadge: string;
+  languages?: string[];
 }
 
 export interface ElevenLabsVoice {
   voice_id: string;
   name: string;
-  gender: string;
+  gender: 'male' | 'female' | 'neutral';
   language: string;
+  languages?: string[];
   accent: string;
   tone?: string;
   category: string;
@@ -220,6 +244,9 @@ export interface ElevenLabsVoice {
 export interface BrandKit {
   accentColor: string;
   bgColor: string;
+  textColor: string;
+  primaryColor: string;
+  secondaryColor: string;
   watermark: string;
   watermarkEnabled: boolean;
   watermarkPosition?: WatermarkPosition;
@@ -315,9 +342,22 @@ export interface VoiceoverConfig {
   voiceId: string;
   stability: number;
   similarityBoost: number;
+  style: number;
+  speakerBoost: boolean;
+  speed: number;
 }
 
-export type ExportTargetDuration = '30' | '60' | '90' | 'auto';
+export type ExportTargetDuration =
+  | '3'
+  | '5'
+  | '8'
+  | '12'
+  | '15'
+  | '30'
+  | '45'
+  | '60'
+  | '90'
+  | 'auto';
 
 export type RenderStepId = 'audio' | 'code' | 'render';
 
@@ -365,6 +405,9 @@ export interface ApiSettingsStatus {
     voiceModelId?: string;
     voiceStability?: number;
     voiceSimilarityBoost?: number;
+    voiceStyle?: number;
+    voiceSpeakerBoost?: boolean;
+    voiceSpeed?: number;
     visualStyle?: VisualStyle;
     aspectRatio?: AspectRatio;
     fps?: FpsOption;
@@ -373,6 +416,8 @@ export interface ApiSettingsStatus {
     creativeCodeMode?: CreativeCodeMode;
     scriptPacing?: ScriptPacing;
     captionAnimationStyle?: CaptionAnimationStyle;
+    captionColors?: CaptionColors;
+    captionBottomOffset?: number;
     wordsPerScreen?: WordsPerScreen;
     captionsEnabled?: boolean;
     brandKit?: BrandKit;
@@ -420,6 +465,8 @@ export interface SettingsSavePayload {
   creativeCodeMode?: CreativeCodeMode;
   scriptPacing?: ScriptPacing;
   captionAnimationStyle?: CaptionAnimationStyle;
+  captionColors?: CaptionColors;
+  captionBottomOffset?: number;
   wordsPerScreen?: WordsPerScreen;
   captionsEnabled?: boolean;
   brandKit?: BrandKit;
@@ -454,7 +501,7 @@ export const AI_PROVIDERS: AiProviderOption[] = [
   {
     id: 'deepseek',
     label: 'DeepSeek',
-    description: 'Direct DeepSeek chat and reasoner models.',
+    description: 'Live models from your DeepSeek API account.',
     requiresKey: true,
   },
   {
@@ -513,24 +560,6 @@ export const AI_SCRIPT_MODELS: AiModelOption[] = [
     note: 'Free balanced Arabic and English dialogue model.',
     isFree: true,
     upstream: 'openrouter',
-  },
-  {
-    id: 'deepseek-chat',
-    label: 'DeepSeek Chat',
-    provider: 'deepseek',
-    providerLabel: 'DeepSeek',
-    note: 'Direct DeepSeek chat model.',
-    isFree: false,
-    upstream: 'deepseek',
-  },
-  {
-    id: 'deepseek-reasoner',
-    label: 'DeepSeek Reasoner',
-    provider: 'deepseek',
-    providerLabel: 'DeepSeek',
-    note: 'Direct DeepSeek reasoning model.',
-    isFree: false,
-    upstream: 'deepseek',
   },
   {
     id: 'anthropic/claude-3.5-sonnet',
@@ -602,10 +631,11 @@ export const STICKMAN_POSES: { value: StickmanPose; label: string; labelEn: stri
   { value: 'facepalm', label: 'تأسف (Facepalm)', labelEn: 'Facepalm' },
 ];
 
-export const SCRIPT_LANGUAGES: { value: ScriptLanguage; label: string; labelEn: string; dir: 'rtl' | 'ltr' }[] = [
-  { value: 'ar', label: 'العربية', labelEn: 'Arabic', dir: 'rtl' },
-  { value: 'en', label: 'الإنجليزية', labelEn: 'English', dir: 'ltr' },
-];
+export {
+  VIDEO_LANGUAGES as SCRIPT_LANGUAGES,
+  type VideoLanguage,
+  type VideoLanguageDirection,
+} from './languages';
 
 export const SCRIPT_DEPTH_OPTIONS: {
   value: ScriptDepth;

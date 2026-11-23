@@ -72,6 +72,13 @@ export type SceneTiming = {
   durationInFrames: number;
 };
 
+/**
+ * Duration of every @remotion/transitions transition between scenes.
+ * Each scene sequence is padded by this amount so the transition overlap
+ * never shifts its start frame (and therefore never desyncs audio/captions).
+ */
+export const TRANSITION_DURATION_IN_FRAMES = 16;
+
 export const getSceneTimings = (
   data: VideoData,
   fps: number,
@@ -80,24 +87,41 @@ export const getSceneTimings = (
   const scenes = data.scenes.length > 0 ? data.scenes : [{}];
 
   return scenes.map((scene) => {
-    const durationInFrames = Math.max(
-      1,
-      Math.round(getSceneDurationInSeconds(scene) * fps),
-    );
+    const explicitFrames = scene.durationInFrames;
+    const durationInFrames =
+      typeof explicitFrames === "number" &&
+      Number.isFinite(explicitFrames) &&
+      explicitFrames > 0
+        ? Math.max(1, Math.round(explicitFrames))
+        : Math.max(
+            1,
+            Math.round(getSceneDurationInSeconds(scene) * fps),
+          );
     const timing = { from: cursor, durationInFrames };
     cursor += durationInFrames;
     return timing;
   });
 };
 
+export const getSceneSequenceDurationInFrames = (
+  durationInFrames: number,
+  sceneCount: number,
+): number => {
+  const transitionPadding =
+    sceneCount > 1 ? TRANSITION_DURATION_IN_FRAMES : 0;
+  return durationInFrames + transitionPadding;
+};
+
 export const getTotalDurationInFrames = (
   data: VideoData,
   fps: number,
 ): number => {
-  return getSceneTimings(data, fps).reduce(
+  const timings = getSceneTimings(data, fps);
+  const sceneTotal = timings.reduce(
     (total, timing) => total + timing.durationInFrames,
     0,
   );
+  return sceneTotal + (timings.length > 1 ? TRANSITION_DURATION_IN_FRAMES : 0);
 };
 
 export const calculateMetadata: CalculateMetadataFunction<MainProps> = ({

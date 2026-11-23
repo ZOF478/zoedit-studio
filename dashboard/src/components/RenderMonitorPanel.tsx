@@ -8,6 +8,7 @@ import {
   Film,
   Loader2,
   PlayCircle,
+  Square,
   Terminal,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
@@ -34,6 +35,8 @@ interface RenderMonitorPanelProps {
   renderStartedAt: number | null;
   renderRemainingSec?: number | null;
   renderRemainingUpdatedAt?: number | null;
+  onCancelRender?: () => void;
+  isCancelling?: boolean;
 }
 
 export function RenderMonitorPanel({
@@ -51,6 +54,8 @@ export function RenderMonitorPanel({
   renderStartedAt,
   renderRemainingSec = null,
   renderRemainingUpdatedAt = null,
+  onCancelRender,
+  isCancelling = false,
 }: RenderMonitorPanelProps) {
   const { t } = useI18n();
   const [showLogs, setShowLogs] = useState(false);
@@ -65,10 +70,18 @@ export function RenderMonitorPanel({
 
   const elapsedSec =
     isRendering && renderStartedAt ? Math.max(0, (clock - renderStartedAt) / 1000) : 0;
+  const expectedAudioSec = 45;
+  const expectedCodeSec = 90;
+  const expectedRenderSec = Math.max(30, totalDurationSec * 1.1);
+  const progress = Math.min(100, Math.max(0, overallProgress));
+  const stageRemainingSec =
+    progress < 30
+      ? expectedAudioSec * (1 - progress / 30) + expectedCodeSec + expectedRenderSec
+      : progress < 70
+        ? expectedCodeSec * (1 - (progress - 30) / 40) + expectedRenderSec
+        : expectedRenderSec * (1 - (progress - 70) / 30);
   const etaSec =
-    isRendering && overallProgress > 3 && overallProgress < 100
-      ? Math.max(0, Math.round((elapsedSec * (100 - overallProgress)) / overallProgress))
-      : null;
+    isRendering && progress < 100 ? Math.max(0, Math.round(stageRemainingSec)) : null;
   const remainingFresh =
     renderRemainingUpdatedAt !== null && clock - renderRemainingUpdatedAt < 15000;
   const liveRemainingSec =
@@ -138,11 +151,28 @@ export function RenderMonitorPanel({
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
             <span className="font-semibold text-slate-200">
               {t('تقدم التصدير', 'Export progress')}
             </span>
-            <span className="font-mono tabular-nums text-sky-300">{overallProgress}%</span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono tabular-nums text-sky-300">{overallProgress}%</span>
+              {isRendering && onCancelRender ? (
+                <button
+                  type="button"
+                  onClick={onCancelRender}
+                  disabled={isCancelling}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/50 bg-red-500/20 px-3 py-1.5 text-[11px] font-bold text-red-100 hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                >
+                  {isCancelling ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Square className="h-3.5 w-3.5 fill-current" />
+                  )}
+                  {t('إيقاف العملية', 'Cancel export')}
+                </button>
+              ) : null}
+            </div>
           </div>
           <div className="h-2 w-full overflow-hidden rounded-full bg-[#0B0E14]">
             <div

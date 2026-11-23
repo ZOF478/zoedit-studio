@@ -10,6 +10,7 @@ import type {
   CaptionAnimationStyle,
   FpsOption,
   SceneItem,
+  ScriptLanguage,
   VisualStyle,
   WordsPerScreen,
 } from '../types/studio';
@@ -297,12 +298,15 @@ const resolveSfxSrc = (
 
 const parentCaptionStyle = (value: CaptionAnimationStyle): string => {
   switch (value) {
+    case 'word-by-word':
     case 'word-pop-glow':
-      return 'word_pop_glow';
+      return 'word_by_word';
+    case 'karaoke':
     case 'dynamic-karaoke':
-      return 'dynamic_karaoke';
+      return 'karaoke';
+    case 'static':
     case 'smooth-chunk-slide':
-      return 'smooth_chunk_slide';
+      return 'static';
     case 'kinetic-typewriter':
       return 'kinetic_typewriter';
     default:
@@ -662,7 +666,7 @@ export interface BuildPreviewDataOptions {
   visualStyle: VisualStyle;
   aspectRatio: AspectRatio;
   fps: FpsOption;
-  scriptLanguage: 'ar' | 'en';
+  scriptLanguage: ScriptLanguage;
   scriptDepth: string;
   creativeCodeMode: string;
   scriptPacing: string;
@@ -684,6 +688,15 @@ export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoDa
   const background = /^#[0-9a-fA-F]{6}$/.test(options.brandKit.bgColor)
     ? options.brandKit.bgColor
     : '#0B0F17';
+  const text = /^#[0-9a-fA-F]{6}$/.test(options.brandKit.textColor)
+    ? options.brandKit.textColor
+    : '#F8FAFC';
+  const primary = /^#[0-9a-fA-F]{6}$/.test(options.brandKit.primaryColor)
+    ? options.brandKit.primaryColor
+    : accent;
+  const secondary = /^#[0-9a-fA-F]{6}$/.test(options.brandKit.secondaryColor)
+    ? options.brandKit.secondaryColor
+    : '#FBBF24';
   const firstTitle = options.scenes[0]?.title || 'Zof Studio';
 
   return {
@@ -714,9 +727,10 @@ export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoDa
     },
     brand_kit: {
       name: 'ZOF',
-      primary: accent,
-      secondary: '#FBBF24',
+      primary,
+      secondary,
       accent,
+      text,
       success: '#16A34A',
       danger: '#DC2626',
       background,

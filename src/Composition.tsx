@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   AbsoluteFill,
   Audio,
@@ -7,15 +8,35 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { getSceneTimings, getVideoSettings, type MainProps } from "./config";
+import {
+  TransitionSeries,
+  springTiming,
+} from "@remotion/transitions";
+import { fade } from "@remotion/transitions/fade";
+import { slide } from "@remotion/transitions/slide";
+import { wipe } from "@remotion/transitions/wipe";
+import {
+  getSceneSequenceDurationInFrames,
+  getSceneTimings,
+  getVideoSettings,
+  TRANSITION_DURATION_IN_FRAMES,
+  type MainProps,
+  type SceneTiming,
+} from "./config";
 import { GENERATED_SCENES } from "./generated";
 import { GeneratedSceneBoundary } from "./components/GeneratedSceneBoundary";
 import {
+  SceneSfx,
+  SceneSfxEnabledContext,
+  SceneSfxVolumeContext,
+} from "./components/SceneSfx";
+import {
   DEFAULT_SFX_CUE_VOLUME,
   DEFAULT_SFX_VOLUME,
+  MAX_SCENE_SFX_VOLUME,
   SFX_CUE_FILES,
 } from "./sfx";
-import type { Scene, SceneElement, SfxCue } from "./types";
+import type { CaptionConfig, Scene, SceneElement, SfxCue } from "./types";
 import { ensureCairoFont, FONT_FAMILY } from "./fonts";
 
 type CustomTsxElement = Extract<SceneElement, { type: "custom_tsx" }>;
@@ -33,6 +54,68 @@ type ScenePalette = {
 
 const FALLBACK_ACCENT = "#E77B40";
 const FALLBACK_BACKGROUND = "#0B0F17";
+
+const transitionTiming = () =>
+  springTiming({
+    config: { damping: 200 },
+    durationInFrames: TRANSITION_DURATION_IN_FRAMES,
+  });
+
+const renderSceneTransition = (index: number) => {
+  const key = `transition-${index}`;
+  const timing = transitionTiming();
+
+  switch (index % 6) {
+    case 0:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={slide({ direction: "from-left" })}
+          timing={timing}
+        />
+      );
+    case 1:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={fade()}
+          timing={timing}
+        />
+      );
+    case 2:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={wipe({ direction: "from-bottom" })}
+          timing={timing}
+        />
+      );
+    case 3:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={slide({ direction: "from-right" })}
+          timing={timing}
+        />
+      );
+    case 4:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={wipe({ direction: "from-left" })}
+          timing={timing}
+        />
+      );
+    default:
+      return (
+        <TransitionSeries.Transition
+          key={key}
+          presentation={slide({ direction: "from-bottom" })}
+          timing={timing}
+        />
+      );
+  }
+};
 
 const safeHex = (value: unknown, fallback: string): string => {
   return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value.trim())
@@ -124,6 +207,15 @@ const FallbackScene = ({
     extrapolateRight: "clamp",
   });
   const drift = Math.sin((frame / Math.max(1, fps)) * 1.2) * 8;
+  const exit = interpolate(
+    frame,
+    [
+      Math.max(0, durationInFrames - 10),
+      Math.max(1, durationInFrames - 1),
+    ],
+    [1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
   const title = scene.title?.trim() || "Zof Studio";
   const caption = scene.caption?.trim() || "";
 
@@ -137,6 +229,14 @@ const FallbackScene = ({
         overflow: "hidden",
       }}
     >
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * -8}px)`,
+        }}
+      >
       <AbsoluteFill
         style={{
           background: `radial-gradient(circle at 50% 18%, ${withAlpha(
@@ -217,6 +317,7 @@ const FallbackScene = ({
           </div>
         ) : null}
       </div>
+      </div>
     </AbsoluteFill>
   );
 };
@@ -241,7 +342,7 @@ const SceneAudio = ({
           from={Math.max(0, Math.round((scene.sfxAt ?? 0.15) * fps))}
           durationInFrames={Math.max(1, Math.round(fps * 1.4))}
         >
-          <Audio src={staticFile(scene.sfxSrc)} volume={sfxVolume} />
+          <Audio src={staticFile(scene.sfxSrc)} volume={Math.min(MAX_SCENE_SFX_VOLUME, sfxVolume)} />
         </Sequence>
       ) : null}
       {cues.map((cue, index) => {
@@ -263,7 +364,39 @@ const SceneAudio = ({
   );
 };
 
-const Watermark = ({
+type WatermarkSettings = {
+  text: string;
+  enabled: boolean;
+  position: string;
+};
+
+const readWatermarkSettings = (
+  brandKit: Record<string, unknown>,
+): WatermarkSettings => {
+  const raw = brandKit.watermark;
+  const nested =
+    raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null;
+  const text =
+    typeof nested?.text === "string"
+      ? nested.text
+      : typeof raw === "string"
+        ? raw
+        : "";
+  const enabled =
+    nested?.enabled === false || brandKit.watermark_enabled === false
+      ? false
+      : Boolean(text.trim());
+  const position =
+    typeof nested?.position === "string"
+      ? nested.position
+      : typeof brandKit.watermark_position === "string"
+        ? brandKit.watermark_position
+        : "top-left";
+
+  return { text: text.trim(), enabled, position };
+};
+
+const WatermarkOverlay = ({
   text,
   palette,
   position,
@@ -282,21 +415,192 @@ const Watermark = ({
         position: "absolute",
         ...(isBottom ? { bottom: 54 } : { top: 34 }),
         ...(isLeft ? { left: 34 } : { right: 34 }),
-        zIndex: 40,
+        zIndex: 70,
         fontFamily: FONT_FAMILY,
         fontSize: 28,
         fontWeight: 700,
         letterSpacing: "0.04em",
-        color: withAlpha(palette.text, 0.64),
+        color: withAlpha(palette.text, 0.7),
         background: withAlpha(palette.background, 0.38),
         border: `1px solid ${withAlpha(palette.text, 0.14)}`,
         borderRadius: 999,
         padding: "8px 22px",
         direction: "ltr",
+        opacity: 0.86,
         pointerEvents: "none",
       }}
     >
       {text}
+    </div>
+  );
+};
+
+const captionTextFor = (scene: Scene): string => {
+  const caption = scene.caption?.trim();
+  if (caption) return caption;
+  const element = findCustomElement(scene);
+  if (!element) return "";
+  const narration = element.data?.narration;
+  if (typeof narration === "string" && narration.trim()) {
+    return narration.trim();
+  }
+  return element.text?.trim() ?? "";
+};
+
+const normalizeCaptionStyle = (
+  value: CaptionConfig["animation_style"],
+): "word_by_word" | "karaoke" | "static" => {
+  switch (value) {
+    case "karaoke":
+    case "dynamic_karaoke":
+      return "karaoke";
+    case "static":
+    case "smooth_chunk_slide":
+      return "static";
+    case "word_by_word":
+    case "word_pop_glow":
+    case "kinetic_typewriter":
+      return "word_by_word";
+    default:
+      return "word_by_word";
+  }
+};
+
+const CaptionsOverlay = ({
+  data,
+  timings,
+  isRtl,
+  palette,
+}: {
+  data: MainProps["data"];
+  timings: SceneTiming[];
+  isRtl: boolean;
+  palette: ScenePalette;
+}) => {
+  const frame = useCurrentFrame();
+  const { height } = useVideoConfig();
+  const caption = data.caption ?? {};
+  const activeIndex = timings.findIndex(
+    (timing) =>
+      frame >= timing.from && frame < timing.from + timing.durationInFrames,
+  );
+  if (activeIndex < 0) return null;
+
+  const timing = timings[activeIndex];
+  const scene = data.scenes[activeIndex];
+  const text = scene ? captionTextFor(scene) : "";
+  if (!timing || !text) return null;
+
+  const style = normalizeCaptionStyle(caption.animation_style);
+  const fontScale = Math.min(1.15, Math.max(0.82, height / 1920));
+  const fontSize = Math.round(36 * fontScale);
+  const localFrame = frame - timing.from;
+  const sceneDuration = Math.max(1, timing.durationInFrames - 1);
+  const progress = Math.min(1, Math.max(0, localFrame / sceneDuration));
+  const rawOffset = caption.bottom_offset;
+  const bottomOffset =
+    typeof rawOffset === "number" && Number.isFinite(rawOffset)
+      ? Math.min(45, Math.max(6, rawOffset))
+      : 20;
+  const appear = interpolate(localFrame, [0, Math.min(10, sceneDuration)], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const captionColors = caption.colors ?? {};
+  const pillBackground = safeHex(
+    captionColors.background,
+    withAlpha(palette.background, 0.82),
+  );
+  const baseText = safeHex(captionColors.text, palette.text);
+  const highlight = safeHex(captionColors.highlight, palette.accent);
+  const words = text.split(/\s+/).filter(Boolean);
+  const activeWord = Math.min(
+    words.length - 1,
+    Math.floor(progress * Math.max(1, words.length)),
+  );
+
+  const boxStyle = {
+    maxWidth: "88%",
+    padding: `${Math.round(14 * fontScale)}px ${Math.round(28 * fontScale)}px`,
+    borderRadius: 24,
+    background: pillBackground,
+    border: `1px solid ${withAlpha(baseText, 0.18)}`,
+    boxShadow: "0 14px 42px rgba(0, 0, 0, 0.45)",
+    color: baseText,
+    fontFamily: FONT_FAMILY,
+    fontSize,
+    fontWeight: 700,
+    lineHeight: 1.4,
+    textAlign: "center" as const,
+    textShadow: "0 2px 10px rgba(0, 0, 0, 0.35)",
+    direction: isRtl ? ("rtl" as const) : ("ltr" as const),
+    opacity: appear,
+    transform: `translateY(${(1 - appear) * 16}px)`,
+  };
+
+  const renderWords = () =>
+    words.map((word, index) => {
+      if (style === "word_by_word") {
+        const startFrame = (index / Math.max(1, words.length)) * sceneDuration * 0.74;
+        const wordProgress = interpolate(
+          localFrame,
+          [startFrame, startFrame + 8],
+          [0, 1],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        );
+        const isFresh = localFrame >= startFrame && localFrame < startFrame + 10;
+        return (
+          <span
+            key={`${word}-${index}`}
+            style={{
+              display: "inline-block",
+              marginInlineEnd: "0.26em",
+              opacity: wordProgress,
+              color: isFresh ? highlight : baseText,
+              transform: `translateY(${(1 - wordProgress) * 10}px) scale(${
+                0.72 + wordProgress * 0.28
+              })`,
+            }}
+          >
+            {word}
+          </span>
+        );
+      }
+      const isActive = style === "karaoke" && index === activeWord;
+      return (
+        <span
+          key={`${word}-${index}`}
+          style={{
+            display: "inline-block",
+            marginInlineEnd: "0.26em",
+            color: isActive ? highlight : baseText,
+            transform: isActive ? "scale(1.06)" : undefined,
+            textShadow: isActive
+              ? `0 0 18px ${withAlpha(highlight, 0.55)}`
+              : undefined,
+          }}
+        >
+          {word}
+        </span>
+      );
+    });
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: `${bottomOffset}%`,
+        zIndex: 60,
+        display: "flex",
+        justifyContent: "center",
+        padding: "0 48px",
+        pointerEvents: "none",
+      }}
+    >
+      <div style={boxStyle}>{style === "static" ? text : renderWords()}</div>
     </div>
   );
 };
@@ -345,6 +649,7 @@ const GeneratedScene = ({
   language,
   brandKit,
   sfxEnabled,
+  sfxVolume,
 }: {
   scene: Scene;
   index: number;
@@ -353,6 +658,7 @@ const GeneratedScene = ({
   language: string;
   brandKit: Record<string, unknown>;
   sfxEnabled: boolean;
+  sfxVolume: number;
 }) => {
   const palette = buildPalette(scene, brandKit);
   const element = findCustomElement(scene);
@@ -375,30 +681,62 @@ const GeneratedScene = ({
   }
 
   return (
-    <GeneratedSceneBoundary fallback={fallback}>
-      <GeneratedComponent
-        accentColor={palette.accent}
-        bgColor={palette.background}
-        textColor={palette.text}
-        mutedColor={palette.muted}
-        characterBody={palette.characterBody}
-        characterFace={palette.characterFace}
-        characterAccent={palette.characterAccent}
-        characterShadow={palette.characterShadow}
-        isRtl={isRtl}
-        language={language}
-        title={element?.title ?? scene.title}
-        text={element?.text ?? scene.caption}
-        keywords={keywordsFor(scene, element)}
-        data={{
-          narration: scene.caption ?? "",
-          sceneIndex: index,
-          sfxEnabled,
-        }}
-        durationInFrames={durationInFrames}
-        showCharacter={scene.character?.enabled !== false}
-      />
-    </GeneratedSceneBoundary>
+    <SceneSfxEnabledContext.Provider value={sfxEnabled}>
+      <SceneSfxVolumeContext.Provider value={sfxVolume}>
+        <GeneratedSceneBoundary fallback={fallback}>
+          <GeneratedComponent
+            accentColor={palette.accent}
+            bgColor={palette.background}
+            textColor={palette.text}
+            mutedColor={palette.muted}
+            characterBody={palette.characterBody}
+            characterFace={palette.characterFace}
+            characterAccent={palette.characterAccent}
+            characterShadow={palette.characterShadow}
+            isRtl={isRtl}
+            language={language}
+            title={element?.title ?? scene.title}
+            text={element?.text ?? scene.caption}
+            keywords={keywordsFor(scene, element)}
+            data={{
+              narration: scene.caption ?? "",
+              sceneIndex: index,
+              sfxEnabled,
+              sfxVolume,
+            }}
+            durationInFrames={durationInFrames}
+            showCharacter={scene.character?.enabled === true}
+          />
+        </GeneratedSceneBoundary>
+      </SceneSfxVolumeContext.Provider>
+    </SceneSfxEnabledContext.Provider>
+  );
+};
+
+const TransitionWhooshes = ({
+  timings,
+  sfxEnabled,
+  sfxVolume,
+}: {
+  timings: SceneTiming[];
+  sfxEnabled: boolean;
+  sfxVolume: number;
+}) => {
+  if (!sfxEnabled) return null;
+
+  return (
+    <SceneSfxEnabledContext.Provider value={sfxEnabled}>
+      <SceneSfxVolumeContext.Provider value={sfxVolume}>
+        {timings.slice(1).map((timing) => (
+          <SceneSfx
+            key={`transition-sfx-${timing.from}`}
+            name="whoosh"
+            frame={timing.from}
+            volume={0.18}
+          />
+        ))}
+      </SceneSfxVolumeContext.Provider>
+    </SceneSfxEnabledContext.Provider>
   );
 };
 
@@ -422,13 +760,8 @@ export const MainComposition = ({ data }: MainProps) => {
               : DEFAULT_SFX_VOLUME,
           ),
         );
-  const watermarkText =
-    typeof brandKit.watermark === "string" ? brandKit.watermark : "";
-  const watermarkEnabled = brandKit.watermark_enabled !== false;
-  const watermarkPosition =
-    typeof brandKit.watermark_position === "string"
-      ? brandKit.watermark_position
-      : "top-left";
+  const watermark = readWatermarkSettings(brandKit);
+  const captionsEnabled = data.caption?.enabled === true;
 
   return (
     <AbsoluteFill
@@ -439,40 +772,65 @@ export const MainComposition = ({ data }: MainProps) => {
         direction: settings.isRtl ? "rtl" : "ltr",
       }}
     >
-      {data.scenes.map((scene, index) => {
-        const timing = timings[index];
-        if (!timing) return null;
-        return (
-          <Sequence
-            key={scene.id ?? `scene-${index}`}
-            from={timing.from}
-            durationInFrames={timing.durationInFrames}
-            name={scene.id ?? `Scene ${index + 1}`}
-            premountFor={settings.fps}
-          >
-            <SceneAudio
-              scene={scene}
-              sfxEnabled={sfxEnabled}
-              sfxVolume={sfxVolume}
-            />
-            <GeneratedScene
-              scene={scene}
-              index={index}
-              durationInFrames={timing.durationInFrames}
-              isRtl={settings.isRtl}
-              language={settings.language}
-              brandKit={brandKit}
-              sfxEnabled={sfxEnabled}
-            />
-          </Sequence>
-        );
-      })}
+      <TransitionSeries>
+        {data.scenes.map((scene, index) => {
+          const timing = timings[index];
+          if (!timing) return null;
+          const sequenceDurationInFrames = getSceneSequenceDurationInFrames(
+            timing.durationInFrames,
+            data.scenes.length,
+          );
+          return (
+            <Fragment key={scene.id ?? `scene-${index}`}>
+              <TransitionSeries.Sequence
+                durationInFrames={sequenceDurationInFrames}
+                name={scene.id ?? `Scene ${index + 1}`}
+                premountFor={settings.fps}
+              >
+                <SceneAudio
+                  scene={scene}
+                  sfxEnabled={sfxEnabled}
+                  sfxVolume={sfxVolume}
+                />
+                <GeneratedScene
+                  scene={scene}
+                  index={index}
+                  durationInFrames={sequenceDurationInFrames}
+                  isRtl={settings.isRtl}
+                  language={settings.language}
+                  brandKit={brandKit}
+                  sfxEnabled={sfxEnabled}
+                  sfxVolume={sfxVolume}
+                />
+              </TransitionSeries.Sequence>
+              {index < data.scenes.length - 1
+                ? renderSceneTransition(index)
+                : null}
+            </Fragment>
+          );
+        })}
+      </TransitionSeries>
 
-      {watermarkEnabled ? (
-        <Watermark
-          text={watermarkText}
+      <TransitionWhooshes
+        timings={timings}
+        sfxEnabled={sfxEnabled}
+        sfxVolume={sfxVolume}
+      />
+
+      {captionsEnabled ? (
+        <CaptionsOverlay
+          data={data}
+          timings={timings}
+          isRtl={settings.isRtl}
           palette={palette}
-          position={watermarkPosition}
+        />
+      ) : null}
+
+      {watermark.enabled ? (
+        <WatermarkOverlay
+          text={watermark.text}
+          palette={palette}
+          position={watermark.position}
         />
       ) : null}
       <ProgressLine palette={palette} />

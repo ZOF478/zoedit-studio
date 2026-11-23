@@ -1,4 +1,4 @@
-import { execFile, spawn } from 'node:child_process';
+import { execFile, spawn, type ChildProcess } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import net from 'node:net';
@@ -14,6 +14,12 @@ import {
   buildStaggeredSfxCues,
   normalizeSfxCues,
 } from '../src/utils/sfxCues';
+import {
+  DEFAULT_VIDEO_LANGUAGE,
+  getVideoLanguage,
+  normalizeVideoLanguage,
+  videoLanguageName,
+} from './src/types/languages';
 
 const DASHBOARD_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(DASHBOARD_DIR, '..');
@@ -33,6 +39,7 @@ const STUDIO_LOG_FILE = path.join(ZOF_HOME_DIR, 'remotion-studio.log');
 const USAGE_FILE = path.join(ZOF_HOME_DIR, 'usage.json');
 const SCENE_CACHE_DIR = path.join(OUT_DIR, 'scene-cache');
 const SCENE_CACHE_INDEX_FILE = path.join(SCENE_CACHE_DIR, 'index.json');
+const TRANSITION_DURATION_IN_FRAMES = 16;
 
 dotenv.config({ path: path.join(DASHBOARD_DIR, '.env') });
 
@@ -61,6 +68,9 @@ interface StudioSettings {
   voiceModelId: string;
   voiceStability: number;
   voiceSimilarityBoost: number;
+  voiceStyle: number;
+  voiceSpeakerBoost: boolean;
+  voiceSpeed: number;
   visualStyle: string;
   aspectRatio: string;
   fps: number;
@@ -69,6 +79,8 @@ interface StudioSettings {
   creativeCodeMode: string;
   scriptPacing: string;
   captionAnimationStyle: string;
+  captionColors: RenderCaptionColors;
+  captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
   brandKit: RenderBrandKit;
@@ -97,12 +109,20 @@ interface AiModelDescriptor {
   upstream?: 'openrouter' | 'deepseek' | 'kieai' | 'custom';
 }
 
+interface OpenCodeModelEntry {
+  id: string;
+  label: string;
+  providerId: string;
+  providerLabel: string;
+}
+
 interface OpenCodeInspection {
   configPaths: string[];
   authPaths: string[];
   configFound: boolean;
   authFound: boolean;
   providers: string[];
+  models: OpenCodeModelEntry[];
   keys: Record<string, string>;
 }
 
@@ -189,6 +209,7 @@ interface RenderScenePayload {
   characterLayout?: 'side-by-side' | 'top-bottom';
   ambientScene?: string;
   durationSec: number;
+  durationInFrames?: number;
 }
 
 type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -196,9 +217,29 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
 interface RenderBrandKit {
   accentColor: string;
   bgColor: string;
+  textColor: string;
+  primaryColor: string;
+  secondaryColor: string;
   watermark: string;
   watermarkEnabled: boolean;
   watermarkPosition: WatermarkPosition;
+}
+
+type CaptionColorSource =
+  | 'background'
+  | 'text'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'custom';
+
+interface RenderCaptionColors {
+  background: string;
+  text: string;
+  highlight: string;
+  backgroundSource: CaptionColorSource;
+  textSource: CaptionColorSource;
+  highlightSource: CaptionColorSource;
 }
 
 interface ProjectStatePayload {
@@ -210,7 +251,11 @@ interface ProjectStatePayload {
   voiceModelId: string;
   voiceStability: number;
   voiceSimilarityBoost: number;
+  voiceStyle: number;
+  voiceSpeakerBoost: boolean;
+  voiceSpeed: number;
   voiceoverEnabled: boolean;
+  cleanBrollMode: boolean;
   visualStyle: string;
   aspectRatio: string;
   fps: number;
@@ -219,6 +264,8 @@ interface ProjectStatePayload {
   creativeCodeMode: string;
   scriptPacing: string;
   captionAnimationStyle: string;
+  captionColors: RenderCaptionColors;
+  captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
   brandKit: RenderBrandKit;
@@ -238,10 +285,14 @@ interface RenderJob {
   aspectRatio: string;
   fps: number;
   voiceoverEnabled: boolean;
+  cleanBrollMode: boolean;
   voiceId: string;
   modelId: string;
   voiceStability: number;
   voiceSimilarityBoost: number;
+  voiceStyle: number;
+  voiceSpeakerBoost: boolean;
+  voiceSpeed: number;
   sfxEnabled: boolean;
   sfxVolume: number;
   sfxMode: 'auto' | 'manual';
@@ -252,14 +303,18 @@ interface RenderJob {
   creativeCodeMode: string;
   scriptPacing: string;
   captionAnimationStyle: string;
+  captionColors: RenderCaptionColors;
+  captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
+  enable25D: boolean;
   elevenlabsKey: string;
   masterPrompt?: string;
+  tweakInstruction?: string;
   targetDuration?: ExportTargetDuration;
   audioPrepared?: boolean;
   usage?: { ttsCharacters: number; ttsCalls: number; ttsUsd: number };
-  status: 'queued' | 'rendering' | 'completed' | 'error';
+  status: 'queued' | 'rendering' | 'completed' | 'error' | 'cancelled';
   outputFile?: string;
   outputPath?: string;
   outputSize?: number;
@@ -296,6 +351,7 @@ type ParentScene = {
   subtitle?: string;
   caption?: string;
   duration: number;
+  durationInFrames?: number;
   audioSrc?: string;
   audioDuration?: number;
   sfxSrc?: string;
@@ -334,8 +390,10 @@ type ParentVideoData = {
   width: number;
   height: number;
   fps: number;
+  durationInFrames?: number;
   style: string;
   script_language: string;
+  language?: string;
   script_depth?: string;
   creative_code_mode?: string;
   script_pacing?: string;
@@ -343,6 +401,12 @@ type ParentVideoData = {
     animation_style: string;
     words_per_screen: number | 'auto';
     lead_in: number;
+    colors?: {
+      background: string;
+      text: string;
+      highlight: string;
+    };
+    bottom_offset?: number;
     enabled?: boolean;
   };
   brand_kit: Record<string, string | number | boolean>;
@@ -356,13 +420,15 @@ interface ElevenLabsModelItem {
   description: string;
   latencyBadge: string;
   qualityBadge: string;
+  languages?: string[];
 }
 
 interface ElevenLabsVoiceItem {
   voice_id: string;
   name: string;
-  gender: string;
+  gender: 'male' | 'female' | 'neutral';
   language: string;
+  languages: string[];
   accent: string;
   tone: string;
   category: string;
@@ -374,7 +440,51 @@ interface ElevenLabsVoiceItem {
 const PORT = Number(process.env.PORT) || 4789;
 const HOST = '127.0.0.1';
 const REMOTION_STUDIO_PORT = 9578;
-const REMOTION_STUDIO_URL = `http://localhost:${REMOTION_STUDIO_PORT}`;
+const REMOTION_STUDIO_UI_PORT = 3333;
+const OPENCODE_RUN_TIMEOUT_MS = 600000;
+const STRICT_EFFICIENCY_RULE =
+  'STRICT EFFICIENCY & NO-LOOP RULE: Write each scene file cleanly in ONE single pass (keep each scene concise, under ~220 lines of clean TypeScript). After writing all scene files and `index.ts`, run at most ONE `npx tsc --noEmit` check. Fix actual TypeScript compiler errors ONLY if any exist, and exit immediately. NEVER run repeated cosmetic micro-edits on font sizes, padding, colors, or coordinates after writing a file.';
+const CRISP_VECTOR_MAP_RULE =
+  '- When the prompt requests a map or geographical route, use real geographic data, never hand-guessed borders: import worldData from "world-atlas/countries-110m.json", convert with feature() from "topojson-client", and project with geoMercator()/geoNaturalEarth1() + geoPath() from "d3-geo". Add a subtle coordinate grid, a glowing animated route curve (evolvePath from "@remotion/paths"), and crisp lucide-react pins sized to the target aspect ratio (16:9 or 9:16).';
+const ZOF_LIBRARY_CAPABILITIES = [
+  '## INSTALLED VISUAL LIBRARIES (available for dynamic scene generation)',
+  '- `lucide-react`: crisp UI, tech, business, and map icons (for example `import { MapPin, Plane, Navigation, ShieldCheck, TrendingUp } from "lucide-react";`). Never hand-code icon `<path>` elements when a lucide icon exists.',
+  '- `d3-geo` + `topojson-client` + `world-atlas/countries-110m.json`: accurate real-world geographic country borders, projections (`geoMercator` / `geoNaturalEarth1`), and animated coordinate routes.',
+  '- `@remotion/paths` & `@remotion/shapes`: mathematical SVG path interpolation, charts, and geometric shapes.',
+  '- `roughjs`: hand-drawn / whiteboard-style diagrams ONLY when the prompt explicitly asks for that look, and ONLY with the deterministic rendering pattern below.',
+  '- `@remotion/noise`: organic subtle motion and natural drift.',
+  '',
+  '## STRICT NO-FALLBACK RULE (apply on the first pass)',
+  '- NEVER draw continents, country borders, map coastlines, or recognizable brand/UI icons manually with guessed SVG `<path>` coordinates.',
+  '- If a real library is whitelisted for the job (world-atlas + d3-geo for maps, lucide-react for icons), hand-drawing an approximation instead is a failure. Use the exact patterns below.',
+  '',
+  '### Real-world maps (d3-geo + topojson-client + world-atlas)',
+  'import worldData from "world-atlas/countries-110m.json";',
+  'import { feature } from "topojson-client";',
+  'import { geoMercator, geoPath } from "d3-geo";',
+  'const countries = feature(worldData as any, (worldData as any).objects.countries) as any;',
+  'const projection = geoMercator().fitExtent([[40, 40], [mapWidth - 40, mapHeight - 40]], targetRegionOrCountries);',
+  'const pathGen = geoPath().projection(projection);',
+  '<path d={pathGen(country) ?? ""} />',
+  'projection([lon, lat]) converts real [longitude, latitude] coordinates into exact [x, y] pixels: Tangier [-5.8, 35.76], Cairo [31.23, 30.04], Mecca [39.82, 21.42].',
+  '',
+  '### Icons (lucide-react)',
+  'import { MapPin, Plane, Navigation, ShieldCheck, TrendingUp } from "lucide-react";',
+  '<MapPin size={32} color={accentColor} />',
+  '',
+  '### Curves & shapes (@remotion/paths & @remotion/shapes)',
+  'import { evolvePath } from "@remotion/paths";',
+  'const dash = evolvePath(progress, routePath);',
+  '<path d={routePath} strokeDasharray={dash.strokeDasharray} strokeDashoffset={dash.strokeDashoffset} />',
+  '',
+  '### Hand-drawn diagrams (roughjs) — MANDATORY deterministic rendering',
+  'Use roughjs for whiteboard/hand-drawn requests and @remotion/noise for organic drift; these complement, never replace, the real map and icon libraries.',
+  'NEVER call rough.svg(), rough.draw(), or rough.generator() paths inside the per-frame render body. Regenerating random rough geometry every frame causes severe frame-by-frame jitter.',
+  'ALWAYS pass a fixed deterministic seed and stable roughness, and compute the drawable ONCE with useMemo:',
+  'const roughGen = useMemo(() => rough.generator(), []);',
+  'const drawable = useMemo(() => roughGen.path(d, { seed: 42, roughness: 1.4 }), []);',
+  'Render the memoized drawable paths and animate drawing progress strictly with SVG strokeDasharray / strokeDashoffset or evolvePath() from @remotion/paths so hand-drawn animations stay silky-smooth at 60fps with zero jitter.',
+].join('\n');
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const sessionKeyStore = new Map<string, SessionKeys>();
@@ -491,27 +601,6 @@ const FREE_MODELS: AiModelDescriptor[] = [
   },
 ];
 
-const DEEPSEEK_MODELS: AiModelDescriptor[] = [
-  {
-    id: 'deepseek-chat',
-    label: 'DeepSeek Chat',
-    provider: 'deepseek',
-    providerLabel: 'DeepSeek',
-    note: 'Direct DeepSeek V3 chat model for fast script writing.',
-    isFree: false,
-    upstream: 'deepseek',
-  },
-  {
-    id: 'deepseek-reasoner',
-    label: 'DeepSeek Reasoner',
-    provider: 'deepseek',
-    providerLabel: 'DeepSeek',
-    note: 'Direct DeepSeek reasoning model for richer narrative logic.',
-    isFree: false,
-    upstream: 'deepseek',
-  },
-];
-
 const OPENROUTER_MODELS: AiModelDescriptor[] = [
   {
     id: 'anthropic/claude-3.5-sonnet',
@@ -595,7 +684,6 @@ const CUSTOM_MODELS: AiModelDescriptor[] = [
 
 const ALL_AI_MODELS: AiModelDescriptor[] = [
   ...FREE_MODELS,
-  ...DEEPSEEK_MODELS,
   ...OPENROUTER_MODELS,
   ...KIEAI_MODELS,
   ...CUSTOM_MODELS,
@@ -632,7 +720,7 @@ const normalizeProviderAlias = (raw: string): AiProviderId => {
 const curatedProviderModels = (provider: AiProviderId): ProviderModelItem[] => {
   const source =
     provider === 'deepseek'
-      ? DEEPSEEK_MODELS
+      ? []
       : provider === 'openrouter'
         ? OPENROUTER_MODELS
         : provider === 'kieai'
@@ -789,6 +877,7 @@ const DEFAULT_ELEVENLABS_MODELS: ElevenLabsModelItem[] = [
     description: 'دقة نطق عربية عالية ونبرة طبيعية للمحتوى الوثائقي والشروحات.',
     latencyBadge: 'جودة فائقة',
     qualityBadge: '29 لغة',
+    languages: ['Arabic', 'English'],
   },
   {
     model_id: 'eleven_turbo_v2_5',
@@ -796,6 +885,7 @@ const DEFAULT_ELEVENLABS_MODELS: ElevenLabsModelItem[] = [
     description: 'توازن مثالي بين سرعة التوليد ووضوح المخارج الصوتية.',
     latencyBadge: 'استجابة سريعة · ~250ms',
     qualityBadge: 'متوازن',
+    languages: ['Arabic', 'English'],
   },
   {
     model_id: 'eleven_flash_v2_5',
@@ -803,6 +893,7 @@ const DEFAULT_ELEVENLABS_MODELS: ElevenLabsModelItem[] = [
     description: 'أسرع نموذج للتوليد الفوري ومعاينة المشاهد المتعددة.',
     latencyBadge: 'زمن فائق الانخفاض · ~75ms',
     qualityBadge: 'سرعة قصوى',
+    languages: ['Arabic', 'English'],
   },
 ];
 
@@ -810,8 +901,9 @@ const DEFAULT_ELEVENLABS_VOICES: ElevenLabsVoiceItem[] = [
   {
     voice_id: 'pNInz6obpgDQGcFmaJgB',
     name: 'آدم — Adam',
-    gender: 'ذكر',
+    gender: 'male',
     language: 'Arabic',
+    languages: ['Arabic'],
     accent: 'Standard',
     tone: 'وثائقي رزين',
     category: 'premade',
@@ -822,8 +914,9 @@ const DEFAULT_ELEVENLABS_VOICES: ElevenLabsVoiceItem[] = [
   {
     voice_id: 'EXAVITQu4vr4xnSDxMaL',
     name: 'سارة — Sarah',
-    gender: 'أنثى',
+    gender: 'female',
     language: 'English',
+    languages: ['English'],
     accent: 'American',
     tone: 'إخباري هادئ',
     category: 'premade',
@@ -834,8 +927,9 @@ const DEFAULT_ELEVENLABS_VOICES: ElevenLabsVoiceItem[] = [
   {
     voice_id: 'TX3LPaxmHKxFdv7VOQHJ',
     name: 'ليام — Liam',
-    gender: 'ذكر',
+    gender: 'male',
     language: 'English',
+    languages: ['English'],
     accent: 'British',
     tone: 'حيوي سريع',
     category: 'premade',
@@ -846,8 +940,9 @@ const DEFAULT_ELEVENLABS_VOICES: ElevenLabsVoiceItem[] = [
   {
     voice_id: 'Xb7hH8MSUJpSbSDYk0k2',
     name: 'أليس — Alice',
-    gender: 'أنثى',
+    gender: 'female',
     language: 'English',
+    languages: ['English'],
     accent: 'British',
     tone: 'تعليمي دافئ',
     category: 'premade',
@@ -865,6 +960,9 @@ function maskApiKey(key?: string): string {
 const DEFAULT_BRAND_KIT: RenderBrandKit = {
   accentColor: '#E77B40',
   bgColor: '#0B0F17',
+  textColor: '#F8FAFC',
+  primaryColor: '#38BDF8',
+  secondaryColor: '#FBBF24',
   watermark: '@ZofStudio',
   watermarkEnabled: true,
   watermarkPosition: 'top-left',
@@ -980,11 +1078,31 @@ function normalizeSceneCharacters(
 const SCRIPT_PACING_VALUES = ['fast', 'balanced', 'auto'] as const;
 const CAPTION_ANIMATION_STYLE_VALUES = [
   'auto',
+  'word-by-word',
+  'karaoke',
+  'static',
   'word-pop-glow',
   'dynamic-karaoke',
   'smooth-chunk-slide',
   'kinetic-typewriter',
 ] as const;
+const DEFAULT_CAPTION_BOTTOM_OFFSET = 20;
+const CAPTION_COLOR_SOURCES = [
+  'background',
+  'text',
+  'primary',
+  'secondary',
+  'accent',
+  'custom',
+] as const;
+const DEFAULT_CAPTION_COLORS: RenderCaptionColors = {
+  background: DEFAULT_BRAND_KIT.primaryColor,
+  text: DEFAULT_BRAND_KIT.textColor,
+  highlight: DEFAULT_BRAND_KIT.accentColor,
+  backgroundSource: 'primary',
+  textSource: 'text',
+  highlightSource: 'accent',
+};
 const WORDS_PER_SCREEN_VALUES = ['auto', '2', '3', '4', '5'] as const;
 
 function normalizeScriptPacing(value: unknown, fallback = 'fast'): string {
@@ -1018,17 +1136,96 @@ function normalizeVisualStyleValue(value: unknown, fallback = 'stickman'): strin
 
 function parentCaptionStyle(value: string): string {
   switch (value) {
+    case 'word-by-word':
     case 'word-pop-glow':
-      return 'word_pop_glow';
+      return 'word_by_word';
+    case 'karaoke':
     case 'dynamic-karaoke':
-      return 'dynamic_karaoke';
+      return 'karaoke';
+    case 'static':
     case 'smooth-chunk-slide':
-      return 'smooth_chunk_slide';
+      return 'static';
     case 'kinetic-typewriter':
       return 'kinetic_typewriter';
     default:
       return 'auto';
   }
+}
+
+function normalizeCaptionColorSource(
+  value: unknown,
+  fallback: CaptionColorSource,
+): CaptionColorSource {
+  return typeof value === 'string' &&
+    (CAPTION_COLOR_SOURCES as readonly string[]).includes(value)
+    ? (value as CaptionColorSource)
+    : fallback;
+}
+
+function captionColorFromSource(
+  source: CaptionColorSource,
+  brandKit: RenderBrandKit,
+): string {
+  switch (source) {
+    case 'background':
+      return brandKit.bgColor;
+    case 'text':
+      return brandKit.textColor;
+    case 'secondary':
+      return brandKit.secondaryColor;
+    case 'accent':
+      return brandKit.accentColor;
+    case 'primary':
+    default:
+      return brandKit.primaryColor;
+  }
+}
+
+function normalizeCaptionColors(
+  raw: unknown,
+  brandKit: RenderBrandKit = DEFAULT_BRAND_KIT,
+): RenderCaptionColors {
+  const record = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const hasExplicitColor = (value: unknown): boolean =>
+    typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim());
+  const backgroundSource = normalizeCaptionColorSource(
+    record.backgroundSource,
+    hasExplicitColor(record.background) ? 'custom' : 'primary',
+  );
+  const textSource = normalizeCaptionColorSource(
+    record.textSource,
+    hasExplicitColor(record.text) ? 'custom' : 'text',
+  );
+  const highlightSource = normalizeCaptionColorSource(
+    record.highlightSource,
+    hasExplicitColor(record.highlight) ? 'custom' : 'accent',
+  );
+  return {
+    background:
+      backgroundSource === 'custom'
+        ? colorSetting(record.background, brandKit.primaryColor)
+        : captionColorFromSource(backgroundSource, brandKit),
+    text:
+      textSource === 'custom'
+        ? colorSetting(record.text, brandKit.textColor)
+        : captionColorFromSource(textSource, brandKit),
+    highlight:
+      highlightSource === 'custom'
+        ? colorSetting(record.highlight, brandKit.accentColor)
+        : captionColorFromSource(highlightSource, brandKit),
+    backgroundSource,
+    textSource,
+    highlightSource,
+  };
+}
+
+function normalizeCaptionBottomOffset(
+  value: unknown,
+  fallback = DEFAULT_CAPTION_BOTTOM_OFFSET,
+): number {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return fallback;
+  return Math.min(40, Math.max(10, Math.round(numeric)));
 }
 
 function parentWordsPerScreen(value: string): number | 'auto' {
@@ -1050,6 +1247,9 @@ const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
   voiceModelId: 'eleven_multilingual_v2',
   voiceStability: 0.5,
   voiceSimilarityBoost: 0.75,
+  voiceStyle: 0,
+  voiceSpeakerBoost: true,
+  voiceSpeed: 1,
   visualStyle: 'stickman',
   aspectRatio: '9:16',
   fps: 60,
@@ -1058,11 +1258,13 @@ const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
   creativeCodeMode: 'creative',
   scriptPacing: 'fast',
   captionAnimationStyle: 'auto',
+  captionColors: DEFAULT_CAPTION_COLORS,
+  captionBottomOffset: DEFAULT_CAPTION_BOTTOM_OFFSET,
   wordsPerScreen: 'auto',
   captionsEnabled: true,
   brandKit: DEFAULT_BRAND_KIT,
   sfxEnabled: true,
-  sfxVolume: 0.65,
+  sfxVolume: 0.2,
   sfxMode: 'auto',
   backgroundPreset: 'ai-free',
   updatedAt: 0,
@@ -1110,6 +1312,9 @@ function normalizeBrandKit(raw: unknown): RenderBrandKit {
   return {
     accentColor: colorSetting(record.accentColor, DEFAULT_BRAND_KIT.accentColor),
     bgColor: colorSetting(record.bgColor, DEFAULT_BRAND_KIT.bgColor),
+    textColor: colorSetting(record.textColor, DEFAULT_BRAND_KIT.textColor),
+    primaryColor: colorSetting(record.primaryColor, DEFAULT_BRAND_KIT.primaryColor),
+    secondaryColor: colorSetting(record.secondaryColor, DEFAULT_BRAND_KIT.secondaryColor),
     watermark:
       typeof record.watermark === 'string'
         ? record.watermark.trim().slice(0, 60)
@@ -1119,13 +1324,43 @@ function normalizeBrandKit(raw: unknown): RenderBrandKit {
   };
 }
 
+function brandKitWithActivePalette(rawBrand: unknown, rawPalette: unknown): RenderBrandKit {
+  const brand = (rawBrand && typeof rawBrand === 'object'
+    ? rawBrand
+    : {}) as Record<string, unknown>;
+  const palette = (rawPalette && typeof rawPalette === 'object'
+    ? rawPalette
+    : {}) as Record<string, unknown>;
+  const pick = (value: unknown): string | undefined =>
+    typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim())
+      ? value.trim()
+      : undefined;
+  const bgColor = pick(palette.background);
+  const textColor = pick(palette.text);
+  const primaryColor = pick(palette.primary);
+  const secondaryColor = pick(palette.secondary);
+  const accentColor = pick(palette.accent);
+  return normalizeBrandKit({
+    ...brand,
+    ...(bgColor ? { bgColor } : {}),
+    ...(textColor ? { textColor } : {}),
+    ...(primaryColor ? { primaryColor } : {}),
+    ...(secondaryColor ? { secondaryColor } : {}),
+    ...(accentColor ? { accentColor } : {}),
+  });
+}
+
 function normalizeStudioSettings(raw: unknown): StudioSettings {
   const record = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const providerRaw = cleanSettingString(record.aiProvider, 32) as AiProviderId;
   const modelId = cleanSettingString(record.aiModel, 160);
   const visualStyle = cleanSettingString(record.visualStyle, 32);
   const aspectRatio = cleanSettingString(record.aspectRatio, 16);
-  const scriptLanguage = cleanSettingString(record.scriptLanguage, 8);
+  const scriptLanguage = normalizeVideoLanguage(
+    record.scriptLanguage ?? record.language,
+    DEFAULT_VIDEO_LANGUAGE,
+  );
+  const brandKit = normalizeBrandKit(record.brandKit);
   return {
     openrouterKey: cleanSettingString(record.openrouterKey),
     deepseekKey: cleanSettingString(record.deepseekKey),
@@ -1146,13 +1381,19 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
       0,
       1,
     ),
+    voiceStyle: clampNumber(record.voiceStyle, DEFAULT_STUDIO_SETTINGS.voiceStyle, 0, 1),
+    voiceSpeakerBoost:
+      typeof record.voiceSpeakerBoost === 'boolean'
+        ? record.voiceSpeakerBoost
+        : DEFAULT_STUDIO_SETTINGS.voiceSpeakerBoost,
+    voiceSpeed: clampNumber(record.voiceSpeed, DEFAULT_STUDIO_SETTINGS.voiceSpeed, 0.7, 1.2),
     visualStyle: normalizeVisualStyleValue(visualStyle, DEFAULT_STUDIO_SETTINGS.visualStyle),
     aspectRatio:
       aspectRatio === '16:9' || aspectRatio === '1:1' || aspectRatio === '9:16'
         ? aspectRatio
         : DEFAULT_STUDIO_SETTINGS.aspectRatio,
     fps: Number(record.fps) === 30 ? 30 : DEFAULT_STUDIO_SETTINGS.fps,
-    scriptLanguage: scriptLanguage === 'en' ? 'en' : DEFAULT_STUDIO_SETTINGS.scriptLanguage,
+    scriptLanguage,
     scriptDepth: normalizeScriptDepth(
       record.scriptDepth,
       DEFAULT_STUDIO_SETTINGS.scriptDepth,
@@ -1169,12 +1410,14 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
       record.captionAnimationStyle,
       DEFAULT_STUDIO_SETTINGS.captionAnimationStyle,
     ),
+    captionColors: normalizeCaptionColors(record.captionColors, brandKit),
+    captionBottomOffset: normalizeCaptionBottomOffset(record.captionBottomOffset),
     wordsPerScreen: normalizeWordsPerScreen(
       record.wordsPerScreen,
       DEFAULT_STUDIO_SETTINGS.wordsPerScreen,
     ),
     captionsEnabled: record.captionsEnabled !== false,
-    brandKit: normalizeBrandKit(record.brandKit),
+    brandKit,
     sfxEnabled: record.sfxEnabled !== false,
     sfxVolume: clampNumber(record.sfxVolume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
     sfxMode: record.sfxMode === 'manual' ? 'manual' : 'auto',
@@ -1218,6 +1461,7 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
   if (scenesRaw.length === 0) return null;
   const providerRaw = cleanSettingString(record.aiProvider, 32) as AiProviderId;
   const depthForTopic = normalizeScriptDepth(record.scriptDepth, 'analytical');
+  const brandKit = normalizeBrandKit(record.brandKit);
   return {
     topic: cleanSettingString(record.topic, depthForTopic === 'article' ? 20000 : 1200),
     scenes: normalizeScenes(scenesRaw),
@@ -1233,14 +1477,24 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
       0,
       1,
     ),
+    voiceStyle: clampNumber(record.voiceStyle, DEFAULT_STUDIO_SETTINGS.voiceStyle, 0, 1),
+    voiceSpeakerBoost:
+      typeof record.voiceSpeakerBoost === 'boolean'
+        ? record.voiceSpeakerBoost
+        : DEFAULT_STUDIO_SETTINGS.voiceSpeakerBoost,
+    voiceSpeed: clampNumber(record.voiceSpeed, DEFAULT_STUDIO_SETTINGS.voiceSpeed, 0.7, 1.2),
     voiceoverEnabled: record.voiceoverEnabled !== false,
+    cleanBrollMode: record.cleanBrollMode === true,
     visualStyle: normalizeVisualStyleValue(
       record.visualStyle,
       DEFAULT_STUDIO_SETTINGS.visualStyle,
     ),
     aspectRatio: cleanSettingString(record.aspectRatio, 16) || DEFAULT_STUDIO_SETTINGS.aspectRatio,
     fps: Number(record.fps) === 30 ? 30 : 60,
-    scriptLanguage: record.scriptLanguage === 'en' ? 'en' : 'ar',
+    scriptLanguage: normalizeVideoLanguage(
+      record.scriptLanguage ?? record.language,
+      DEFAULT_STUDIO_SETTINGS.scriptLanguage,
+    ),
     scriptDepth: normalizeScriptDepth(
       record.scriptDepth,
       DEFAULT_STUDIO_SETTINGS.scriptDepth,
@@ -1257,12 +1511,14 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
       record.captionAnimationStyle,
       DEFAULT_STUDIO_SETTINGS.captionAnimationStyle,
     ),
+    captionColors: normalizeCaptionColors(record.captionColors, brandKit),
+    captionBottomOffset: normalizeCaptionBottomOffset(record.captionBottomOffset),
     wordsPerScreen: normalizeWordsPerScreen(
       record.wordsPerScreen,
       DEFAULT_STUDIO_SETTINGS.wordsPerScreen,
     ),
     captionsEnabled: record.captionsEnabled !== false,
-    brandKit: normalizeBrandKit(record.brandKit),
+    brandKit,
     sfxEnabled: record.sfxEnabled !== false,
     sfxVolume: clampNumber(record.sfxVolume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
     sfxMode: record.sfxMode === 'manual' ? 'manual' : 'auto',
@@ -1285,6 +1541,9 @@ function saveProjectState(project: ProjectStatePayload): void {
   studioSettings.voiceModelId = project.voiceModelId;
   studioSettings.voiceStability = project.voiceStability;
   studioSettings.voiceSimilarityBoost = project.voiceSimilarityBoost;
+  studioSettings.voiceStyle = project.voiceStyle;
+  studioSettings.voiceSpeakerBoost = project.voiceSpeakerBoost;
+  studioSettings.voiceSpeed = project.voiceSpeed;
   studioSettings.visualStyle = project.visualStyle;
   studioSettings.aspectRatio = project.aspectRatio;
   studioSettings.fps = project.fps;
@@ -1293,6 +1552,8 @@ function saveProjectState(project: ProjectStatePayload): void {
   studioSettings.creativeCodeMode = project.creativeCodeMode;
   studioSettings.scriptPacing = project.scriptPacing;
   studioSettings.captionAnimationStyle = project.captionAnimationStyle;
+  studioSettings.captionColors = project.captionColors;
+  studioSettings.captionBottomOffset = project.captionBottomOffset;
   studioSettings.wordsPerScreen = project.wordsPerScreen;
   studioSettings.captionsEnabled = project.captionsEnabled;
   studioSettings.brandKit = project.brandKit;
@@ -1498,9 +1759,75 @@ const OPENCODE_AUTH_PATHS = [
 
 function inspectOpenCode(): OpenCodeInspection {
   const providers = new Set<string>();
+  const models: OpenCodeModelEntry[] = [];
+  const seenModels = new Set<string>();
   const keys: Record<string, string> = {};
   let configFound = false;
   let authFound = false;
+
+  const addModel = (
+    providerId: string,
+    providerLabel: string,
+    modelId: string,
+    modelLabel: string,
+  ) => {
+    const id = modelId.trim();
+    if (!id || seenModels.has(id)) return;
+    seenModels.add(id);
+    models.push({
+      id,
+      label: modelLabel.trim() || id,
+      providerId,
+      providerLabel,
+    });
+  };
+
+  const collectProviderModels = (
+    providerId: string,
+    providerConfig: Record<string, unknown>,
+  ) => {
+    const providerLabel =
+      typeof providerConfig.name === 'string' && providerConfig.name.trim()
+        ? providerConfig.name.trim()
+        : providerId;
+    const modelField = providerConfig.models;
+    if (modelField && typeof modelField === 'object' && !Array.isArray(modelField)) {
+      for (const [modelId, modelValue] of Object.entries(modelField)) {
+        if (!modelId.trim()) continue;
+        const modelRecord =
+          modelValue && typeof modelValue === 'object'
+            ? (modelValue as Record<string, unknown>)
+            : {};
+        const modelLabel =
+          typeof modelRecord.name === 'string' && modelRecord.name.trim()
+            ? modelRecord.name.trim()
+            : typeof modelRecord.id === 'string' && modelRecord.id.trim()
+              ? modelRecord.id.trim()
+              : modelId;
+        addModel(providerId, providerLabel, modelId, `${providerLabel} · ${modelLabel}`);
+      }
+    } else if (Array.isArray(modelField)) {
+      for (const item of modelField) {
+        if (!item || typeof item !== 'object') continue;
+        const record = item as Record<string, unknown>;
+        const modelId =
+          typeof record.id === 'string'
+            ? record.id
+            : typeof record.model === 'string'
+              ? record.model
+              : '';
+        const modelLabel =
+          typeof record.name === 'string' && record.name.trim()
+            ? record.name.trim()
+            : modelId;
+        addModel(providerId, providerLabel, modelId, `${providerLabel} · ${modelLabel}`);
+      }
+    }
+    if (typeof providerConfig.model === 'string' && providerConfig.model.trim()) {
+      const modelId = providerConfig.model.trim();
+      addModel(providerId, providerLabel, modelId, `${providerLabel} · ${modelId}`);
+    }
+  };
 
   for (const configPath of OPENCODE_CONFIG_PATHS) {
     const parsed = readJsonFileSafe(configPath);
@@ -1510,9 +1837,15 @@ function inspectOpenCode(): OpenCodeInspection {
     for (const field of ['provider', 'providers']) {
       const value = record[field];
       if (value && typeof value === 'object' && !Array.isArray(value)) {
-        Object.keys(value as Record<string, unknown>).forEach((id) => {
-          if (/^[a-zA-Z0-9._-]{2,64}$/.test(id)) providers.add(id);
-        });
+        for (const [id, providerConfig] of Object.entries(
+          value as Record<string, unknown>,
+        )) {
+          if (!/^[a-zA-Z0-9._-]{2,64}$/.test(id)) continue;
+          providers.add(id);
+          if (providerConfig && typeof providerConfig === 'object') {
+            collectProviderModels(id, providerConfig as Record<string, unknown>);
+          }
+        }
       }
     }
   }
@@ -1537,8 +1870,35 @@ function inspectOpenCode(): OpenCodeInspection {
     configFound,
     authFound,
     providers: Array.from(providers).sort(),
+    models,
     keys,
   };
+}
+
+function openCodeProviderModels(opencode: OpenCodeInspection): ProviderModelItem[] {
+  const seen = new Set<string>();
+  const items: ProviderModelItem[] = [];
+  for (const model of opencode.models) {
+    if (seen.has(model.id)) continue;
+    seen.add(model.id);
+    items.push({
+      id: model.id,
+      label: model.label,
+      provider: 'opencode-free',
+      providerLabel: 'OpenCode',
+      note: model.providerId,
+      isFree: true,
+      upstream:
+        model.providerId === 'openrouter'
+          ? 'openrouter'
+          : model.providerId === 'deepseek'
+            ? 'deepseek'
+            : model.providerId === 'kieai'
+              ? 'kieai'
+              : undefined,
+    });
+  }
+  return items;
 }
 
 function getOrCreateSessionId(req: Request): { sessionId: string; isNew: boolean } {
@@ -1630,6 +1990,9 @@ function buildSettingsResponse(req: Request, sessionId?: string) {
       voiceModelId: studioSettings.voiceModelId,
       voiceStability: studioSettings.voiceStability,
       voiceSimilarityBoost: studioSettings.voiceSimilarityBoost,
+      voiceStyle: studioSettings.voiceStyle,
+      voiceSpeakerBoost: studioSettings.voiceSpeakerBoost,
+      voiceSpeed: studioSettings.voiceSpeed,
       visualStyle: studioSettings.visualStyle,
       aspectRatio: studioSettings.aspectRatio,
       fps: studioSettings.fps,
@@ -1638,6 +2001,8 @@ function buildSettingsResponse(req: Request, sessionId?: string) {
       creativeCodeMode: studioSettings.creativeCodeMode,
       scriptPacing: studioSettings.scriptPacing,
       captionAnimationStyle: studioSettings.captionAnimationStyle,
+      captionColors: studioSettings.captionColors,
+      captionBottomOffset: studioSettings.captionBottomOffset,
       wordsPerScreen: studioSettings.wordsPerScreen,
       captionsEnabled: studioSettings.captionsEnabled,
       brandKit: studioSettings.brandKit,
@@ -1692,45 +2057,54 @@ function normalizeVisualType(raw: string): string {
 }
 
 const SFX_CATALOG_IDS = new Set([
+  'whoosh-soft',
+  'whoosh-whip',
+  'pop-soft',
+  'click-subtle',
+  'slide',
+  'type-tick',
+  'toggle-soft',
+  'impact-soft',
+  // Legacy ids stay mapped to the clean CC0 assets for older saved projects.
   'whoosh-fast',
   'whoosh-deep',
   'pop-bubble',
   'pop-sharp',
-  'ding-success',
   'alert-warning',
   'cash-register',
   'typing-click',
-  'notification-chime',
   'cinematic-hit',
   'bass-drop',
   'riser-build',
 ]);
 
+const FORBIDDEN_SFX_IDS = new Set(['ding-success', 'notification-chime']);
+
 const SFX_AUTO_MATCH: Record<string, string> = {
-  'title-hero': 'cinematic-hit',
-  'stat-number': 'ding-success',
-  'comparison-box': 'whoosh-fast',
-  'bar-chart': 'pop-sharp',
-  'line-chart': 'riser-build',
-  'circular-gauge': 'bass-drop',
-  'step-timeline': 'typing-click',
-  'notification-card': 'notification-chime',
-  'warning-card': 'alert-warning',
-  'editorial-quote': 'whoosh-deep',
-  'bullet-list': 'pop-bubble',
-  cta: 'cash-register',
-  custom: 'pop-bubble',
-  'generative-scene': 'whoosh-deep',
+  'title-hero': 'impact-soft',
+  'stat-number': 'pop-soft',
+  'comparison-box': 'whoosh-soft',
+  'bar-chart': 'click-subtle',
+  'line-chart': 'slide',
+  'circular-gauge': 'impact-soft',
+  'step-timeline': 'type-tick',
+  'notification-card': 'click-subtle',
+  'warning-card': 'impact-soft',
+  'editorial-quote': 'whoosh-soft',
+  'bullet-list': 'pop-soft',
+  cta: 'click-subtle',
+  custom: 'pop-soft',
+  'generative-scene': 'whoosh-soft',
 };
 
 function resolveSceneSfxSrc(
   selection: string | undefined,
   visualType: string
 ): string | undefined {
-  const autoMatch = SFX_AUTO_MATCH[normalizeVisualType(visualType)] || 'pop-bubble';
+  const autoMatch = SFX_AUTO_MATCH[normalizeVisualType(visualType)] || 'pop-soft';
   const chosen = selection === 'auto' ? autoMatch : (selection || 'none').trim();
 
-  if (chosen === 'none' || !chosen) return undefined;
+  if (chosen === 'none' || !chosen || FORBIDDEN_SFX_IDS.has(chosen)) return undefined;
   if (SFX_CATALOG_IDS.has(chosen)) return `sfx/${chosen}.wav`;
 
   const candidate = chosen.replace(/^\/?sfx\//, '');
@@ -1767,7 +2141,7 @@ function buildFallbackScenes(
         visualValue: focus,
         layout: 'centered',
         camera: 'push-in',
-        sfxId: 'cinematic-hit',
+        sfxId: 'impact-soft',
         sfxAt: 0.2,
         showCharacter: true,
         durationSec: 4.2,
@@ -1828,7 +2202,7 @@ function buildFallbackScenes(
         visualValue: '+1 measurable change',
         layout: 'centered',
         camera: 'slow-zoom-in',
-        sfxId: 'ding-success',
+        sfxId: 'pop-soft',
         sfxAt: 0.3,
         showCharacter: true,
         durationSec: 4,
@@ -1874,7 +2248,7 @@ function buildFallbackScenes(
       visualValue: focus,
       layout: 'centered',
       camera: 'push-in',
-      sfxId: 'cinematic-hit',
+      sfxId: 'impact-soft',
       sfxAt: 0.2,
       showCharacter: true,
       durationSec: 4.2,
@@ -1935,7 +2309,7 @@ function buildFallbackScenes(
       visualValue: '+1 تحسّن قابل للقياس',
       layout: 'centered',
       camera: 'slow-zoom-in',
-      sfxId: 'ding-success',
+      sfxId: 'pop-soft',
       sfxAt: 0.3,
       showCharacter: true,
       durationSec: 4,
@@ -2086,34 +2460,34 @@ const SFX_SOFT_MOOD =
   /(هادئ|تأمل|سكون|صمت|حزين|حنين|ذكرى|دافئ|calm|soft|quiet|reflective|emotional|memory|gentle|intimate)/i;
 
 const SFX_BY_TYPE: Record<string, string> = {
-  'line-chart': 'riser-build',
-  'bar-chart': 'whoosh-fast',
-  'circular-gauge': 'bass-drop',
-  'stat-number': 'whoosh-deep',
-  'warning-card': 'alert-warning',
-  'comparison-box': 'whoosh-fast',
-  cta: 'cash-register',
+  'line-chart': 'slide',
+  'bar-chart': 'whoosh-soft',
+  'circular-gauge': 'impact-soft',
+  'stat-number': 'whoosh-soft',
+  'warning-card': 'impact-soft',
+  'comparison-box': 'whoosh-soft',
+  cta: 'click-subtle',
 };
 
 const SILENT_SFX_BY_TYPE: Record<string, string[]> = {
-  'title-hero': ['cinematic-hit', 'whoosh-deep', 'riser-build'],
-  'stat-number': ['ding-success', 'pop-sharp', 'bass-drop'],
-  'comparison-box': ['whoosh-fast', 'whoosh-deep', 'pop-sharp'],
-  'bar-chart': ['pop-sharp', 'typing-click', 'whoosh-fast'],
-  'line-chart': ['riser-build', 'whoosh-deep', 'bass-drop'],
-  'circular-gauge': ['bass-drop', 'riser-build', 'ding-success'],
-  'step-timeline': ['typing-click', 'pop-sharp', 'whoosh-fast'],
-  'notification-card': ['notification-chime', 'ding-success', 'pop-bubble'],
-  'warning-card': ['alert-warning', 'cinematic-hit', 'bass-drop'],
-  'editorial-quote': ['whoosh-deep', 'riser-build', 'notification-chime'],
-  'bullet-list': ['pop-bubble', 'pop-sharp', 'typing-click'],
-  cta: ['cash-register', 'ding-success', 'notification-chime'],
-  custom: ['pop-bubble', 'pop-sharp', 'whoosh-fast'],
-  'custom-tsx': ['whoosh-deep', 'pop-sharp', 'riser-build'],
-  'generative-scene': ['whoosh-deep', 'riser-build', 'pop-sharp'],
+  'title-hero': ['impact-soft', 'whoosh-soft', 'slide'],
+  'stat-number': ['pop-soft', 'click-subtle', 'whoosh-soft'],
+  'comparison-box': ['whoosh-soft', 'pop-soft', 'click-subtle'],
+  'bar-chart': ['click-subtle', 'type-tick', 'whoosh-soft'],
+  'line-chart': ['slide', 'whoosh-soft', 'impact-soft'],
+  'circular-gauge': ['impact-soft', 'slide', 'pop-soft'],
+  'step-timeline': ['type-tick', 'click-subtle', 'whoosh-soft'],
+  'notification-card': ['click-subtle', 'pop-soft', 'type-tick'],
+  'warning-card': ['impact-soft', 'whoosh-soft', 'slide'],
+  'editorial-quote': ['whoosh-soft', 'slide', 'click-subtle'],
+  'bullet-list': ['pop-soft', 'click-subtle', 'type-tick'],
+  cta: ['click-subtle', 'pop-soft', 'slide'],
+  custom: ['pop-soft', 'click-subtle', 'whoosh-soft'],
+  'custom-tsx': ['whoosh-soft', 'click-subtle', 'slide'],
+  'generative-scene': ['whoosh-soft', 'slide', 'pop-soft'],
 };
 
-const SILENT_SFX_CALM = ['whoosh-deep', 'riser-build', 'notification-chime'];
+const SILENT_SFX_CALM = ['whoosh-soft', 'slide', 'click-subtle'];
 
 type CurateSfxOptions = {
   voiceoverEnabled?: boolean;
@@ -2170,38 +2544,58 @@ function curateSceneSfx(
   });
 
   const chosen = new Set<number>();
+  const pickWithBreathingRoom = (
+    candidates: typeof evaluations,
+    target: number,
+  ): Set<number> => {
+    const result = new Set<number>();
+    for (const entry of candidates) {
+      if (result.has(entry.index)) continue;
+      if (result.has(entry.index - 1) || result.has(entry.index + 1)) continue;
+      result.add(entry.index);
+      if (result.size >= target) break;
+    }
+    return result;
+  };
+
   if (silentVisualMode) {
-    const minTarget = Math.min(
-      scenes.length,
-      Math.ceil(scenes.length * 0.85),
-    );
     const target = Math.min(
       scenes.length,
-      Math.max(minTarget, Math.round(scenes.length * 0.92)),
+      Math.max(1, Math.ceil(scenes.length * 0.6)),
     );
-    evaluations
+    const candidates = evaluations
       .slice()
       .sort(
         (a, b) =>
           Number(b.explicit) - Number(a.explicit) ||
           b.score - a.score ||
           a.index - b.index,
-      )
-      .slice(0, target)
-      .forEach((entry) => chosen.add(entry.index));
+      );
+    for (const index of pickWithBreathingRoom(candidates, target)) {
+      chosen.add(index);
+    }
   } else {
     const maxSfx = Math.max(0, Math.floor(scenes.length * 0.35));
     if (!topicNight) {
-      evaluations
+      const candidates = evaluations
         .filter(
           (entry) =>
             !entry.night && !entry.calm && entry.pivotal && entry.score > 0,
         )
-        .sort((a, b) => b.score - a.score || a.index - b.index)
-        .slice(0, maxSfx)
-        .forEach((entry) => chosen.add(entry.index));
+        .sort((a, b) => b.score - a.score || a.index - b.index);
+      for (const index of pickWithBreathingRoom(candidates, maxSfx)) {
+        chosen.add(index);
+      }
     }
   }
+
+  const earlySfxStart = (scene: RenderScenePayload, fallback: number): number => {
+    const duration = Math.max(0.5, Number(scene.durationSec) || 0);
+    const maxStart = Math.max(0.12, Math.min(1.2, duration * 0.25));
+    const requested = Number(scene.sfxAt);
+    const start = Number.isFinite(requested) ? requested : fallback;
+    return Number(Math.min(maxStart, Math.max(0.12, start)).toFixed(2));
+  };
 
   return scenes.map((scene, index) => {
     const entry = evaluations[index];
@@ -2214,42 +2608,41 @@ function curateSceneSfx(
         ? scene.sfxId
         : '';
     const explicitSound =
-      previousSound && SFX_CATALOG_IDS.has(previousSound) ? previousSound : '';
+      previousSound &&
+      !FORBIDDEN_SFX_IDS.has(previousSound) &&
+      SFX_CATALOG_IDS.has(previousSound)
+        ? previousSound
+        : '';
 
     if (silentVisualMode) {
       const palette =
         entry.night || entry.calm
           ? SILENT_SFX_CALM
           : SILENT_SFX_BY_TYPE[entry.type] || [
-              'pop-bubble',
-              'pop-sharp',
-              'whoosh-fast',
+              'pop-soft',
+              'click-subtle',
+              'whoosh-soft',
             ];
       const sound =
-        explicitSound || palette[index % palette.length] || 'pop-bubble';
+        explicitSound || palette[index % palette.length] || 'pop-soft';
       return {
         ...scene,
         sfxId: sound,
-        sfxAt: Number.isFinite(Number(scene.sfxAt))
-          ? Math.min(2, Math.max(0, Number(scene.sfxAt)))
-          : Math.min(0.45, Number((0.15 + (index % 4) * 0.07).toFixed(2))),
+        sfxAt: earlySfxStart(
+          scene,
+          Math.min(0.45, 0.15 + (index % 4) * 0.07),
+        ),
       };
     }
 
-    const brightSound =
-      previousSound === 'ding-success' ||
-      previousSound === 'pop-bubble' ||
-      previousSound === 'pop-sharp';
     const sound =
-      entry.night || entry.calm || brightSound
-        ? SFX_BY_TYPE[entry.type] || 'whoosh-deep'
-        : explicitSound || SFX_BY_TYPE[entry.type] || 'whoosh-fast';
+      entry.night || entry.calm
+        ? SFX_BY_TYPE[entry.type] || 'whoosh-soft'
+        : explicitSound || SFX_BY_TYPE[entry.type] || 'whoosh-soft';
     return {
       ...scene,
       sfxId: sound,
-      sfxAt: Number.isFinite(Number(scene.sfxAt))
-        ? Math.min(2, Math.max(0, Number(scene.sfxAt)))
-        : 0.2,
+      sfxAt: earlySfxStart(scene, 0.2),
     };
   });
 }
@@ -2319,6 +2712,9 @@ function sceneAudioCacheHash(
     modelId: string;
     stability: number;
     similarityBoost: number;
+    style: number;
+    speakerBoost: boolean;
+    speed: number;
   },
 ): string {
   return contentHash({
@@ -2327,6 +2723,9 @@ function sceneAudioCacheHash(
     modelId: voice.modelId,
     stability: voice.stability,
     similarityBoost: voice.similarityBoost,
+    style: voice.style,
+    speakerBoost: voice.speakerBoost,
+    speed: voice.speed,
   });
 }
 
@@ -2358,10 +2757,14 @@ function sceneSegmentCacheHash(
     creativeCodeMode: job.creativeCodeMode,
     scriptPacing: job.scriptPacing,
     captionAnimationStyle: job.captionAnimationStyle,
+    captionColors: job.captionColors,
+    captionBottomOffset: job.captionBottomOffset,
     wordsPerScreen: job.wordsPerScreen,
     captionsEnabled: job.captionsEnabled,
     voiceoverEnabled: job.voiceoverEnabled,
+    cleanBrollMode: job.cleanBrollMode,
     sfxEnabled: job.sfxEnabled,
+    transitionDurationInFrames: TRANSITION_DURATION_IN_FRAMES,
     startFrame,
     endFrame,
   });
@@ -2374,6 +2777,9 @@ function seedSceneAudioCache(
     modelId: string;
     stability: number;
     similarityBoost: number;
+    style: number;
+    speakerBoost: boolean;
+    speed: number;
   },
 ): void {
   const cache = loadSceneArtifactCache();
@@ -2391,6 +2797,41 @@ function seedSceneAudioCache(
     changed = true;
   }
   if (changed) saveSceneArtifactCache();
+}
+
+function sceneDurationInFrames(scene: RenderScenePayload, fps: number): number {
+  const explicit = Number(scene.durationInFrames);
+  if (Number.isFinite(explicit) && explicit > 0) {
+    return Math.max(1, Math.round(explicit));
+  }
+  return Math.max(1, Math.round(scene.durationSec * fps));
+}
+
+function applyPromptOnlyPacing(
+  scenes: RenderScenePayload[],
+  targetDuration: ExportTargetDuration | undefined,
+  fps: number,
+): number {
+  if (scenes.length === 0) return 0;
+  const effective = targetDuration && targetDuration !== 'auto' ? targetDuration : '60';
+  const seconds = Number(effective);
+  if (!Number.isFinite(seconds) || seconds <= 0) return 0;
+
+  const targetFrames = Math.max(1, Math.round(seconds * fps));
+  const contentFrames = Math.max(scenes.length, targetFrames);
+  const baseFrames = Math.floor(contentFrames / scenes.length);
+  const remainder = contentFrames - baseFrames * scenes.length;
+
+  scenes.forEach((scene, index) => {
+    const frames = Math.max(1, baseFrames + (index < remainder ? 1 : 0));
+    scene.audioSrc = undefined;
+    scene.audioDataUrl = undefined;
+    scene.audioDuration = undefined;
+    scene.durationInFrames = frames;
+    scene.durationSec = Number((frames / fps).toFixed(6));
+  });
+
+  return targetFrames;
 }
 
 function sceneWindows(scenes: RenderScenePayload[]): Array<{
@@ -2544,19 +2985,21 @@ function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
     const poseRaw = typeof record.pose === 'string' ? record.pose.toLowerCase() : 'explaining';
     const typeRaw = typeof record.visualType === 'string' ? record.visualType.toLowerCase() : 'stat-number';
     const durationRaw = Number(record.durationSec);
+    const durationFramesRaw = Number(record.durationInFrames);
     const audioDataUrl = typeof record.audioDataUrl === 'string' ? record.audioDataUrl : undefined;
     const audioSrc = typeof record.audioSrc === 'string' ? record.audioSrc : undefined;
     const audioDurationRaw = Number(record.audioDuration);
-    const sfxId =
+    const sfxIdRaw =
       typeof record.sfxId === 'string' && record.sfxId.trim()
         ? record.sfxId.trim().slice(0, 300)
         : 'none';
+    const sfxId = FORBIDDEN_SFX_IDS.has(sfxIdRaw) ? 'none' : sfxIdRaw;
     const sfxPrompt =
       typeof record.sfxPrompt === 'string' && record.sfxPrompt.trim()
         ? record.sfxPrompt.trim().slice(0, 450)
         : undefined;
     const sfxAtRaw = Number(record.sfxAt);
-    const sfxCues = normalizeSfxCues(record.sfxCues);
+    const sfxCues = normalizeSfxCues(record.sfxCues)?.slice(0, 1);
     const layoutRaw = typeof record.layout === 'string' ? record.layout.toLowerCase() : '';
     const cameraRaw = typeof record.camera === 'string' ? record.camera.toLowerCase() : '';
     const background =
@@ -2656,7 +3099,14 @@ function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
       characters,
       characterLayout,
       ambientScene,
-      durationSec: Number.isFinite(durationRaw) && durationRaw >= 2 && durationRaw <= 30 ? Number(durationRaw.toFixed(1)) : 4,
+      durationSec:
+        Number.isFinite(durationRaw) && durationRaw > 0
+          ? Number(durationRaw.toFixed(3))
+          : 4,
+      durationInFrames:
+        Number.isFinite(durationFramesRaw) && durationFramesRaw > 0
+          ? Math.max(1, Math.round(durationFramesRaw))
+          : undefined,
     };
   });
 }
@@ -2733,7 +3183,74 @@ type MediaFileInfo = {
   url: string;
 };
 
-let remotionStudioProcess: import('node:child_process').ChildProcess | null = null;
+let remotionStudioProcess: ChildProcess | null = null;
+let remotionStudioUiProcess: ChildProcess | null = null;
+let lastStudioSpawnError: string | null = null;
+
+type StudioProcessKind = 'studio' | 'studio-ui';
+
+interface StudioLaunchResult {
+  running: boolean;
+  started: boolean;
+  port: number;
+  url: string;
+  pid?: number;
+  pids?: number[];
+  recovered?: boolean;
+  external?: boolean;
+  error?: string;
+}
+
+const activeExportProcesses = new Set<ChildProcess>();
+const cancelledExportJobs = new Set<string>();
+const exportStreamEmitters = new Map<
+  string,
+  (eventName: string, payload: Record<string, unknown>) => void
+>();
+
+function trackExportProcess(child: ChildProcess): ChildProcess {
+  activeExportProcesses.add(child);
+  const cleanup = () => {
+    activeExportProcesses.delete(child);
+  };
+  child.once('close', cleanup);
+  child.once('error', cleanup);
+  return child;
+}
+
+function killProcessTree(child: ChildProcess): void {
+  if (!child || child.killed) return;
+  try {
+    if (child.pid && process.platform !== 'win32') {
+      process.kill(-child.pid, 'SIGKILL');
+      return;
+    }
+  } catch {
+    // Fall back to killing the direct child below.
+  }
+  try {
+    child.kill('SIGKILL');
+  } catch {
+    // Process already exited.
+  }
+}
+
+function killAllExportProcesses(): void {
+  for (const child of Array.from(activeExportProcesses)) {
+    killProcessTree(child);
+  }
+  activeExportProcesses.clear();
+}
+
+function isExportCancelled(jobId: string): boolean {
+  return cancelledExportJobs.has(jobId);
+}
+
+function throwIfExportCancelled(jobId: string): void {
+  if (isExportCancelled(jobId)) {
+    throw new Error('تم إيقاف عملية التصدير بواسطة المستخدم.');
+  }
+}
 
 function listMediaFiles(dir: string, type: MediaFileInfo['type'], urlPrefix: string): MediaFileInfo[] {
   try {
@@ -2806,53 +3323,333 @@ function checkPortOpen(port: number, host = '127.0.0.1'): Promise<boolean> {
   });
 }
 
-async function ensureRemotionStudio(): Promise<{
-  running: boolean;
-  started: boolean;
-  url: string;
-  port: number;
-}> {
-  const url = REMOTION_STUDIO_URL;
-  const port = REMOTION_STUDIO_PORT;
-  if (await checkPortOpen(port)) {
-    return { running: true, started: false, url, port };
-  }
+const STUDIO_START_TIMEOUT_MS = 45_000;
+const STUDIO_START_POLL_MS = 400;
 
-  fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
-  const logStream = fs.createWriteStream(STUDIO_LOG_FILE, { flags: 'a' });
+function isProcessAlive(child: ChildProcess | null): child is ChildProcess {
+  return Boolean(
+    child &&
+      child.pid &&
+      child.exitCode === null &&
+      child.signalCode === null &&
+      !child.killed,
+  );
+}
+
+function trackedStudioProcess(kind: StudioProcessKind): ChildProcess | null {
+  return kind === 'studio' ? remotionStudioProcess : remotionStudioUiProcess;
+}
+
+function setTrackedStudioProcess(kind: StudioProcessKind, child: ChildProcess | null): void {
+  if (kind === 'studio') {
+    remotionStudioProcess = child;
+  } else {
+    remotionStudioUiProcess = child;
+  }
+}
+
+function resolveRemotionCli(): { command: string; args: string[] } {
+  const cliPath = path.join(
+    PROJECT_ROOT,
+    'node_modules',
+    '@remotion',
+    'cli',
+    'remotion-cli.js',
+  );
+  if (fs.existsSync(cliPath)) {
+    return { command: process.execPath, args: [cliPath] };
+  }
+  return {
+    command: process.platform === 'win32' ? 'npx.cmd' : 'npx',
+    args: ['remotion'],
+  };
+}
+
+function openStudioLogFd(): number | null {
   try {
-    if (!remotionStudioProcess || remotionStudioProcess.killed) {
-      remotionStudioProcess = spawn(
-        'npx',
-        [
-          'remotion',
-          'studio',
-          path.relative(PROJECT_ROOT, REMOTION_ENTRY),
-          '--port',
-          String(port),
-          '--host',
-          '127.0.0.1',
-        ],
-        {
-          cwd: PROJECT_ROOT,
-          env: { ...process.env },
-          detached: true,
-          stdio: ['ignore', logStream, logStream],
-        },
-      );
-      remotionStudioProcess.unref();
-    }
+    fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+    // Open synchronously so the descriptor exists before spawn(); a lazily
+    // created WriteStream has fd: null at this point and spawn() rejects it.
+    return fs.openSync(STUDIO_LOG_FILE, 'a');
   } catch {
-    return { running: false, started: false, url, port };
+    return null;
+  }
+}
+
+function spawnStudioProcess(port: number, kind: StudioProcessKind): ChildProcess {
+  lastStudioSpawnError = null;
+  const { command, args } = resolveRemotionCli();
+  const logFd = openStudioLogFd();
+  const logStdio = logFd === null ? 'ignore' : logFd;
+  let child: ChildProcess;
+  try {
+    child = spawn(
+      command,
+      [
+        ...args,
+        'studio',
+        path.relative(PROJECT_ROOT, REMOTION_ENTRY),
+        '--port',
+        String(port),
+        '--host',
+        '127.0.0.1',
+        '--no-open',
+      ],
+      {
+        cwd: PROJECT_ROOT,
+        env: { ...process.env },
+        // Detached keeps Studio in its own process group so it survives the
+        // dashboard request/server lifecycle and keeps running after export.
+        detached: process.platform !== 'win32',
+        stdio: ['ignore', logStdio, logStdio],
+        windowsHide: true,
+      },
+    );
+  } finally {
+    // The child holds a duplicated descriptor; the parent copy is no longer
+    // needed once spawn() returns.
+    if (logFd !== null) {
+      try {
+        fs.closeSync(logFd);
+      } catch {
+        // Ignore double-close races.
+      }
+    }
   }
 
-  for (let attempt = 0; attempt < 30; attempt += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    if (await checkPortOpen(port)) {
-      return { running: true, started: true, url, port };
+  const clearReference = () => {
+    if (trackedStudioProcess(kind) === child) {
+      setTrackedStudioProcess(kind, null);
+    }
+  };
+
+  child.once('error', (error) => {
+    lastStudioSpawnError = error instanceof Error ? error.message : String(error);
+    console.error(`[studio] ${kind} failed to start:`, error);
+    clearReference();
+  });
+  child.once('exit', (code, signal) => {
+    console.warn(`[studio] ${kind} exited (code=${code ?? 'null'}, signal=${signal ?? 'null'})`);
+    clearReference();
+  });
+
+  setTrackedStudioProcess(kind, child);
+  child.unref();
+  return child;
+}
+
+async function checkStudioHttp(port: number): Promise<boolean> {
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(2000),
+    });
+    return response.status > 0;
+  } catch {
+    return false;
+  }
+}
+
+async function waitForStudio(
+  port: number,
+  child: ChildProcess,
+  timeoutMs: number,
+): Promise<'ready' | 'exited' | 'timeout'> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (!isProcessAlive(child)) {
+      return (await checkPortOpen(port)) && (await checkStudioHttp(port)) ? 'ready' : 'exited';
+    }
+    if ((await checkPortOpen(port)) && (await checkStudioHttp(port))) {
+      return 'ready';
+    }
+    await new Promise((resolve) => setTimeout(resolve, STUDIO_START_POLL_MS));
+  }
+  return 'timeout';
+}
+
+const studioLaunchPromises = new Map<StudioProcessKind, Promise<StudioLaunchResult>>();
+
+async function ensureStudioProcess(
+  kind: StudioProcessKind,
+  port: number,
+  timeoutMs = STUDIO_START_TIMEOUT_MS,
+): Promise<StudioLaunchResult> {
+  const inFlight = studioLaunchPromises.get(kind);
+  if (inFlight) return inFlight;
+
+  const launch = launchStudioProcess(kind, port, timeoutMs).finally(() => {
+    if (studioLaunchPromises.get(kind) === launch) {
+      studioLaunchPromises.delete(kind);
+    }
+  });
+  studioLaunchPromises.set(kind, launch);
+  return launch;
+}
+
+async function launchStudioProcess(
+  kind: StudioProcessKind,
+  port: number,
+  timeoutMs: number,
+): Promise<StudioLaunchResult> {
+  const url = `http://localhost:${port}`;
+  const tracked = trackedStudioProcess(kind);
+  const trackedAlive = isProcessAlive(tracked);
+
+  if (!trackedAlive && (await checkPortOpen(port))) {
+    if (await checkStudioHttp(port)) {
+      return {
+        running: true,
+        started: false,
+        external: true,
+        port,
+        url,
+      };
+    }
+    const pids = await findPidsOnPort(port);
+    return {
+      running: false,
+      started: false,
+      port,
+      url,
+      pids,
+      error:
+        pids.length > 0
+          ? `المنفذ ${port} مشغول بعملية أخرى (PID: ${pids.join(', ')}). أوقفها أو أعد تشغيل خادم Zof Studio ثم أعد المحاولة.`
+          : `المنفذ ${port} مفتوح لكنه لا يستجيب لـ Remotion Studio. تحقق من العمليات التي تستخدمه ثم أعد المحاولة.`,
+    };
+  }
+
+  let child = trackedAlive ? tracked : null;
+  if (!child) {
+    try {
+      child = spawnStudioProcess(port, kind);
+    } catch (error) {
+      return {
+        running: false,
+        started: false,
+        port,
+        url,
+        error: error instanceof Error ? error.message : 'تعذر تشغيل Remotion Studio.',
+      };
     }
   }
-  return { running: false, started: true, url, port };
+
+  let status = await waitForStudio(port, child, timeoutMs);
+  let recovered = false;
+
+  if (status === 'exited') {
+    // The previous launch exited early (stale instance, crash, or a port race).
+    // Clear the dead reference and try exactly once more so the dashboard can
+    // recover without needing a server restart.
+    setTrackedStudioProcess(kind, null);
+    try {
+      child = spawnStudioProcess(port, kind);
+      recovered = true;
+      status = await waitForStudio(port, child, timeoutMs);
+    } catch (error) {
+      return {
+        running: false,
+        started: true,
+        recovered: true,
+        port,
+        url,
+        error: error instanceof Error ? error.message : 'تعذر تشغيل Remotion Studio.',
+      };
+    }
+  }
+
+  if (status === 'ready') {
+    return {
+      running: true,
+      started: true,
+      recovered,
+      port,
+      url,
+      ...(isProcessAlive(child) && child.pid ? { pid: child.pid } : {}),
+    };
+  }
+
+  return {
+    running: false,
+    started: true,
+    recovered,
+    port,
+    url,
+    error:
+      status === 'exited'
+        ? lastStudioSpawnError
+          ? `توقف Remotion Studio مباشرة بعد التشغيل: ${lastStudioSpawnError}`
+          : 'توقف Remotion Studio مباشرة بعد التشغيل. راجع سجل Studio ثم أعد المحاولة.'
+        : `تعذر تشغيل Remotion Studio على المنفذ ${port} خلال ${Math.round(timeoutMs / 1000)} ثانية.`,
+  };
+}
+
+async function ensureRemotionStudio(): Promise<StudioLaunchResult> {
+  return ensureStudioProcess('studio', REMOTION_STUDIO_PORT);
+}
+
+function findPidsOnPort(port: number): Promise<number[]> {
+  return new Promise((resolve) => {
+    execFile(
+      'lsof',
+      ['-ti', `tcp:${port}`],
+      { timeout: 5000, maxBuffer: 1024 * 1024 },
+      (error, stdout) => {
+        if (error && !stdout) {
+          resolve([]);
+          return;
+        }
+        const pids = String(stdout || '')
+          .split(/\s+/)
+          .map((value) => Number(value))
+          .filter((value) => Number.isInteger(value) && value > 0 && value !== process.pid);
+        resolve(Array.from(new Set(pids)));
+      },
+    );
+  });
+}
+
+async function ensureRemotionStudioUi(): Promise<StudioLaunchResult> {
+  return ensureStudioProcess('studio-ui', REMOTION_STUDIO_UI_PORT);
+}
+
+async function stopRemotionStudioUi(): Promise<{
+  ok: boolean;
+  running: boolean;
+  port: number;
+  pids?: number[];
+  error?: string;
+}> {
+  const port = REMOTION_STUDIO_UI_PORT;
+  const tracked = trackedStudioProcess('studio-ui');
+  if (isProcessAlive(tracked)) {
+    killProcessTree(tracked);
+  }
+  setTrackedStudioProcess('studio-ui', null);
+
+  const pids = await findPidsOnPort(port);
+  for (const pid of pids) {
+    try {
+      process.kill(pid, 'SIGKILL');
+    } catch {
+      // Process may already be gone.
+    }
+  }
+
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    if (!(await checkPortOpen(port))) {
+      return { ok: true, running: false, port };
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return {
+    ok: false,
+    running: await checkPortOpen(port),
+    port,
+    pids,
+    error: 'تعذر إيقاف Remotion Studio — ما زال المنفذ مشغولاً.',
+  };
 }
 
 const ELEMENT_TO_VISUAL_TYPE: Record<string, string> = {
@@ -3008,6 +3805,11 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
         Number.isFinite(Number(scene.duration)) && Number(scene.duration) > 0
           ? Number(scene.duration)
           : 4,
+      durationInFrames:
+        Number.isFinite(Number(scene.durationInFrames)) &&
+        Number(scene.durationInFrames) > 0
+          ? Math.max(1, Math.round(Number(scene.durationInFrames)))
+          : undefined,
     };
   });
 
@@ -3023,6 +3825,20 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
           ? 'smart-mix'
           : 'stickman';
   const brand = data.brand_kit || {};
+  const brandKit: RenderBrandKit = {
+    accentColor: colorSetting(
+      brand.accent ?? brand.primary,
+      DEFAULT_BRAND_KIT.accentColor,
+    ),
+    bgColor: colorSetting(brand.background, DEFAULT_BRAND_KIT.bgColor),
+    textColor: colorSetting(brand.text, DEFAULT_BRAND_KIT.textColor),
+    primaryColor: colorSetting(brand.primary, DEFAULT_BRAND_KIT.primaryColor),
+    secondaryColor: colorSetting(brand.secondary, DEFAULT_BRAND_KIT.secondaryColor),
+    watermark:
+      typeof brand.watermark === 'string' ? brand.watermark.slice(0, 60) : DEFAULT_BRAND_KIT.watermark,
+    watermarkEnabled: brand.watermark_enabled !== false,
+    watermarkPosition: normalizeWatermarkPosition(brand.watermark_position),
+  };
 
   return {
     topic: data.meta?.topic || '',
@@ -3033,11 +3849,18 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
     voiceModelId: studioSettings.voiceModelId,
     voiceStability: studioSettings.voiceStability,
     voiceSimilarityBoost: studioSettings.voiceSimilarityBoost,
+    voiceStyle: studioSettings.voiceStyle,
+    voiceSpeakerBoost: studioSettings.voiceSpeakerBoost,
+    voiceSpeed: studioSettings.voiceSpeed,
     voiceoverEnabled: true,
+    cleanBrollMode: false,
     visualStyle: style,
     aspectRatio,
     fps: Number(data.fps) === 30 ? 30 : 60,
-    scriptLanguage: data.script_language === 'en' ? 'en' : 'ar',
+    scriptLanguage: normalizeVideoLanguage(
+      data.script_language ?? data.language,
+      DEFAULT_VIDEO_LANGUAGE,
+    ),
     scriptDepth: normalizeScriptDepth(data.script_depth, 'analytical'),
     creativeCodeMode: normalizeCreativeCodeMode(data.creative_code_mode, 'creative'),
     scriptPacing: normalizeScriptPacing(data.script_pacing, 'fast'),
@@ -3045,6 +3868,8 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
       data.caption?.animation_style?.replace(/_/g, '-'),
       'auto',
     ),
+    captionColors: normalizeCaptionColors(data.caption?.colors, brandKit),
+    captionBottomOffset: normalizeCaptionBottomOffset(data.caption?.bottom_offset),
     wordsPerScreen: normalizeWordsPerScreen(
       data.caption?.words_per_screen !== undefined
         ? String(data.caption.words_per_screen)
@@ -3052,14 +3877,7 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
       'auto',
     ),
     captionsEnabled: data.caption?.enabled !== false,
-    brandKit: {
-      accentColor: colorSetting(brand.primary, DEFAULT_BRAND_KIT.accentColor),
-      bgColor: colorSetting(brand.background, DEFAULT_BRAND_KIT.bgColor),
-      watermark:
-        typeof brand.watermark === 'string' ? brand.watermark.slice(0, 60) : DEFAULT_BRAND_KIT.watermark,
-      watermarkEnabled: brand.watermark_enabled !== false,
-      watermarkPosition: normalizeWatermarkPosition(brand.watermark_position),
-    },
+    brandKit,
     sfxEnabled: data.sfx?.enabled !== false,
     sfxVolume: clampNumber(data.sfx?.volume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
     sfxMode: 'auto',
@@ -3077,10 +3895,14 @@ function buildProjectVideoData(project: ProjectStatePayload): ParentVideoData {
     aspectRatio: project.aspectRatio,
     fps: project.fps,
     voiceoverEnabled: project.voiceoverEnabled,
+    cleanBrollMode: project.cleanBrollMode,
     voiceId: project.voiceId,
     modelId: project.voiceModelId,
     voiceStability: project.voiceStability,
     voiceSimilarityBoost: project.voiceSimilarityBoost,
+    voiceStyle: project.voiceStyle,
+    voiceSpeakerBoost: project.voiceSpeakerBoost,
+    voiceSpeed: project.voiceSpeed,
     sfxEnabled: project.sfxEnabled,
     sfxVolume: project.sfxVolume,
     sfxMode: project.sfxMode,
@@ -3091,8 +3913,11 @@ function buildProjectVideoData(project: ProjectStatePayload): ParentVideoData {
     creativeCodeMode: project.creativeCodeMode,
     scriptPacing: project.scriptPacing,
     captionAnimationStyle: project.captionAnimationStyle,
+    captionColors: project.captionColors,
+    captionBottomOffset: project.captionBottomOffset,
     wordsPerScreen: project.wordsPerScreen,
     captionsEnabled: project.captionsEnabled,
+    enable25D: false,
     elevenlabsKey: '',
     status: 'queued',
   };
@@ -3289,7 +4114,7 @@ function buildParentScene(
   ]);
   const showCharacter =
     visualStyle === 'stickman'
-      ? true
+      ? (scene.showCharacter ?? index === 0)
       : visualStyle === 'smart-mix'
         ? (scene.showCharacter ?? (!dataHeavyTypes.has(type) && index % 2 === 0))
         : false;
@@ -3529,7 +4354,10 @@ function buildParentScene(
       `linear-gradient(160deg, transparent 20%, ${hexToRgba(accent, 0.18)} 100%)`,
     ][index % 4];
 
-  const sfxCues = sfxEnabled
+  const sceneSfxSrc = resolveSceneSfxSrc(scene.sfxId, scene.visualType);
+  const sceneFrames = sceneDurationInFrames(scene, fps);
+  const lastSafeCueFrame = Math.max(1, sceneFrames - Math.round(fps * 0.5));
+  let sfxCues = sfxEnabled && !sceneSfxSrc
     ? scene.sfxCues && scene.sfxCues.length > 0
       ? scene.sfxCues
       : buildStaggeredSfxCues({
@@ -3537,8 +4365,12 @@ function buildParentScene(
           durationSec: scene.durationSec,
           elements,
           mode: voiceoverEnabled ? 'voiceover' : 'silent',
+          maxCues: 1,
         })
     : [];
+  sfxCues = sfxCues
+    .filter((cue) => cue.frameOffset < lastSafeCueFrame)
+    .slice(0, 1);
 
   return {
     id: scene.id,
@@ -3547,11 +4379,12 @@ function buildParentScene(
     subtitle: label,
     caption: scene.narration,
     duration: scene.durationSec,
+    durationInFrames: sceneFrames,
     audioSrc:
       scene.audioSrc ||
       (scene.audioDataUrl?.startsWith('/audio/') ? scene.audioDataUrl.slice(1) : undefined),
     audioDuration: scene.audioDuration,
-    sfxSrc: resolveSceneSfxSrc(scene.sfxId, scene.visualType),
+    sfxSrc: sceneSfxSrc,
     sfxAt: scene.sfxAt,
     ...(sfxCues.length > 0 ? { sfxCues } : {}),
     layout,
@@ -3600,6 +4433,9 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
   const firstTitle = job.scenes[0]?.title || existing?.meta?.title || 'Zof Studio';
   const accent = safeColor(job.brandKit.accentColor, '#E77B40');
   const background = safeColor(job.brandKit.bgColor, '#0B0F17');
+  const primary = safeColor(job.brandKit.primaryColor, accent);
+  const secondary = safeColor(job.brandKit.secondaryColor, '#FBBF24');
+  const text = safeColor(job.brandKit.textColor, '#F8FAFC');
 
   return {
     meta: {
@@ -3610,6 +4446,11 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
     width,
     height,
     fps: job.fps,
+    durationInFrames:
+      job.scenes.reduce(
+        (total, scene) => total + sceneDurationInFrames(scene, job.fps),
+        0,
+      ) + (job.scenes.length > 1 ? TRANSITION_DURATION_IN_FRAMES : 0),
     style: mapVisualStyle(job.visualStyle),
     script_language: job.scriptLanguage,
     script_depth: job.scriptDepth,
@@ -3619,19 +4460,26 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
       animation_style: parentCaptionStyle(job.captionAnimationStyle),
       words_per_screen: parentWordsPerScreen(job.wordsPerScreen),
       lead_in: 0.2,
+      colors: {
+        background: job.captionColors.background,
+        text: job.captionColors.text,
+        highlight: job.captionColors.highlight,
+      },
+      bottom_offset: job.captionBottomOffset,
       enabled: job.captionsEnabled && job.voiceoverEnabled,
     },
     brand_kit: {
       name: 'ZOF',
-      primary: accent,
-      secondary:
-        typeof existingKit?.secondary === 'string' ? existingKit.secondary : '#FBBF24',
+      primary,
+      secondary,
       accent,
       success:
         typeof existingKit?.success === 'string' ? existingKit.success : '#16A34A',
       danger:
         typeof existingKit?.danger === 'string' ? existingKit.danger : '#DC2626',
       background,
+      text,
+      muted: hexToRgba(text, 0.72),
       watermark: job.brandKit.watermark.slice(0, 60),
       watermark_enabled: job.brandKit.watermarkEnabled,
       watermark_position: job.brandKit.watermarkPosition,
@@ -3651,9 +4499,62 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
         job.sfxEnabled,
       );
       if (job.voiceoverEnabled) return parentScene;
-      return { ...parentScene, audioSrc: undefined, audioDuration: undefined };
+      return {
+        ...parentScene,
+        caption: '',
+        audioSrc: '',
+        audioDuration: undefined,
+      };
     }),
   };
+}
+
+function resetActiveCompositionMetadata(job: RenderJob): ParentVideoData {
+  const videoData = buildParentVideoData(job, job.masterPrompt);
+  const silent = !job.voiceoverEnabled;
+  if (silent) {
+    for (const scene of job.scenes) {
+      scene.audioSrc = '';
+      scene.audioDataUrl = undefined;
+      scene.audioDuration = undefined;
+    }
+  }
+  const scenes = videoData.scenes.map((scene, index) => {
+    const source = job.scenes[index];
+    const durationInFrames = source
+      ? sceneDurationInFrames(source, job.fps)
+      : scene.durationInFrames;
+    return {
+      ...scene,
+      duration: source ? source.durationSec : scene.duration,
+      durationInFrames,
+      ...(silent
+        ? { caption: '', audioSrc: '', audioDuration: undefined }
+        : {}),
+    };
+  });
+  const { width, height } = aspectDimensions(job.aspectRatio);
+  const caption = videoData.caption ?? {
+    animation_style: 'auto',
+    words_per_screen: 'auto' as const,
+    lead_in: 0.2,
+  };
+  const next: ParentVideoData = {
+    ...videoData,
+    width,
+    height,
+    fps: job.fps,
+    durationInFrames:
+      scenes.reduce(
+        (total, scene) => total + (scene.durationInFrames ?? 0),
+        0,
+      ) + (scenes.length > 1 ? TRANSITION_DURATION_IN_FRAMES : 0),
+    ...(silent ? { caption: { ...caption, enabled: false } } : {}),
+    scenes,
+  };
+  job.videoData = next;
+  writeJsonFile(DATA_FILE, next);
+  return next;
 }
 
 function parseRemainingTimeLabel(raw: string): number | null {
@@ -3702,6 +4603,11 @@ function runRemotionRender(
   },
 ): Promise<{ outputPath: string; outputFile: string }> {
   return new Promise((resolve, reject) => {
+    if (isExportCancelled(job.id)) {
+      reject(new Error('تم إيقاف عملية التصدير بواسطة المستخدم.'));
+      return;
+    }
+
     fs.mkdirSync(OUT_DIR, { recursive: true });
 
     const outputPath = options?.outputPath ?? path.join(OUT_DIR, `${job.id}.mp4`);
@@ -3734,7 +4640,9 @@ function runRemotionRender(
       cwd: PROJECT_ROOT,
       env: { ...process.env },
       stdio: ['ignore', 'pipe', 'pipe'],
+      detached: process.platform !== 'win32',
     });
+    trackExportProcess(child);
 
     let lastProgress = 0;
     let stderrBuffer = '';
@@ -3867,6 +4775,7 @@ async function concatSceneSegments(
     ],
     PROJECT_ROOT,
     300000,
+    true,
   );
   if (!result.ok || !fs.existsSync(outputPath)) {
     try {
@@ -3886,12 +4795,13 @@ async function renderJobWithSceneCache(
   onTimeRemaining?: (remainingSec: number) => void,
 ): Promise<{ outputPath: string; outputFile: string }> {
   try {
+    throwIfExportCancelled(job.id);
     fs.mkdirSync(SCENE_CACHE_DIR, { recursive: true });
     const cache = loadSceneArtifactCache();
     const timings: Array<{ startFrame: number; frames: number }> = [];
     let cursor = 0;
     for (const scene of job.scenes) {
-      const frames = Math.max(1, Math.round(scene.durationSec * job.fps));
+      const frames = sceneDurationInFrames(scene, job.fps);
       timings.push({ startFrame: cursor, frames });
       cursor += frames;
     }
@@ -3902,6 +4812,7 @@ async function renderJobWithSceneCache(
     let cacheChanged = false;
 
     for (let index = 0; index < job.scenes.length; index += 1) {
+      throwIfExportCancelled(job.id);
       const scene = job.scenes[index];
       const timing = timings[index];
       const endFrame = timing.startFrame + timing.frames - 1;
@@ -4024,6 +4935,7 @@ async function renderJobWithSceneCache(
       outputFile: path.relative(PROJECT_ROOT, outputPath),
     };
   } catch (error) {
+    if (isExportCancelled(job.id)) throw error;
     const message = error instanceof Error ? error.message : 'unknown segment cache error';
     onLog(
       'warn',
@@ -4138,17 +5050,20 @@ async function applyMeasuredAudioDuration(
   explicitDuration: number | null,
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
   sceneNumber: number,
+  fps: number,
 ): Promise<number | null> {
   let duration = explicitDuration;
   if ((!duration || duration <= 0) && scene.audioSrc) {
     duration = await probeAudioDuration(audioFilePath(scene.audioSrc));
   }
   if (!duration || duration <= 0) return null;
+  const frames = Math.max(1, Math.ceil((duration + 0.25) * fps));
   scene.audioDuration = Number(duration.toFixed(3));
-  scene.durationSec = Math.ceil((duration + 0.35) * 10) / 10;
+  scene.durationInFrames = frames;
+  scene.durationSec = frames / fps;
   onLog(
     'info',
-    `المشهد ${sceneNumber}: مدة الصوت الفعلية ${duration.toFixed(2)}s → مدة المشهد ${scene.durationSec.toFixed(1)}s (هامش 0.35s).`,
+    `المشهد ${sceneNumber}: مدة الصوت الفعلية ${duration.toFixed(2)}s → durationInFrames=${frames} (${(frames / fps).toFixed(2)}s، هامش 0.25s).`,
   );
   return duration;
 }
@@ -4180,6 +5095,9 @@ async function synthesizeSceneVoice(
           voice_settings: {
             stability: job.voiceStability,
             similarity_boost: job.voiceSimilarityBoost,
+            style: job.voiceStyle,
+            use_speaker_boost: job.voiceSpeakerBoost,
+            speed: job.voiceSpeed,
           },
         }),
         signal: AbortSignal.timeout(60000),
@@ -4243,6 +5161,9 @@ async function prepareSceneAudio(
     modelId: job.modelId,
     stability: job.voiceStability,
     similarityBoost: job.voiceSimilarityBoost,
+    style: job.voiceStyle,
+    speakerBoost: job.voiceSpeakerBoost,
+    speed: job.voiceSpeed,
   };
   let cacheChanged = false;
 
@@ -4270,6 +5191,7 @@ async function prepareSceneAudio(
           cachedAudio.audioDuration ?? null,
           onLog,
           index + 1,
+          job.fps,
         );
         if (appliedCached) {
           onLog(
@@ -4291,14 +5213,22 @@ async function prepareSceneAudio(
     const measured = scene.audioSrc
       ? await probeAudioDuration(audioFilePath(scene.audioSrc))
       : null;
-    const applied = await applyMeasuredAudioDuration(scene, measured, onLog, index + 1);
+    const applied = await applyMeasuredAudioDuration(
+      scene,
+      measured,
+      onLog,
+      index + 1,
+      job.fps,
+    );
     if (!applied) {
       const estimate = estimateNarrationDuration(scene.narration);
+      const frames = Math.max(1, Math.ceil((estimate + 0.25) * job.fps));
       scene.audioDuration = estimate;
-      scene.durationSec = Math.ceil((estimate + 0.35) * 10) / 10;
+      scene.durationInFrames = frames;
+      scene.durationSec = frames / job.fps;
       onLog(
         'warn',
-        `المشهد ${index + 1}: تعذر قياس الصوت — تم تقدير ${scene.durationSec.toFixed(1)}s من النص.`,
+        `المشهد ${index + 1}: تعذر قياس الصوت — تم تقدير ${(frames / job.fps).toFixed(2)}s من النص.`,
       );
     }
 
@@ -4360,7 +5290,13 @@ const LANGUAGE_LABELS: Record<string, string> = {
 
 function normalizeLanguageLabel(raw: unknown): string {
   if (typeof raw !== 'string' || !raw.trim()) return 'Other';
-  const cleaned = raw.trim();
+  const cleaned = raw
+    .trim()
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/[,،].*$/, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!cleaned) return 'Other';
   const code = cleaned.toLowerCase().split(/[-_]/)[0];
   if (LANGUAGE_LABELS[code]) return LANGUAGE_LABELS[code];
   if (LANGUAGE_LABELS[cleaned.toLowerCase()]) return LANGUAGE_LABELS[cleaned.toLowerCase()];
@@ -4374,8 +5310,42 @@ type RawElevenLabsVoice = {
   preview_url?: string | null;
   description?: string;
   labels?: Record<string, string>;
-  verified_languages?: Array<string | { language?: string; accent?: string }>;
+  fine_tuning?: { language?: string; accent?: string } | null;
+  verified_languages?: Array<
+    string | {
+      language?: string;
+      language_code?: string;
+      locale?: string;
+      accent?: string;
+    }
+  >;
 };
+
+function normalizeVoiceGender(raw: unknown): 'male' | 'female' | 'neutral' {
+  if (typeof raw !== 'string') return 'neutral';
+  const value = raw.trim().toLowerCase();
+  if (!value) return 'neutral';
+  if (
+    value === 'female' ||
+    value === 'woman' ||
+    value === 'girl' ||
+    value === 'f' ||
+    value.includes('أنثى') ||
+    value.includes('انثى')
+  ) {
+    return 'female';
+  }
+  if (
+    value === 'male' ||
+    value === 'man' ||
+    value === 'boy' ||
+    value === 'm' ||
+    value.includes('ذكر')
+  ) {
+    return 'male';
+  }
+  return 'neutral';
+}
 
 function mapElevenLabsVoice(
   raw: RawElevenLabsVoice,
@@ -4384,15 +5354,32 @@ function mapElevenLabsVoice(
   const labels = raw.labels || {};
   const verifiedLanguages = Array.isArray(raw.verified_languages)
     ? raw.verified_languages
-        .map((item) => (typeof item === 'string' ? item : item.language || ''))
+        .map((item) =>
+          typeof item === 'string'
+            ? item
+            : item.language || item.language_code || item.locale || ''
+        )
         .filter(Boolean)
     : [];
-  const genderRaw = (labels.gender || '').trim();
-  const gender = genderRaw
-    ? genderRaw.charAt(0).toUpperCase() + genderRaw.slice(1).toLowerCase()
-    : 'Voice';
-  const language = normalizeLanguageLabel(labels.language || verifiedLanguages[0] || '');
-  const accentRaw = labels.accent || labels.locale || '';
+  const languageSources = [
+    labels.language,
+    labels.locale,
+    ...verifiedLanguages,
+    raw.fine_tuning?.language || '',
+  ];
+  const languages: string[] = [];
+  const seenLanguages = new Set<string>();
+  for (const candidate of languageSources) {
+    const label = normalizeLanguageLabel(candidate);
+    if (!label || label === 'Other') continue;
+    const key = label.toLowerCase();
+    if (seenLanguages.has(key)) continue;
+    seenLanguages.add(key);
+    languages.push(label);
+  }
+  const language = languages[0] || 'Other';
+  const gender = normalizeVoiceGender(labels.gender);
+  const accentRaw = labels.accent || labels.locale || raw.fine_tuning?.accent || '';
   const accent = accentRaw
     ? accentRaw
         .split(/[-_]/)
@@ -4407,6 +5394,7 @@ function mapElevenLabsVoice(
     name: raw.name || 'Unnamed voice',
     gender,
     language,
+    languages,
     accent,
     tone,
     category: raw.category || source,
@@ -4517,6 +5505,7 @@ function mapOpenRouterModel(requestedModel: string): string {
   const mapped = OPENROUTER_MODEL_MAP[requestedModel] || requestedModel;
   if (
     !mapped ||
+    !mapped.includes('/') ||
     mapped === 'deepseek-chat' ||
     mapped === 'deepseek-reasoner' ||
     mapped === 'custom-model' ||
@@ -4531,6 +5520,13 @@ function mapDeepSeekModel(requestedModel: string): string {
   const mapped = OPENROUTER_MODEL_MAP[requestedModel] || requestedModel;
   if (mapped.includes('reasoner')) return 'deepseek-reasoner';
   if (mapped === 'deepseek-chat' || mapped === 'deepseek-reasoner') return mapped;
+  if (mapped.startsWith('deepseek/')) {
+    const model = mapped.slice('deepseek/'.length);
+    if (!model || model.includes('/') || model.endsWith(':free')) return 'deepseek-chat';
+    return model;
+  }
+  if (mapped.includes('/')) return 'deepseek-chat';
+  if (/^[a-zA-Z0-9._:-]+$/.test(mapped)) return mapped;
   return 'deepseek-chat';
 }
 
@@ -4729,11 +5725,20 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   'react',
   'remotion',
   '../components/Stickman',
+  '../components/SceneSfx',
+  '../../src/components/SceneSfx',
+  '../components/Depth25D',
+  '../../src/components/Depth25D',
   '@remotion/google-fonts',
   '@remotion/noise',
   '@remotion/paths',
   '@remotion/shapes',
   '@remotion/transitions',
+  'lucide-react',
+  'd3-geo',
+  'topojson-client',
+  'roughjs',
+  'world-atlas/countries-110m.json',
 ]);
 
 function isAllowedGeneratedImport(source: string): boolean {
@@ -4915,17 +5920,121 @@ function cleanGeneratedTsxCache(): string[] {
   return removed;
 }
 
+function sanitizeGeneratedSfxFiles(): string[] {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  const changed: string[] = [];
+  for (const entry of fs.readdirSync(GENERATED_DIR, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.tsx')) continue;
+    const file = path.join(GENERATED_DIR, entry.name);
+    const source = fs.readFileSync(file, 'utf8');
+    let keptSceneSfx = false;
+    const sanitizedLines: string[] = [];
+    for (const line of source.split('\n')) {
+      if (/ding-success|notification-chime/i.test(line)) continue;
+      if (/<SceneSfx\b/.test(line)) {
+        if (keptSceneSfx || /frame=\{0\}/.test(line)) continue;
+        keptSceneSfx = true;
+        sanitizedLines.push(
+          line
+            .replace(/volume=\{[^}]*\}/g, 'volume={0.18}')
+            .replace(/name="sparkle"/g, 'name="pop"'),
+        );
+        continue;
+      }
+      sanitizedLines.push(line);
+    }
+    const next = sanitizedLines.join('\n');
+    if (next !== source) {
+      fs.writeFileSync(file, next, 'utf8');
+      changed.push(entry.name);
+    }
+  }
+  return changed;
+}
+
+function snapshotGeneratedSceneFiles(): Map<string, string | null> {
+  const snapshot = new Map<string, string | null>();
+  const names = new Set<string>(['index.ts']);
+  try {
+    for (const entry of fs.readdirSync(GENERATED_DIR, { withFileTypes: true })) {
+      if (entry.isFile() && entry.name.endsWith('.tsx')) names.add(entry.name);
+    }
+  } catch {
+    // Generated directory is optional before the first export.
+  }
+  for (const name of names) {
+    try {
+      snapshot.set(name, fs.readFileSync(path.join(GENERATED_DIR, name), 'utf8'));
+    } catch {
+      snapshot.set(name, null);
+    }
+  }
+  return snapshot;
+}
+
+function restoreGeneratedSceneFiles(snapshot: Map<string, string | null>): void {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  for (const [name, source] of snapshot) {
+    const file = path.join(GENERATED_DIR, name);
+    try {
+      if (source === null) {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      } else {
+        fs.writeFileSync(file, source, 'utf8');
+      }
+    } catch {
+      // Best effort restore.
+    }
+  }
+  try {
+    for (const entry of fs.readdirSync(GENERATED_DIR, { withFileTypes: true })) {
+      if (entry.isFile() && entry.name.endsWith('.tsx') && !snapshot.has(entry.name)) {
+        fs.unlinkSync(path.join(GENERATED_DIR, entry.name));
+      }
+    }
+  } catch {
+    // Best effort cleanup of any files created during the tweak.
+  }
+  syncGeneratedRegistry();
+}
+
+function validateTweakSceneSources(job: RenderJob): string[] {
+  const errors: string[] = [];
+  for (let index = 0; index < job.scenes.length; index += 1) {
+    const scene = job.scenes[index];
+    const name =
+      scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
+        ? scene.generatedComponent
+        : `Scene${index + 1}`;
+    const source = readGeneratedComponentSource(name);
+    if (!source) {
+      errors.push(`${name}: missing generated scene file`);
+      continue;
+    }
+    const sanitized = sanitizeGeneratedTsx(source, name);
+    if (!sanitized.ok) {
+      errors.push(`${name}: ${sanitized.errors.slice(0, 4).join(' | ')}`);
+    }
+  }
+  return errors;
+}
+
 function runCommand(
   command: string,
   args: string[],
   cwd: string,
   timeoutMs: number,
+  track = false,
 ): Promise<{ ok: boolean; output: string }> {
   return new Promise((resolve) => {
-    execFile(
+    const child = execFile(
       command,
       args,
-      { cwd, timeout: timeoutMs, maxBuffer: 20 * 1024 * 1024 },
+      {
+        cwd,
+        timeout: timeoutMs,
+        maxBuffer: 20 * 1024 * 1024,
+      },
       (error, stdout, stderr) => {
         resolve({
           ok: !error,
@@ -4933,6 +6042,7 @@ function runCommand(
         });
       },
     );
+    if (track) trackExportProcess(child);
   });
 }
 
@@ -4954,84 +6064,11 @@ function generatedTypeScriptErrors(output: string): string {
 }
 
 function buildLocalCustomSceneSource(componentName: string): string {
-  return `import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { Circle, Star } from "@remotion/shapes";
-import { evolvePath } from "@remotion/paths";
-import { noise2D } from "@remotion/noise";
-import { Stickman } from "../components/Stickman";
-
-type Props = {
-  accentColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
-};
-
-export const ${componentName} = (props: Props) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const time = frame / fps;
-  const entrance = spring({ frame, fps, config: { damping: 18, mass: 0.6, stiffness: 120 } });
-  const progress = interpolate(frame, [0, Math.max(1, props.durationInFrames - 1)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const pulse = 0.5 + 0.5 * Math.sin(time * Math.PI * 2 * 1.2);
-  const drift = noise2D("zof-custom", time * 0.3, 0);
-  const trail = "M 80 260 C 220 120, 420 360, 760 180";
-  const trailDash = evolvePath(progress, trail);
-  const keywords = props.keywords && props.keywords.length > 0 ? props.keywords.slice(0, 4) : [props.title || "Idea", "Mechanism", "Action"];
-  const rtl = props.isRtl ? "rtl" : "ltr";
-  const align = props.isRtl ? "right" : "left";
-  return (
-    <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 20%, " + props.accentColor + "22 0%, transparent 55%), " + props.bgColor, direction: rtl, overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, opacity: 0.9 }}>
-        <svg viewBox="0 0 900 500" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-          <path d={trail} fill="none" stroke={props.accentColor} strokeWidth={3} strokeLinecap="round" strokeDasharray={trailDash.strokeDasharray} strokeDashoffset={trailDash.strokeDashoffset} />
-        </svg>
-        {keywords.map((word, index) => {
-          const x = 12 + index * (76 / Math.max(1, keywords.length - 1));
-          const y = 34 + Math.sin(index * 1.7 + time * 1.4) * 10 + drift * 3;
-          const nodeScale = interpolate(progress, [index / Math.max(1, keywords.length), Math.min(1, (index + 1) / Math.max(1, keywords.length))], [0.3, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-          return (
-            <div key={"node-" + index} style={{ position: "absolute", left: x + "%", top: y + "%", transform: "translate(-50%, -50%) scale(" + nodeScale + ")", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Circle radius={18 + pulse * 4} fill={index % 2 === 0 ? props.accentColor : props.characterAccent} style={{ opacity: 0.85 }} />
-              <div style={{ position: "absolute" }}>
-                <Star points={5} innerRadius={5} outerRadius={9} fill={props.textColor} style={{ opacity: 0.9 }} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div style={{ position: "absolute", left: "8%", right: "8%", top: "10%", bottom: "24%", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: entrance }}>
-        <div>
-          <div style={{ fontSize: 64, fontWeight: 900, lineHeight: 1.1, color: props.textColor, textAlign: align }}>{props.title || "Custom scene"}</div>
-          <div style={{ marginTop: 12, fontSize: 34, fontWeight: 600, color: props.mutedColor, textAlign: align, maxWidth: "70%" }}>{props.text || ""}</div>
-        </div>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: props.isRtl ? "flex-end" : "flex-start" }}>
-          {keywords.map((word, index) => (
-            <div key={"chip-" + index} style={{ padding: "10px 18px", borderRadius: 999, border: "1px solid " + props.accentColor, background: props.bgColor + "cc", color: props.textColor, fontSize: 30, fontWeight: 700, transform: "translateY(" + Math.sin(time * 1.6 + index) * 4 + "px)" }}>{word}</div>
-          ))}
-        </div>
-        {props.showCharacter ? (
-          <div style={{ position: "absolute", right: props.isRtl ? undefined : "0%", left: props.isRtl ? "0%" : undefined, bottom: "16%", width: 210, height: 300 }}>
-            <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} />
-          </div>
-        ) : null}
-      </div>
-    </AbsoluteFill>
+  const variant = Array.from(componentName).reduce(
+    (sum, character) => sum + character.charCodeAt(0),
+    0,
   );
-};
-`;
+  return buildFallbackSceneSource(componentName, variant);
 }
 
 async function requestCustomSceneCode(options: {
@@ -5047,17 +6084,20 @@ async function requestCustomSceneCode(options: {
 }): Promise<string | null> {
   const { scene, componentName, scriptLanguage, aspectRatio, attempts, keys } =
     options;
+  const languageMeta = getVideoLanguage(scriptLanguage);
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", "../components/Stickman", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", or "@remotion/google-fonts".',
+    'Only import from: "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".',
     'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
     'type Props = { accentColor: string; bgColor: string; textColor: string; mutedColor: string; characterBody: string; characterFace: string; characterAccent: string; characterShadow: string; isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[]; data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean; };',
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
     'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman component only when showCharacter is true.',
+    ZOF_LIBRARY_CAPABILITIES,
     'Strictly apply accentColor and bgColor. Respect isRtl for text direction and composition.',
+    `Write every visible label in ${languageMeta.name} (${languageMeta.native}), direction ${languageMeta.dir.toUpperCase()}; never leave English placeholders such as TIME or VALUE when the video language is not English.`,
     `Primary aspect ratio: ${aspectRatio}. Optimize density, visual scale, and hierarchy for this ratio first.`,
     'Use useVideoConfig() to stay responsive across every aspect ratio: const { width, height } = useVideoConfig(); const isLandscape = width > height; const isSquare = width === height; const isPortrait = height > width. Never hardcode a single frame size.',
     'Build layouts with relative units (%, flex, minHeight: 0, overflow: hidden) instead of fixed pixel offsets so the scene cannot overflow when the aspect ratio changes before export.',
@@ -5076,7 +6116,7 @@ async function requestCustomSceneCode(options: {
     `Visual value: ${scene.visualValue}`,
     `Brief: ${scene.customCodeBrief || scene.visualPrompt || scene.narration}`,
     `Keywords: ${(scene.visualKeywords || []).join(' | ')}`,
-    `Language: ${scriptLanguage}`,
+    `Language: ${languageMeta.name} (${languageMeta.native}) — ${languageMeta.dir.toUpperCase()}`,
     `Aspect ratio: ${aspectRatio}`,
     options.previousCode
       ? `Previous attempt:\n${options.previousCode}\n\nCompiler errors:\n${options.compilerErrors || 'none'}`
@@ -5261,11 +6301,12 @@ function buildChatAttempts(
   };
 
   if (provider === 'opencode-free') {
-    [mapOpenRouterModel(model), ...FREE_FALLBACK_MODELS]
-      .filter((item, index, list) => list.indexOf(item) === index)
-      .slice(0, 3)
-      .forEach(pushOpenRouter);
+    const primaryOpenRouter = mapOpenRouterModel(model);
+    pushOpenRouter(model);
     pushDeepSeek(model);
+    FREE_FALLBACK_MODELS.filter((item) => item !== primaryOpenRouter)
+      .slice(0, 2)
+      .forEach(pushOpenRouter);
   } else if (provider === 'deepseek') {
     pushDeepSeek(model);
     pushOpenRouter(model);
@@ -5334,7 +6375,33 @@ function pickSmartEditTsx(record: Record<string, unknown>): string {
   return '';
 }
 
-type ExportTargetDuration = '30' | '60' | '90' | 'auto';
+type ExportTargetDuration =
+  | '3'
+  | '5'
+  | '8'
+  | '12'
+  | '15'
+  | '30'
+  | '45'
+  | '60'
+  | '90'
+  | 'auto';
+
+const EXPORT_TARGET_DURATIONS: readonly ExportTargetDuration[] = [
+  '3',
+  '5',
+  '8',
+  '12',
+  '15',
+  '30',
+  '45',
+  '60',
+  '90',
+  'auto',
+];
+
+const PROMPT_ONLY_SINGLE_SCENE_MAX_SECONDS = 8;
+const PROMPT_ONLY_TWO_SCENE_MAX_SECONDS = 15;
 type ExportStepId = 'audio' | 'code' | 'render';
 
 const EXPORT_LOCK_TTL_MS = 3 * 60 * 60 * 1000;
@@ -5362,30 +6429,104 @@ function releaseExportLock(jobId: string): void {
   }
 }
 
+function cancelActiveExport(reason: string): string | null {
+  const jobId = activeExportLock?.jobId;
+  if (!jobId) return null;
+
+  cancelledExportJobs.add(jobId);
+  killAllExportProcesses();
+
+  const job = renderJobs.get(jobId);
+  if (job && job.status !== 'completed') {
+    job.status = 'cancelled';
+    job.error = reason;
+  }
+
+  const emit = exportStreamEmitters.get(jobId);
+  if (emit) {
+    emit('cancelled', {
+      jobId,
+      message: reason,
+    });
+  }
+
+  releaseExportLock(jobId);
+  return jobId;
+}
+
 function normalizeTargetDuration(value: unknown): ExportTargetDuration {
-  return value === '30' || value === '60' || value === '90' || value === 'auto'
-    ? value
+  return EXPORT_TARGET_DURATIONS.includes(value as ExportTargetDuration)
+    ? (value as ExportTargetDuration)
     : 'auto';
 }
 
 function exportSceneCount(
   prompt: string,
   targetDuration: ExportTargetDuration,
+  voiceoverEnabled: boolean,
 ): number {
+  if (!voiceoverEnabled) {
+    if (targetDuration === 'auto') return 4;
+    const seconds = Number(targetDuration);
+    if (!Number.isFinite(seconds) || seconds <= 0) return 4;
+    if (seconds <= PROMPT_ONLY_SINGLE_SCENE_MAX_SECONDS) return 1;
+    if (seconds <= PROMPT_ONLY_TWO_SCENE_MAX_SECONDS) return 2;
+    return Math.min(6, Math.max(3, Math.round(seconds / 15)));
+  }
+  if (targetDuration === '3' || targetDuration === '5') return 1;
+  if (targetDuration === '8') return 2;
+  if (targetDuration === '12' || targetDuration === '15') return 3;
   if (targetDuration === '30') return 6;
+  if (targetDuration === '45') return 8;
   if (targetDuration === '60') return 10;
   if (targetDuration === '90') return 14;
   const words = prompt.trim().split(/\s+/).filter(Boolean).length;
   return Math.min(16, Math.max(5, Math.ceil(words / 16)));
 }
 
+const SCRIPT_DOMAIN_TLDS = [
+  'com',
+  'net',
+  'org',
+  'io',
+  'ai',
+  'co',
+  'dev',
+  'app',
+] as const;
+
+const DOMAIN_DOT_SPACING_PATTERN = new RegExp(
+  `([\\p{L}\\p{N}][\\p{L}\\p{N}-]*)\\.\\s+(${SCRIPT_DOMAIN_TLDS.join('|')})(?![\\p{L}\\p{N}])`,
+  'giu',
+);
+
+function normalizeDomainDotSpacing(rawText: string): string {
+  return rawText.replace(DOMAIN_DOT_SPACING_PATTERN, '$1.$2');
+}
+
+function splitScriptSentences(rawText: string): string[] {
+  const text = normalizeDomainDotSpacing(
+    rawText
+      .replace(/\r/g, ' ')
+      .replace(/[\t\n]+/g, ' ')
+      .replace(/ {2,}/g, ' ')
+      .trim(),
+  );
+  if (!text) return [];
+  // Only break after real sentence-ending punctuation that is followed by
+  // whitespace or the end of the string. Domain dots such as "example.net"
+  // (including accidental "example. net" spacing, normalized above) are
+  // followed by a TLD, which is never a sentence boundary.
+  return text
+    .split(/(?<=[.!?؟。！])(?=\s|$)/u)
+    .map((part) => part.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
 function splitScriptIntoChunks(prompt: string, count: number): string[] {
   const text = prompt.replace(/\r/g, ' ').trim();
   if (!text) return [];
-  const sentences = text
-    .split(/(?<=[.!?؟。！])\s+|\n+/)
-    .map((part) => part.replace(/\s+/g, ' ').trim())
-    .filter(Boolean);
+  const sentences = splitScriptSentences(text);
 
   const chunks: string[] = [];
   if (sentences.length >= count) {
@@ -5460,13 +6601,74 @@ function sceneTitleFromNarration(
   return title;
 }
 
+function splitSpokenScriptIntoBeats(script: string): string[] {
+  const text = script.replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!text) return [];
+  const sentences = splitScriptSentences(text).filter((part) =>
+    /[\p{L}\p{N}]/u.test(part),
+  );
+
+  const beats: string[] = [];
+  const flushClauses = (sentence: string) => {
+    const clauses = sentence
+      .split(/(?<=[،,;؛:])\s+|\s+[—–]\s+/u)
+      .map((part) => part.trim())
+      .filter((part) => /[\p{L}\p{N}]/u.test(part));
+    if (clauses.length <= 1) {
+      beats.push(sentence);
+      return;
+    }
+    let current: string[] = [];
+    let currentWords = 0;
+    const flush = () => {
+      if (current.length > 0) {
+        beats.push(current.join(' '));
+        current = [];
+        currentWords = 0;
+      }
+    };
+    for (const clause of clauses) {
+      const words = clause.split(/\s+/).filter(Boolean).length;
+      if (currentWords > 0 && currentWords + words > 30) flush();
+      current.push(clause);
+      currentWords += words;
+    }
+    flush();
+  };
+
+  for (const sentence of sentences) {
+    const words = sentence.split(/\s+/).filter(Boolean).length;
+    if (words > 34) {
+      flushClauses(sentence);
+    } else {
+      beats.push(sentence);
+    }
+  }
+  return beats;
+}
+
+function buildVoiceoverScenePlan(
+  script: string,
+): Array<{ title: string; narration: string; durationSec: number }> {
+  const beats = splitSpokenScriptIntoBeats(script);
+  const usedTitles = new Set<string>();
+  return beats.map((narration, index) => {
+    const words = narration.split(/\s+/).filter(Boolean).length;
+    return {
+      title: sceneTitleFromNarration(narration, index, usedTitles),
+      narration,
+      durationSec: Math.max(2, Number((words * 0.4 + 0.25).toFixed(2))),
+    };
+  });
+}
+
 function buildExportScenePlan(
   prompt: string,
   targetDuration: ExportTargetDuration,
   voiceoverEnabled: boolean,
 ): Array<{ title: string; narration: string; durationSec: number }> {
   const effectiveTarget = targetDuration === 'auto' && !voiceoverEnabled ? '60' : targetDuration;
-  const count = exportSceneCount(prompt, effectiveTarget);
+  const count = exportSceneCount(prompt, effectiveTarget, voiceoverEnabled);
   const chunks = splitScriptIntoChunks(prompt, count);
   const targetSeconds =
     effectiveTarget === 'auto' ? null : Number(effectiveTarget);
@@ -5476,7 +6678,7 @@ function buildExportScenePlan(
     const words = narration.split(/\s+/).filter(Boolean).length;
     const estimate = Math.max(2.6, Number((words * 0.48 + 0.8).toFixed(2)));
     const durationSec = targetSeconds
-      ? Number((targetSeconds / Math.max(1, chunks.length)).toFixed(1))
+      ? Number((targetSeconds / Math.max(1, chunks.length)).toFixed(3))
       : estimate;
     return {
       title: sceneTitleFromNarration(narration, index, usedTitles),
@@ -5488,12 +6690,12 @@ function buildExportScenePlan(
 
 function exportSfxId(index: number): string {
   const catalog = [
-    'whoosh-fast',
-    'pop-bubble',
-    'whoosh-deep',
-    'typing-click',
-    'ding-success',
-    'riser-build',
+    'whoosh-soft',
+    'pop-soft',
+    'click-subtle',
+    'type-tick',
+    'slide',
+    'impact-soft',
   ];
   return catalog[index % catalog.length];
 }
@@ -5505,33 +6707,47 @@ function buildExportScenes(options: {
   voiceoverEnabled: boolean;
   sfxEnabled: boolean;
   language: string;
+  spokenScript?: string;
 }): RenderScenePayload[] {
-  const plan = buildExportScenePlan(
-    options.prompt,
-    options.targetDuration,
-    options.voiceoverEnabled,
-  );
+  const scriptForVoiceover =
+    options.voiceoverEnabled && options.spokenScript?.trim()
+      ? options.spokenScript.trim()
+      : '';
+  const plan = scriptForVoiceover
+    ? buildVoiceoverScenePlan(scriptForVoiceover)
+    : buildExportScenePlan(
+        options.prompt,
+        options.targetDuration,
+        options.voiceoverEnabled,
+      );
 
-  return plan.map((item, index) => ({
-    id: `scene-${options.jobId}-${index + 1}`,
-    title: item.title,
-    narration: item.narration,
-    pose: index % 2 === 0 ? 'explaining' : 'pointing',
-    visualType: 'custom-tsx',
-    visualLabel: item.title,
-    visualValue: item.narration.slice(0, 160),
-    customCodeBrief: item.narration,
-    visualKeywords: item.title.split(/\s+/).slice(0, 5),
-    showCharacter: true,
-    durationSec: item.durationSec,
-    backgroundPreset: 'ai-free',
-    ...(options.sfxEnabled
-      ? {
-          sfxId: exportSfxId(index),
-          sfxAt: 0.15,
-        }
-      : {}),
-  }));
+  return plan.map((item, index) => {
+    const keyPhrase = item.title
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 5)
+      .join(' ');
+    return {
+      id: `scene-${options.jobId}-${index + 1}`,
+      title: item.title,
+      narration: item.narration,
+      pose: index % 2 === 0 ? 'explaining' : 'pointing',
+      visualType: 'custom-tsx',
+      visualLabel: item.title,
+      visualValue: keyPhrase || item.title,
+      customCodeBrief: item.narration,
+      visualKeywords: keyPhrase ? [keyPhrase] : [item.title],
+      showCharacter: index === 0 || index === plan.length - 1,
+      durationSec: item.durationSec,
+      backgroundPreset: 'ai-free',
+      ...(options.sfxEnabled
+        ? {
+            sfxId: exportSfxId(index),
+            sfxAt: 0.15,
+          }
+        : {}),
+    };
+  });
 }
 
 function syncExportProject(job: RenderJob): void {
@@ -5545,7 +6761,11 @@ function syncExportProject(job: RenderJob): void {
       voiceModelId: job.modelId,
       voiceStability: job.voiceStability,
       voiceSimilarityBoost: job.voiceSimilarityBoost,
+      voiceStyle: job.voiceStyle,
+      voiceSpeakerBoost: job.voiceSpeakerBoost,
+      voiceSpeed: job.voiceSpeed,
       voiceoverEnabled: job.voiceoverEnabled,
+      cleanBrollMode: job.cleanBrollMode,
       visualStyle: job.visualStyle,
       aspectRatio: job.aspectRatio,
       fps: job.fps,
@@ -5554,6 +6774,8 @@ function syncExportProject(job: RenderJob): void {
       creativeCodeMode: 'creative',
       scriptPacing: job.scriptPacing,
       captionAnimationStyle: job.captionAnimationStyle,
+      captionColors: job.captionColors,
+      captionBottomOffset: job.captionBottomOffset,
       wordsPerScreen: job.wordsPerScreen,
       captionsEnabled: job.captionsEnabled,
       brandKit: job.brandKit,
@@ -5574,9 +6796,112 @@ function expectedGeneratedSceneNames(count: number): string[] {
   return Array.from({ length: Math.max(1, count) }, (_, index) => `Scene${index + 1}`);
 }
 
-function buildFallbackSceneSource(componentName: string): string {
+function buildFallbackLayoutMarkup(variantIndex: number): string {
+  const safeIndex = Number.isFinite(variantIndex)
+    ? Math.abs(Math.floor(variantIndex))
+    : 0;
+  switch (safeIndex % 4) {
+    case 1:
+      return `
+      <div style={{ width: "82%", maxWidth: 860, display: "flex", flexDirection: "column", gap: 18, textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 44 + "px)" }}>
+        <div style={{ fontSize: 58, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
+        {keywords.map((word, index) => {
+          const itemEnter = spring({ frame: frame - index * 14 - 6, fps, config: { damping: 16, mass: 0.6, stiffness: 120 } });
+          const done = progress > (index + 1) / (keywords.length + 1);
+          return (
+            <div key={word + index} style={{ display: "flex", alignItems: "center", gap: 18, padding: "20px 24px", borderRadius: 22, background: props.bgColor + "dd", border: "1px solid " + (done ? props.accentColor : props.mutedColor + "33"), opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 28 + "px)" }}>
+              <div style={{ width: 46, height: 46, borderRadius: 14, border: "2px solid " + (done ? props.accentColor : props.mutedColor + "55"), display: "flex", alignItems: "center", justifyContent: "center", background: done ? props.accentColor + "22" : "transparent", color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{done ? "✓" : ""}</div>
+              <div style={{ flex: 1, fontSize: 28, fontWeight: 700, color: props.textColor }}>{word}</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: props.mutedColor }}>{done ? "100%" : "..."}</div>
+            </div>
+          );
+        })}
+        {text ? <div style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor }}>{text}</div> : null}
+        <div style={{ height: 10, borderRadius: 999, background: props.mutedColor + "22", overflow: "hidden" }}>
+          <div style={{ width: Math.round(progress * 100) + "%", height: "100%", background: props.accentColor }} />
+        </div>
+      </div>
+      `;
+    case 2:
+      return `
+      <div style={{ width: "84%", maxWidth: 900, display: "flex", flexDirection: "column", gap: 20, textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 40 + "px)" }}>
+        <div style={{ fontSize: 58, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
+        {text ? <div style={{ fontSize: 26, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor }}>{text}</div> : null}
+        {keywords.map((word, index) => {
+          const value = Math.max(0.08, Math.min(1, progress * ((index + 1) / keywords.length)));
+          return (
+            <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: props.textColor, fontSize: 26, fontWeight: 700 }}>
+                <span>{word}</span>
+                <span style={{ color: props.accentColor }}>{Math.round(value * 100)}%</span>
+              </div>
+              <div style={{ height: 18, borderRadius: 999, background: props.mutedColor + "22", overflow: "hidden" }}>
+                <div style={{ width: Math.round(value * 100) + "%", height: "100%", borderRadius: 999, background: index % 2 === 0 ? props.accentColor : props.characterAccent }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      `;
+    case 3:
+      return `
+      <div style={{ width: "86%", maxWidth: 920, display: "flex", flexDirection: "column", gap: 20, textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 44 + "px)" }}>
+        <div style={{ fontSize: 58, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 18 }}>
+          {keywords.map((word, index) => {
+            const itemEnter = spring({ frame: frame - index * 12, fps, config: { damping: 15, mass: 0.6, stiffness: 130 } });
+            const pulse = 1 + Math.sin(frame / 12 + index) * 0.04;
+            return (
+              <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: props.isRtl ? "flex-end" : "flex-start", padding: "24px 22px", borderRadius: 24, background: props.bgColor + "dd", border: "1px solid " + props.accentColor + "55", opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 24 + "px) scale(" + itemEnter * pulse + ")" }}>
+                <div style={{ width: 52, height: 52, borderRadius: 18, background: props.accentColor + "22", border: "1px solid " + props.accentColor + "66", display: "flex", alignItems: "center", justifyContent: "center", color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{String(index + 1).padStart(2, "0")}</div>
+                <div style={{ fontSize: 26, fontWeight: 800, color: props.textColor }}>{word}</div>
+              </div>
+            );
+          })}
+        </div>
+        {text ? <div style={{ fontSize: 25, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor }}>{text}</div> : null}
+        <div style={{ height: 10, borderRadius: 999, background: props.mutedColor + "22", overflow: "hidden" }}>
+          <div style={{ width: Math.round(progress * 100) + "%", height: "100%", background: props.accentColor }} />
+        </div>
+      </div>
+      `;
+    default:
+      return `
+      <div style={{ width: "84%", maxWidth: 900, borderRadius: 32, background: props.bgColor + "ee", border: "1px solid " + props.accentColor + "55", boxShadow: "0 40px 120px " + props.accentColor + "22", opacity: enter, transform: "translateY(" + (1 - enter) * 60 + "px) scale(" + (0.92 + enter * 0.08) + ")", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid " + props.accentColor + "33", background: props.bgColor + "cc" }}>
+          {[0, 1, 2].map((dot) => (
+            <div key={"dot-" + dot} style={{ width: 16, height: 16, borderRadius: 999, background: dot === 0 ? props.accentColor : props.mutedColor, opacity: dot === 0 ? 0.9 : 0.4 }} />
+          ))}
+          <div style={{ flex: 1, height: 34, borderRadius: 999, background: props.bgColor + "aa", border: "1px solid " + props.accentColor + "33", display: "flex", alignItems: "center", padding: "0 16px", color: props.mutedColor, fontSize: 20, fontWeight: 600 }}>{title}</div>
+        </div>
+        <div style={{ padding: "40px 44px", display: "flex", flexDirection: "column", gap: 20, textAlign: align }}>
+          <div style={{ fontSize: 62, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
+          {text ? <div style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor }}>{text}</div> : null}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: props.isRtl ? "flex-end" : "flex-start" }}>
+            {keywords.map((word, index) => {
+              const itemEnter = spring({ frame: frame - index * 12, fps, config: { damping: 16, mass: 0.6, stiffness: 120 } });
+              return (
+                <div key={word + index} style={{ padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor + "66", background: props.bgColor + "cc", color: props.textColor, fontSize: 26, fontWeight: 700, opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 20 + "px)" }}>{word}</div>
+              );
+            })}
+          </div>
+          <div style={{ height: 12, borderRadius: 999, background: props.mutedColor + "22", overflow: "hidden" }}>
+            <div style={{ width: Math.round(progress * 100) + "%", height: "100%", background: props.accentColor }} />
+          </div>
+        </div>
+      </div>
+      `;
+  }
+}
+
+function buildFallbackSceneSource(
+  componentName: string,
+  variantIndex = 0,
+): string {
+  const layout = buildFallbackLayoutMarkup(variantIndex);
   return `import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { Stickman } from "../components/Stickman";
+import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
   accentColor: string;
@@ -5602,75 +6927,102 @@ export const ${componentName} = (props: Props) => {
   const { fps } = useVideoConfig();
   const progress = interpolate(frame, [0, Math.max(1, props.durationInFrames - 1)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const enter = spring({ frame, fps, config: { damping: 18, mass: 0.7, stiffness: 90 } });
-  const sway = Math.sin((frame / Math.max(1, fps)) * 1.4) * 16;
+  const beat = Math.sin((frame / Math.max(1, fps)) * 1.8);
   const title = props.title?.trim() || "Zof Studio";
   const text = props.text?.trim() || "";
   const keywords = (props.keywords && props.keywords.length > 0 ? props.keywords : [title]).slice(0, 4);
   const align = props.isRtl ? "right" : "left";
+  const rtl = props.isRtl ? "rtl" : "ltr";
+  const exit = interpolate(frame, [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
-    <AbsoluteFill style={{ background: props.bgColor, overflow: "hidden", direction: props.isRtl ? "rtl" : "ltr" }}>
-      <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 20%, " + props.accentColor + "33 0%, transparent 62%)" }} />
-      <svg viewBox="0 0 1080 1920" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-        <path d={"M 120 " + (900 + sway) + " C 340 " + (640 - sway) + ", 720 " + (1180 + sway) + ", 960 " + (760 - sway)} fill="none" stroke={props.accentColor} strokeWidth={6} strokeLinecap="round" strokeDasharray={1800} strokeDashoffset={1800 * (1 - progress)} opacity={0.7} />
-        <circle cx={540 + sway * 2} cy={820} r={230 + Math.sin(progress * Math.PI) * 30} fill="none" stroke={props.accentColor} strokeOpacity={0.32} strokeWidth={3} />
-      </svg>
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 26, padding: "0 10%", textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 44 + "px)" }}>
-        <div style={{ alignSelf: props.isRtl ? "flex-end" : "flex-start", padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor, background: props.accentColor + "22", color: props.accentColor, fontSize: 26, fontWeight: 800, letterSpacing: "0.06em" }}>ZOF STUDIO</div>
-        <div style={{ fontSize: 82, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
-        {text ? <div style={{ fontSize: 36, fontWeight: 600, lineHeight: 1.5, color: props.mutedColor, maxWidth: "88%" }}>{text}</div> : null}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: props.isRtl ? "flex-end" : "flex-start" }}>
-          {keywords.map((keyword, index) => (
-            <div key={keyword + index} style={{ padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor + "66", background: props.bgColor + "cc", color: props.textColor, fontSize: 28, fontWeight: 700, transform: "translateY(" + Math.sin(progress * 6 + index) * 8 + "px)" }}>{keyword}</div>
-          ))}
+    <AbsoluteFill style={{ background: props.bgColor, overflow: "hidden", direction: rtl }}>
+      <SceneSfx name="pop" frame={12} volume={0.18} />
+      <SceneSfx name="whoosh" frame={48} volume={0.16} />
+      <div style={{ position: "absolute", inset: 0, opacity: exit, transform: "translateY(" + (1 - exit) * -10 + "px)" }}>
+        <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 18%, " + props.accentColor + "33 0%, transparent 62%)" }} />
+        <div style={{ position: "absolute", top: "14%", left: "50%", width: 580 + beat * 26, height: 580 + beat * 26, marginLeft: -(580 + beat * 26) / 2, borderRadius: "50%", border: "2px solid " + props.accentColor + "22" }} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8%" }}>
+${layout}
         </div>
+        {props.showCharacter ? (
+          <div style={{ position: "absolute", bottom: "10%", [props.isRtl ? "left" : "right"]: 56, width: 200, height: 300 }}>
+            <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} />
+          </div>
+        ) : null}
       </div>
-      {props.showCharacter ? (
-        <div style={{ position: "absolute", bottom: "12%", [props.isRtl ? "left" : "right"]: "7%", width: 220, height: 320 }}>
-          <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} />
-        </div>
-      ) : null}
     </AbsoluteFill>
   );
 };
 `;
 }
 
-function writeFallbackSceneFiles(job: RenderJob): void {
-  fs.mkdirSync(GENERATED_DIR, { recursive: true });
-  for (let index = 0; index < job.scenes.length; index += 1) {
-    const name = `Scene${index + 1}`;
-    fs.writeFileSync(
-      path.join(GENERATED_DIR, `${name}.tsx`),
-      buildFallbackSceneSource(name),
-      'utf8',
+function expectedGeneratedNamesForJob(job: RenderJob): string[] {
+  return job.scenes.map((scene, index) =>
+    scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
+      ? scene.generatedComponent
+      : `Scene${index + 1}`,
+  );
+}
+
+function generatedSceneVariantIndexes(job: RenderJob): Map<string, number> {
+  const variants = new Map<string, number>();
+  job.scenes.forEach((scene, index) => {
+    const name =
+      scene.generatedComponent &&
+      isValidGeneratedComponentName(scene.generatedComponent)
+        ? scene.generatedComponent
+        : `Scene${index + 1}`;
+    if (!variants.has(name)) variants.set(name, index);
+  });
+  return variants;
+}
+
+function generatedErrorComponentNames(errors: string): Set<string> {
+  const names = new Set<string>();
+  for (const line of errors.split(/\r?\n/)) {
+    const match = line.match(
+      /src[\\/]generated[\\/]([A-Za-z_$][A-Za-z0-9_$]*)\.tsx/,
     );
+    if (match && match[1] !== 'index') names.add(match[1]);
   }
-  syncGeneratedRegistry();
+  return names;
 }
 
 function repairGeneratedSceneFiles(job: RenderJob): void {
-  const expected = expectedGeneratedSceneNames(job.scenes.length);
+  const expected = Array.from(new Set(expectedGeneratedNamesForJob(job)));
+  const variants = generatedSceneVariantIndexes(job);
   let repaired = false;
   for (const name of expected) {
     const file = path.join(GENERATED_DIR, `${name}.tsx`);
+    const variant = variants.get(name) ?? 0;
     if (!fs.existsSync(file)) {
-      fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+      fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
       repaired = true;
+      console.log(
+        `[export] generated scene ${name} was missing; wrote its distinct fallback layout.`,
+      );
       continue;
     }
     try {
       const source = fs.readFileSync(file, 'utf8');
       const sanitized = sanitizeGeneratedTsx(source, name);
       if (!sanitized.ok) {
-        fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+        console.log(
+          `[export] generated scene ${name} failed validation: ${sanitized.errors.join(' | ')}`,
+        );
+        fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
         repaired = true;
       } else if (sanitized.code !== source.trim()) {
         fs.writeFileSync(file, `${sanitized.code}\n`, 'utf8');
         repaired = true;
       }
-    } catch {
-      fs.writeFileSync(file, buildFallbackSceneSource(name), 'utf8');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(
+        `[export] generated scene ${name} could not be read: ${message}`,
+      );
+      fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
       repaired = true;
     }
   }
@@ -5680,9 +7032,42 @@ function repairGeneratedSceneFiles(job: RenderJob): void {
   }
 }
 
-function attachGeneratedComponents(job: RenderJob): void {
+function repairFailingGeneratedScenes(
+  job: RenderJob,
+  errors: string,
+): string[] {
+  const failing = generatedErrorComponentNames(errors);
+  if (failing.size === 0) return [];
+  const variants = generatedSceneVariantIndexes(job);
+  const repaired: string[] = [];
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  for (const name of failing) {
+    if (!isValidGeneratedComponentName(name)) continue;
+    const variant = variants.get(name) ?? 0;
+    console.log(
+      `[export] replacing only failing generated scene ${name} with its distinct fallback layout.`,
+    );
+    fs.writeFileSync(
+      path.join(GENERATED_DIR, `${name}.tsx`),
+      buildFallbackSceneSource(name, variant),
+      'utf8',
+    );
+    repaired.push(name);
+  }
+  if (repaired.length > 0) syncGeneratedRegistry();
+  return repaired;
+}
+
+function attachGeneratedComponents(job: RenderJob, preserveExisting = false): void {
   job.scenes.forEach((scene, index) => {
-    scene.generatedComponent = `Scene${index + 1}`;
+    const existing =
+      preserveExisting &&
+      scene.generatedComponent &&
+      isValidGeneratedComponentName(scene.generatedComponent) &&
+      fs.existsSync(path.join(GENERATED_DIR, `${scene.generatedComponent}.tsx`))
+        ? scene.generatedComponent
+        : `Scene${index + 1}`;
+    scene.generatedComponent = existing;
     scene.visualType = 'custom-tsx';
     scene.customCodeBrief = scene.customCodeBrief || scene.narration;
     if (!scene.visualKeywords || scene.visualKeywords.length === 0) {
@@ -5691,50 +7076,340 @@ function attachGeneratedComponents(job: RenderJob): void {
   });
 }
 
+function cleanBrollPromptSection(enabled: boolean): string[] {
+  if (enabled) {
+    return [
+      '## CLEAN B-ROLL MODE (ENABLED by the user)',
+      '- Fill the frame with the primary visual at 100% width and 100% height (full-bleed) and drive it with a smooth continuous camera pan/zoom. Never box the main visual inside a small card.',
+      '- ZERO TOP HEADER RULE: render NO top <header>, no kicker, no scene title, no title badge, no top banner, and no prompt-echo descriptive text anywhere in the frame.',
+      '- Do NOT reserve a top 22% headline band in this mode. The visual owns the full canvas edge-to-edge.',
+      '- Render only diegetic labels that belong inside the graphic: city names, map labels, data values, axis labels, and explicitly requested callout cards.',
+      '- Keep Y-axis tick labels offset from the axis line with textAnchor="end" and x={axisX - 14} (plus at least 56px left padding) so values such as 10x / 20x / 30x are never struck through by the axis stroke.',
+      '- Keep every floating card and 2.5D SpatialCard fully outside the plot rectangle, axis lines, gridlines, and data labels with at least a 24px gap.',
+      '- This layout applies ONLY because cleanBrollMode is true. Never enable it just because the voiceover is disabled.',
+    ];
+  }
+  return [
+    '## FULL TYPOGRAPHY MODE (cleanBrollMode OFF — user-selected)',
+    '- Render complete typography, scene titles, structured headers, kickers, and callout text normally, even when the voiceover is disabled.',
+    '- Never hide or suppress headers merely because voiceoverEnabled is false.',
+  ];
+}
+
+const VISUAL_ARCHETYPES = [
+  'full-bleed kinetic typography',
+  'split-screen comparison',
+  'dynamic camera pan across a large canvas',
+  'minimal icon-driven beat',
+  'data-first chart or diagram',
+  'clean B-Roll visual',
+  'timeline or process flow',
+  'spatial 2.5D depth stack',
+];
+
+function captionStyleDisplayName(value: string): string {
+  switch (value) {
+    case 'word-by-word':
+    case 'word-pop-glow':
+      return 'word-by-word pop/reveal';
+    case 'karaoke':
+    case 'dynamic-karaoke':
+      return 'karaoke active-word highlight';
+    case 'static':
+    case 'smooth-chunk-slide':
+      return 'static clean subtitle block';
+    case 'kinetic-typewriter':
+      return 'kinetic typewriter';
+    default:
+      return 'word-by-word pop/reveal';
+  }
+}
+
 function buildOpenCodeScenePrompt(job: RenderJob): string {
+  const languageMeta = getVideoLanguage(job.scriptLanguage);
+  const languageName = languageMeta.name;
+  const languageDirection = languageMeta.dir.toUpperCase();
+  const characterMomentIndices = new Set<number>();
+  if (job.scenes.length > 0) {
+    characterMomentIndices.add(0);
+    if (job.scenes.length > 1) {
+      characterMomentIndices.add(job.scenes.length - 1);
+    }
+  }
   const sceneLines = job.scenes
     .map((scene, index) => {
-      const frames = Math.max(1, Math.round(scene.durationSec * job.fps));
+      const frames = sceneDurationInFrames(scene, job.fps);
+      const renderedFrames =
+        job.scenes.length > 1
+          ? frames + TRANSITION_DURATION_IN_FRAMES
+          : frames;
       return [
         `Scene${index + 1}`,
-        `title: ${scene.title}`,
+        job.cleanBrollMode
+          ? `concept (internal semantic anchor — NEVER render it as a header): ${scene.title}`
+          : `title: ${scene.title}`,
         `narration: ${scene.narration}`,
+        `keyPhrases: ${(scene.visualKeywords?.length ? scene.visualKeywords : [scene.visualLabel]).join(' | ')}`,
+        `compositionArchetype: ${VISUAL_ARCHETYPES[index % VISUAL_ARCHETYPES.length]} (adapt to the narration — never reuse the previous scene skeleton)`,
         `durationSeconds: ${scene.durationSec.toFixed(2)}`,
-        `durationInFrames: ${frames}`,
+        `contentFrames: ${frames}`,
+        `renderedDurationInFrames: ${renderedFrames}`,
+        `character: ${
+          characterMomentIndices.has(index)
+            ? 'Stickman allowed ONLY if a human gesture clearly strengthens the hook or CTA'
+            : 'NONE — pure kinetic motion graphics only, do not render the Stickman'
+        }`,
       ].join(' | ');
     })
     .join('\n');
 
+  const depth25DEnabled = job.enable25D === true;
+  const promptOnlyShortForm =
+    !job.voiceoverEnabled &&
+    job.targetDuration !== undefined &&
+    job.targetDuration !== 'auto' &&
+    Number(job.targetDuration) <= PROMPT_ONLY_SINGLE_SCENE_MAX_SECONDS;
+  const promptOnlySection = !job.voiceoverEnabled
+    ? promptOnlyShortForm
+      ? [
+          '## PROMPT-ONLY SHORT-FORM DIRECTOR MODE (SINGLE SCENE)',
+          '- Render exactly one cohesive, high-impact motion-graphics scene (Scene1.tsx) derived directly from the MASTER PROMPT. Do not split the idea across multiple files.',
+          '- Build a complete three-act arc inside the single scene: a bold entrance in the first 20% of props.durationInFrames, a sustained main-action sequence for the middle 55–65%, and a graceful exit ease over the final 10 frames.',
+          '- Choreograph at least three distinct visual beats (hook reveal, mechanism/action, payoff) with staggered springs, continuous idle motion, and clear state changes. Never hold a static frame.',
+          '- Use at most one subtle <SceneSfx /> on a single key visual beat (volume 0.15–0.22). Never place a bell, chime, ding, or success sound, never at frame 0, and never at the scene ending; leave at least 0.6s of breathing room.',
+          '- Make the scene read as a finished short-form visual even with no narration or captions: kinetic key-phrases and animated graphics must carry the full message.',
+        ]
+      : [
+          '## PROMPT-ONLY MULTI-BEAT DIRECTOR MODE',
+          `- Plan ${job.scenes.length} distinct visual beats directly from the MASTER PROMPT, distributed evenly across the total duration already listed below.`,
+          '- Keep each scene focused on ONE core visual idea with a crisp entrance, a sustained main action, and a gentle exit ease over its final 10 frames. Never overload a single scene with complex multi-step choreography.',
+          '- Keep the story flowing scene-to-scene without narration: kinetic key-phrases, diagrams, and visual metaphors must communicate the full idea.',
+          '- Use at most one subtle <SceneSfx /> per scene on a key visual beat (volume 0.15–0.22). Never place a bell, chime, ding, or success sound, never at frame 0, and never at a scene ending; leave at least 0.6s of breathing room.',
+        ]
+    : [];
+
+  const allowedImportsRule = depth25DEnabled
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.';
   const { width, height } = aspectDimensions(job.aspectRatio);
   const watermarkRule = job.brandKit.watermarkEnabled
     ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
     : 'Global watermark is DISABLED. Do not draw any watermark.';
+  const captionStyleName = captionStyleDisplayName(job.captionAnimationStyle);
+  const captionSafeBottom = Math.min(46, Math.max(28, job.captionBottomOffset + 8));
+  const captionDirectionSection = [
+    '## CAPTION DIRECTION (composition-owned)',
+    `- Caption animation style selected by the user: ${captionStyleName}. The composition renders it; do not rebuild caption animation inside scene files.`,
+    `- Caption colors are locked: pill ${job.captionColors.background}, base text ${job.captionColors.text}, active-word highlight ${job.captionColors.highlight}. Do not override them.`,
+    `- Caption vertical height is ${job.captionBottomOffset}% from the bottom. Keep every scene element above the bottom ${captionSafeBottom}% caption/safe zone.`,
+    '- Never render duplicate subtitle text inside the scene when captions are enabled; let the composition own the caption strip.',
+  ];
+  const safeLayoutSection = job.cleanBrollMode
+    ? [
+        '## CLEAN B-ROLL SAFE LAYOUT (mandatory)',
+        '- There is NO top headline/subtitle band. Do NOT reserve or render a top 22% header, kicker, title badge, or banner.',
+        '- Fill the frame with the primary visual at 100% width and height and let a smooth camera pan/zoom carry the composition.',
+        '- Keep only diegetic in-graphic labels (city names, data values, axis labels, requested callouts); never echo the prompt or scene title on screen.',
+        `- If captions are enabled, keep the bottom ${captionSafeBottom}% clear (caption offset ${job.captionBottomOffset}%) for the composition-owned caption strip; otherwise keep the bottom safe margin clean.`,
+        '- Never clip or collide: all labels must stay inside the full-bleed visual with generous padding.',
+      ]
+    : [
+        '## SAFE LAYOUT GRID (no overlaps, no clipping)',
+        `- TOP 22%: reserve exclusively for the headline/subtitle. ${languageDirection === 'RTL' ? 'RTL' : 'LTR'} text MUST use direction: "${languageDirection.toLowerCase()}", textAlign: "${languageDirection === 'RTL' ? 'right' : 'left'}", lineHeight: 1.4, and padding: "0 48px".`,
+        '- MIDDLE 50%: the main visual stage, centered with maxWidth: "85%" and enough internal padding for labels.',
+        `- BOTTOM ${captionSafeBottom}%: keep completely clear for captions (offset ${job.captionBottomOffset}%) and the safe margin. Never place headlines, key visuals, or the Stickman there.`,
+        '- Never let any element clip off-screen or collide with the headline, subtitle, or caption safe zones. Decorative layers may bleed only when intentionally masked and never over text.',
+      ];
 
   return [
     'You are the creative motion-graphics engineer for Zof Studio.',
     'Work inside the project root and create a complete bespoke Remotion scene set from the master prompt below.',
     '',
+    STRICT_EFFICIENCY_RULE,
+    '',
     '## MASTER PROMPT (single source of truth)',
     job.masterPrompt,
+    '',
+    ...(promptOnlySection.length > 0 ? [...promptOnlySection, ''] : []),
+    '## CREATIVE STORYTELLING MANDATE (dynamic SVG world, never static cards)',
+    '- Every scene must be a rich, bespoke animated world tailored to the narration — never a static card, a lone word, or an idle Stickman.',
+    '- When a scene includes the Stickman, make it actively interact with custom scene props: point at holographic screens, hold a glowing lightbulb, climb progress steps, push/pull objects, gesture with spring physics, and react to on-screen data. Use interpolate() and spring() for every limb prop and camera beat.',
+    '- React to hook questions with floating animated ؟ / ? question marks around the visual, then resolve them as the narration answers.',
+    '- Layer hand-built SVG illustrations, charts, timelines, icons, badges, and ambient particles. Build subtle parallax depth with 2–4 layered transforms moving at different speeds.',
+    '- Smart kinetic key-phrases: display concise, impactful 2–5 word takeaways or punctuation hooks synced to the narration. NEVER show a single isolated word. Animate the phrase as a unit (pop, slide, mask-reveal, or spring scale) and time it to the spoken beat.',
+    '- Use the provided keyPhrases as the semantic anchors; you may refine them to 2–5 words. When Captions are ENABLED, keep key-phrases distinct from the bottom caption strip so they do not duplicate it. When Captions are DISABLED, the kinetic key-phrases become the primary on-screen text.',
+    '- Vary the visual composition aggressively between scenes: motion-graphics data diagram, timeline, comparison, symbolic metaphor, environmental storytelling, or a purposeful character beat. No two consecutive scenes should share the same layout.',
+    '',
+    '## ANTI-BOILERPLATE VISUAL VARIETY (mandatory)',
+    '- NEVER default every scene to the same rigid skeleton (small kicker + top-left title + subtitle + centered card). That is a failure.',
+    '- Adapt the composition architecture to each scene\'s narrative and pacing. Use the per-scene compositionArchetype as a starting point, then customize it so every scene feels custom-directed.',
+    '- Vary focal placement deliberately: full-bleed kinetic typography, split-screen comparisons, large-canvas camera pans, minimal icon-driven beats, data-first charts, or clean B-Roll scenes with no header block.',
+    '- Omit the header/kicker/title block whenever it adds no meaning. Never stamp a repeated top text band from habit.',
+    '- Two consecutive scenes must not share the same layout skeleton, focal point, or card grid.',
+    '',
+    '## MULTI-BEAT CHOREOGRAPHY (mandatory in every scene)',
+    '- Every scene MUST contain at least three distinct motion beats: an entrance beat, an ongoing idle beat, and a visual state-change beat. A single fade-in is not acceptable.',
+    '- Staggered spring entrances: every list item, card, badge, node, row, and icon enters with its own spring() whose delay is exactly `index * 12` frames. Never reveal a group as one block.',
+    '- Continuous subtle idle motion for the whole scene duration: floating sine drift, pulsing rings/halos, animated SVG path dashoffset or morphing blobs, slow orbit particles, or breathing scale. Motion must never freeze.',
+    '- Visual state changes may optionally use at most one subtle SceneSfx on the key beat (soft pop/click/whoosh only). Never place a bell, chime, ding, or success sound, and never place any SFX at the scene ending.',
+    '- Keep choreography readable: each beat should reinforce the narration instead of adding random noise.',
+    '',
+    '## SCENE TRANSITIONS & GENTLE EXIT EASE (mandatory)',
+    `- The composition already connects scenes with @remotion/transitions (16-frame spring transitions with slide/wipe/fade) and triggers the scene-to-scene whoosh. Never build a hard cut, a scene-to-scene transition component, or a transition reset inside a scene.`,
+    `- The composition adds ${TRANSITION_DURATION_IN_FRAMES} transition frames to every scene sequence so audio and captions stay frame-accurate. Always read props.durationInFrames for timing; the contentFrames value in the scene list is only the audio-length estimate.`,
+    '- End every scene with a gentle 10-frame exit ease over the final 10 frames of props.durationInFrames: interpolate(frame, [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) and apply it to the content layer opacity plus a tiny translateY/scale. Elements must never freeze abruptly.',
+    '- Keep the idle motion alive until that exit ease begins; do not stop animation early or shorten the scene to compensate for the transition overlap.',
+    '- Keep the entrance at frame 0. Do not render `<SceneSfx name="whoosh" frame={0} />` for scene transitions — the composition owns that whoosh.',
+    '',
+    ...(depth25DEnabled
+      ? [
+          '## 2.5D SPATIAL DEPTH MODE (ENABLED)',
+          '- Import exactly: import { DepthStage, SpatialCard } from "../components/Depth25D";',
+          '- Wrap the scene visual stage in <DepthStage> so every card shares perspective: 1200px and transformStyle: "preserve-3d".',
+          '- Choreograph multi-plane card layering: build an ordered stack of 2–5 <SpatialCard> layers. Each new card uses enterFrame to spring smoothly toward the viewer at translateZ(0).',
+          '- When the next card arrives, pass the previous card a recedeFrame so it smoothly recedes backward into Z-space (translateZ(-150px), scale(0.84), opacity 0.45, blur(2px), dynamic drop shadow) while the new active card rises forward in front of it.',
+          '- Use tiltX/tiltY for a subtle physical card tilt. Keep the active card sharp and readable, and let receded cards become dim depth layers.',
+          '- Mirror x offsets and text alignment for props.isRtl when language is ar, and use the exact active palette hex values for card surfaces, borders, glows, and shadows.',
+          '- Every scene must visibly progress cards forward and backward through Z-space over time; do not use DepthStage/SpatialCard as a flat fade substitute.',
+          `- Never place cards over the top 22% headline/subtitle or inside the bottom ${captionSafeBottom}% caption safe zone.`,
+        ]
+      : []),
+    '',
+    '## SUBTLE MICRO-SFX (strictly limited, optional)',
+    'import { SceneSfx } from "../components/SceneSfx";',
+    'type SceneSfxProps = {',
+    '  name: "pop" | "check" | "whoosh" | "sparkle";',
+    '  frame: number;',
+    '  volume?: number;',
+    '  sfxEnabled?: boolean;',
+    '};',
+    '- Use AT MOST ONE `<SceneSfx />` per scene, only on the single most important visual transition or state change.',
+    '- Keep the volume between `0.15` and `0.22` (never above `0.25`), and leave at least 0.6s of breathing room after the sound.',
+    '- Allowed names: `pop` (soft pop), `check` (subtle click), `whoosh` (soft whoosh), `sparkle` (soft pop). Never use any bell, chime, ding, success, alarm, or notification sound.',
+    '- Never place a SceneSfx at frame 0, inside the final 20% of props.durationInFrames, or at a scene ending / transition boundary. Scenes must end in silence; the composition owns the transition whoosh.',
+    '- If unsure whether a beat truly needs sound, omit it. Silence is always preferred over a bell/chime or stacked SFX.',
+    '',
+    '## CHARACTER POLICY — STICKMAN IS SELECTIVE, NOT MANDATORY',
+    '- Pure kinetic motion graphics (animated SVG icons, UI mockups, data charts, glowing cards, kinetic typography, geometric transitions) must carry at least 60–70% of all scenes.',
+    '- Include the clean, minimally expressive Stickman ONLY when the master prompt explicitly requests it OR in 1–2 narrative moments (such as the opening hook or the closing CTA) where a human gesture adds clear value.',
+    '- Follow the per-scene "character" line in the scene list. When it says NONE, build the scene entirely from kinetic motion graphics with no Stickman figure, no silhouette, and no stand-in human shape.',
+    '- Never add the Stickman as decoration or default filler, and never force it into data, chart, comparison, or process scenes.',
+    '',
+    '## SPEED CONTRACT — DO NOT INSPECT THE CODEBASE',
+    '- Do NOT run `cat`, `sed`, `head`, `tail`, `rg`, `grep`, `ls`, or any file-reading command on src/components/Stickman.tsx, src/types.ts, src/theme.ts, src/config.ts, src/data.json, or package.json.',
+    '- After writing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run `npm`, build, test, or render commands. The host validates and renders after you finish.',
+    '- Go straight to writing the files below with the write tool. No exploration step, no plan file.',
     '',
     '## OUTPUT FILES (exactly these, no other files)',
     ...job.scenes.map((_, index) => `- src/generated/Scene${index + 1}.tsx`),
     '- src/generated/index.ts',
     '',
-    'Each Scene file must export exactly one named component matching its file name.',
-    'src/generated/index.ts must import every component, export the GeneratedSceneProps type, and export:',
-    'export const GENERATED_SCENES: Record<string, ComponentType<GeneratedSceneProps>> = { "Scene1": Scene1, ... };',
+    'Each Scene file must export exactly one named component matching its file name (Scene1, Scene2, ...).',
+    '',
+    '## CONCISE CODE CONTRACT',
+    '- Keep each scene component clean, modular, and concise: target 80–140 lines per scene file.',
+    '- Extract tiny local helper components/functions instead of repeating markup, and avoid dead code or unused imports.',
+    '- Write src/generated/index.ts IMMEDIATELY after writing all scene files. Do not re-read, explore, or re-write scenes before writing the index.',
+    '',
+    '## src/generated/index.ts EXPORT CONTRACT (copy this shape exactly)',
+    'import type { ComponentType } from "react";',
+    'import { Scene1 } from "./Scene1";',
+    'import { Scene2 } from "./Scene2";',
+    '// ...one import per scene file you wrote...',
+    '',
+    'export type GeneratedSceneProps = {',
+    '  accentColor: string;',
+    '  bgColor: string;',
+    '  textColor: string;',
+    '  mutedColor: string;',
+    '  characterBody: string;',
+    '  characterFace: string;',
+    '  characterAccent: string;',
+    '  characterShadow: string;',
+    '  isRtl: boolean;',
+    '  language: string;',
+    '  title?: string;',
+    '  text?: string;',
+    '  keywords?: string[];',
+    '  data?: Record<string, unknown>;',
+    '  durationInFrames: number;',
+    '  showCharacter?: boolean;',
+    '};',
+    '',
+    'export const GENERATED_SCENES: Record<string, ComponentType<GeneratedSceneProps>> = {',
+    '  Scene1,',
+    '  Scene2,',
+    '  // ...every scene you wrote...',
+    '};',
+    '',
+    '## EXACT STICKMAN COMPONENT INTERFACE (do not read the file)',
+    'import { Stickman } from "../components/Stickman";',
+    'type StickmanProps = {',
+    '  pose?: "idle" | "walking" | "explaining" | "thinking" | "shocked" | "happy" | "sad" | "pointing" | "celebrating" | "idea" | "facepalm";',
+    '  color: string;',
+    '  faceColor: string;',
+    '  accent: string;',
+    '  shadow: string;',
+    '  accessory?: "none" | "tie" | "badge";',
+    '  delay?: number;',
+    '};',
+    'Usage: <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} delay={0} />.',
+    'Stickman already animates its own entrance and uses useVideoConfig internally. Place it in a relatively positioned wrapper with an explicit size such as 340x460 and pass no other props.',
+    '',
+    '## ABSOLUTEFILL LAYOUT RULES (mandatory)',
+    '- The scene root MUST be `<AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: props.isRtl ? "rtl" : "ltr" }}>`.',
+    '- Read width/height from useVideoConfig() and prefer percentage/flex layouts so the scene works at 1080x1920, 1920x1080, and 1080x1080.',
+    '- Use position: "absolute" layers for decorative motion and keep all text inside a padded content column.',
+    '- Use flexbox with gap/justifyContent/alignItems instead of magic pixel offsets, and clamp overflow with maxWidth: "100%".',
+    '',
+    ...safeLayoutSection,
+    '',
+    ...captionDirectionSection,
+    '',
+    ...cleanBrollPromptSection(job.cleanBrollMode),
+    '',
+    '## STRICT NON-OVERLAP BOUNDING ZONES (mandatory)',
+    '- The Stickman must live in a dedicated column/corner, never in the center of the content grid. Pin it with an explicit wrapper such as `left: 60` or `right: 60` (use the RTL side for Arabic if it reads better) and a fixed width/height, for example `{ position: "absolute", left: 60, bottom: "30%", width: 260, height: 380 }` or `{ position: "absolute", right: 60, bottom: "30%", width: 260, height: 380 }`.',
+    '- The Stickman wrapper must NEVER overlap any text pill, badge, card, row, chart label, headline, subtitle, or caption. Reserve the column by shrinking the text/card area (for example `maxWidth: "62%"` plus `marginLeft`/`marginRight`) so the two bounding boxes are disjoint.',
+    `- Keep all pills, badges, and cards inside the middle 50% stage and within \`maxWidth: "85%"\`. They must not touch the Stickman column, the top 22% headline, or the bottom ${captionSafeBottom}% caption zone.`,
+    '- Prefer separate layout regions (flex columns / absolute corners) over stacking text directly on top of illustrations. If a decorative SVG passes behind text, keep its opacity low and never position interactive content over the character.',
+    '',
+    '## CHART & CARD GEOMETRY (mandatory spacing)',
+    '- Offset every Y-axis tick label away from the axis line: use textAnchor="end" and x={axisX - 14}, and reserve at least 56px of left padding so values like 10x / 20x / 30x are never struck through by the axis stroke.',
+    '- Keep all floating cards and 2.5D SpatialCard surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap). Never let a card overlap a chart line, tick, or label.',
+    '- Keep axis titles outside the plot area, and never draw data labels on top of gridlines or strokes.',
+    '',
+    '## DIRECTION & ROTATION ALIGNMENT (mandatory geometry)',
+    '- Any directional object (rocket, arrow, plane, projectile, pointer) moving along a vector (dx, dy) MUST have its SVG rotation aligned to its travel angle.',
+    '- Compute the angle with `Math.atan2(dy, dx) * (180 / Math.PI)` and apply it to the moving group. A rocket moving up-right must be rotated ~35–45deg clockwise, NEVER tilted left while moving right.',
+    '- Match arrowheads, trails, and thrust plumes to the same vector; motion direction and rotation must never contradict each other.',
     '',
     '## EXACT SCENES AND TIMING',
     sceneLines,
     '',
+    '## VIDEO LANGUAGE & ON-SCREEN COPY (mandatory)',
+    `- Selected video language: ${languageName} (${languageMeta.native}); text direction: ${languageDirection}.`,
+    `- Write EVERY visible string in ${languageName}: scene titles, key-phrases, axis titles, tick labels, legends, cards, badges, callouts, buttons, and UI mockup text.`,
+    '- Never leave English placeholder labels such as TIME, VALUE, TOTAL, GROWTH, or REVENUE when a non-English language is selected. Translate them (for Arabic: الزمن / القيمة / الإجمالي / النمو / الإيرادات).',
+    '- This localization is mandatory even when voiceoverEnabled is false; a silent video must keep all on-screen copy in the selected language.',
+    `- Use props.isRtl with direction: "${languageDirection.toLowerCase()}" and the matching ${languageDirection === 'RTL' ? 'right' : 'left'} alignment for all ${languageName} text.`,
+    '',
     '## VIDEO SETTINGS',
     `Aspect ratio: ${job.aspectRatio} (${width}x${height})`,
     `FPS: ${job.fps}`,
-    `Language: ${job.scriptLanguage} (${job.scriptLanguage === 'ar' ? 'RTL' : 'LTR'})`,
-    `Brand background: ${job.brandKit.bgColor}`,
-    `Brand accent: ${job.brandKit.accentColor}`,
+    `Language: ${languageName} (${languageMeta.native}) — ${languageDirection}`,
+    '',
+    '## LOCKED BRAND PALETTE (use these exact hex values, no substitutions)',
+    `Background: ${job.brandKit.bgColor}`,
+    `Text: ${job.brandKit.textColor}`,
+    `Primary: ${job.brandKit.primaryColor}`,
+    `Secondary: ${job.brandKit.secondaryColor}`,
+    `Accent: ${job.brandKit.accentColor}`,
+    '- Use the exact background hex above for the scene root background, the exact text hex for all body/headline text, the exact primary/secondary/accent hex for cards, pills, badges, charts, glows, and SVG strokes.',
+    '- These hex values come from the active UI palette and MUST flow through as the exact props.bgColor / props.textColor / props.accentColor values. Never hardcode #1D150C, #E77B40, #0B0F17, #FBBF24, or any other fallback color when the active palette differs.',
+    '- If you need tints, derive them from the active hex with rgba()/opacity rather than swapping in a different palette.',
     `Voiceover: ${job.voiceoverEnabled ? 'ENABLED (audio is handled by the composition)' : 'DISABLED (silent visual pacing)'}`,
+    `Captions: ${job.captionsEnabled && job.voiceoverEnabled ? 'ENABLED (the composition draws captions)' : 'DISABLED (do not draw caption text)'}`,
     `SFX: ${job.sfxEnabled ? 'ENABLED (the composition plays SFX; design visual accents that match)' : 'DISABLED'}`,
     watermarkRule,
     '',
@@ -5748,20 +7423,109 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     '## HARD DESIGN RULES',
     '- Use free-form React/Remotion JSX and animated inline <svg> scenes and props. Do not use fixed card templates.',
-    '- Featureless stickman ONLY: a smooth silhouette head and body with NO eyes, NO eyebrows, NO nose, NO mouth, and NO ears. Emotion must come from posture, head tilt, limb motion, interactive SVG props, and visual cues.',
+    '- Stickman faces: keep the head smooth and clean, with NO detailed anatomical face (no nose, mouth, or ears). By default, express emotion through descriptive poses, head tilt, limb motion, interactive SVG props, and visual cues. ONLY when the scene emotion specifically requires it, add minimal contextual symbolic cues such as falling teardrops for sadness, sharp angled brow lines for anger, or sparkles for joy. Never draw complex or realistic faces.',
     '- Default to neutral/male minimalist stickman figures. NEVER depict a female character unless the script strictly requires it; if strictly required, keep the silhouette completely featureless and modest.',
     '- Build custom topic metaphors and story-driven props that match the master prompt. Avoid repetitive text cards.',
-    '- Never show the same title twice on screen. Each scene should have a single clear headline at most.',
+    '- Every scene — with or without the Stickman — must include at least one custom SVG prop, diagram, animated icon, chart, UI mockup, or kinetic typographic composition, plus layered parallax background depth.',
+    CRISP_VECTOR_MAP_RULE,
+    '- Show 2–5 word kinetic key-phrases synced to the narration; never render a lone isolated word as the main visual.',
+    ...(job.cleanBrollMode
+      ? ['- Do NOT render any scene title, top header, kicker, or banner. The concept line in the scene list is internal only.']
+      : ['- Never show the same title twice on screen. Each scene should have a single clear headline at most.']),
     '- Use the provided brand colors, keep text contrast high, and respect RTL/LTR direction.',
     '- Animate continuously across the entire durationInFrames using useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never freeze.',
     '- Every scene must be responsive to the aspect ratio using useVideoConfig(); no overflow and no fixed single-frame assumptions.',
-    '- Keep critical content out of the bottom 18% safe zone.',
+    `- Keep critical content out of the bottom ${captionSafeBottom}% safe zone.`,
+    '',
+    ZOF_LIBRARY_CAPABILITIES,
     '',
     '## IMPORT RESTRICTIONS',
-    '- Only import from "react", "remotion", "../components/Stickman", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", or "@remotion/google-fonts". Do not import any other package.',
+    allowedImportsRule,
     '- Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), or dynamic import().',
     '- TypeScript strict mode and noUnusedLocals are enabled: every import and local must be used and fully typed.',
     '- Return only real files written to disk. Do not return markdown fences or commentary.',
+  ].join('\n');
+}
+
+function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
+  const languageMeta = getVideoLanguage(job.scriptLanguage);
+  const languageName = languageMeta.name;
+  const languageDirection = languageMeta.dir.toUpperCase();
+  const sceneFiles = job.scenes.map((scene, index) => {
+    const name =
+      scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
+        ? scene.generatedComponent
+        : `Scene${index + 1}`;
+    return `- src/generated/${name}.tsx — ${job.cleanBrollMode ? 'concept (internal, never render as header)' : 'title'}: ${scene.title}`;
+  });
+  const { width, height } = aspectDimensions(job.aspectRatio);
+  const depth25DTweakEnabled = job.enable25D === true;
+  const allowedTweakImports = depth25DTweakEnabled
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".';
+
+  return [
+    'You are the surgical Remotion scene editor for Zof Studio.',
+    'Apply a quick visual/motion tweak to the EXISTING generated scene files below. This is not a full regeneration.',
+    '',
+    STRICT_EFFICIENCY_RULE,
+    '',
+    '## REQUESTED TWEAK',
+    instruction,
+    '',
+    '## FILES TO EDIT IN PLACE',
+    ...sceneFiles,
+    '',
+    '## HARD RULES',
+    '- Edit only the listed src/generated/*.tsx files. Do NOT create, delete, or rename files.',
+    '- Do NOT edit src/generated/index.ts or any other project file unless a listed scene file does not exist yet.',
+    '- Preserve each component export name, the Props type, narration text, titles, scene durations, and all audio behavior.',
+    '- Preserve audioSrc, audioDataUrl, and durationInFrames usage exactly; never add or remove voiceover logic.',
+    '- Keep every scene file clean, modular, and concise: target 80–140 lines and reuse small local helpers.',
+    '- Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so motion stays continuous for the whole scene.',
+    '- Preserve the gentle 10-frame exit ease at the end of props.durationInFrames (opacity plus a tiny translateY/scale); never let the scene freeze before the composition transitions out.',
+    '- Never add a scene-to-scene whoosh at frame 0 or a hard cut: the composition owns @remotion/transitions and the transition whoosh.',
+    job.cleanBrollMode
+      ? `- Clean B-Roll is ON: render NO top header, kicker, scene title, title badge, or banner, and do not reserve a top 22% headline band. Keep the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% clear when captions are enabled.`
+      : `- Keep critical content out of the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% safe zone (caption offset ${job.captionBottomOffset}%); reserve the top 22% for RTL/LTR headline and subtitle text and respect RTL spacing when the video language is RTL.`,
+    '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
+    `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
+    '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. At most one subtle `<SceneSfx name="pop|check|whoosh|sparkle" />` may be preserved per scene at volume 0.15–0.22, never at frame 0 or at the scene ending; remove any bell/chime/ding/success sound.',
+    '- Keep the Stickman inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
+    CRISP_VECTOR_MAP_RULE,
+    ...cleanBrollPromptSection(job.cleanBrollMode),
+    '- Use the exact active palette hex values from the scene props; never replace them with #1D150C or #E77B40 fallbacks.',
+    '',
+    ZOF_LIBRARY_CAPABILITIES,
+    '',
+    ...(depth25DTweakEnabled
+      ? [
+          '- Preserve 2.5D spatial depth: keep importing { DepthStage, SpatialCard } from "../components/Depth25D" and keep the multi-plane Z-space card enter/recede choreography intact unless the tweak explicitly changes it.',
+        ]
+      : []),
+    allowedTweakImports,
+    '- Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), or dynamic import().',
+    '- After editing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run npm, build, test, or render commands. The host validates and renders after you finish.',
+    '- Read only the listed scene files you must edit, then write them back immediately. No exploration step, no plan file.',
+    '',
+    '## CHART & CARD GEOMETRY (mandatory spacing)',
+    '- Offset every Y-axis tick label away from the axis line: textAnchor="end" with x={axisX - 14} and at least 56px left padding, so 10x / 20x / 30x are never struck through by the axis stroke.',
+    '- Keep all floating cards and 2.5D SpatialCard surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap).',
+    '',
+    '## VIDEO LANGUAGE & ON-SCREEN COPY (mandatory)',
+    `- Selected video language: ${languageName} (${languageMeta.native}); text direction: ${languageDirection}.`,
+    `- Keep EVERY visible label in ${languageName}: titles, key-phrases, axis titles, ticks, legends, cards, badges, callouts, buttons, and UI mockup text. Never revert to English placeholders such as TIME, VALUE, or TOTAL.`,
+    `- Localize even when voiceover is disabled; use props.isRtl with direction: "${languageDirection.toLowerCase()}" and ${languageDirection === 'RTL' ? 'right' : 'left'} alignment.`,
+    '',
+    '## VIDEO SETTINGS',
+    `Aspect ratio: ${job.aspectRatio} (${width}x${height})`,
+    `FPS: ${job.fps}`,
+    `Language: ${languageName} (${languageMeta.native}) — ${languageDirection}`,
+    `Active palette — background ${job.brandKit.bgColor}; text ${job.brandKit.textColor}; primary ${job.brandKit.primaryColor}; secondary ${job.brandKit.secondaryColor}; accent ${job.brandKit.accentColor}. Use these exact hex values and never fall back to #1D150C or #E77B40.`,
+    `Voiceover: ${job.voiceoverEnabled ? 'ENABLED (reuse existing audio)' : 'DISABLED (silent visual pacing)'}`,
+    `Captions: ${job.captionsEnabled ? 'ENABLED (the composition draws captions)' : 'DISABLED (do not draw caption text)'}`,
+    '',
+    'Return only real files written to disk. Do not return markdown fences or commentary.',
   ].join('\n');
 }
 
@@ -5785,20 +7549,18 @@ function runOpenCodeExport(
       cwd: PROJECT_ROOT,
       env: { ...process.env },
       stdio: ['ignore', 'pipe', 'pipe'],
+      detached: process.platform !== 'win32',
     });
+    trackExportProcess(child);
     let settled = false;
     let lineCount = 0;
     let buffer = '';
     const timer = setTimeout(() => {
       if (settled) return;
-      try {
-        child.kill('SIGKILL');
-      } catch {
-        // ignore
-      }
+      killProcessTree(child);
       settled = true;
-      reject(new Error('opencode run timed out after 20 minutes.'));
-    }, 20 * 60 * 1000);
+      reject(new Error('opencode run timed out after 600 seconds.'));
+    }, OPENCODE_RUN_TIMEOUT_MS);
 
     const handleLine = (line: string) => {
       const trimmed = line.trim();
@@ -6135,7 +7897,15 @@ async function startServer() {
     let source: 'live' | 'curated' = 'curated';
     let notice: string | undefined;
 
-    if (provider !== 'opencode-free') {
+    if (provider === 'opencode-free') {
+      const opencode = inspectOpenCode();
+      const discovered = openCodeProviderModels(opencode);
+      if (discovered.length > 0) {
+        models = discovered;
+        source = 'live';
+        notice = 'نماذج OpenCode المكتشفة من ملفات الإعدادات المحلية.';
+      }
+    } else {
       const live = await fetchProviderModelsLive(provider, keys);
       models = live.models;
       notice = live.notice;
@@ -6148,7 +7918,7 @@ async function startServer() {
       notice =
         notice ||
         (provider === 'opencode-free'
-          ? 'قائمة OpenCode المجانية المنسّقة.'
+          ? 'لم يتم العثور على نماذج في إعدادات OpenCode — تم استخدام القائمة الاحتياطية.'
           : 'تم استخدام القائمة الاحتياطية المنسّقة.');
     }
 
@@ -6309,7 +8079,8 @@ async function startServer() {
         ...studio,
         port: REMOTION_STUDIO_PORT,
         error:
-          'تعذر تشغيل Remotion Studio على المنفذ 9578 خلال 15 ثانية. تحقق من السجلات.',
+          studio.error ||
+          'تعذر تشغيل Remotion Studio على المنفذ 9578. تحقق من حالة المنفذ ثم أعد المحاولة.',
         dataFile: path.relative(PROJECT_ROOT, DATA_FILE),
         projectFile: CURRENT_PROJECT_FILE,
       });
@@ -6326,6 +8097,85 @@ async function startServer() {
 
   app.post('/api/open-remotion-studio', handleOpenRemotionStudio);
   app.post('/api/studio/open', handleOpenRemotionStudio);
+
+  app.post('/api/remotion-studio/start', async (_req: Request, res: Response) => {
+    const studio = await ensureRemotionStudioUi();
+    if (!studio.running) {
+      res.status(503).json({
+        ok: false,
+        ...studio,
+        error: studio.error || `تعذر تشغيل Remotion Studio على المنفذ ${REMOTION_STUDIO_UI_PORT}.`,
+      });
+      return;
+    }
+    res.json({ ok: true, ...studio });
+  });
+
+  app.post('/api/remotion-studio/stop', async (_req: Request, res: Response) => {
+    const stopped = await stopRemotionStudioUi();
+    res.status(stopped.ok ? 200 : 503).json({
+      ...stopped,
+      ...(stopped.ok ? {} : { error: 'تعذر إيقاف Remotion Studio على المنفذ 3333.' }),
+    });
+  });
+
+  app.get('/api/remotion-studio/status', async (_req: Request, res: Response) => {
+    const port = REMOTION_STUDIO_UI_PORT;
+    const tracked = trackedStudioProcess('studio-ui');
+    const trackedAlive = isProcessAlive(tracked);
+    const portOpen = await checkPortOpen(port);
+    const running = portOpen ? await checkStudioHttp(port) : false;
+    const pids = portOpen && !running ? await findPidsOnPort(port) : [];
+    res.json({
+      ok: true,
+      running,
+      starting: trackedAlive && !running,
+      port,
+      url: `http://localhost:${port}`,
+      ...(trackedAlive && tracked.pid ? { pid: tracked.pid } : {}),
+      external: running && !trackedAlive,
+      ...(portOpen && !running && !trackedAlive
+        ? {
+            error: `المنفذ ${port} مفتوح لكنه لا يستجيب لـ Remotion Studio. قد تحتاج إلى استعادة العملية.`,
+            pids,
+          }
+        : {}),
+    });
+  });
+
+  const handleGeneratedSceneStatus = (_req: Request, res: Response) => {
+    const project = readProjectState();
+    const projectScenes = project?.scenes || [];
+    const generatedScenes = projectScenes
+      .map((scene, index) => {
+        const component =
+          scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
+            ? scene.generatedComponent
+            : `Scene${index + 1}`;
+        return {
+          id: scene.id,
+          title: scene.title,
+          index: index + 1,
+          component,
+          durationSec: scene.durationSec,
+          hasAudio: Boolean(scene.audioSrc || scene.audioDataUrl),
+          exists: fs.existsSync(path.join(GENERATED_DIR, `${component}.tsx`)),
+        };
+      })
+      .filter((scene) => scene.exists);
+    res.json({
+      ok: true,
+      hasGenerated:
+        generatedScenes.length > 0 && generatedScenes.length === projectScenes.length,
+      count: generatedScenes.length,
+      totalScenes: projectScenes.length,
+      scenes: generatedScenes,
+      updatedAt: project?.updatedAt ?? null,
+    });
+  };
+
+  app.get('/api/generated/status', handleGeneratedSceneStatus);
+  app.get('/api/generated', handleGeneratedSceneStatus);
 
   app.get('/api/project', (_req: Request, res: Response) => {
     const project = readProjectState();
@@ -6375,14 +8225,21 @@ async function startServer() {
       voiceModelId?: unknown;
       voiceStability?: unknown;
       voiceSimilarityBoost?: unknown;
+      voiceStyle?: unknown;
+      voiceSpeakerBoost?: unknown;
+      voiceSpeed?: unknown;
       visualStyle?: unknown;
       aspectRatio?: unknown;
       fps?: unknown;
       scriptLanguage?: unknown;
+      language?: unknown;
       scriptDepth?: unknown;
       creativeCodeMode?: unknown;
       scriptPacing?: unknown;
       captionAnimationStyle?: unknown;
+      captionStyle?: unknown;
+      captionColors?: unknown;
+      captionBottomOffset?: unknown;
       wordsPerScreen?: unknown;
       captionsEnabled?: unknown;
       brandKit?: unknown;
@@ -6458,6 +8315,15 @@ async function startServer() {
         1,
       );
     }
+    if (body.voiceStyle !== undefined) {
+      studioSettings.voiceStyle = clampNumber(body.voiceStyle, studioSettings.voiceStyle, 0, 1);
+    }
+    if (typeof body.voiceSpeakerBoost === 'boolean') {
+      studioSettings.voiceSpeakerBoost = body.voiceSpeakerBoost;
+    }
+    if (body.voiceSpeed !== undefined) {
+      studioSettings.voiceSpeed = clampNumber(body.voiceSpeed, studioSettings.voiceSpeed, 0.7, 1.2);
+    }
     if (typeof body.visualStyle === 'string') {
       studioSettings.visualStyle = normalizeVisualStyleValue(
         body.visualStyle,
@@ -6470,8 +8336,12 @@ async function startServer() {
     if (Number(body.fps) === 30 || Number(body.fps) === 60) {
       studioSettings.fps = Number(body.fps);
     }
-    if (body.scriptLanguage === 'ar' || body.scriptLanguage === 'en') {
-      studioSettings.scriptLanguage = body.scriptLanguage;
+    const requestedLanguage = normalizeVideoLanguage(
+      body.scriptLanguage ?? body.language,
+      '',
+    );
+    if (requestedLanguage) {
+      studioSettings.scriptLanguage = requestedLanguage;
     }
     if (body.scriptDepth !== undefined) {
       studioSettings.scriptDepth = normalizeScriptDepth(
@@ -6491,9 +8361,9 @@ async function startServer() {
         studioSettings.scriptPacing,
       );
     }
-    if (body.captionAnimationStyle !== undefined) {
+    if (body.captionStyle !== undefined || body.captionAnimationStyle !== undefined) {
       studioSettings.captionAnimationStyle = normalizeCaptionAnimationStyle(
-        body.captionAnimationStyle,
+        body.captionStyle ?? body.captionAnimationStyle,
         studioSettings.captionAnimationStyle,
       );
     }
@@ -6508,6 +8378,18 @@ async function startServer() {
     }
     if (body.brandKit && typeof body.brandKit === 'object') {
       studioSettings.brandKit = normalizeBrandKit(body.brandKit);
+    }
+    if (body.captionColors !== undefined) {
+      studioSettings.captionColors = normalizeCaptionColors(
+        body.captionColors,
+        studioSettings.brandKit,
+      );
+    }
+    if (body.captionBottomOffset !== undefined) {
+      studioSettings.captionBottomOffset = normalizeCaptionBottomOffset(
+        body.captionBottomOffset,
+        studioSettings.captionBottomOffset,
+      );
     }
     if (typeof body.sfxEnabled === 'boolean') {
       studioSettings.sfxEnabled = body.sfxEnabled;
@@ -6569,20 +8451,44 @@ async function startServer() {
         res.json({ source: 'catalog', models: DEFAULT_ELEVENLABS_MODELS, warning: 'تعذر التحقق من مفتاح ElevenLabs' });
         return;
       }
-      const data = (await response.json()) as Array<{
-        model_id?: string;
-        name?: string;
-        description?: string;
-        can_do_text_to_speech?: boolean;
-        languages?: Array<unknown>;
-      }>;
+      const payload = (await response.json()) as unknown;
+      const data = Array.isArray(payload)
+        ? (payload as Array<{
+            model_id?: string;
+            name?: string;
+            description?: string;
+            can_do_text_to_speech?: boolean;
+            languages?: Array<unknown>;
+          }>)
+        : [];
 
       const ttsModels = data
-        .filter((m) => m.can_do_text_to_speech !== false && m.model_id)
+        .filter((m) => m.can_do_text_to_speech === true && m.model_id)
         .map((m) => {
           const id = m.model_id || '';
+          const languages = Array.from(
+            new Set(
+              (Array.isArray(m.languages) ? m.languages : [])
+                .map((language) => {
+                  if (typeof language === 'string') return language;
+                  if (language && typeof language === 'object') {
+                    const record = language as Record<string, unknown>;
+                    return (
+                      record.language ||
+                      record.language_code ||
+                      record.locale ||
+                      record.name ||
+                      ''
+                    );
+                  }
+                  return '';
+                })
+                .map((language) => normalizeLanguageLabel(language))
+                .filter((language) => language && language !== 'Other'),
+            ),
+          );
           let latencyBadge = 'استجابة قياسية';
-          let qualityBadge = `${m.languages?.length || 29} لغة`;
+          let qualityBadge = `${languages.length || m.languages?.length || 0} لغة`;
           if (id.includes('flash')) {
             latencyBadge = 'زمن فائق الانخفاض · ~75ms';
             qualityBadge = 'سرعة قصوى';
@@ -6593,12 +8499,14 @@ async function startServer() {
             latencyBadge = 'جودة فائقة';
             qualityBadge = 'متعدد اللغات';
           }
+          if (!languages.length) qualityBadge = 'جميع النماذج الصوتية';
           return {
             model_id: id,
             name: m.name || id,
             description: m.description || 'نموذج توليد صوتي من ElevenLabs',
             latencyBadge,
             qualityBadge,
+            languages,
           };
         });
 
@@ -6607,7 +8515,11 @@ async function startServer() {
         models: ttsModels.length > 0 ? ttsModels : DEFAULT_ELEVENLABS_MODELS,
       });
     } catch {
-      res.json({ source: 'catalog', models: DEFAULT_ELEVENLABS_MODELS });
+      res.json({
+        source: 'catalog',
+        models: DEFAULT_ELEVENLABS_MODELS,
+        warning: 'تعذر الاتصال بـ ElevenLabs، تم استخدام النماذج الاحتياطية',
+      });
     }
   });
 
@@ -6673,6 +8585,9 @@ async function startServer() {
       modelId?: unknown;
       stability?: unknown;
       similarityBoost?: unknown;
+      style?: unknown;
+      speakerBoost?: unknown;
+      speed?: unknown;
       voiceoverEnabled?: unknown;
     };
 
@@ -6681,6 +8596,9 @@ async function startServer() {
     const modelId = typeof body.modelId === 'string' && body.modelId.trim() ? body.modelId.trim().slice(0, 64) : 'eleven_multilingual_v2';
     const stability = Math.min(1, Math.max(0, Number(body.stability ?? 0.5)));
     const similarityBoost = Math.min(1, Math.max(0, Number(body.similarityBoost ?? 0.75)));
+    const style = Math.min(1, Math.max(0, Number(body.style ?? 0)));
+    const speakerBoost = typeof body.speakerBoost === 'boolean' ? body.speakerBoost : true;
+    const speed = Math.min(1.2, Math.max(0.7, Number(body.speed ?? 1)));
 
     if (!text) {
       res.status(400).json({ error: 'النص الصوتي مطلوب' });
@@ -6727,6 +8645,9 @@ async function startServer() {
           voice_settings: {
             stability,
             similarity_boost: similarityBoost,
+            style,
+            use_speaker_boost: speakerBoost,
+            speed,
           },
         }),
         signal: AbortSignal.timeout(20000),
@@ -6852,6 +8773,291 @@ async function startServer() {
     }
   });
 
+  function countSpokenWords(script: string): number {
+    return script.trim().split(/\s+/).filter(Boolean).length;
+  }
+
+  function estimateSpokenDurationSec(script: string): number {
+    const words = countSpokenWords(script);
+    if (words === 0) return 0;
+    return Math.round((words / 2.5) * 10) / 10;
+  }
+
+  type ScriptWordBudget = {
+    min: number;
+    max: number;
+    target: number;
+    sentences: string;
+  };
+
+  function scriptWordBudget(target: ExportTargetDuration): ScriptWordBudget {
+    if (target === '3') {
+      return { min: 5, max: 9, target: 7, sentences: '1 to 2' };
+    }
+    if (target === '5') {
+      return { min: 9, max: 14, target: 12, sentences: '2 to 3' };
+    }
+    if (target === '8') {
+      return { min: 15, max: 22, target: 19, sentences: '2 to 3' };
+    }
+    if (target === '12') {
+      return { min: 24, max: 32, target: 28, sentences: '3 to 4' };
+    }
+    if (target === '15') {
+      return { min: 30, max: 40, target: 35, sentences: '3 to 4' };
+    }
+    if (target === '30') {
+      return { min: 55, max: 70, target: 62, sentences: '4 to 5' };
+    }
+    if (target === '45') {
+      return { min: 90, max: 110, target: 100, sentences: '5 to 7' };
+    }
+    if (target === '90') {
+      return { min: 195, max: 215, target: 205, sentences: '10 to 12' };
+    }
+    return { min: 125, max: 145, target: 135, sentences: '7 to 8' };
+  }
+
+  function scriptTargetWords(target: ExportTargetDuration): number {
+    return scriptWordBudget(target).target;
+  }
+
+  function splitSpokenSentences(text: string): string[] {
+    return splitScriptSentences(text);
+  }
+
+  function enforceScriptWordBudget(
+    script: string,
+    budget: ScriptWordBudget,
+  ): string {
+    const text = script.trim();
+    if (!text || countSpokenWords(text) <= budget.max) return text;
+
+    const kept: string[] = [];
+    let total = 0;
+    for (const sentence of splitSpokenSentences(text)) {
+      const words = countSpokenWords(sentence);
+      if (total + words > budget.max) {
+        const remaining = budget.max - total;
+        if (remaining > 0) {
+          const clipped = sentence
+            .split(/\s+/)
+            .slice(0, remaining)
+            .join(' ')
+            .replace(/[،,;:.!?؟。！]+$/, '');
+          if (clipped) kept.push(`${clipped}.`);
+        }
+        break;
+      }
+      kept.push(sentence);
+      total += words;
+    }
+
+    const trimmed = kept.join(' ').replace(/\s+/g, ' ').trim();
+    return trimmed || text;
+  }
+
+  function normalizeVoiceoverScript(raw: string): string {
+    let text = raw.trim();
+    const fenced = text.match(/```(?:[a-z]*)?\s*\n?([\s\S]*?)```/i);
+    if (fenced?.[1]) text = fenced[1];
+    text = text
+      .replace(/^\s*(?:script|voiceover|voice-over|narration|spoken script|السكربت(?:\s+الصوتي)?|التعليق الصوتي)\s*[:：-]\s*/i, '')
+      .replace(/\*\*|__|`/g, '')
+      .replace(/^[ \t]*[-*•]\s+/gm, '')
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    return normalizeDomainDotSpacing(text);
+  }
+
+  function buildLocalVoiceoverScript(
+    topic: string,
+    language: string,
+    targetWords: number,
+    budget: ScriptWordBudget = scriptWordBudget('60'),
+  ): string {
+    const core = topic.replace(/\s+/g, ' ').trim().replace(/[.!?؟]+$/, '');
+    const shortCore = core.length > 150 ? `${core.slice(0, 147).trim()}…` : core;
+    const openers =
+      language === 'en'
+        ? [
+            `What if ${shortCore} is the one idea that changes how you see everything?`,
+            'At first it looks simple, but the real result appears once you understand how it works from the inside.',
+            `Most people treat ${shortCore} as a single step, when it is really a chain of small, deliberate decisions.`,
+            'Start with one clear action, then measure the result after a full week instead of guessing.',
+            'When those small steps add up, you feel the difference in time, effort, and outcome.',
+            'The takeaway is simple: do not wait for perfect conditions. Start now and improve what you already have.',
+          ]
+        : [
+            `ماذا لو كان ${shortCore} هو الفكرة التي تغيّر نظرتك بالكامل؟`,
+            'في البداية يبدو الأمر بسيطاً، لكن النتيجة الحقيقية تظهر عندما تفهم كيف يعمل من الداخل.',
+            `معظم الناس يتعاملون مع ${shortCore} كخطوة واحدة، بينما هو في الحقيقة سلسلة من القرارات الصغيرة والمدروسة.`,
+            'ابدأ بخطوة واحدة واضحة، ثم قِس النتيجة بعد أسبوع كامل بدلاً من التخمين.',
+            'وعندما تتراكم هذه الخطوات، ستلاحظ فرقاً ملموساً في الوقت والجهد والنتيجة.',
+            'الخلاصة بسيطة: لا تنتظر الظروف المثالية، ابدأ الآن وحسّن ما لديك تدريجياً.',
+          ];
+    const extensions =
+      language === 'en'
+        ? [
+            'Write down the first step today, give it a deadline, and let the next decision become easier.',
+            'Look at the last time you tried: what exactly stopped you, and what would make the next attempt easier?',
+            'Clarity beats intensity, so choose one measurable action and repeat it until it becomes automatic.',
+            'Track what changes, keep what works, and remove the step that adds friction without adding value.',
+          ]
+        : [
+            'اكتب أول خطوة اليوم، وحدّد لها موعداً نهائياً، وستصبح الخطوة التالية أسهل.',
+            'فكّر في آخر مرة حاولت فيها: ما الذي أوقفك بالتحديد، وما الذي سيجعل المحاولة القادمة أسهل؟',
+            'الوضوح أهم من الحماس، لذلك اختر خطوة واحدة قابلة للقياس وكرّرها حتى تصبح تلقائية.',
+            'راقب ما يتغيّر، واحتفظ بما ينجح، واحذف الخطوة التي تضيف تعقيداً بلا قيمة.',
+          ];
+    let script = openers.join(' ');
+    if (countSpokenWords(script) < targetWords * 0.55) {
+      script += ` ${extensions[0]}`;
+    }
+    let extensionIndex = 1;
+    while (
+      countSpokenWords(script) < budget.min &&
+      extensionIndex < extensions.length * 3
+    ) {
+      script += ` ${extensions[extensionIndex % extensions.length]}`;
+      extensionIndex += 1;
+    }
+    return enforceScriptWordBudget(script, budget);
+  }
+
+  type VoiceoverScriptBody = {
+    topic?: unknown;
+    language?: unknown;
+    provider?: unknown;
+    modelId?: unknown;
+    scriptLanguage?: unknown;
+    targetDuration?: unknown;
+    rephrase?: unknown;
+    previousScript?: unknown;
+    mode?: unknown;
+  };
+
+  async function handleVoiceoverScriptGeneration(
+    req: Request,
+    res: Response,
+    body: VoiceoverScriptBody,
+  ): Promise<void> {
+    const topic =
+      typeof body.topic === 'string' ? body.topic.trim().slice(0, 12000) : '';
+    if (!topic) {
+      res.status(400).json({ error: 'يرجى إدخال موضوع الفيديو أو الفكرة أولاً.' });
+      return;
+    }
+    const scriptLanguage = normalizeVideoLanguage(
+      body.scriptLanguage ?? body.language,
+      studioSettings.scriptLanguage,
+    );
+    const outputLanguage = videoLanguageName(scriptLanguage);
+    const targetDuration = normalizeTargetDuration(body.targetDuration);
+    const targetBudget = scriptWordBudget(targetDuration);
+    const targetWords = targetBudget.target;
+    const rephrase = body.rephrase === true;
+    const previousScript =
+      typeof body.previousScript === 'string'
+        ? normalizeVoiceoverScript(body.previousScript.slice(0, 12000))
+        : '';
+    const providerCandidate =
+      typeof body.provider === 'string' ? body.provider : studioSettings.aiProvider;
+    const requestedProvider = AI_PROVIDER_IDS.has(providerCandidate as AiProviderId)
+      ? (providerCandidate as AiProviderId)
+      : studioSettings.aiProvider;
+    const requestedModel =
+      (typeof body.modelId === 'string' && body.modelId.trim()
+        ? body.modelId.trim()
+        : studioSettings.aiModel) || DEFAULT_FREE_MODEL;
+
+    const systemPrompt = [
+      `You are a world-class ${outputLanguage} voiceover scriptwriter for short-form video.`,
+      `Write ONLY the final spoken voiceover script in ${outputLanguage}.`,
+      `Target length: STRICTLY ${targetBudget.min} to ${targetBudget.max} words for a ${targetDuration === 'auto' ? '60' : targetDuration}-second video (about ${targetWords} words), calibrated to a realistic speaking speed.`,
+      `Structure the script as ${targetBudget.sentences} cohesive spoken sentences, each carrying one concrete idea.`,
+      `Hard limit: the final script must stay at or below ${targetBudget.max} words and at or above ${targetBudget.min} words. Do not pad with filler to reach the lower bound.`,
+      'Use natural, engaging, conversational language that sounds excellent when read aloud.',
+      'Use proper punctuation (؟, !, .) and short clauses that a narrator can breathe between.',
+      'Open with a strong hook, develop the idea with a concrete mechanism or example, and close with a clear takeaway.',
+      'Do NOT include headings, timestamps, scene numbers, speaker labels, stage directions, bullet points, markdown, emojis, or explanations.',
+      'Do NOT output a JSON object or an array. Output plain spoken text only.',
+      rephrase
+        ? 'The user wants a fresh rephrase of their approved script: preserve the same core meaning and approximate length, but rewrite it with different wording and rhythm.'
+        : 'Expand the user topic/brief into a complete, polished spoken script.',
+    ].join('\n');
+
+    const userPrompt = rephrase && previousScript
+      ? `Topic/brief: ${topic}\n\nApproved script to rephrase:\n${previousScript}\n\nReturn only the rewritten ${outputLanguage} spoken voiceover script.`
+      : `Topic/brief: ${topic}\n\nReturn only the complete ${outputLanguage} spoken voiceover script.`;
+
+    const keys = resolveApiKeys(req);
+    const attempts = buildChatAttempts(requestedProvider, requestedModel, keys);
+    let lastProviderLabel = '';
+    let lastModel = '';
+    let usage = { aiInputTokens: 0, aiOutputTokens: 0, aiCalls: 0, aiUsd: 0, aiModel: '' };
+
+    for (const attempt of attempts) {
+      lastProviderLabel = attempt.providerLabel;
+      lastModel = attempt.model;
+      const result = await requestChatCompletion(attempt, systemPrompt, userPrompt, keys);
+      if (!result) continue;
+      const script = enforceScriptWordBudget(
+        normalizeVoiceoverScript(result.content),
+        targetBudget,
+      );
+      if (countSpokenWords(script) < 10) continue;
+      usage = {
+        aiInputTokens: usage.aiInputTokens + result.usage.inputTokens,
+        aiOutputTokens: usage.aiOutputTokens + result.usage.outputTokens,
+        aiCalls: usage.aiCalls + result.usage.calls,
+        aiUsd: Number((usage.aiUsd + result.usage.usd).toFixed(6)),
+        aiModel: result.usage.model,
+      };
+      res.json({
+        script,
+        wordCount: countSpokenWords(script),
+        estimatedDurationSec: estimateSpokenDurationSec(script),
+        targetDuration,
+        targetWords,
+        language: scriptLanguage,
+        source: attempt.kind,
+        providerUsed: attempt.providerLabel,
+        modelUsed: attempt.model,
+        fallbackUsed:
+          requestedProvider !== 'opencode-free' && attempt.kind !== requestedProvider,
+        usage,
+      });
+      return;
+    }
+
+    const script = buildLocalVoiceoverScript(
+      topic,
+      scriptLanguage === 'ar' ? 'ar' : 'en',
+      targetWords,
+      targetBudget,
+    );
+    res.json({
+      script,
+      wordCount: countSpokenWords(script),
+      estimatedDurationSec: estimateSpokenDurationSec(script),
+      targetDuration,
+      targetWords,
+      language: scriptLanguage,
+      source: 'template',
+      providerUsed: 'Local spoken-script template',
+      modelUsed: lastModel || requestedModel,
+      fallbackUsed: true,
+      usage,
+      notice:
+        scriptLanguage === 'ar'
+          ? `تعذر الوصول إلى مزودي الذكاء الاصطناعي لموضوع "${topic.slice(0, 60)}". تم توليد مسودة صوتية محلية؛ تحقق من مفتاح API في الإعدادات للحصول على توليد حي.`
+          : `No AI provider was reachable for "${topic.slice(0, 60)}". Generated a local spoken draft; verify your API key in settings for live output.`,
+      lastProviderLabel: lastProviderLabel || undefined,
+    });
+  }
+
   const handleGenerateScript = async (req: Request, res: Response) => {
     const body = (req.body || {}) as {
       topic?: unknown;
@@ -6860,6 +9066,7 @@ async function startServer() {
       visualStyle?: unknown;
       aspectRatio?: unknown;
       scriptLanguage?: unknown;
+      language?: unknown;
       scriptDepth?: unknown;
       creativeCodeMode?: unknown;
       scriptPacing?: unknown;
@@ -6869,7 +9076,16 @@ async function startServer() {
       captionsEnabled?: unknown;
       sfxEnabled?: unknown;
       sfxVolume?: unknown;
+      targetDuration?: unknown;
+      rephrase?: unknown;
+      previousScript?: unknown;
+      mode?: unknown;
     };
+
+    if (body.mode !== 'scenes') {
+      await handleVoiceoverScriptGeneration(req, res, body);
+      return;
+    }
 
     const requestedScriptDepth = normalizeScriptDepth(
       body.scriptDepth,
@@ -6889,8 +9105,15 @@ async function startServer() {
         : studioSettings.aiModel) || DEFAULT_FREE_MODEL;
     const visualStyle = normalizeVisualStyleValue(body.visualStyle, 'stickman');
     const aspectRatio = typeof body.aspectRatio === 'string' ? body.aspectRatio : '9:16';
-    const scriptLanguage = body.scriptLanguage === 'en' ? 'en' : 'ar';
-    const outputLanguage = scriptLanguage === 'en' ? 'English' : 'Arabic';
+    const scriptLanguage = normalizeVideoLanguage(
+      body.scriptLanguage ?? body.language,
+      studioSettings.scriptLanguage,
+    );
+    const outputLanguage = videoLanguageName(scriptLanguage);
+    const targetDuration = normalizeTargetDuration(body.targetDuration);
+    const targetBudget = scriptWordBudget(targetDuration);
+    const targetDurationLabel =
+      targetDuration === 'auto' ? '60' : targetDuration;
     const scriptDepth = requestedScriptDepth;
     const creativeCodeMode = normalizeCreativeCodeMode(
       body.creativeCodeMode,
@@ -6958,6 +9181,7 @@ async function startServer() {
       `Design each scene for the primary ${aspectRatio} frame first, then keep it responsive: 16:9 favors a balanced horizontal two-column split (visual/chart/character beside headline and callout), 1:1 favors compact centered or split spacing with proportional type, and 9:16 favors clean vertical stacking with generous top/bottom safe zones. Never pack a scene so tightly that it clips when the aspect ratio changes.`,
       `SCRIPT DEPTH MODE: ${scriptDepth}. ${depthGuidance}`,
       sceneCountRule,
+      `TOTAL SPOKEN BUDGET: the combined narration across all scenes must stay within ${targetBudget.min}-${targetBudget.max} words so the spoken audio matches the selected ${targetDurationLabel}-second duration. Trim narration rather than exceeding the ceiling.`,
       `Each micro-scene must contain ONE concrete idea and ${wordRule}; ${durationRule}.`,
       `BAN all generic filler, shallow platitudes and cliché intros. Never open with "في عالم اليوم", "هل تساءلت يوماً", "In today's world", "Have you ever wondered", "Did you know", or similar. Start with a concrete tension, surprising fact, or high-stakes consequence.`,
       'Every scene must add new information: a mechanism, a specific number/statistic, a real-world contrast, a common mistake, or an actionable step. Never repeat the same insight in different words.',
@@ -6974,7 +9198,7 @@ async function startServer() {
       visualStyle === 'smart-mix'
         ? 'For AI Smart Mix, set "showCharacter" per scene: true only when an expressive faceless character genuinely helps the emotional beat; false when data, flow, comparison, or pure motion graphics communicate better.'
         : visualStyle === 'stickman'
-          ? 'The selected style is Stickman, so every scene uses the faceless character; still vary pose and composition.'
+          ? 'Stickman is SELECTIVE, not mandatory: set "showCharacter": true only for the opening hook and/or closing CTA (at most 1-2 scenes) where a human gesture adds clear value. Set false for at least 60-70% of scenes and carry them with pure kinetic motion graphics, animated SVG icons, UI mockups, data charts, glowing cards, kinetic typography, and geometric transitions.'
           : 'The selected style is pure motion graphics. Never rely on a character; use typography, geometry, data and diagram motion only.',
       'Return ONLY a valid JSON array (no markdown fences) where each object has:',
       `- "title": short ${outputLanguage} scene title (2-5 words)`,
@@ -7004,8 +9228,8 @@ async function startServer() {
       '- "layout": one of "split", "stacked", "overlay", "centered" — never repeat the same layout in two consecutive scenes',
       '- "camera": one of "slow-zoom-in", "slow-zoom-out", "pan-left", "pan-right", "push-in", "static" — vary the camera motion',
       '- "backgroundPreset": optionally one of "animated-mesh", "kinetic-grid", "floating-orbs", "deep-wave", "particle-field", "editorial-paper", "neon-cyber" — never repeat the same background in consecutive scenes',
-      '- "sfxId": default to "none". Attach SFX only to genuinely pivotal transitions or chart reveals, never more than 35% of scenes. Use "none" for calm, night, reflective, or emotional beats. Never use bright "ding-success" or cartoonish "pop-*" sounds on dark/night or emotional scenes; prefer "whoosh-deep", "riser-build", or "bass-drop" for cinematic/chart reveals.',
-      '- "sfxAt": trigger offset in seconds (0 to 2) when sfxId is not "none"',
+      '- "sfxId": default to "none". Attach at most one subtle SFX to genuinely pivotal visual transitions or chart reveals, never more than 35% of scenes. Use "none" for calm, night, reflective, or emotional beats. Choose only from "whoosh-soft", "whoosh-whip", "pop-soft", "click-subtle", "slide", "type-tick", "toggle-soft", "impact-soft". Never use any bell, chime, ding, success, alarm, or notification sound (for example never "ding-success" or "notification-chime") and never place SFX at a scene ending.',
+      '- "sfxAt": trigger offset in seconds (0.12 to 1.2 only) when sfxId is not "none"; keep it early in the scene with at least 0.6s of breathing room before the end.',
       `- "durationSec": number between ${scriptDepth === 'condensed' ? '3.5 and 4.5' : '4 and 5.5'} (the render pipeline will replace it with the measured ElevenLabs MP3 duration)`,
       'Output the JSON array only. It must contain no commentary, no markdown, and no repeated scenes.',
     ].join('\n');
@@ -7058,11 +9282,11 @@ async function startServer() {
 
     if (requestedProvider === 'opencode-free') {
       const primaryModel = mapOpenRouterModel(requestedModel);
-      const freeModels = [primaryModel, ...FREE_FALLBACK_MODELS]
-        .filter((model, index, list) => list.indexOf(model) === index)
-        .slice(0, 3);
-      freeModels.forEach(pushOpenRouter);
+      pushOpenRouter(requestedModel);
       pushDeepSeek(requestedModel);
+      FREE_FALLBACK_MODELS.filter((model) => model !== primaryModel)
+        .slice(0, 2)
+        .forEach(pushOpenRouter);
     } else if (requestedProvider === 'deepseek') {
       pushDeepSeek(requestedModel);
       pushOpenRouter(requestedModel);
@@ -7205,7 +9429,11 @@ async function startServer() {
     }
 
     const fallbackFinalized = await finalizeScenes(
-      buildFallbackScenes(topic, scriptLanguage, scriptDepth),
+      buildFallbackScenes(
+        topic,
+        scriptLanguage === 'ar' ? 'ar' : 'en',
+        scriptDepth,
+      ),
     );
     res.json({
       source: 'template',
@@ -7221,9 +9449,9 @@ async function startServer() {
       scriptPacing,
       design: backgroundPreset === 'ai-free' ? aiDesign : undefined,
       notice:
-        scriptLanguage === 'en'
-          ? `No AI provider was reachable for "${topic}". Generated a topic-tailored local draft; add or verify an API key in settings for live model output.`
-          : `تعذر الوصول إلى مزودي الذكاء الاصطناعي لموضوع "${topic}". تم توليد مسودة محلية مخصصة للموضوع؛ تحقق من مفاتيح API في الإعدادات للحصول على توليد حي.`,
+        scriptLanguage === 'ar'
+          ? `تعذر الوصول إلى مزودي الذكاء الاصطناعي لموضوع "${topic}". تم توليد مسودة محلية مخصصة للموضوع؛ تحقق من مفاتيح API في الإعدادات للحصول على توليد حي.`
+          : `No AI provider was reachable for "${topic}". Generated a topic-tailored local draft; add or verify an API key in settings for live model output.`,
     });
   };
 
@@ -7240,6 +9468,7 @@ async function startServer() {
       visualStyle?: unknown;
       brandKit?: unknown;
       language?: unknown;
+      scriptLanguage?: unknown;
       aspectRatio?: unknown;
       voiceoverEnabled?: unknown;
       sfxEnabled?: unknown;
@@ -7320,7 +9549,10 @@ async function startServer() {
       studioSettings.visualStyle,
     );
     const brandKit = normalizeBrandKit(body.brandKit ?? studioSettings.brandKit);
-    const language = body.language === 'en' ? 'en' : 'ar';
+    const language = normalizeVideoLanguage(
+      body.language ?? body.scriptLanguage,
+      studioSettings.scriptLanguage,
+    );
     const aspectRatio =
       typeof body.aspectRatio === 'string' ? body.aspectRatio : '9:16';
     const wcag = resolveWcagPalette({
@@ -7365,12 +9597,12 @@ async function startServer() {
       'Preserve every non-target scene exactly as-is. Never touch narration, title, durationSec, audio files, audioSrc, audioDataUrl, or audioDuration.',
       'Only update surgical visual fields: pose, visualType, visualLabel, visualValue, visualPrompt, visualSvg, layout, camera, background, backgroundPreset, visualKeywords, motif, showCharacter, customCodeBrief, characters, characterLayout, ambientScene, sfxCues, sfxAt.',
       'Keep the overall video duration identical. Do not change durationSec.',
-      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", and "../components/Stickman". Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
+      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "../components/Stickman", and "../components/SceneSfx". Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
       'The TSX module must export exactly one named component with the same component name as the existing generatedComponent when provided.',
       'Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so the segment stays animated. Respect RTL Arabic text when language is ar.',
       `Prioritize the requested aspect ratio (${aspectRatio}) while keeping the TSX responsive: read width/height from useVideoConfig(), derive isLandscape = width > height and isSquare = width === height, and use percentage/flex containers with minHeight 0 so switching to 9:16, 16:9, or 1:1 never clips or overflows.`,
       'For 16:9 use a two-column split with maxHeight 72% and at least 64px/48px safe padding; for 1:1 use compact centered/split spacing; for 9:16 use vertical stacking with at least 80px top and 112px bottom safe zones.',
-      'Reserve the bottom 22% for captions. Keep Foley/SFX cues valid and use sfxCues frameOffset values relative to the scene start.',
+      'Reserve the bottom 22% for captions. Keep at most one subtle SFX cue per scene at volume 0.12–0.25, use sfxCues frameOffset values relative to the scene start, never place a bell/chime/ding/success sound, and never place any cue in the final 0.6s of the scene.',
       wcag.promptBlock,
     ].join('\n');
 
@@ -7621,6 +9853,10 @@ async function startServer() {
         similarityBoost:
           projectVoice?.voiceSimilarityBoost ??
           studioSettings.voiceSimilarityBoost,
+        style: projectVoice?.voiceStyle ?? studioSettings.voiceStyle,
+        speakerBoost:
+          projectVoice?.voiceSpeakerBoost ?? studioSettings.voiceSpeakerBoost,
+        speed: projectVoice?.voiceSpeed ?? studioSettings.voiceSpeed,
       });
 
       res.json({
@@ -7663,11 +9899,16 @@ async function startServer() {
       topic?: unknown;
       modelId?: unknown;
       scriptLanguage?: unknown;
+      language?: unknown;
     };
 
     const prompt = typeof body.prompt === 'string' ? body.prompt.trim().slice(0, 500) : '';
     const topic = typeof body.topic === 'string' ? body.topic.trim().slice(0, 300) : '';
-    const scriptLanguage = body.scriptLanguage === 'en' ? 'en' : 'ar';
+    const scriptLanguage = normalizeVideoLanguage(
+      body.scriptLanguage ?? body.language,
+      studioSettings.scriptLanguage,
+    );
+    const outputLanguage = videoLanguageName(scriptLanguage);
     const requestedModel = typeof body.modelId === 'string' ? body.modelId : 'deepseek/deepseek-v4.1-flash';
 
     if (!prompt) {
@@ -7683,7 +9924,9 @@ async function startServer() {
       'briefcase', 'key', 'cloud',
     ]);
 
-    let title = prompt.split(/[.!?،؟\n]/)[0].slice(0, 52) || (scriptLanguage === 'en' ? 'Custom visual' : 'عنصر بصري مخصص');
+    let title =
+      prompt.split(/[.!?،؟\n]/)[0].slice(0, 52) ||
+      (scriptLanguage === 'ar' ? 'عنصر بصري مخصص' : 'Custom visual');
     let text = prompt.slice(0, 160);
     let icon = 'spark';
     let source: 'openrouter' | 'template' = 'template';
@@ -7693,7 +9936,7 @@ async function startServer() {
     if (openrouterKey) {
       const openrouterModel = OPENROUTER_MODEL_MAP[requestedModel] || requestedModel;
       const systemPrompt = [
-        `You are a visual director designing a single custom SVG card for a ${scriptLanguage === 'en' ? 'English' : 'Arabic'} short video.`,
+        `You are a visual director designing a single custom SVG card for a ${outputLanguage} short video.`,
         'Return ONLY a compact JSON object with keys:',
         '- "title": 2-6 word card title',
         '- "text": one crisp supporting sentence (max 140 chars)',
@@ -7772,21 +10015,73 @@ async function startServer() {
       aspectRatio?: unknown;
       fps?: unknown;
       brandKit?: unknown;
+      palette?: unknown;
       voiceoverEnabled?: unknown;
       voiceId?: unknown;
       modelId?: unknown;
       stability?: unknown;
       similarityBoost?: unknown;
+      style?: unknown;
+      speakerBoost?: unknown;
+      speed?: unknown;
       sfxEnabled?: unknown;
       sfxVolume?: unknown;
       scriptLanguage?: unknown;
+      language?: unknown;
+      captionsEnabled?: unknown;
+      captionStyle?: unknown;
+      captionAnimationStyle?: unknown;
+      captionColors?: unknown;
+      captionBottomOffset?: unknown;
+      enable25D?: unknown;
+      cleanBrollMode?: unknown;
+      tweakInstruction?: unknown;
+      voiceoverScript?: unknown;
     };
 
     const prompt =
       typeof body.prompt === 'string' ? body.prompt.trim().slice(0, 24000) : '';
-    if (!prompt) {
+    const approvedVoiceoverScript =
+      typeof body.voiceoverScript === 'string'
+        ? body.voiceoverScript.trim().slice(0, 24000)
+        : '';
+    const tweakInstruction =
+      typeof body.tweakInstruction === 'string'
+        ? body.tweakInstruction.trim().slice(0, 1200)
+        : '';
+    const project = tweakInstruction ? readProjectState() : null;
+    if (tweakInstruction && (!project || project.scenes.length === 0)) {
+      res.status(400).json({
+        error: 'لا توجد مشاهد مولّدة لتعديلها. أنشئ فيديو أولاً ثم استخدم التعديل السريع.',
+      });
+      return;
+    }
+    if (!prompt && !tweakInstruction) {
       res.status(400).json({ error: 'يرجى كتابة برومبت الفيديو الرئيسي أولاً.' });
       return;
+    }
+    if (tweakInstruction && project) {
+      project.scenes.forEach((scene, index) => {
+        if (
+          !scene.generatedComponent &&
+          fs.existsSync(path.join(GENERATED_DIR, `Scene${index + 1}.tsx`))
+        ) {
+          scene.generatedComponent = `Scene${index + 1}`;
+        }
+      });
+      const missing = project.scenes.filter(
+        (scene) =>
+          !scene.generatedComponent ||
+          !isValidGeneratedComponentName(scene.generatedComponent) ||
+          !fs.existsSync(path.join(GENERATED_DIR, `${scene.generatedComponent}.tsx`)),
+      );
+      if (missing.length > 0) {
+        res.status(400).json({
+          error:
+            'ملفات المشاهد المولّدة غير موجودة. أعد إنشاء الفيديو أولاً ثم استخدم التعديل السريع.',
+        });
+        return;
+      }
     }
     if (exportLockIsActive()) {
       res.status(409).json({
@@ -7797,27 +10092,94 @@ async function startServer() {
 
     const { elevenlabsKey } = resolveApiKeys(req);
     const jobId = crypto.randomUUID();
-    const targetDuration = normalizeTargetDuration(body.targetDuration);
+    const targetDuration = tweakInstruction
+      ? undefined
+      : normalizeTargetDuration(body.targetDuration);
+    const projectAspect = project?.aspectRatio;
     const aspectRatio =
       body.aspectRatio === '16:9' || body.aspectRatio === '1:1' || body.aspectRatio === '9:16'
         ? body.aspectRatio
-        : studioSettings.aspectRatio;
-    const fps = Number(body.fps) === 30 ? 30 : 60;
-    const brandKit = normalizeBrandKit(body.brandKit ?? studioSettings.brandKit);
-    const voiceoverEnabled = Boolean(body.voiceoverEnabled);
-    const sfxEnabled = Boolean(body.sfxEnabled);
+        : projectAspect === '16:9' || projectAspect === '1:1' || projectAspect === '9:16'
+          ? projectAspect
+          : studioSettings.aspectRatio;
+    const requestedFps = Number(body.fps);
+    const projectFps = project?.fps;
+    const fps =
+      requestedFps === 30 || requestedFps === 60
+        ? requestedFps
+        : projectFps === 30 || projectFps === 60
+          ? projectFps
+          : 60;
+    const brandKit = brandKitWithActivePalette(
+      body.brandKit ?? project?.brandKit ?? studioSettings.brandKit,
+      body.palette,
+    );
+    const voiceoverEnabled = tweakInstruction
+      ? typeof body.voiceoverEnabled === 'boolean'
+        ? body.voiceoverEnabled
+        : Boolean(project?.voiceoverEnabled)
+      : Boolean(body.voiceoverEnabled);
+    const sfxEnabled = tweakInstruction
+      ? typeof body.sfxEnabled === 'boolean'
+        ? body.sfxEnabled
+        : Boolean(project?.sfxEnabled)
+      : Boolean(body.sfxEnabled);
     const requestedSfxVolume = Number(body.sfxVolume);
     const sfxVolume = Number.isFinite(requestedSfxVolume)
       ? Math.min(1, Math.max(0, requestedSfxVolume))
-      : studioSettings.sfxVolume;
-    const scenes = buildExportScenes({
-      jobId,
-      prompt,
-      targetDuration,
-      voiceoverEnabled,
-      sfxEnabled,
-      language: body.scriptLanguage === 'en' ? 'en' : 'ar',
-    });
+      : project?.sfxVolume ?? studioSettings.sfxVolume;
+    const scriptLanguage = normalizeVideoLanguage(
+      body.language ?? body.scriptLanguage,
+      normalizeVideoLanguage(project?.scriptLanguage, studioSettings.scriptLanguage),
+    );
+    const captionsEnabled =
+      (tweakInstruction
+        ? typeof body.captionsEnabled === 'boolean'
+          ? body.captionsEnabled
+          : Boolean(project?.captionsEnabled)
+        : Boolean(body.captionsEnabled)) && voiceoverEnabled;
+    const captionAnimationStyle = normalizeCaptionAnimationStyle(
+      body.captionStyle ??
+        body.captionAnimationStyle ??
+        (tweakInstruction ? project?.captionAnimationStyle : undefined),
+      project?.captionAnimationStyle || studioSettings.captionAnimationStyle,
+    );
+    const captionColors = normalizeCaptionColors(
+      body.captionColors ??
+        (tweakInstruction ? project?.captionColors : undefined) ??
+        studioSettings.captionColors,
+      brandKit,
+    );
+    const captionBottomOffset = normalizeCaptionBottomOffset(
+      body.captionBottomOffset ??
+        (tweakInstruction ? project?.captionBottomOffset : undefined) ??
+        studioSettings.captionBottomOffset,
+      DEFAULT_CAPTION_BOTTOM_OFFSET,
+    );
+    const enable25D = body.enable25D === true;
+    const cleanBrollMode = tweakInstruction
+      ? typeof body.cleanBrollMode === 'boolean'
+        ? body.cleanBrollMode
+        : Boolean(project?.cleanBrollMode)
+      : body.cleanBrollMode === true;
+    const scenes =
+      tweakInstruction && project
+        ? project.scenes
+        : buildExportScenes({
+            jobId,
+            prompt,
+            targetDuration: targetDuration ?? 'auto',
+            voiceoverEnabled,
+            sfxEnabled,
+            language: scriptLanguage,
+            spokenScript: voiceoverEnabled
+              ? approvedVoiceoverScript || prompt
+              : undefined,
+          });
+
+    if (!tweakInstruction && !voiceoverEnabled) {
+      applyPromptOnlyPacing(scenes, targetDuration, fps);
+    }
 
     const job: RenderJob = {
       id: jobId,
@@ -7827,35 +10189,61 @@ async function startServer() {
       aspectRatio,
       fps,
       voiceoverEnabled,
+      cleanBrollMode,
       voiceId:
         typeof body.voiceId === 'string' && body.voiceId.trim()
           ? body.voiceId.trim()
-          : studioSettings.voiceId,
+          : project?.voiceId || studioSettings.voiceId,
       modelId:
         typeof body.modelId === 'string' && body.modelId.trim()
           ? body.modelId.trim()
-          : studioSettings.voiceModelId,
-      voiceStability: clampNumber(body.stability, studioSettings.voiceStability, 0, 1),
-      voiceSimilarityBoost: clampNumber(
-        body.similarityBoost,
-        studioSettings.voiceSimilarityBoost,
+          : project?.voiceModelId || studioSettings.voiceModelId,
+      voiceStability: clampNumber(
+        body.stability,
+        project?.voiceStability ?? studioSettings.voiceStability,
         0,
         1,
+      ),
+      voiceSimilarityBoost: clampNumber(
+        body.similarityBoost,
+        project?.voiceSimilarityBoost ?? studioSettings.voiceSimilarityBoost,
+        0,
+        1,
+      ),
+      voiceStyle: clampNumber(
+        body.style,
+        project?.voiceStyle ?? studioSettings.voiceStyle,
+        0,
+        1,
+      ),
+      voiceSpeakerBoost:
+        typeof body.speakerBoost === 'boolean'
+          ? body.speakerBoost
+          : (project?.voiceSpeakerBoost ?? studioSettings.voiceSpeakerBoost),
+      voiceSpeed: clampNumber(
+        body.speed,
+        project?.voiceSpeed ?? studioSettings.voiceSpeed,
+        0.7,
+        1.2,
       ),
       sfxEnabled,
       sfxVolume,
       sfxMode: 'auto',
-      backgroundPreset: 'ai-free',
+      backgroundPreset: project?.backgroundPreset || 'ai-free',
       brandKit,
-      scriptLanguage: body.scriptLanguage === 'en' ? 'en' : 'ar',
-      scriptDepth: studioSettings.scriptDepth,
-      creativeCodeMode: 'creative',
-      scriptPacing: studioSettings.scriptPacing,
-      captionAnimationStyle: studioSettings.captionAnimationStyle,
-      wordsPerScreen: studioSettings.wordsPerScreen,
-      captionsEnabled: false,
+      scriptLanguage,
+      scriptDepth: project?.scriptDepth || studioSettings.scriptDepth,
+      creativeCodeMode: project?.creativeCodeMode || 'creative',
+      scriptPacing: project?.scriptPacing || studioSettings.scriptPacing,
+      captionAnimationStyle,
+      captionColors,
+      captionBottomOffset,
+      wordsPerScreen: project?.wordsPerScreen || studioSettings.wordsPerScreen,
+      captionsEnabled,
+      enable25D,
       elevenlabsKey,
-      masterPrompt: prompt,
+      masterPrompt: prompt || project?.topic || '',
+      tweakInstruction: tweakInstruction || undefined,
       targetDuration,
       status: 'queued',
     };
@@ -7867,9 +10255,22 @@ async function startServer() {
       return;
     }
 
+    try {
+      resetActiveCompositionMetadata(job);
+      syncExportProject(job);
+    } catch (error) {
+      releaseExportLock(jobId);
+      console.error('[export] failed to reset active composition metadata', error);
+      res.status(500).json({
+        error: 'تعذر تحديث بيانات التركيب النشط قبل بدء التصدير. أعد المحاولة.',
+      });
+      return;
+    }
+
     renderJobs.set(jobId, job);
     res.json({
       jobId,
+      mode: tweakInstruction ? 'tweak' : 'full',
       targetDuration,
       fps,
       aspectRatio,
@@ -7877,6 +10278,19 @@ async function startServer() {
       totalDurationSec: scenes.reduce((total, scene) => total + scene.durationSec, 0),
       outputFile: path.relative(PROJECT_ROOT, path.join(OUT_DIR, `${jobId}.mp4`)),
     });
+  });
+
+  app.post('/api/export/cancel', (req: Request, res: Response) => {
+    const requestedJobId =
+      typeof (req.body || {}).jobId === 'string' ? String((req.body || {}).jobId) : '';
+    const activeJobId = activeExportLock?.jobId || '';
+    if (!activeJobId || (requestedJobId && requestedJobId !== activeJobId)) {
+      res.status(404).json({ error: 'لا توجد عملية تصدير قيد التنفيذ لإيقافها.' });
+      return;
+    }
+
+    const jobId = cancelActiveExport('تم إيقاف عملية التصدير بواسطة المستخدم.');
+    res.json({ ok: true, jobId });
   });
 
   app.get('/api/export/stream/:jobId', (req: Request, res: Response) => {
@@ -7918,7 +10332,7 @@ async function startServer() {
       job.scenes.map((scene, index) => ({
         index: index + 1,
         id: scene.id,
-        durationInFrames: Math.max(1, Math.round(scene.durationSec * job.fps)),
+        durationInFrames: sceneDurationInFrames(scene, job.fps),
         generatedComponent: scene.generatedComponent,
       }));
 
@@ -7941,6 +10355,14 @@ async function startServer() {
       res.end();
       return;
     }
+    if (job.status === 'cancelled') {
+      sendEvent('cancelled', {
+        jobId: job.id,
+        message: job.error || 'تم إيقاف عملية التصدير.',
+      });
+      res.end();
+      return;
+    }
     if (job.status === 'error') {
       sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
       res.end();
@@ -7953,6 +10375,13 @@ async function startServer() {
           clearInterval(poll);
           emitComplete();
           if (!closed) res.end();
+        } else if (job.status === 'cancelled') {
+          clearInterval(poll);
+          sendEvent('cancelled', {
+            jobId: job.id,
+            message: job.error || 'تم إيقاف عملية التصدير.',
+          });
+          if (!closed) res.end();
         } else if (job.status === 'error') {
           clearInterval(poll);
           sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
@@ -7964,19 +10393,57 @@ async function startServer() {
     }
 
     job.status = 'rendering';
+    exportStreamEmitters.set(job.id, sendEvent);
 
     const runPipeline = async () => {
       try {
+        throwIfExportCancelled(job.id);
         // Step 1 — Audio & exact timing.
         sendStep('audio', 'active', 5);
         sendLog(
           'audio',
           'info',
-          `تقسيم البرومبت إلى ${job.scenes.length} مشاهد — المدة المستهدفة: ${
-            job.targetDuration === 'auto' ? 'تلقائية حسب التعليق الصوتي' : `${job.targetDuration}s`
-          }.`,
+          job.tweakInstruction
+            ? `التعديل السريع على ${job.scenes.length} مشاهد — الحفاظ على التوقيت والصوت الحاليين.`
+            : job.voiceoverEnabled
+              ? `تقسيم السكربت الصوتي المعتمد إلى ${job.scenes.length} مشاهد/جمل كاملة — المدة تُحسب من صوت ElevenLabs الفعلي بدون تمديد.`
+              : `وضع الإخراج البصري المباشر من البرومبت الرئيسي إلى ${job.scenes.length} مشهداً — المدة المستهدفة: ${
+                  job.targetDuration === 'auto'
+                    ? 'تلقائية'
+                    : `${job.targetDuration}s`
+                } (بدون تعليق صوتي).`,
         );
-        if (job.voiceoverEnabled) {
+        if (job.tweakInstruction) {
+          const missingAudio = job.scenes.some(
+            (scene) =>
+              job.voiceoverEnabled &&
+              !normalizeAudioSrc(scene.audioSrc || scene.audioDataUrl),
+          );
+          if (missingAudio) {
+            sendLog(
+              'audio',
+              'info',
+              'التعديل السريع: بعض المشاهد لا تملك صوتاً محفوظاً — سيتم تجهيز الصوت المفقود فقط.',
+            );
+            const generated = await prepareSceneAudio(job, (level, message) =>
+              sendLog('audio', level, message),
+            );
+            sendLog(
+              'audio',
+              'success',
+              `تم تجهيز ${generated} مقطع صوتي مفقود مع إعادة استخدام الصوت المخزن للمشاهد الأخرى.`,
+            );
+          } else {
+            sendLog(
+              'audio',
+              'success',
+              job.voiceoverEnabled
+                ? 'التعديل السريع: إعادة استخدام التعليق الصوتي الحالي بالكامل دون إعادة توليد.'
+                : 'التعديل السريع: وضع الإخراج البصري المباشر — الحفاظ على التوقيت البصري الحالي دون TTS.',
+            );
+          }
+          job.audioPrepared = true;
+        } else if (job.voiceoverEnabled) {
           const generated = await prepareSceneAudio(job, (level, message) =>
             sendLog('audio', level, message),
           );
@@ -7996,39 +10463,19 @@ async function startServer() {
         } else {
           const totalSeconds =
             job.targetDuration === 'auto' ? 60 : Number(job.targetDuration);
-          const perScene = totalSeconds / Math.max(1, job.scenes.length);
-          job.scenes.forEach((scene) => {
-            scene.audioSrc = undefined;
-            scene.audioDataUrl = undefined;
-            scene.audioDuration = undefined;
-            scene.durationSec = Number(perScene.toFixed(1));
-          });
+          applyPromptOnlyPacing(job.scenes, job.targetDuration, job.fps);
           job.audioPrepared = true;
           sendLog(
             'audio',
             'success',
-            `الوضع الصامت — تم توزيع ${totalSeconds}s بصرياً على ${job.scenes.length} مشاهد.`,
+            `وضع الإخراج البصري المباشر — بدون TTS، تم ضبط ${job.scenes.length} مشهداً على ${Math.round(
+              totalSeconds * job.fps,
+            )} إطاراً (${totalSeconds}s @ ${job.fps}fps).`,
           );
         }
 
-        if (job.targetDuration !== 'auto') {
-          const targetSeconds = Number(job.targetDuration);
-          const current = job.scenes.reduce((total, scene) => total + scene.durationSec, 0);
-          if (current + 0.3 < targetSeconds) {
-            const extra = (targetSeconds - current) / Math.max(1, job.scenes.length);
-            job.scenes.forEach((scene) => {
-              scene.durationSec = Number((scene.durationSec + extra).toFixed(1));
-            });
-            sendLog(
-              'audio',
-              'info',
-              `تم تمديد التوقيت بصرياً للوصول إلى المدة المستهدفة ${targetSeconds}s.`,
-            );
-          }
-        }
-
         const plannedFrames = job.scenes.reduce(
-          (total, scene) => total + Math.max(1, Math.round(scene.durationSec * job.fps)),
+          (total, scene) => total + sceneDurationInFrames(scene, job.fps),
           0,
         );
         sendLog(
@@ -8037,48 +10484,130 @@ async function startServer() {
           `التوقيت النهائي: ${plannedFrames} إطاراً بمعدل ${job.fps}fps.`,
         );
         syncExportProject(job);
+        resetActiveCompositionMetadata(job);
         sendStep('audio', 'completed', 30);
+        throwIfExportCancelled(job.id);
 
         // Step 2 — Real opencode headless scene coding.
         sendStep('code', 'active', 34);
-        sendLog(
-          'code',
-          'info',
-          'تشغيل opencode headless لكتابة مشاهد Remotion مخصصة في src/generated/.',
-        );
-        const removed = cleanGeneratedTsxCache();
-        if (removed.length > 0) {
-          sendLog('code', 'info', `تنظيف ${removed.length} مكوّن مولّد سابق.`);
+        const generatedSnapshot = job.tweakInstruction
+          ? snapshotGeneratedSceneFiles()
+          : null;
+        if (job.tweakInstruction) {
+          sendLog(
+            'code',
+            'info',
+            'التعديل السريع: opencode سيعدل مشاهد src/generated الحالية دون إعادة توليدها.',
+          );
+        } else {
+          sendLog(
+            'code',
+            'info',
+            'تشغيل opencode headless لكتابة مشاهد Remotion مخصصة في src/generated/.',
+          );
+          const removed = cleanGeneratedTsxCache();
+          if (removed.length > 0) {
+            sendLog('code', 'info', `تنظيف ${removed.length} مكوّن مولّد سابق.`);
+          }
         }
-        const openCodePrompt = buildOpenCodeScenePrompt(job);
+        const openCodePrompt = job.tweakInstruction
+          ? buildOpenCodeTweakPrompt(job, job.tweakInstruction)
+          : buildOpenCodeScenePrompt(job);
+        let codeProgress = 34;
+        const codeProgressTimer = setInterval(() => {
+          if (isExportCancelled(job.id)) return;
+          codeProgress = Math.min(
+            68,
+            codeProgress + Math.max(1, Math.round((68 - codeProgress) * 0.12)),
+          );
+          sendStep('code', 'active', codeProgress);
+        }, 1500);
         try {
           await runOpenCodeExport(job, openCodePrompt, (level, message) =>
             sendLog('code', level, message),
           );
         } catch (error) {
+          clearInterval(codeProgressTimer);
+          if (job.tweakInstruction && generatedSnapshot) {
+            restoreGeneratedSceneFiles(generatedSnapshot);
+          }
+          if (isExportCancelled(job.id)) throw error;
           const message =
             error instanceof Error ? error.message : 'فشل تشغيل opencode.';
           sendLog('code', 'error', message);
           throw error;
+        } finally {
+          clearInterval(codeProgressTimer);
         }
+        throwIfExportCancelled(job.id);
 
-        repairGeneratedSceneFiles(job);
-        const validation = await validateGeneratedScenes();
-        if (!validation.ok) {
+        const sanitizedSfxFiles = sanitizeGeneratedSfxFiles();
+        if (sanitizedSfxFiles.length > 0) {
           sendLog(
             'code',
-            'warn',
-            `مشاهد opencode لم تجتز TypeScript — سيتم استخدام مشاهد آمنة بديلة. ${validation.errors}`,
+            'info',
+            `تم تنظيف مؤثرات المشاهد لتبقى ناعمة وواحدة فقط دون أي جرس أو نغمة نهاية (${sanitizedSfxFiles.length} ملف).`,
           );
-          writeFallbackSceneFiles(job);
-          const retry = await validateGeneratedScenes();
-          if (!retry.ok) {
+        }
+
+        if (job.tweakInstruction) {
+          const sourceErrors = validateTweakSceneSources(job);
+          if (sourceErrors.length > 0) {
+            restoreGeneratedSceneFiles(generatedSnapshot!);
             throw new Error(
-              `تعذر التحقق من مشاهد Remotion المولّدة: ${retry.errors}`,
+              `فشل التحقق من ملفات التعديل السريع وتم استرجاع النسخة السابقة: ${sourceErrors.join(' | ')}`,
             );
           }
+          const validation = await validateGeneratedScenes();
+          if (!validation.ok) {
+            restoreGeneratedSceneFiles(generatedSnapshot!);
+            throw new Error(
+              `فشل التحقق من TypeScript للتعديل السريع وتم استرجاع النسخة السابقة: ${validation.errors}`,
+            );
+          }
+          attachGeneratedComponents(job, true);
+        } else {
+          repairGeneratedSceneFiles(job);
+          let validation = await validateGeneratedScenes();
+          if (!validation.ok) {
+            console.log(
+              `[export] generated scenes failed TypeScript validation:\n${validation.errors}`,
+            );
+            sendLog(
+              'code',
+              'warn',
+              `مشاهد opencode لم تجتز TypeScript — سيتم إصلاح المشاهد المتأثرة فقط. ${validation.errors}`,
+            );
+            let repairedNames = repairFailingGeneratedScenes(
+              job,
+              validation.errors,
+            );
+            if (
+              repairedNames.length === 0 &&
+              /src[\\/]generated[\\/]index\.ts/.test(validation.errors)
+            ) {
+              syncGeneratedRegistry();
+              repairedNames = ['index.ts'];
+            }
+            if (repairedNames.length > 0) {
+              validation = await validateGeneratedScenes();
+            }
+            if (!validation.ok) {
+              console.log(
+                `[export] generated scenes still failed after targeted repair:\n${validation.errors}`,
+              );
+              throw new Error(
+                `تعذر التحقق من مشاهد Remotion المولّدة بعد إصلاح المشاهد المتأثرة فقط: ${validation.errors}`,
+              );
+            }
+            sendLog(
+              'code',
+              'warn',
+              `تم إصلاح المشاهد المتأثرة فقط (${repairedNames.join(', ')}) بتخطيطات بديلة متنوعة.`,
+            );
+          }
+          attachGeneratedComponents(job);
         }
-        attachGeneratedComponents(job);
         syncExportProject(job);
         const videoData = buildParentVideoData(job, job.masterPrompt);
         job.videoData = videoData;
@@ -8107,9 +10636,12 @@ async function startServer() {
         sendLog(
           'code',
           'success',
-          `opencode كتب ${job.scenes.length} مشهداً مخصصاً وأُضيفت إلى سجل src/generated.`,
+          job.tweakInstruction
+            ? `تم تطبيق التعديل السريع على ${job.scenes.length} مشهداً مع الحفاظ على الصوت الحالي.`
+            : `opencode كتب ${job.scenes.length} مشهداً مخصصاً وأُضيفت إلى سجل src/generated.`,
         );
         sendStep('code', 'completed', 70);
+        throwIfExportCancelled(job.id);
 
         // Step 3 — Render final MP4 and register it.
         sendStep('render', 'active', 74);
@@ -8117,7 +10649,7 @@ async function startServer() {
         job.videoData = renderVideoData;
         writeJsonFile(DATA_FILE, renderVideoData);
         const renderFrames = job.scenes.reduce(
-          (total, scene) => total + Math.max(1, Math.round(scene.durationSec * job.fps)),
+          (total, scene) => total + sceneDurationInFrames(scene, job.fps),
           0,
         );
         recordUsage({
@@ -8154,10 +10686,17 @@ async function startServer() {
         sendLog('render', 'success', `اكتمل التصدير: ${result.outputFile}`);
         emitComplete();
       } catch (error) {
-        job.status = 'error';
-        job.error = error instanceof Error ? error.message : 'فشلت عملية التصدير.';
-        sendEvent('error', { message: job.error });
+        if (isExportCancelled(job.id)) {
+          job.status = 'cancelled';
+          job.error = 'تم إيقاف عملية التصدير بواسطة المستخدم.';
+          sendEvent('cancelled', { jobId: job.id, message: job.error });
+        } else {
+          job.status = 'error';
+          job.error = error instanceof Error ? error.message : 'فشلت عملية التصدير.';
+          sendEvent('error', { message: job.error });
+        }
       } finally {
+        exportStreamEmitters.delete(job.id);
         releaseExportLock(job.id);
         if (!closed) res.end();
       }
@@ -8174,20 +10713,28 @@ async function startServer() {
       aspectRatio?: unknown;
       fps?: unknown;
       voiceoverEnabled?: unknown;
+      cleanBrollMode?: unknown;
       voiceId?: unknown;
       modelId?: unknown;
       stability?: unknown;
       similarityBoost?: unknown;
+      style?: unknown;
+      speakerBoost?: unknown;
+      speed?: unknown;
       sfxEnabled?: unknown;
       sfxVolume?: unknown;
       sfxMode?: unknown;
       backgroundPreset?: unknown;
       brandKit?: unknown;
       scriptLanguage?: unknown;
+      language?: unknown;
       scriptDepth?: unknown;
       creativeCodeMode?: unknown;
       scriptPacing?: unknown;
       captionAnimationStyle?: unknown;
+      captionStyle?: unknown;
+      captionColors?: unknown;
+      captionBottomOffset?: unknown;
       wordsPerScreen?: unknown;
       captionsEnabled?: unknown;
     };
@@ -8209,6 +10756,9 @@ async function startServer() {
     const brandKit: RenderBrandKit = {
       accentColor: safeColor(brandRaw.accentColor, '#E77B40'),
       bgColor: safeColor(brandRaw.bgColor, '#0B0F17'),
+      textColor: safeColor(brandRaw.textColor, DEFAULT_BRAND_KIT.textColor),
+      primaryColor: safeColor(brandRaw.primaryColor, DEFAULT_BRAND_KIT.primaryColor),
+      secondaryColor: safeColor(brandRaw.secondaryColor, DEFAULT_BRAND_KIT.secondaryColor),
       watermark:
         typeof brandRaw.watermark === 'string' ? brandRaw.watermark.trim().slice(0, 60) : '',
       watermarkEnabled: brandRaw.watermarkEnabled !== false,
@@ -8221,7 +10771,7 @@ async function startServer() {
     const requestedSfxVolume = Number(body.sfxVolume);
     const sfxVolume = Number.isFinite(requestedSfxVolume)
       ? Math.min(1, Math.max(0, requestedSfxVolume))
-      : 0.65;
+      : DEFAULT_STUDIO_SETTINGS.sfxVolume;
     const requestedBackgroundPreset = normalizeBackgroundPreset(
       body.backgroundPreset,
       normalizeBackgroundPreset(studioSettings.backgroundPreset),
@@ -8253,6 +10803,7 @@ async function startServer() {
       aspectRatio: typeof body.aspectRatio === 'string' ? body.aspectRatio : '9:16',
       fps,
       voiceoverEnabled: Boolean(body.voiceoverEnabled),
+      cleanBrollMode: body.cleanBrollMode === true,
       voiceId: typeof body.voiceId === 'string' ? body.voiceId : studioSettings.voiceId,
       modelId: typeof body.modelId === 'string' ? body.modelId : studioSettings.voiceModelId,
       voiceStability: clampNumber(body.stability, studioSettings.voiceStability, 0, 1),
@@ -8262,12 +10813,21 @@ async function startServer() {
         0,
         1,
       ),
+      voiceStyle: clampNumber(body.style, studioSettings.voiceStyle, 0, 1),
+      voiceSpeakerBoost:
+        typeof body.speakerBoost === 'boolean'
+          ? body.speakerBoost
+          : studioSettings.voiceSpeakerBoost,
+      voiceSpeed: clampNumber(body.speed, studioSettings.voiceSpeed, 0.7, 1.2),
       sfxEnabled: Boolean(body.sfxEnabled),
       sfxVolume,
       sfxMode: requestedSfxMode,
       backgroundPreset: requestedBackgroundPreset,
       brandKit,
-      scriptLanguage: body.scriptLanguage === 'en' ? 'en' : 'ar',
+      scriptLanguage: normalizeVideoLanguage(
+        body.language ?? body.scriptLanguage,
+        studioSettings.scriptLanguage,
+      ),
       scriptDepth: normalizeScriptDepth(body.scriptDepth, studioSettings.scriptDepth),
       creativeCodeMode: normalizeCreativeCodeMode(
         body.creativeCodeMode,
@@ -8275,8 +10835,15 @@ async function startServer() {
       ),
       scriptPacing: normalizeScriptPacing(body.scriptPacing, studioSettings.scriptPacing),
       captionAnimationStyle: normalizeCaptionAnimationStyle(
-        body.captionAnimationStyle,
+        body.captionStyle ?? body.captionAnimationStyle,
         studioSettings.captionAnimationStyle,
+      ),
+      captionColors: normalizeCaptionColors(
+        body.captionColors ?? studioSettings.captionColors,
+        brandKit,
+      ),
+      captionBottomOffset: normalizeCaptionBottomOffset(
+        body.captionBottomOffset ?? studioSettings.captionBottomOffset,
       ),
       wordsPerScreen: normalizeWordsPerScreen(
         body.wordsPerScreen,
@@ -8284,6 +10851,7 @@ async function startServer() {
       ),
       captionsEnabled:
         Boolean(body.captionsEnabled) && Boolean(body.voiceoverEnabled),
+      enable25D: false,
       elevenlabsKey,
       status: 'queued',
     };
@@ -8298,7 +10866,7 @@ async function startServer() {
     job.audioPrepared = true;
 
     const plannedFrames = job.scenes.reduce(
-      (total, scene) => total + Math.max(1, Math.round(scene.durationSec * job.fps)),
+      (total, scene) => total + sceneDurationInFrames(scene, job.fps),
       0,
     );
     const renderUsage: UsageDelta = {
@@ -8326,7 +10894,11 @@ async function startServer() {
       voiceModelId: job.modelId,
       voiceStability: job.voiceStability,
       voiceSimilarityBoost: job.voiceSimilarityBoost,
+      voiceStyle: job.voiceStyle,
+      voiceSpeakerBoost: job.voiceSpeakerBoost,
+      voiceSpeed: job.voiceSpeed,
       voiceoverEnabled: job.voiceoverEnabled,
+      cleanBrollMode: job.cleanBrollMode,
       visualStyle: job.visualStyle,
       aspectRatio: job.aspectRatio,
       fps: job.fps,
@@ -8335,6 +10907,8 @@ async function startServer() {
       creativeCodeMode: job.creativeCodeMode,
       scriptPacing: job.scriptPacing,
       captionAnimationStyle: job.captionAnimationStyle,
+      captionColors: job.captionColors,
+      captionBottomOffset: job.captionBottomOffset,
       wordsPerScreen: job.wordsPerScreen,
       captionsEnabled: job.captionsEnabled,
       brandKit: job.brandKit,
@@ -8426,7 +11000,7 @@ async function startServer() {
     const buildTimings = () => {
       let cursorFrame = 0;
       return job.scenes.map((scene, index) => {
-        const frames = Math.max(1, Math.round(scene.durationSec * job.fps));
+        const frames = sceneDurationInFrames(scene, job.fps);
         const startFrame = cursorFrame;
         cursorFrame += frames;
         return { index: index + 1, id: scene.id, startFrame, durationInFrames: frames };

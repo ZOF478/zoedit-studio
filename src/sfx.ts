@@ -1,48 +1,62 @@
 import type { Scene, SfxCueSound } from "./types";
 
 export const SFX_FILES = {
-  "whoosh-fast": "whoosh-fast.wav",
-  "whoosh-deep": "whoosh-deep.wav",
-  "pop-bubble": "pop-bubble.wav",
-  "pop-sharp": "pop-sharp.wav",
-  "ding-success": "ding-success.wav",
-  "alert-warning": "alert-warning.wav",
+  "whoosh-soft": "whoosh-soft.wav",
+  "whoosh-whip": "whoosh-whip.wav",
+  "pop-soft": "pop-soft.wav",
+  "click-subtle": "click-subtle.wav",
+  slide: "slide.wav",
+  "type-tick": "type-tick.wav",
+  "toggle-soft": "toggle-soft.wav",
+  "impact-soft": "impact-soft.wav",
+  "whoosh-fast": "whoosh-soft.wav",
+  "whoosh-deep": "whoosh-soft.wav",
+  "pop-bubble": "pop-soft.wav",
+  "pop-sharp": "click-subtle.wav",
+  "typing-click": "type-tick.wav",
+  "alert-warning": "toggle-soft.wav",
   "cash-register": "cash-register.wav",
-  "typing-click": "typing-click.wav",
-  "notification-chime": "notification-chime.wav",
-  "cinematic-hit": "cinematic-hit.wav",
-  "bass-drop": "bass-drop.wav",
-  "riser-build": "riser-build.wav",
+  "cinematic-hit": "impact-soft.wav",
+  "bass-drop": "impact-soft.wav",
+  "riser-build": "slide.wav",
 } as const;
 
 export type SfxCatalogId = keyof typeof SFX_FILES;
 
 export const SFX_DURATIONS: Record<SfxCatalogId, number> = {
-  "whoosh-fast": 0.62,
-  "whoosh-deep": 1.25,
-  "pop-bubble": 0.34,
-  "pop-sharp": 0.24,
-  "ding-success": 1.55,
-  "alert-warning": 1.15,
-  "cash-register": 1.4,
-  "typing-click": 0.46,
-  "notification-chime": 1.85,
-  "cinematic-hit": 2.2,
-  "bass-drop": 1.85,
-  "riser-build": 2.55,
+  "whoosh-soft": 0.16,
+  "whoosh-whip": 0.18,
+  "pop-soft": 0.14,
+  "click-subtle": 0.07,
+  slide: 0.4,
+  "type-tick": 0.05,
+  "toggle-soft": 0.62,
+  "impact-soft": 0.2,
+  "whoosh-fast": 0.16,
+  "whoosh-deep": 0.16,
+  "pop-bubble": 0.14,
+  "pop-sharp": 0.07,
+  "typing-click": 0.05,
+  "alert-warning": 0.62,
+  "cash-register": 0.3,
+  "cinematic-hit": 0.2,
+  "bass-drop": 0.2,
+  "riser-build": 0.4,
 };
 
-export const DEFAULT_SFX_VOLUME = 0.65;
+export const MAX_SCENE_SFX_VOLUME = 0.25;
 
-export const DEFAULT_SFX_CUE_VOLUME = 0.4;
+export const DEFAULT_SFX_VOLUME = 0.2;
+
+export const DEFAULT_SFX_CUE_VOLUME = 0.18;
 
 export const SFX_CUE_FILES: Record<SfxCueSound, string> = {
-  pop: "pop-sharp.wav",
-  tick: "typing-click.wav",
-  whoosh: "whoosh-fast.wav",
-  rise: "riser-build.wav",
-  impact: "cinematic-hit.wav",
-  chime: "notification-chime.wav",
+  pop: "pop-soft.wav",
+  tick: "type-tick.wav",
+  whoosh: "whoosh-soft.wav",
+  rise: "slide.wav",
+  impact: "impact-soft.wav",
+  chime: "click-subtle.wav",
 };
 
 export const resolveSceneSfxSrc = (scene: Scene): string | null => {

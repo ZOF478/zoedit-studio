@@ -55,8 +55,8 @@ export const buildStaggeredSfxCues = ({
     Math.round(Math.max(0.5, durationSec) * safeFps),
   );
   const silent = mode === "silent";
-  const accentVolume = silent ? 0.46 : 0.4;
-  const baseVolume = silent ? 0.4 : 0.35;
+  const accentVolume = silent ? 0.22 : 0.2;
+  const baseVolume = silent ? 0.2 : 0.16;
   const beat = (seconds: number) => Math.round(safeFps * seconds);
   const elementDelay = (index: number) =>
     Math.round(safeFps * 0.3) + index * Math.round(safeFps * 0.24);
@@ -68,7 +68,11 @@ export const buildStaggeredSfxCues = ({
     volume = baseVolume,
   ) => {
     const at = Math.round(frameOffset);
-    if (!Number.isFinite(at) || at < 0 || at >= Math.max(1, durationFrames - 1)) {
+    if (
+      !Number.isFinite(at) ||
+      at < 0 ||
+      at >= Math.max(1, durationFrames - beat(0.5))
+    ) {
       return;
     }
     if (
@@ -81,7 +85,7 @@ export const buildStaggeredSfxCues = ({
     cues.push({
       frameOffset: at,
       sound,
-      volume: Math.min(0.5, Math.max(0.34, Number(volume.toFixed(2)))),
+      volume: Math.min(0.25, Math.max(0.12, Number(volume.toFixed(2)))),
     });
   };
 
@@ -207,10 +211,10 @@ export const buildStaggeredSfxCues = ({
         pushCue(delay + beat(0.1), "pop", baseVolume);
         break;
       case "cta":
-        pushCue(delay + beat(0.1), "chime", silent ? 0.36 : 0.3);
+        pushCue(delay + beat(0.1), "tick", baseVolume);
         break;
       case "notification_card":
-        pushCue(delay, "chime", baseVolume);
+        pushCue(delay, "pop", baseVolume);
         break;
       case "warning_card":
         pushCue(delay, "impact", baseVolume * 0.92);
@@ -230,10 +234,10 @@ export const buildStaggeredSfxCues = ({
   });
 
   if (silent && cues.length === 0) {
-    cues.push({ frameOffset: beat(0.28), sound: "pop", volume: 0.36 });
+    cues.push({ frameOffset: beat(0.28), sound: "pop", volume: 0.18 });
   }
 
-  const limit = maxCues ?? (silent ? 7 : 3);
+  const limit = maxCues ?? 1;
   return cues
     .sort((a, b) => a.frameOffset - b.frameOffset)
     .slice(0, Math.max(0, limit));
@@ -268,7 +272,7 @@ export const normalizeSfxCues = (raw: unknown): SfxCue[] | undefined => {
         frameOffset: Math.round(frameOffset),
         sound: sound as SfxCueSound,
         ...(Number.isFinite(volumeRaw)
-          ? { volume: Math.min(1, Math.max(0, Number(volumeRaw.toFixed(2)))) }
+          ? { volume: Math.min(0.25, Math.max(0.12, Number(volumeRaw.toFixed(2)))) }
           : {}),
       };
     })

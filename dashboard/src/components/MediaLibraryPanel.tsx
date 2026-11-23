@@ -234,20 +234,20 @@ export function MediaLibraryPanel({
   };
 
   return (
-    <section id="media-manager" className="min-w-0 overflow-x-hidden rounded-xl border border-white/8 bg-[#10141D] p-4 space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 pb-4">
+    <section id="media-manager" className="min-w-0 overflow-x-hidden rounded-2xl border border-white/10 bg-[#0E121A] p-3.5 space-y-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3.5">
         <div>
-          <h2 className="font-display text-base font-bold text-slate-100">
+          <h2 className="font-display text-[13px] font-bold text-slate-100">
             {t('سجل التصدير والفيديوهات المصدّرة', 'Recent Exports & Rendered Videos')}
           </h2>
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p className="mt-0.5 text-[11px] leading-tight text-slate-500">
             {t(
               'كل فيديو مصيّر وملفات الصوت والمؤثرات مع المعاينة والتنزيل والحذف.',
               'Every rendered video, voice file, and SFX with preview, download, and delete.'
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => void cleanUnused()}

@@ -12,6 +12,9 @@ export type WatermarkPosition =
 
 export type CaptionAnimationStyle =
   | "auto"
+  | "word_by_word"
+  | "karaoke"
+  | "static"
   | "word_pop_glow"
   | "dynamic_karaoke"
   | "smooth_chunk_slide"
@@ -19,10 +22,18 @@ export type CaptionAnimationStyle =
 
 export type WordsPerScreen = "auto" | 2 | 3 | 4 | 5;
 
+export type CaptionColors = {
+  background?: string;
+  text?: string;
+  highlight?: string;
+};
+
 export type CaptionConfig = {
   animation_style?: CaptionAnimationStyle;
   words_per_screen?: WordsPerScreen;
   lead_in?: number;
+  colors?: CaptionColors;
+  bottom_offset?: number;
   enabled?: boolean;
 };
 
@@ -343,6 +354,7 @@ export type Scene = {
   caption?: string;
   duration?: number;
   durationInSeconds?: number;
+  durationInFrames?: number;
   background?: string;
   audioSrc?: string;
   audioDuration?: number;

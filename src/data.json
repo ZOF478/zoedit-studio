@@ -1,14 +1,15 @@
 {
   "meta": {
-    "title": "الحبة قبل الفنجان",
-    "topic": "لماذا ارتفع سعر كوب القهوة الصباحي بنسبة 40% خلال عامين فقط؟ القصة لا تبدأ في المقهى، بل في مزارع البرازيل وفيتنام. موجة جفاف قياسية قلّصت المحصول العالمي، بينما تضاعفت تكاليف الشحن البحري 3 مرات. النتيجة: سلسلة إمداد مضغوطة تجعل حبة البن الواحدة أغلى سلعة زراعية في 2026.",
-    "description": "الحبة قبل الفنجان · الجفاف يضرب المحصول · الشحن يتضاعف ثلاثاً · الخطأ الشائع · سلسلة مضغوطة · أغلى سلعة زراعية · ما تفعله أنت"
+    "title": "Here's the secret to a richer soup",
+    "topic": "Clean culinary motion graphic B-Roll scene in Arabic inspired by a recipe cooking tip from ShelfRecipes: toasted spices and simmer timing for rich soup and stew flavor. Start with a smooth camera push-in on a warm dark charcoal culinary canvas with subtle organic motion (@remotion/noise). Animate a clean visual breakdown showing two contrasting stages: \"تحميص سريع\" (quick 20-second spice bloom on medium heat) vs. \"غليان طويل\" (over-boiling bitter spices), using crisp lucide-react icons (Flame, Timer, Sparkles, CheckCircle2) and clean Arabic labels inside the diagram. Highlight the sweet spot with a glowing accent ring and a concise tip badge (\"يحفظ النكهة ويمنع المرارة\") with subtle tactile UI/spark sound effects and zero top-corner title headers.",
+    "description": "Here's the secret to a richer soup · Twenty seconds on medium heat is all · But keep them moving because a single · That quick bloom builds deep warm flavor · Long boiling does the opposite · It drains the aroma and leaves a · So bloom fast"
   },
   "width": 1080,
   "height": 1920,
   "fps": 60,
-  "style": "smart_mix",
-  "script_language": "ar",
+  "durationInFrames": 2342,
+  "style": "stickman",
+  "script_language": "en",
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
@@ -16,290 +17,300 @@
     "animation_style": "auto",
     "words_per_screen": "auto",
     "lead_in": 0.2,
-    "enabled": false
+    "enabled": true
   },
   "brand_kit": {
     "name": "ZOF",
-    "primary": "#8b1ad1",
-    "secondary": "#FBBF24",
-    "accent": "#8b1ad1",
+    "primary": "#BE2523",
+    "secondary": "#0D3745",
+    "accent": "#0D3745",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#f7f2f7",
+    "background": "#FFFFFF",
+    "text": "#100D05",
+    "muted": "rgba(16, 13, 5, 0.72)",
     "watermark": "@ZofStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
   },
   "sfx": {
     "enabled": true,
-    "volume": 0.65
+    "volume": 0.1
   },
   "scenes": [
     {
-      "id": "scene-86c332c4",
-      "kicker": "نقطة البداية",
-      "title": "الحبة قبل الفنجان",
-      "subtitle": "نقطة البداية",
-      "caption": "سعر فنجانك ارتفع أربعين بالمئة، لكن القصة تبدأ في مزارع البرازيل وفيتنام لا في المقهى.",
-      "duration": 8.8,
-      "audioSrc": "audio/scene-1795303704801-3ac73a2a.mp3",
-      "audioDuration": 8.359,
-      "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 18,
-          "sound": "pop",
-          "volume": 0.34
-        },
-        {
-          "frameOffset": 30,
-          "sound": "tick",
-          "volume": 0.35
-        }
-      ],
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-1",
+      "kicker": "Here's the secret to a richer soup",
+      "title": "Here's the secret to a richer soup",
+      "subtitle": "Here's the secret to a richer soup",
+      "caption": "Here's the secret to a richer soup: toast your spices first.",
+      "duration": 4.85,
+      "durationInFrames": 291,
+      "audioSrc": "audio/scene-1795390071586-a5a6a144.mp3",
+      "audioDuration": 4.598,
+      "sfxSrc": "sfx/whoosh-soft.wav",
+      "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(135deg, rgba(139, 26, 209, 0.22) 0%, transparent 58%)",
-      "backgroundPreset": "editorial-paper",
-      "character": {
-        "pose": "shocked",
-        "side": "left",
-        "accessory": "badge",
-        "enabled": true
-      },
-      "elements": [
-        {
-          "type": "hero_title",
-          "title": "نقطة البداية",
-          "subtitle": "+40% في عامين",
-          "kicker": "الحبة قبل الفنجان",
-          "badge": "ZOF STUDIO"
-        }
-      ]
-    },
-    {
-      "id": "scene-31d88205",
-      "kicker": "السبب الجذري",
-      "title": "الجفاف يضرب المحصول",
-      "subtitle": "السبب الجذري",
-      "caption": "جفاف قياسي ضرب البرازيل وفيتنام، فانخفض المحصول العالمي وارتفعت أسعار البن الخام فوراً.",
-      "duration": 9,
-      "audioSrc": "audio/scene-1795303706124-4ba029fa.mp3",
-      "audioDuration": 8.594,
-      "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 34,
-          "sound": "pop",
-          "volume": 0.4
-        },
-        {
-          "frameOffset": 135,
-          "sound": "tick",
-          "volume": 0.35
-        }
-      ],
-      "layout": "split",
-      "camera": "pan-right",
-      "background": "linear-gradient(215deg, rgba(139, 26, 209, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "kinetic-grid",
-      "character": {
-        "pose": "sad",
-        "side": "right",
-        "accessory": "tie",
-        "enabled": false
-      },
-      "elements": [
-        {
-          "type": "generative_scene",
-          "title": "السبب الجذري",
-          "headline": "محصول أقل = سعر أعلى",
-          "keywords": [
-            "جفاف قياسي",
-            "البرازيل",
-            "فيتنام",
-            "محصول منخفض",
-            "سعر خام"
-          ],
-          "motif": "funnel",
-          "badge": "الجفاف يضرب المحصول"
-        }
-      ]
-    },
-    {
-      "id": "scene-9d88a998",
-      "kicker": "تكلفة الشحن البحري",
-      "title": "الشحن يتضاعف ثلاثاً",
-      "subtitle": "تكلفة الشحن البحري",
-      "caption": "وبينما يقلّ المحصول، تضاعفت تكاليف الشحن البحري ثلاث مرات، فصار نقل الحبة أغلى من قيمتها.",
-      "duration": 9.3,
-      "audioSrc": "audio/scene-1795303707099-68802552.mp3",
-      "audioDuration": 8.908,
-      "sfxSrc": "sfx/bass-drop.wav",
-      "sfxAt": 0.5,
-      "layout": "overlay",
-      "camera": "push-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(139, 26, 209, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "particle-field",
+      "background": "linear-gradient(135deg, rgba(13, 55, 69, 0.22) 0%, transparent 58%)",
+      "backgroundPreset": "ai-free",
       "character": {
         "pose": "explaining",
         "side": "left",
-        "accessory": "tie",
-        "enabled": true
-      },
-      "elements": [
-        {
-          "type": "stat_number",
-          "value": 3,
-          "label": "تكلفة الشحن البحري",
-          "icon": "chart"
-        }
-      ]
-    },
-    {
-      "id": "scene-cb0e8c75",
-      "kicker": "خطأ شائع",
-      "title": "الخطأ الشائع",
-      "subtitle": "خطأ شائع",
-      "caption": "الخطأ الشائع أن نلوم المقهى، بينما هامشه ضاق فعلاً؛ الضغط كله قادم من المزرعة والبحر.",
-      "duration": 9.6,
-      "audioSrc": "audio/scene-1795303708052-8bcf4aea.mp3",
-      "audioDuration": 9.169,
-      "sfxSrc": "sfx/alert-warning.wav",
-      "sfxAt": 0,
-      "layout": "stacked",
-      "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(139, 26, 209, 0.18) 100%)",
-      "backgroundPreset": "animated-mesh",
-      "character": {
-        "pose": "facepalm",
-        "side": "right",
         "accessory": "badge",
         "enabled": true
       },
-      "elements": [
-        {
-          "type": "warning_card",
-          "title": "خطأ شائع",
-          "badge": "الخطأ الشائع",
-          "myth": "المقهى ليس السبب",
-          "text": "الخطأ الشائع أن نلوم المقهى، بينما هامشه ضاق فعلاً؛ الضغط كله قادم من المزرعة والبحر.",
-          "tone": "warning"
-        }
-      ]
-    },
-    {
-      "id": "scene-b1e258b1",
-      "kicker": "سلسلة الإمداد",
-      "title": "سلسلة مضغوطة",
-      "subtitle": "سلسلة الإمداد",
-      "caption": "حين يقلّ العرض ويغلو النقل، تضيق سلسلة الإمداد كلها، وينتقل الضغط من المزرعة إلى فنجانك.",
-      "duration": 9.8,
-      "audioSrc": "audio/scene-1795303709079-06730831.mp3",
-      "audioDuration": 9.404,
-      "sfxAt": 0,
-      "sfxCues": [
-        {
-          "frameOffset": 34,
-          "sound": "pop",
-          "volume": 0.4
-        },
-        {
-          "frameOffset": 144,
-          "sound": "tick",
-          "volume": 0.35
-        }
-      ],
-      "layout": "split",
-      "camera": "pan-left",
-      "background": "linear-gradient(135deg, rgba(139, 26, 209, 0.22) 0%, transparent 58%)",
-      "backgroundPreset": "deep-wave",
-      "character": {
-        "pose": "thinking",
-        "side": "left",
-        "accessory": "tie",
-        "enabled": false
-      },
-      "elements": [
-        {
-          "type": "generative_scene",
-          "title": "سلسلة الإمداد",
-          "headline": "ضغط ينتقل خطوة بخطوة",
-          "keywords": [
-            "مزرعة",
-            "تصدير",
-            "شحن",
-            "تحميص",
-            "مقهى"
-          ],
-          "motif": "flow",
-          "badge": "سلسلة مضغوطة"
-        }
-      ]
-    },
-    {
-      "id": "scene-4e14b274",
-      "kicker": "2026",
-      "title": "أغلى سلعة زراعية",
-      "subtitle": "2026",
-      "caption": "النتيجة أن حبة البن صارت أغلى سلعة زراعية في 2026، قبل أن تصل إلى يدك.",
-      "duration": 9.2,
-      "audioSrc": "audio/scene-1795303710238-b44ffbec.mp3",
-      "audioDuration": 8.751,
-      "sfxAt": 0,
-      "layout": "centered",
-      "camera": "slow-zoom-in",
-      "background": "linear-gradient(215deg, rgba(139, 26, 209, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "neon-cyber",
-      "character": {
-        "pose": "pointing",
-        "side": "right",
-        "accessory": "tie",
-        "enabled": false
-      },
+      "generatedComponent": "Scene1",
       "elements": [
         {
           "type": "custom_tsx",
-          "component": "CustomScene_scene_4e14b274_5",
-          "title": "2026",
-          "text": "حبة البن = أغلى سلعة زراعية",
+          "component": "Scene1",
+          "title": "Here's the secret to a richer soup",
+          "text": "Here's the secret to a",
           "keywords": [
-            "حبة البن = أغلى سلعة زراعية"
+            "Here's the secret to a"
           ],
           "data": {
-            "narration": "النتيجة أن حبة البن صارت أغلى سلعة زراعية في 2026، قبل أن تصل إلى يدك.",
+            "narration": "Here's the secret to a richer soup: toast your spices first.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-c26ba97f",
-      "kicker": "خطوة عملية",
-      "title": "ما تفعله أنت",
-      "subtitle": "خطوة عملية",
-      "caption": "راقب سعر الكيلو لا الفنجان، واشترِ حبوباً كاملة بالجملة؛ هذا ما يخفف فاتورتك فعلاً.",
-      "duration": 9,
-      "audioSrc": "audio/scene-1795303711144-fa224933.mp3",
-      "audioDuration": 8.594,
-      "sfxAt": 0,
-      "layout": "stacked",
-      "camera": "static",
-      "background": "radial-gradient(circle at 82% 18%, rgba(139, 26, 209, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "floating-orbs",
-      "character": {
-        "pose": "idea",
-        "side": "left",
-        "accessory": "badge",
-        "enabled": true
-      },
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-2",
+      "kicker": "Twenty seconds on medium heat is all",
+      "title": "Twenty seconds on medium heat is all",
+      "subtitle": "Twenty seconds on medium heat is all",
+      "caption": "Twenty seconds on medium heat is all it takes to wake up their oils.",
+      "duration": 4.85,
+      "durationInFrames": 291,
+      "audioSrc": "audio/scene-1795390072196-9c1f2ea5.mp3",
+      "audioDuration": 4.598,
+      "sfxSrc": "sfx/pop-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-left",
+      "background": "linear-gradient(215deg, rgba(13, 55, 69, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene2",
       "elements": [
         {
-          "type": "cta",
-          "title": "خطوة عملية",
-          "subtitle": "اشترِ الكيلو لا الفنجان",
-          "buttonLabel": "ما تفعله أنت",
-          "icon": "rocket"
+          "type": "custom_tsx",
+          "component": "Scene2",
+          "title": "Twenty seconds on medium heat is all",
+          "text": "Twenty seconds on medium heat",
+          "keywords": [
+            "Twenty seconds on medium heat"
+          ],
+          "data": {
+            "narration": "Twenty seconds on medium heat is all it takes to wake up their oils.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-3",
+      "kicker": "But keep them moving because a single",
+      "title": "But keep them moving because a single",
+      "subtitle": "But keep them moving because a single",
+      "caption": "But keep them moving, because a single bitter scorch can ruin the whole pot.",
+      "duration": 5.666666666666667,
+      "durationInFrames": 340,
+      "audioSrc": "audio/scene-1795390072857-599b467f.mp3",
+      "audioDuration": 5.407,
+      "sfxSrc": "sfx/whoosh-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "stacked",
+      "camera": "push-in",
+      "background": "radial-gradient(circle at 82% 18%, rgba(13, 55, 69, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene3",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene3",
+          "title": "But keep them moving because a single",
+          "text": "But keep them moving because",
+          "keywords": [
+            "But keep them moving because"
+          ],
+          "data": {
+            "narration": "But keep them moving, because a single bitter scorch can ruin the whole pot.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-4",
+      "kicker": "That quick bloom builds deep warm flavor",
+      "title": "That quick bloom builds deep warm flavor",
+      "subtitle": "That quick bloom builds deep warm flavor",
+      "caption": "That quick bloom builds deep, warm flavor before the liquid ever goes in.",
+      "duration": 5.4,
+      "durationInFrames": 324,
+      "audioSrc": "audio/scene-1795390073520-b30039d9.mp3",
+      "audioDuration": 5.146,
+      "sfxSrc": "sfx/type-tick.wav",
+      "sfxAt": 0.15,
+      "layout": "overlay",
+      "camera": "slow-zoom-out",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(13, 55, 69, 0.18) 100%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene4",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene4",
+          "title": "That quick bloom builds deep warm flavor",
+          "text": "That quick bloom builds deep",
+          "keywords": [
+            "That quick bloom builds deep"
+          ],
+          "data": {
+            "narration": "That quick bloom builds deep, warm flavor before the liquid ever goes in.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-5",
+      "kicker": "Long boiling does the opposite",
+      "title": "Long boiling does the opposite",
+      "subtitle": "Long boiling does the opposite",
+      "caption": "Long boiling does the opposite.",
+      "duration": 2.6166666666666667,
+      "durationInFrames": 157,
+      "audioSrc": "audio/scene-1795390073966-20d20f33.mp3",
+      "audioDuration": 2.351,
+      "sfxSrc": "sfx/pop-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-right",
+      "background": "linear-gradient(135deg, rgba(13, 55, 69, 0.22) 0%, transparent 58%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene5",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene5",
+          "title": "Long boiling does the opposite",
+          "text": "Long boiling does the opposite",
+          "keywords": [
+            "Long boiling does the opposite"
+          ],
+          "data": {
+            "narration": "Long boiling does the opposite.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-6",
+      "kicker": "It drains the aroma and leaves a",
+      "title": "It drains the aroma and leaves a",
+      "subtitle": "It drains the aroma and leaves a",
+      "caption": "It drains the aroma and leaves a harsh, bitter edge behind.",
+      "duration": 4.783333333333333,
+      "durationInFrames": 287,
+      "audioSrc": "audio/scene-1795390074604-4a516cbf.mp3",
+      "audioDuration": 4.519,
+      "sfxSrc": "sfx/slide.wav",
+      "sfxAt": 0.15,
+      "layout": "centered",
+      "camera": "slow-zoom-in",
+      "background": "linear-gradient(215deg, rgba(13, 55, 69, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene6",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene6",
+          "title": "It drains the aroma and leaves a",
+          "text": "It drains the aroma and",
+          "keywords": [
+            "It drains the aroma and"
+          ],
+          "data": {
+            "narration": "It drains the aroma and leaves a harsh, bitter edge behind.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-7",
+      "kicker": "So bloom fast then simmer low and",
+      "title": "So bloom fast then simmer low and",
+      "subtitle": "So bloom fast then simmer low and",
+      "caption": "So bloom fast, then simmer low and slow.",
+      "duration": 4.383333333333334,
+      "durationInFrames": 263,
+      "audioSrc": "audio/scene-1795390075162-048671c3.mp3",
+      "audioDuration": 4.127,
+      "sfxSrc": "sfx/whoosh-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-left",
+      "background": "radial-gradient(circle at 82% 18%, rgba(13, 55, 69, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene7",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene7",
+          "title": "So bloom fast then simmer low and",
+          "text": "So bloom fast then simmer",
+          "keywords": [
+            "So bloom fast then simmer"
+          ],
+          "data": {
+            "narration": "So bloom fast, then simmer low and slow.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-8",
+      "kicker": "That's the sweet spot where real flavor",
+      "title": "That's the sweet spot where real flavor",
+      "subtitle": "That's the sweet spot where real flavor",
+      "caption": "That's the sweet spot, where real flavor is saved and bitterness never gets a chance.",
+      "duration": 6.216666666666667,
+      "durationInFrames": 373,
+      "audioSrc": "audio/scene-1795390075897-3da620ba.mp3",
+      "audioDuration": 5.956,
+      "sfxSrc": "sfx/pop-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "stacked",
+      "camera": "push-in",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(13, 55, 69, 0.18) 100%)",
+      "backgroundPreset": "ai-free",
+      "character": {
+        "pose": "pointing",
+        "side": "right",
+        "accessory": "tie",
+        "enabled": true
+      },
+      "generatedComponent": "Scene8",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene8",
+          "title": "That's the sweet spot where real flavor",
+          "text": "That's the sweet spot where",
+          "keywords": [
+            "That's the sweet spot where"
+          ],
+          "data": {
+            "narration": "That's the sweet spot, where real flavor is saved and bitterness never gets a chance.",
+            "visualType": "custom-tsx"
+          }
         }
       ]
     }

@@ -31,6 +31,7 @@ interface ColorFormatPickerProps {
   value: string;
   onChange: (value: string) => void;
   compact?: boolean;
+  disabled?: boolean;
 }
 
 export function ColorFormatPicker({
@@ -38,6 +39,7 @@ export function ColorFormatPicker({
   value,
   onChange,
   compact = false,
+  disabled = false,
 }: ColorFormatPickerProps) {
   const [format, setFormat] = useState<ColorFormat>('HEX');
   const [draft, setDraft] = useState(() => formatColor(value, 'HEX'));
@@ -69,7 +71,7 @@ export function ColorFormatPicker({
     <div
       className={`min-w-0 rounded-lg border border-white/10 bg-[#0B0E14] ${
         compact ? 'space-y-1.5 p-1.5' : 'space-y-2 p-2.5'
-      }`}
+      } ${disabled ? 'opacity-60' : ''}`}
     >
       <div className="flex min-w-0 items-center justify-between gap-1.5">
         <span
@@ -89,9 +91,10 @@ export function ColorFormatPicker({
               <button
                 key={option}
                 type="button"
+                disabled={disabled}
                 onClick={() => handleFormat(option)}
                 aria-pressed={active}
-                className={`rounded font-mono font-bold transition-colors cursor-pointer ${
+                className={`rounded font-mono font-bold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${
                   compact ? 'px-1 py-0.5 text-[8px]' : 'px-1.5 py-0.5 text-[9px]'
                 } ${
                   active
@@ -115,6 +118,7 @@ export function ColorFormatPicker({
           <input
             type="color"
             value={colorInputValue}
+            disabled={disabled}
             onChange={(event) => {
               const parsed = parseColorInput(event.target.value);
               if (parsed) {
@@ -123,7 +127,7 @@ export function ColorFormatPicker({
               }
             }}
             aria-label={label}
-            className="relative h-6 w-6 cursor-pointer border-0 bg-transparent p-0 opacity-0"
+            className="relative h-6 w-6 cursor-pointer border-0 bg-transparent p-0 opacity-0 disabled:cursor-not-allowed"
           />
         </span>
         <input
@@ -131,6 +135,7 @@ export function ColorFormatPicker({
           dir="ltr"
           value={draft}
           spellCheck={false}
+          disabled={disabled}
           onChange={(event) => {
             const next = event.target.value;
             setDraft(next);
@@ -145,7 +150,7 @@ export function ColorFormatPicker({
           onKeyDown={(event) => {
             if (event.key === 'Enter') event.currentTarget.blur();
           }}
-          className={`min-w-0 flex-1 rounded-md border border-white/10 bg-[#10141D] px-2 font-mono text-slate-100 placeholder:text-slate-600 focus:border-sky-400 focus:outline-none ${
+          className={`min-w-0 flex-1 rounded-md border border-white/10 bg-[#10141D] px-2 font-mono text-slate-100 placeholder:text-slate-600 focus:border-sky-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-40 ${
             compact ? 'py-1 text-[9px]' : 'py-1.5 text-[10px]'
           }`}
         />
@@ -158,6 +163,7 @@ export function ColorFormatPicker({
             <button
               key={swatch}
               type="button"
+              disabled={disabled}
               onClick={() => {
                 onChange(swatch);
                 setDraft(formatColor(swatch, format));
@@ -165,7 +171,7 @@ export function ColorFormatPicker({
               title={swatch}
               aria-label={`${label} ${swatch}`}
               aria-pressed={active}
-              className={`rounded-full border transition-transform cursor-pointer hover:scale-110 ${
+              className={`rounded-full border transition-transform cursor-pointer hover:scale-110 disabled:cursor-not-allowed disabled:opacity-40 ${
                 compact ? 'h-3.5 w-3.5' : 'h-4 w-4'
               } ${active ? 'border-white ring-2 ring-sky-400/70' : 'border-white/25'}`}
               style={{ backgroundColor: swatch }}

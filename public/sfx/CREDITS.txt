@@ -1,0 +1,11 @@
+Zof Studio SFX credits
+======================
+
+Interface sounds (click-subtle, type-tick, pop-soft, toggle-soft, impact-soft, cash-register)
+  Kenney — Interface Sounds (CC0 1.0)
+  https://kenney.nl/assets/interface-sounds
+  License: https://creativecommons.org/publicdomain/zero/1.0/
+
+Motion sounds (whoosh-soft, whoosh-whip, slide)
+  @remotion/sfx assets (CC0)
+  https://remotion.dev/docs/sfx

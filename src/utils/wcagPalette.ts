@@ -122,7 +122,7 @@ const buildPromptBlock = (
       ? "Night/dark mood is explicitly requested: keep a rich deep dark base and use light text; never place faint blue/grey text on dark cards."
       : "Keep cards clearly separated from the background using --zof-card-bg and --zof-card-border.",
     "Mobile typography at 1080x1920: headline 54px-68px bold (lineHeight 1.2); card body/comparison/axis labels 30px-36px semibold. Never use text below 26px.",
-    "Reserve the bottom 220px as a strict safe zone for AnimatedCaption. Never place cards, characters, or controls there.",
+    "Reserve the bottom 20% (about 380px at 1920px height) as a strict safe zone for AnimatedCaption and TikTok/Reels UI. Never place cards, characters, or controls there.",
   ].join("\n");
 };
 
