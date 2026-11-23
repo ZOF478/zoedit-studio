@@ -20,6 +20,7 @@ interface MainPreviewPanelProps {
   captionColors: CaptionColors;
   captionBottomOffset: number;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
 }
 
 export function MainPreviewPanel({
@@ -35,6 +36,7 @@ export function MainPreviewPanel({
   captionColors,
   captionBottomOffset,
   captionsEnabled,
+  respectSafeZone,
 }: MainPreviewPanelProps) {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<PreviewTabId>('video');
@@ -102,6 +104,7 @@ export function MainPreviewPanel({
           captionColors={captionColors}
           captionBottomOffset={captionBottomOffset}
           captionsEnabled={captionsEnabled}
+          respectSafeZone={respectSafeZone}
           fps={fps}
           embedded
         />

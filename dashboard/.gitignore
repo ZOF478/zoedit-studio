@@ -3,9 +3,16 @@ build/
 dist/
 coverage/
 .DS_Store
-*.log
-.env*
+
+# Local environment files (never commit real secrets)
+.env
+.env.*
 !.env.example
 
-# Local persisted settings with API keys
-data/studio-settings.json
+# Runtime data and generated artifacts
+data/*
+!data/.gitkeep
+public/audio/*
+!public/audio/.gitkeep
+*.log
+.zof_*

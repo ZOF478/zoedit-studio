@@ -5,8 +5,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { noise2D } from "@remotion/noise";
-import { Flame, Timer, TrendingDown } from "lucide-react";
+import { ArrowUpRight, Code2, Terminal } from "lucide-react";
+import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
@@ -28,44 +28,42 @@ type Props = {
   showCharacter?: boolean;
 };
 
-const BUBBLES = Array.from({ length: 12 }, (_, i) => ({
-  id: i,
-  x: 245 + ((i * 29) % 112),
-  speed: 0.8 + (i % 4) * 0.35,
-  size: 4 + (i % 4) * 2,
-}));
+const CLAMP = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+};
+
+const NODES = [
+  [12, 24],
+  [26, 44],
+  [44, 22],
+  [58, 50],
+  [72, 26],
+  [84, 46],
+  [38, 68],
+  [66, 70],
+];
+
+const COMMAND = "npx zofstudio";
 
 export const Scene5 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const accent = props.accentColor;
-  const spice = "#BE2523";
-  const enter = (i: number) =>
-    spring({
-      frame,
-      fps,
-      delay: i * 12,
-      config: { damping: 15, stiffness: 112, mass: 0.8 },
-    });
+  const { fps, width, height } = useVideoConfig();
+  const unit = Math.min(width, height);
+  const dur = props.durationInFrames;
   const exit = interpolate(
     frame,
-    [
-      Math.max(0, props.durationInFrames - 10),
-      Math.max(1, props.durationInFrames - 1),
-    ],
+    [Math.max(0, dur - 10), Math.max(1, dur - 1)],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    CLAMP,
   );
-  const drain = interpolate(frame, [20, 140], [0.86, 0.18], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const bitter = spring({
-    frame,
-    fps,
-    delay: 100,
-    config: { damping: 12, stiffness: 150 },
-  });
+  const typed = COMMAND.slice(
+    0,
+    Math.max(0, Math.floor(interpolate(frame, [158, 200], [0, COMMAND.length], CLAMP))),
+  );
+  const axisX = 58;
+  const baseY = 190;
+  const ticks = [0, 20, 40, 60];
 
   return (
     <AbsoluteFill
@@ -77,303 +75,226 @@ export const Scene5 = (props: Props) => {
     >
       <AbsoluteFill
         style={{
+          background: `radial-gradient(circle at 76% 24%, ${props.accentColor}22, transparent 56%), radial-gradient(circle at 20% 76%, #255C9933, transparent 55%)`,
+        }}
+      />
+      <svg width={width} height={height} style={{ position: "absolute", inset: 0, opacity: 0.2 }}>
+        {NODES.map(([x, y], i) =>
+          NODES.slice(i + 1).map(([x2, y2], j) => (
+            <line
+              key={`l${i}-${j}`}
+              x1={(x / 100) * width}
+              y1={(y / 100) * height}
+              x2={(x2 / 100) * width}
+              y2={(y2 / 100) * height}
+              stroke={props.accentColor}
+              strokeWidth={1}
+              strokeDasharray="4 10"
+              strokeDashoffset={-(frame * 0.7) % 14}
+            />
+          )),
+        )}
+        {NODES.map(([x, y], i) => (
+          <circle
+            key={`n${i}`}
+            cx={(x / 100) * width}
+            cy={(y / 100) * height}
+            r={4 + Math.abs(Math.sin(frame / 36 + i)) * 3}
+            fill={props.accentColor}
+            opacity={0.6}
+          />
+        ))}
+      </svg>
+
+      <div
+        style={{
+          position: "absolute",
+          top: "7%",
+          left: 0,
+          right: 0,
+          padding: "0 48px",
+          maxWidth: "88%",
+          direction: "ltr",
+          textAlign: "left",
           opacity: exit,
-          transform: `translateY(${(1 - exit) * 18}px) scale(${1 - (1 - exit) * 0.012})`,
-          backgroundImage:
-            "radial-gradient(circle at 84% 26%, rgba(190,37,35,0.12), transparent 42%), radial-gradient(circle at 10% 68%, rgba(13,55,69,0.10), transparent 44%)",
+          transform: `translateY(${(1 - exit) * -14}px)`,
         }}
       >
         <div
           style={{
-            position: "absolute",
-            top: "6.5%",
-            left: 0,
-            right: 0,
-            padding: "0 6%",
-            direction: "ltr",
-            textAlign: "left",
+            fontFamily: "monospace",
+            fontSize: 15,
+            letterSpacing: 4,
+            color: props.accentColor,
+            marginBottom: 12,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 16,
-              opacity: enter(0),
-              transform: `translateY(${(1 - enter(0)) * 16}px)`,
-            }}
-          >
-            <span style={{ width: 38, height: 3, background: spice, borderRadius: 2 }} />
-            <span
-              style={{
-                color: accent,
-                fontSize: 19,
-                letterSpacing: 4,
-                fontWeight: 800,
-              }}
-            >
-              THE OPPOSITE
-            </span>
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              color: props.textColor,
-              fontSize: 72,
-              lineHeight: 1.04,
-              letterSpacing: -1.5,
-              fontWeight: 800,
-              maxWidth: "94%",
-              opacity: enter(1),
-              transform: `translateY(${(1 - enter(1)) * 20}px)`,
-            }}
-          >
-            Long boiling does the{" "}
-            <span style={{ color: spice }}>opposite</span>
-          </h1>
-          <p
-            style={{
-              margin: "14px 0 0",
-              color: props.mutedColor,
-              fontSize: 25,
-              lineHeight: 1.35,
-              fontWeight: 500,
-              opacity: enter(2),
-            }}
-          >
-            Heat that keeps going turns on you.
-          </p>
+          OPEN SOURCE · FOREVER FREE
         </div>
-
         <div
           style={{
-            position: "absolute",
-            top: "25.5%",
-            left: "6%",
-            right: "6%",
-            height: "45.5%",
-            opacity: enter(1),
-            transform: `translateY(${(1 - enter(1)) * 24}px)`,
+            fontFamily: "Inter, system-ui, sans-serif",
+            fontWeight: 900,
+            fontSize: unit * 0.06,
+            lineHeight: 1.12,
+            letterSpacing: -1.8,
+            color: props.textColor,
           }}
         >
-          <div
+          Zof Studio is free and{" "}
+          <span style={{ color: props.accentColor }}>open source.</span>
+        </div>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: "23%",
+          bottom: "27%",
+          left: "6%",
+          right: "6%",
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * 16}px)`,
+        }}
+      >
+        <DepthStage style={{ flexDirection: "column", gap: unit * 0.02 }}>
+          <SpatialCard
+            enterFrame={8}
+            recedeFrame={150}
+            tiltY={props.isRtl ? -7 : 7}
+            shadowColor="rgba(2,6,23,0.65)"
             style={{
-              position: "relative",
-              width: "100%",
-              height: "100%",
-              borderRadius: 36,
+              width: "90%",
+              maxWidth: 660,
+              height: "56%",
+              borderRadius: 24,
+              padding: "16px 20px",
+              background: "rgba(240,248,255,0.05)",
+              border: `1px solid ${props.accentColor}55`,
               overflow: "hidden",
-              background: accent,
-              boxShadow: "0 28px 64px rgba(13,55,69,0.24)",
             }}
           >
-            <AbsoluteFill
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 50% 66%, rgba(190,37,35,0.24), transparent 48%), radial-gradient(circle at 12% 8%, rgba(255,255,255,0.14), transparent 38%)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                top: "5.5%",
-                left: "6%",
-                right: "6%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                direction: "ltr",
-              }}
-            >
-              <div
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+              <span style={{ fontFamily: "monospace", fontSize: 12, letterSpacing: 2.5, color: props.textColor }}>
+                COST TO LAUNCH
+              </span>
+              <span
                 style={{
-                  padding: "12px 22px",
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.26)",
-                  color: "#FFFFFF",
-                  fontSize: 24,
-                  fontWeight: 700,
-                  opacity: enter(3),
-                  transform: `translateX(${(1 - enter(3)) * -16}px)`,
-                }}
-              >
-                Long boiling backfires
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "10px 15px",
-                  borderRadius: 999,
-                  background: "rgba(190,37,35,0.22)",
-                  border: "1px solid rgba(190,37,35,0.48)",
-                  color: "#FFD9D7",
-                  fontSize: 16,
-                  fontWeight: 800,
-                  letterSpacing: 1,
-                  opacity: enter(4),
-                }}
-              >
-                <Timer size={19} />
-                30 MIN
-              </div>
-            </div>
-
-            <div
-              style={{
-                position: "absolute",
-                right: "7%",
-                top: "17%",
-                display: "flex",
-                alignItems: "center",
-                gap: 7,
-                padding: "10px 15px",
-                borderRadius: 999,
-                background: "rgba(190,37,35,0.28)",
-                border: "1px solid rgba(255,255,255,0.18)",
-                color: "#FFFFFF",
-                fontSize: 16,
-                fontWeight: 800,
-                opacity: bitter,
-                transform: `scale(${0.8 + bitter * 0.2})`,
-              }}
-            >
-              <Flame size={18} color="#FFD9D7" />
-              HARSH & BITTER
-            </div>
-
-            <svg
-              viewBox="0 0 600 360"
-              preserveAspectRatio="xMidYMax meet"
-              style={{
-                position: "absolute",
-                left: "8%",
-                right: "8%",
-                top: "15%",
-                width: "84%",
-                height: "62%",
-              }}
-            >
-              <ellipse cx="300" cy="318" rx="138" ry="30" fill="rgba(0,0,0,0.28)" />
-              <path
-                d="M176 205 Q300 238 424 205 L398 300 Q300 342 202 300 Z"
-                fill="#082A35"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="3"
-              />
-              <ellipse
-                cx="300"
-                cy="205"
-                rx="124"
-                ry="30"
-                fill="#0B2F3B"
-                stroke="rgba(255,255,255,0.3)"
-                strokeWidth="3"
-              />
-              <ellipse cx="300" cy="205" rx="102" ry="21" fill={spice} opacity="0.72" />
-              <path
-                d="M176 210 Q138 214 146 246"
-                stroke="rgba(255,255,255,0.42)"
-                strokeWidth="12"
-                fill="none"
-                strokeLinecap="round"
-              />
-              <path
-                d="M424 210 Q462 214 454 246"
-                stroke="rgba(255,255,255,0.42)"
-                strokeWidth="12"
-                fill="none"
-                strokeLinecap="round"
-              />
-              {BUBBLES.map((b) => {
-                const rise = (frame * b.speed + b.id * 22) % 110;
-                const drift = noise2D("scene5-bubble", b.id * 1.1, frame / 40) * 8;
-                return (
-                  <circle
-                    key={b.id}
-                    cx={b.x + drift}
-                    cy={198 - rise}
-                    r={b.size}
-                    fill="none"
-                    stroke="rgba(255,255,255,0.5)"
-                    strokeWidth="2"
-                    opacity={0.75 - rise / 180}
-                  />
-                );
-              })}
-              {[0, 1, 2].map((i) => {
-                const sway = noise2D("scene5-steam", i * 1.5, frame / 36) * 26;
-                return (
-                  <path
-                    key={i}
-                    d={`M${242 + i * 58} 182 C ${214 + i * 58 + sway} 138, ${280 + i * 58 + sway} 112, ${246 + i * 58} 62`}
-                    stroke="rgba(255,255,255,0.36)"
-                    strokeWidth="7"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeDasharray="9 17"
-                    strokeDashoffset={-frame * 2 - i * 12}
-                  />
-                );
-              })}
-            </svg>
-
-            <div
-              style={{
-                position: "absolute",
-                left: "7%",
-                right: "7%",
-                bottom: "4%",
-                display: "flex",
-                flexDirection: "column",
-                gap: 8,
-                direction: "ltr",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                  fontWeight: 800,
-                  letterSpacing: 1.3,
-                }}
-              >
-                <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <TrendingDown size={19} color="#FFD9D7" />
-                  AROMA
-                </span>
-                <span style={{ color: "#FFD9D7" }}>{Math.round(drain * 100)}%</span>
-              </div>
-              <div
-                style={{
-                  height: 13,
+                  fontFamily: "monospace",
+                  fontSize: 10,
+                  letterSpacing: 1.5,
+                  color: props.accentColor,
+                  padding: "4px 8px",
                   borderRadius: 99,
-                  background: "rgba(255,255,255,0.14)",
-                  overflow: "hidden",
+                  border: `1px solid ${props.accentColor}55`,
                 }}
               >
-                <div
-                  style={{
-                    width: `${drain * 100}%`,
-                    height: "100%",
-                    borderRadius: 99,
-                    background: spice,
-                  }}
-                />
-              </div>
+                MIT LICENSE
+              </span>
             </div>
-          </div>
-        </div>
+            <svg viewBox="0 0 560 230" style={{ width: "100%", height: "auto", display: "block" }}>
+              <line x1={axisX} y1={16} x2={axisX} y2={baseY} stroke={props.accentColor} strokeWidth={1.5} opacity={0.45} />
+              <line x1={axisX} y1={baseY} x2={530} y2={baseY} stroke={props.accentColor} strokeWidth={1.5} opacity={0.45} />
+              {ticks.map((tick) => {
+                const y = baseY - (tick / 60) * 150;
+                return (
+                  <g key={tick}>
+                    <line x1={axisX} y1={y} x2={530} y2={y} stroke={props.accentColor} strokeWidth={1} strokeDasharray="3 9" opacity={0.18} />
+                    <text x={axisX - 14} y={y + 4} textAnchor="end" fontSize={11} fill={props.mutedColor} fontFamily="monospace">
+                      ${tick}
+                    </text>
+                  </g>
+                );
+              })}
+              {[
+                { label: "Template tools", value: 49, x: 118, color: "rgba(240,248,255,0.3)", caption: "$49 / mo" },
+                { label: "Zof Studio", value: 0, x: 308, color: props.accentColor, caption: "FREE" },
+              ].map((bar, i) => {
+                const s = spring({ frame: frame - 24 - i * 12, fps, config: { damping: 16, stiffness: 105 } });
+                const h = bar.value === 0 ? 5 * s : (bar.value / 60) * 150 * s;
+                return (
+                  <g key={bar.label}>
+                    <rect x={bar.x} y={baseY - h} width={104} height={h} rx={7} fill={bar.color} />
+                    <text x={bar.x + 52} y={baseY - h - 10} textAnchor="middle" fontSize={14} fontWeight={800} fill={props.textColor} fontFamily="monospace">
+                      {bar.caption}
+                    </text>
+                    <text x={bar.x + 52} y={baseY + 22} textAnchor="middle" fontSize={12} fill={props.mutedColor} fontFamily="monospace">
+                      {bar.label}
+                    </text>
+                  </g>
+                );
+              })}
+              <text x={axisX} y={16} fontSize={10} fill={props.mutedColor} fontFamily="monospace">
+                USD / MONTH
+              </text>
+            </svg>
+          </SpatialCard>
 
-        <SceneSfx name="pop" frame={12} volume={0.18} />
-      </AbsoluteFill>
+          <SpatialCard
+            enterFrame={150}
+            tiltY={props.isRtl ? 5 : -5}
+            shadowColor="rgba(0,0,0,0.7)"
+            style={{
+              width: "90%",
+              maxWidth: 620,
+              borderRadius: 20,
+              padding: "14px 18px",
+              background: "rgba(5,22,42,0.96)",
+              border: `1px solid ${props.accentColor}88`,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#5AA9E6" }} />
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#BAE6FD", opacity: 0.7 }} />
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#255C99" }} />
+              <Terminal size={14} color={props.mutedColor} style={{ marginLeft: 6 }} />
+              <span style={{ fontFamily: "monospace", fontSize: 10, color: props.mutedColor, letterSpacing: 1 }}>bash · zof-studio</span>
+            </div>
+            <div style={{ fontFamily: "monospace", fontSize: unit * 0.03, color: props.textColor, letterSpacing: 0.5 }}>
+              <span style={{ color: props.accentColor, marginRight: 8 }}>$</span>
+              {typed}
+              <span style={{ color: props.accentColor, opacity: Math.sin(frame / 7) > 0 ? 1 : 0 }}>▌</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
+              <ArrowUpRight size={Math.round(unit * 0.022)} color={props.accentColor} />
+              <span style={{ fontSize: unit * 0.02, fontWeight: 800, color: props.textColor }}>studio.zoedit.com</span>
+              <span style={{ marginLeft: "auto", fontFamily: "monospace", fontSize: unit * 0.011, color: props.mutedColor }}>
+                TRY IT FREE
+              </span>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 12 }}>
+              {["OPEN SOURCE", "ZERO COST", "COMMUNITY"].map((chip, i) => {
+                const s = spring({ frame: frame - 220 - i * 12, fps, config: { damping: 14, stiffness: 130 } });
+                return (
+                  <span
+                    key={chip}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      opacity: s,
+                      transform: `translateY(${interpolate(s, [0, 1], [10, 0], CLAMP)}px)`,
+                      fontFamily: "monospace",
+                      fontSize: 10,
+                      letterSpacing: 1,
+                      color: props.textColor,
+                      padding: "5px 9px",
+                      borderRadius: 99,
+                      border: `1px solid ${props.accentColor}44`,
+                      background: "rgba(90,169,230,0.1)",
+                    }}
+                  >
+                    {i === 0 && <Code2 size={11} color={props.accentColor} />}
+                    {chip}
+                  </span>
+                );
+              })}
+            </div>
+          </SpatialCard>
+        </DepthStage>
+      </div>
+
+      <SceneSfx name="pop" frame={150} volume={0.18} />
     </AbsoluteFill>
   );
 };

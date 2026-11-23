@@ -1,12 +1,13 @@
 import {
   AbsoluteFill,
+  Easing,
   interpolate,
   spring,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { noise2D } from "@remotion/noise";
-import { AlertTriangle, CheckCircle2, Flame } from "lucide-react";
+import { Film, Play, Sparkles, TrendingUp } from "lucide-react";
+import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
@@ -28,47 +29,36 @@ type Props = {
   showCharacter?: boolean;
 };
 
-const BURN_SPOTS = [
-  { x: 300, y: 220, r: 20, delay: 0 },
-  { x: 396, y: 270, r: 26, delay: 8 },
-  { x: 332, y: 312, r: 16, delay: 16 },
+const CLAMP = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+};
+
+const STATIONS = [
+  { title: "LIVE CHARTS", tag: "01 · DATA" },
+  { title: "CINEMATIC B-ROLL", tag: "02 · FOOTAGE" },
+  { title: "VECTOR MOTION", tag: "03 · DESIGNED" },
 ];
 
 export const Scene3 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const accent = props.accentColor;
-  const spice = "#BE2523";
-  const enter = (i: number) =>
-    spring({
-      frame,
-      fps,
-      delay: i * 12,
-      config: { damping: 15, stiffness: 110, mass: 0.8 },
-    });
+  const { fps, width, height } = useVideoConfig();
+  const unit = Math.min(width, height);
+  const dur = props.durationInFrames;
   const exit = interpolate(
     frame,
-    [
-      Math.max(0, props.durationInFrames - 10),
-      Math.max(1, props.durationInFrames - 1),
-    ],
+    [Math.max(0, dur - 10), Math.max(1, dur - 1)],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    CLAMP,
   );
-  const burn = interpolate(frame, [70, 108, 188, 220], [0, 0.92, 0.92, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const warning = interpolate(frame, [66, 88, 196, 216], [0, 1, 1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const checkFrame = 210;
-  const safe = spring({
-    frame,
-    fps,
-    delay: checkFrame,
-    config: { damping: 12, stiffness: 150 },
+  const pad = width * 0.06;
+  const gap = width * 0.05;
+  const stationW = width * 0.7;
+  const trackWidth = pad * 2 + stationW * 3 + gap * 2;
+  const panMax = Math.max(0, pad + (stationW + gap) * 2 - (width - stationW) / 2);
+  const pan = interpolate(frame, [40, dur - 30], [0, panMax], {
+    ...CLAMP,
+    easing: Easing.inOut(Easing.cubic),
   });
 
   return (
@@ -81,307 +71,317 @@ export const Scene3 = (props: Props) => {
     >
       <AbsoluteFill
         style={{
+          background: `radial-gradient(circle at 70% 30%, ${props.accentColor}1f, transparent 60%)`,
+        }}
+      />
+      <div style={{ position: "absolute", inset: 0, transform: `translateX(${-pan * 0.22}px)`, opacity: 0.16 }}>
+        <svg width={width * 2} height={height}>
+          {Array.from({ length: 22 }).map((_, i) => (
+            <line
+              key={`bgv${i}`}
+              x1={i * 110}
+              y1={0}
+              x2={i * 110}
+              y2={height}
+              stroke={props.accentColor}
+              strokeWidth={1}
+              strokeDasharray="3 14"
+            />
+          ))}
+          {Array.from({ length: 12 }).map((_, i) => (
+            <line
+              key={`bgh${i}`}
+              x1={0}
+              y1={i * 180}
+              x2={width * 2}
+              y2={i * 180}
+              stroke={props.accentColor}
+              strokeWidth={1}
+              strokeDasharray="3 14"
+            />
+          ))}
+        </svg>
+      </div>
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={`dot${i}`}
+          style={{
+            position: "absolute",
+            left: `${14 + i * 22}%`,
+            top: `${24 + (i % 3) * 21}%`,
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: props.accentColor,
+            opacity: 0.35,
+            transform: `translateY(${Math.sin(frame / 30 + i * 1.7) * 22}px)`,
+          }}
+        />
+      ))}
+
+      <div
+        style={{
+          position: "absolute",
+          top: "7%",
+          left: 0,
+          right: 0,
+          padding: "0 48px",
+          maxWidth: "88%",
+          direction: "ltr",
+          textAlign: "left",
           opacity: exit,
-          transform: `translateY(${(1 - exit) * 18}px) scale(${1 - (1 - exit) * 0.012})`,
-          backgroundImage:
-            "radial-gradient(circle at 84% 20%, rgba(190,37,35,0.10), transparent 42%), radial-gradient(circle at 10% 60%, rgba(13,55,69,0.10), transparent 44%)",
+          transform: `translateY(${(1 - exit) * -14}px)`,
         }}
       >
         <div
           style={{
-            position: "absolute",
-            top: "6.5%",
-            left: 0,
-            right: 0,
-            padding: "0 6%",
-            direction: "ltr",
-            textAlign: "left",
+            fontFamily: "monospace",
+            fontSize: 15,
+            letterSpacing: 4,
+            color: props.accentColor,
+            marginBottom: 12,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 16,
-              opacity: enter(0),
-              transform: `translateY(${(1 - enter(0)) * 16}px)`,
-            }}
-          >
-            <span style={{ width: 38, height: 3, background: spice, borderRadius: 2 }} />
-            <span
-              style={{
-                color: accent,
-                fontSize: 19,
-                letterSpacing: 4,
-                fontWeight: 800,
-              }}
-            >
-              THE RISK
-            </span>
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              color: props.textColor,
-              fontSize: 74,
-              lineHeight: 1.04,
-              letterSpacing: -1.5,
-              fontWeight: 800,
-              maxWidth: "95%",
-              opacity: enter(1),
-              transform: `translateY(${(1 - enter(1)) * 20}px)`,
-            }}
-          >
-            A single scorch{" "}
-            <span style={{ color: spice }}>ruins the pot</span>
-          </h1>
-          <p
-            style={{
-              margin: "14px 0 0",
-              color: props.mutedColor,
-              fontSize: 25,
-              lineHeight: 1.35,
-              fontWeight: 500,
-              opacity: enter(2),
-            }}
-          >
-            Still spices turn bitter in seconds.
-          </p>
+          TRUE CREATIVE VARIETY
         </div>
-
         <div
           style={{
-            position: "absolute",
-            top: "25%",
-            left: "6%",
-            right: "6%",
-            height: "46%",
-            opacity: enter(1),
-            transform: `translateY(${(1 - enter(1)) * 24}px)`,
+            fontFamily: "Inter, system-ui, sans-serif",
+            fontWeight: 900,
+            fontSize: unit * 0.058,
+            lineHeight: 1.12,
+            letterSpacing: -1.5,
+            color: props.textColor,
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              height: "100%",
-              borderRadius: 36,
-              overflow: "hidden",
-              background: accent,
-              boxShadow: "0 28px 64px rgba(13,55,69,0.24)",
-            }}
-          >
-            <AbsoluteFill
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 50% 62%, rgba(190,37,35,0.20), transparent 50%), radial-gradient(circle at 12% 8%, rgba(255,255,255,0.14), transparent 38%)",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                top: "6%",
-                left: "6%",
-                right: "6%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                direction: "ltr",
-              }}
-            >
-              <div
-                style={{
-                  padding: "12px 22px",
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.26)",
-                  color: "#FFFFFF",
-                  fontSize: 24,
-                  fontWeight: 700,
-                  opacity: enter(3),
-                  transform: `translateX(${(1 - enter(3)) * -16}px)`,
-                }}
-              >
-                Keep them moving
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "10px 15px",
-                  borderRadius: 999,
-                  background: "rgba(190,37,35,0.22)",
-                  border: "1px solid rgba(190,37,35,0.5)",
-                  color: "#FFD9D7",
-                  fontSize: 15,
-                  fontWeight: 800,
-                  letterSpacing: 1,
-                  opacity: warning,
-                }}
-              >
-                <AlertTriangle size={19} />
-                SCORCH RISK
-              </div>
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "10px 15px",
-                  borderRadius: 999,
-                  background: "rgba(244,194,122,0.16)",
-                  border: "1px solid rgba(244,194,122,0.45)",
-                  color: "#F4C27A",
-                  fontSize: 15,
-                  fontWeight: 800,
-                  letterSpacing: 1,
-                  opacity: safe,
-                  transform: `scale(${0.86 + safe * 0.14})`,
-                }}
-              >
-                <CheckCircle2 size={19} />
-                SAFE & MOVING
-              </div>
-            </div>
-
-            <svg
-              viewBox="0 0 700 520"
-              preserveAspectRatio="xMidYMid meet"
-              style={{
-                position: "absolute",
-                left: "4%",
-                right: "4%",
-                top: "15%",
-                width: "92%",
-                height: "80%",
-              }}
-            >
-              <circle
-                cx="350"
-                cy="260"
-                r="214"
-                fill="rgba(255,255,255,0.035)"
-                stroke="rgba(255,255,255,0.12)"
-                strokeWidth="2"
-              />
-              <circle
-                cx="350"
-                cy="260"
-                r="196"
-                fill="#0A2E3A"
-                stroke="rgba(255,255,255,0.16)"
-                strokeWidth="3"
-              />
-              <circle
-                cx="350"
-                cy="260"
-                r="170"
-                fill="none"
-                stroke="rgba(255,255,255,0.10)"
-                strokeWidth="2"
-                strokeDasharray="8 14"
-                transform={`rotate(${frame * 0.45} 350 260)`}
-              />
-              <rect
-                x="530"
-                y="236"
-                width="154"
-                height="48"
-                rx="24"
-                fill="rgba(255,255,255,0.18)"
-              />
-              <rect
-                x="546"
-                y="248"
-                width="126"
-                height="24"
-                rx="12"
-                fill="rgba(255,255,255,0.08)"
-              />
-              {BURN_SPOTS.map((spot) => (
-                <circle
-                  key={spot.x}
-                  cx={spot.x}
-                  cy={spot.y}
-                  r={spot.r}
-                  fill="#6E1918"
-                  opacity={burn * 0.8}
-                />
-              ))}
-              {Array.from({ length: 16 }).map((_, i) => {
-                const angle = frame / 62 + i * 0.74;
-                const radius = 36 + (i % 6) * 22;
-                const cx =
-                  350 +
-                  Math.cos(angle) * radius +
-                  noise2D("scene3-x", i * 0.9, frame / 50) * 10;
-                const cy =
-                  260 +
-                  Math.sin(angle) * radius * 0.86 +
-                  noise2D("scene3-y", i * 0.9, frame / 55) * 10;
-                return (
-                  <circle
-                    key={i}
-                    cx={cx}
-                    cy={cy}
-                    r={4 + (i % 3) * 2}
-                    fill={i % 4 === 0 ? "#F4C27A" : "rgba(255,255,255,0.82)"}
-                    opacity={0.65 + 0.25 * Math.abs(Math.sin(frame / 25 + i))}
-                  />
-                );
-              })}
-              <g transform={`rotate(${frame * 1.5 + 18} 350 260)`}>
-                <line
-                  x1="350"
-                  y1="260"
-                  x2="552"
-                  y2="260"
-                  stroke="#F4C27A"
-                  strokeWidth="13"
-                  strokeLinecap="round"
-                  opacity="0.95"
-                />
-                <rect
-                  x="500"
-                  y="236"
-                  width="62"
-                  height="48"
-                  rx="17"
-                  fill="#F4C27A"
-                  transform="rotate(14 531 260)"
-                />
-              </g>
-              <circle cx="350" cy="260" r="11" fill="#F4C27A" />
-            </svg>
-
-            <div
-              style={{
-                position: "absolute",
-                left: "7%",
-                bottom: "4%",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                color: "rgba(255,255,255,0.72)",
-                fontSize: 18,
-                fontWeight: 600,
-                opacity: enter(4),
-              }}
-            >
-              <Flame size={20} color="#F4C27A" />
-              Stir, do not walk away
-            </div>
-          </div>
+          No rigid templates —{" "}
+          <span style={{ color: props.accentColor }}>just charts, B-roll & motion</span>
         </div>
+      </div>
 
-        <SceneSfx name="pop" frame={12} volume={0.18} />
-      </AbsoluteFill>
+      <div
+        style={{
+          position: "absolute",
+          top: "25%",
+          height: "50%",
+          left: 0,
+          right: 0,
+          overflow: "hidden",
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * 14}px)`,
+        }}
+      >
+        <DepthStage
+          style={{
+            width: trackWidth,
+            height: "100%",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap,
+            paddingLeft: pad,
+            paddingRight: pad,
+            transform: `translateX(${-pan}px)`,
+          }}
+        >
+          {STATIONS.map((station, i) => (
+            <SpatialCard
+              key={station.title}
+              enterFrame={i * 12}
+              recedeFrame={i === 0 ? 130 : i === 1 ? 260 : undefined}
+              tiltY={props.isRtl ? 7 : -7}
+              shadowColor="rgba(2,6,23,0.6)"
+              style={{
+                width: stationW,
+                height: "78%",
+                flexShrink: 0,
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: 24,
+                padding: "18px 20px",
+                background: "linear-gradient(155deg, rgba(37,92,153,0.3), rgba(5,22,42,0.92))",
+                border: `1px solid ${props.accentColor}55`,
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                {i === 0 ? (
+                  <TrendingUp size={20} color={props.accentColor} />
+                ) : i === 1 ? (
+                  <Film size={20} color={props.accentColor} />
+                ) : (
+                  <Sparkles size={20} color={props.accentColor} />
+                )}
+                <span style={{ fontSize: unit * 0.02, fontWeight: 800, color: props.textColor, letterSpacing: 0.5 }}>
+                  {station.title}
+                </span>
+                <span
+                  style={{
+                    marginLeft: "auto",
+                    fontFamily: "monospace",
+                    fontSize: 10,
+                    letterSpacing: 1.5,
+                    color: props.mutedColor,
+                  }}
+                >
+                  {station.tag}
+                </span>
+              </div>
+
+              {i === 0 && (
+                <svg viewBox="0 0 360 210" style={{ width: "100%", flex: 1, minHeight: 0 }}>
+                  <line x1={58} y1={16} x2={58} y2={180} stroke={props.accentColor} strokeWidth={1.5} opacity={0.5} />
+                  <line x1={58} y1={180} x2={340} y2={180} stroke={props.accentColor} strokeWidth={1.5} opacity={0.5} />
+                  {[0, 20, 40, 60].map((tick) => {
+                    const y = 180 - (tick / 80) * 150;
+                    return (
+                      <g key={tick}>
+                        <line x1={58} y1={y} x2={340} y2={y} stroke={props.accentColor} strokeWidth={1} strokeDasharray="3 8" opacity={0.2} />
+                        <text x={44} y={y + 4} textAnchor="end" fontSize={11} fill={props.mutedColor} fontFamily="monospace">
+                          {tick}
+                        </text>
+                      </g>
+                    );
+                  })}
+                  {[30, 55, 42, 75, 60].map((value, b) => {
+                    const s = spring({
+                      frame: frame - 24 - b * 12,
+                      fps,
+                      config: { damping: 16, stiffness: 110 },
+                    });
+                    const barH = (value / 80) * 150 * s;
+                    return (
+                      <rect
+                        key={b}
+                        x={78 + b * 52}
+                        y={180 - barH}
+                        width={32}
+                        height={barH}
+                        rx={6}
+                        fill={b === 3 ? props.accentColor : b === 1 ? "#BAE6FD" : "rgba(240,248,255,0.28)"}
+                      />
+                    );
+                  })}
+                  <text x={58} y={200} fontSize={10} fill={props.mutedColor} fontFamily="monospace">
+                    ENGAGEMENT · LAST 5 LAUNCHES
+                  </text>
+                </svg>
+              )}
+
+              {i === 1 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10, flex: 1, minHeight: 0 }}>
+                  {[0, 1, 2, 3].map((tile) => (
+                    <div
+                      key={tile}
+                      style={{
+                        width: "calc(50% - 5px)",
+                        height: "calc(50% - 5px)",
+                        borderRadius: 12,
+                        background:
+                          tile % 2 === 0
+                            ? "linear-gradient(140deg, rgba(90,169,230,0.35), rgba(5,22,42,0.9))"
+                            : "linear-gradient(140deg, rgba(186,230,253,0.25), rgba(5,22,42,0.9))",
+                        border: `1px solid ${props.accentColor}44`,
+                        position: "relative",
+                        overflow: "hidden",
+                        transform: `translateY(${Math.sin(frame / 34 + tile) * 4}px)`,
+                      }}
+                    >
+                      {tile === 0 && (
+                        <svg viewBox="0 0 120 70" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+                          <polygon points="0,70 36,26 62,58 84,34 120,70" fill={props.accentColor} opacity={0.55} />
+                          <circle cx={94} cy={18} r={8} fill="#BAE6FD" opacity={0.9} />
+                        </svg>
+                      )}
+                      {tile === 1 && (
+                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Play size={26} color={props.textColor} fill={props.textColor} />
+                        </div>
+                      )}
+                      {tile === 2 && (
+                        <svg viewBox="0 0 120 70" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+                          {[0, 1, 2].map((k) => (
+                            <path
+                              key={k}
+                              d={`M0 ${44 + k * 8} Q 30 ${30 + k * 6 + Math.sin(frame / 18 + k) * 5}, 60 ${40 + k * 6} T 120 ${38 + k * 6}`}
+                              fill="none"
+                              stroke={props.accentColor}
+                              strokeWidth={2}
+                              opacity={0.7 - k * 0.15}
+                            />
+                          ))}
+                        </svg>
+                      )}
+                      {tile === 3 && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            bottom: 8,
+                            left: 10,
+                            fontFamily: "monospace",
+                            fontSize: 10,
+                            color: props.textColor,
+                            opacity: 0.75,
+                          }}
+                        >
+                          4K CLIP
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {i === 2 && (
+                <>
+                  <svg viewBox="0 0 360 210" style={{ width: "100%", flex: 1, minHeight: 0 }}>
+                    <ellipse cx={180} cy={100} rx={120} ry={44} fill="none" stroke={props.accentColor} strokeWidth={1.2} opacity={0.4} transform="rotate(-14 180 100)" />
+                    <ellipse cx={180} cy={100} rx={120} ry={44} fill="none" stroke="#BAE6FD" strokeWidth={1.2} opacity={0.25} transform="rotate(34 180 100)" />
+                    <path
+                      d={`M60 140 C 110 ${70 + Math.sin(frame / 22) * 12}, 200 150, 300 62`}
+                      fill="none"
+                      stroke={props.accentColor}
+                      strokeWidth={3}
+                      strokeLinecap="round"
+                      strokeDasharray="320"
+                      strokeDashoffset={320 - ((frame * 2.2) % 320)}
+                    />
+                    <circle cx={180} cy={100} r={26} fill="rgba(90,169,230,0.18)" stroke={props.accentColor} strokeWidth={2} />
+                    {[0, 1, 2].map((dot) => {
+                      const a = frame / 26 + (dot * Math.PI * 2) / 3;
+                      return <circle key={dot} cx={180 + Math.cos(a) * 120} cy={100 + Math.sin(a) * 44} r={6} fill={props.accentColor} />;
+                    })}
+                  </svg>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {["SPRING PHYSICS", "MASKING", "BEZIER"].map((label, k) => {
+                      const s = spring({ frame: frame - 160 - k * 12, fps, config: { damping: 15, stiffness: 120 } });
+                      return (
+                        <span
+                          key={label}
+                          style={{
+                            opacity: s,
+                            transform: `translateY(${interpolate(s, [0, 1], [12, 0], CLAMP)}px)`,
+                            fontFamily: "monospace",
+                            fontSize: 10,
+                            letterSpacing: 1,
+                            color: props.textColor,
+                            padding: "6px 9px",
+                            borderRadius: 99,
+                            border: `1px solid ${props.accentColor}55`,
+                          }}
+                        >
+                          {label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </SpatialCard>
+          ))}
+        </DepthStage>
+      </div>
+
+      <SceneSfx name="whoosh" frame={130} volume={0.18} />
     </AbsoluteFill>
   );
 };

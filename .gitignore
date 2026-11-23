@@ -1,9 +1,27 @@
 node_modules/
 dashboard/node_modules/
 dashboard/dist/
-dashboard/studio.log
-out/
+
+# Local environment files (never commit real secrets)
 .env
+.env.*
+!.env.example
+
+# Runtime data and generated artifacts
+dashboard/data/*
+!dashboard/data/.gitkeep
+out/*
+build/*
+public/audio/*
+!public/audio/.gitkeep
+*.log
+.zof_*
+
+# Never commit user settings or API keys (they live in ~/.zof-studio)
+**/studio-settings.json
+**/.zof-studio/
+
+# Media artifacts
 *.mp4
 *.wav
 *.mp3

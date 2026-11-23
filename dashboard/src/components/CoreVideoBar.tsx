@@ -5,6 +5,7 @@ import {
   Languages,
   Layers,
   Monitor,
+  ShieldCheck,
   SlidersHorizontal,
   Sparkles,
 } from 'lucide-react';
@@ -33,6 +34,8 @@ interface CoreVideoBarProps {
   onChangeEnable25D: (value: boolean) => void;
   cleanBrollMode: boolean;
   onChangeCleanBrollMode: (value: boolean) => void;
+  respectSafeZone: boolean;
+  onChangeRespectSafeZone: (value: boolean) => void;
   brandKit: BrandKit;
   onChangeBrandKit: (next: BrandKit) => void;
   disabled?: boolean;
@@ -62,7 +65,7 @@ function ToggleSwitch({
   onChange: () => void;
   disabled: boolean;
   label: string;
-  tone: 'violet' | 'amber';
+  tone: 'violet' | 'amber' | 'emerald';
 }) {
   const { isRtl } = useI18n();
   return (
@@ -77,7 +80,9 @@ function ToggleSwitch({
         checked
           ? tone === 'violet'
             ? 'bg-violet-500'
-            : 'bg-amber-500'
+            : tone === 'amber'
+              ? 'bg-amber-500'
+              : 'bg-emerald-500'
           : 'bg-slate-700'
       }`}
     >
@@ -102,6 +107,8 @@ export function CoreVideoBar({
   onChangeEnable25D,
   cleanBrollMode,
   onChangeCleanBrollMode,
+  respectSafeZone,
+  onChangeRespectSafeZone,
   brandKit,
   onChangeBrandKit,
   disabled = false,
@@ -288,6 +295,24 @@ export function CoreVideoBar({
                   'Toggle clean B-Roll mode',
                 )}
                 tone="amber"
+              />
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-400/20 bg-[#10141D] px-2 py-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-300" />
+              <span className="min-w-0 flex-1 text-start text-[10px] font-semibold leading-snug text-slate-300">
+                {t('احترام منطقة الأمان', 'Respect Safe Zone')}
+              </span>
+              <span
+                className={`shrink-0 font-mono text-[9px] ${respectSafeZone ? 'text-emerald-200' : 'text-slate-500'}`}
+              >
+                {respectSafeZone ? t('مفعّل', 'ON') : t('مغلق', 'OFF')}
+              </span>
+              <ToggleSwitch
+                checked={respectSafeZone}
+                onChange={() => onChangeRespectSafeZone(!respectSafeZone)}
+                disabled={disabled}
+                label={t('تبديل احترام منطقة الأمان', 'Toggle respect safe zone')}
+                tone="emerald"
               />
             </div>
           </div>

@@ -33,7 +33,6 @@ const GENERATED_REGISTRY_FILE = path.join(GENERATED_DIR, 'index.ts');
 const GENERATED_FILE_PATTERN = /^(?:CustomScene_[A-Za-z0-9_]+|Scene\d+)$/;
 const ZOF_HOME_DIR = path.join(os.homedir(), '.zof-studio');
 const SETTINGS_FILE = path.join(ZOF_HOME_DIR, 'settings.json');
-const LEGACY_SETTINGS_FILE = path.join(DASHBOARD_DIR, 'data', 'studio-settings.json');
 const CURRENT_PROJECT_FILE = path.join(ZOF_HOME_DIR, 'current-project.json');
 const STUDIO_LOG_FILE = path.join(ZOF_HOME_DIR, 'remotion-studio.log');
 const USAGE_FILE = path.join(ZOF_HOME_DIR, 'usage.json');
@@ -83,6 +82,7 @@ interface StudioSettings {
   captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
   brandKit: RenderBrandKit;
   sfxEnabled: boolean;
   sfxVolume: number;
@@ -268,6 +268,7 @@ interface ProjectStatePayload {
   captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
   brandKit: RenderBrandKit;
   sfxEnabled: boolean;
   sfxVolume: number;
@@ -307,6 +308,7 @@ interface RenderJob {
   captionBottomOffset: number;
   wordsPerScreen: string;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
   enable25D: boolean;
   elevenlabsKey: string;
   masterPrompt?: string;
@@ -397,6 +399,7 @@ type ParentVideoData = {
   script_depth?: string;
   creative_code_mode?: string;
   script_pacing?: string;
+  respect_safe_zone?: boolean;
   caption?: {
     animation_style: string;
     words_per_screen: number | 'auto';
@@ -438,9 +441,9 @@ interface ElevenLabsVoiceItem {
 }
 
 const PORT = Number(process.env.PORT) || 4789;
-const HOST = '127.0.0.1';
-const REMOTION_STUDIO_PORT = 9578;
-const REMOTION_STUDIO_UI_PORT = 3333;
+const HOST = process.env.HOST || '127.0.0.1';
+const REMOTION_STUDIO_RENDER_PORT = 9578;
+const REMOTION_STUDIO_UI_PORT = Number(process.env.REMOTION_STUDIO_PORT) || 3333;
 const OPENCODE_RUN_TIMEOUT_MS = 600000;
 const STRICT_EFFICIENCY_RULE =
   'STRICT EFFICIENCY & NO-LOOP RULE: Write each scene file cleanly in ONE single pass (keep each scene concise, under ~220 lines of clean TypeScript). After writing all scene files and `index.ts`, run at most ONE `npx tsc --noEmit` check. Fix actual TypeScript compiler errors ONLY if any exist, and exit immediately. NEVER run repeated cosmetic micro-edits on font sizes, padding, colors, or coordinates after writing a file.';
@@ -491,8 +494,11 @@ const sessionKeyStore = new Map<string, SessionKeys>();
 const renderJobs = new Map<string, RenderJob>();
 
 const ALLOWED_LOCAL_ORIGINS = new Set([
-  'http://localhost:4789',
-  'http://127.0.0.1:4789',
+  `http://localhost:${PORT}`,
+  `http://127.0.0.1:${PORT}`,
+  `http://${HOST}:${PORT}`,
+  `http://localhost:${REMOTION_STUDIO_UI_PORT}`,
+  `http://127.0.0.1:${REMOTION_STUDIO_UI_PORT}`,
 ]);
 
 const OPENROUTER_MODEL_MAP: Record<string, string> = {
@@ -1262,6 +1268,7 @@ const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
   captionBottomOffset: DEFAULT_CAPTION_BOTTOM_OFFSET,
   wordsPerScreen: 'auto',
   captionsEnabled: true,
+  respectSafeZone: true,
   brandKit: DEFAULT_BRAND_KIT,
   sfxEnabled: true,
   sfxVolume: 0.2,
@@ -1276,6 +1283,23 @@ const AI_PROVIDER_IDS = new Set<AiProviderId>(
 
 function cleanSettingString(value: unknown, maxLength = 512): string {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      default:
+        return '&#39;';
+    }
+  });
 }
 
 function readJsonFileSafe(filePath: string): unknown | null {
@@ -1356,6 +1380,10 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
   const modelId = cleanSettingString(record.aiModel, 160);
   const visualStyle = cleanSettingString(record.visualStyle, 32);
   const aspectRatio = cleanSettingString(record.aspectRatio, 16);
+  const normalizedAspectRatio =
+    aspectRatio === '16:9' || aspectRatio === '1:1' || aspectRatio === '9:16'
+      ? aspectRatio
+      : DEFAULT_STUDIO_SETTINGS.aspectRatio;
   const scriptLanguage = normalizeVideoLanguage(
     record.scriptLanguage ?? record.language,
     DEFAULT_VIDEO_LANGUAGE,
@@ -1388,10 +1416,7 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
         : DEFAULT_STUDIO_SETTINGS.voiceSpeakerBoost,
     voiceSpeed: clampNumber(record.voiceSpeed, DEFAULT_STUDIO_SETTINGS.voiceSpeed, 0.7, 1.2),
     visualStyle: normalizeVisualStyleValue(visualStyle, DEFAULT_STUDIO_SETTINGS.visualStyle),
-    aspectRatio:
-      aspectRatio === '16:9' || aspectRatio === '1:1' || aspectRatio === '9:16'
-        ? aspectRatio
-        : DEFAULT_STUDIO_SETTINGS.aspectRatio,
+    aspectRatio: normalizedAspectRatio,
     fps: Number(record.fps) === 30 ? 30 : DEFAULT_STUDIO_SETTINGS.fps,
     scriptLanguage,
     scriptDepth: normalizeScriptDepth(
@@ -1417,6 +1442,10 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
       DEFAULT_STUDIO_SETTINGS.wordsPerScreen,
     ),
     captionsEnabled: record.captionsEnabled !== false,
+    respectSafeZone:
+      typeof record.respectSafeZone === 'boolean'
+        ? record.respectSafeZone
+        : normalizedAspectRatio === '9:16',
     brandKit,
     sfxEnabled: record.sfxEnabled !== false,
     sfxVolume: clampNumber(record.sfxVolume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
@@ -1429,17 +1458,6 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
 function loadStudioSettings(): StudioSettings {
   const raw = readJsonFileSafe(SETTINGS_FILE);
   if (raw) return normalizeStudioSettings(raw);
-
-  const legacyRaw = readJsonFileSafe(LEGACY_SETTINGS_FILE);
-  if (legacyRaw) {
-    const migrated = normalizeStudioSettings(legacyRaw);
-    try {
-      saveStudioSettings(migrated);
-    } catch {
-      // Migration is best-effort; runtime still uses the migrated values.
-    }
-    return migrated;
-  }
 
   return normalizeStudioSettings({});
 }
@@ -1462,6 +1480,8 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
   const providerRaw = cleanSettingString(record.aiProvider, 32) as AiProviderId;
   const depthForTopic = normalizeScriptDepth(record.scriptDepth, 'analytical');
   const brandKit = normalizeBrandKit(record.brandKit);
+  const projectAspectRatio =
+    cleanSettingString(record.aspectRatio, 16) || DEFAULT_STUDIO_SETTINGS.aspectRatio;
   return {
     topic: cleanSettingString(record.topic, depthForTopic === 'article' ? 20000 : 1200),
     scenes: normalizeScenes(scenesRaw),
@@ -1489,7 +1509,7 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
       record.visualStyle,
       DEFAULT_STUDIO_SETTINGS.visualStyle,
     ),
-    aspectRatio: cleanSettingString(record.aspectRatio, 16) || DEFAULT_STUDIO_SETTINGS.aspectRatio,
+    aspectRatio: projectAspectRatio,
     fps: Number(record.fps) === 30 ? 30 : 60,
     scriptLanguage: normalizeVideoLanguage(
       record.scriptLanguage ?? record.language,
@@ -1518,6 +1538,10 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
       DEFAULT_STUDIO_SETTINGS.wordsPerScreen,
     ),
     captionsEnabled: record.captionsEnabled !== false,
+    respectSafeZone:
+      typeof record.respectSafeZone === 'boolean'
+        ? record.respectSafeZone
+        : projectAspectRatio === '9:16',
     brandKit,
     sfxEnabled: record.sfxEnabled !== false,
     sfxVolume: clampNumber(record.sfxVolume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
@@ -1556,6 +1580,7 @@ function saveProjectState(project: ProjectStatePayload): void {
   studioSettings.captionBottomOffset = project.captionBottomOffset;
   studioSettings.wordsPerScreen = project.wordsPerScreen;
   studioSettings.captionsEnabled = project.captionsEnabled;
+  studioSettings.respectSafeZone = project.respectSafeZone;
   studioSettings.brandKit = project.brandKit;
   studioSettings.sfxEnabled = project.sfxEnabled;
   studioSettings.sfxVolume = project.sfxVolume;
@@ -2005,6 +2030,7 @@ function buildSettingsResponse(req: Request, sessionId?: string) {
       captionBottomOffset: studioSettings.captionBottomOffset,
       wordsPerScreen: studioSettings.wordsPerScreen,
       captionsEnabled: studioSettings.captionsEnabled,
+      respectSafeZone: studioSettings.respectSafeZone,
       brandKit: studioSettings.brandKit,
       sfx: {
         enabled: studioSettings.sfxEnabled,
@@ -2763,6 +2789,7 @@ function sceneSegmentCacheHash(
     captionsEnabled: job.captionsEnabled,
     voiceoverEnabled: job.voiceoverEnabled,
     cleanBrollMode: job.cleanBrollMode,
+    respectSafeZone: job.respectSafeZone,
     sfxEnabled: job.sfxEnabled,
     transitionDurationInFrames: TRANSITION_DURATION_IN_FRAMES,
     startFrame,
@@ -3586,7 +3613,7 @@ async function launchStudioProcess(
 }
 
 async function ensureRemotionStudio(): Promise<StudioLaunchResult> {
-  return ensureStudioProcess('studio', REMOTION_STUDIO_PORT);
+  return ensureStudioProcess('studio', REMOTION_STUDIO_RENDER_PORT);
 }
 
 function findPidsOnPort(port: number): Promise<number[]> {
@@ -3877,6 +3904,10 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
       'auto',
     ),
     captionsEnabled: data.caption?.enabled !== false,
+    respectSafeZone:
+      typeof data.respect_safe_zone === 'boolean'
+        ? data.respect_safe_zone
+        : aspectRatio === '9:16',
     brandKit,
     sfxEnabled: data.sfx?.enabled !== false,
     sfxVolume: clampNumber(data.sfx?.volume, DEFAULT_STUDIO_SETTINGS.sfxVolume, 0, 1),
@@ -3896,6 +3927,7 @@ function buildProjectVideoData(project: ProjectStatePayload): ParentVideoData {
     fps: project.fps,
     voiceoverEnabled: project.voiceoverEnabled,
     cleanBrollMode: project.cleanBrollMode,
+    respectSafeZone: project.respectSafeZone,
     voiceId: project.voiceId,
     modelId: project.voiceModelId,
     voiceStability: project.voiceStability,
@@ -4456,6 +4488,7 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
     script_depth: job.scriptDepth,
     creative_code_mode: job.creativeCodeMode,
     script_pacing: job.scriptPacing,
+    respect_safe_zone: job.respectSafeZone,
     caption: {
       animation_style: parentCaptionStyle(job.captionAnimationStyle),
       words_per_screen: parentWordsPerScreen(job.wordsPerScreen),
@@ -6778,6 +6811,7 @@ function syncExportProject(job: RenderJob): void {
       captionBottomOffset: job.captionBottomOffset,
       wordsPerScreen: job.wordsPerScreen,
       captionsEnabled: job.captionsEnabled,
+      respectSafeZone: job.respectSafeZone,
       brandKit: job.brandKit,
       sfxEnabled: job.sfxEnabled,
       sfxVolume: job.sfxVolume,
@@ -7220,6 +7254,15 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
         `- BOTTOM ${captionSafeBottom}%: keep completely clear for captions (offset ${job.captionBottomOffset}%) and the safe margin. Never place headlines, key visuals, or the Stickman there.`,
         '- Never let any element clip off-screen or collide with the headline, subtitle, or caption safe zones. Decorative layers may bleed only when intentionally masked and never over text.',
       ];
+  const respectSafeZoneSection =
+    job.respectSafeZone === true && job.aspectRatio === '9:16'
+      ? [
+          '## RESPECT SAFE ZONE (mandatory — vertical 9:16)',
+          '- Keep ALL primary typography, cards, charts, and captions centered inside the platform safe zone: content top >= 12%, content bottom <= 78%, content right edge <= 84%, content left edge >= 6%.',
+          '- Never place text, buttons, badges, charts, or captions under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar.',
+          '- Backgrounds, gradients, and decorative layers may remain full-bleed edge-to-edge; only the content respects the safe-zone insets.',
+        ]
+      : [];
 
   return [
     'You are the creative motion-graphics engineer for Zof Studio.',
@@ -7364,6 +7407,8 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     ...safeLayoutSection,
     '',
+    ...respectSafeZoneSection,
+    '',
     ...captionDirectionSection,
     '',
     ...cleanBrollPromptSection(job.cleanBrollMode),
@@ -7488,6 +7533,11 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     job.cleanBrollMode
       ? `- Clean B-Roll is ON: render NO top header, kicker, scene title, title badge, or banner, and do not reserve a top 22% headline band. Keep the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% clear when captions are enabled.`
       : `- Keep critical content out of the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% safe zone (caption offset ${job.captionBottomOffset}%); reserve the top 22% for RTL/LTR headline and subtitle text and respect RTL spacing when the video language is RTL.`,
+    ...(job.respectSafeZone === true && job.aspectRatio === '9:16'
+      ? [
+          '- Respect Safe Zone is ON: keep ALL typography, cards, charts, and captions inside top >= 12%, bottom <= 78%, right <= 84%, left >= 6%. Never place content under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar; backgrounds may stay full-bleed.',
+        ]
+      : []),
     '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
     `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
     '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. At most one subtle `<SceneSfx name="pop|check|whoosh|sparkle" />` may be preserved per scene at volume 0.15–0.22, never at frame 0 or at the scene ending; remove any bell/chime/ding/success sound.',
@@ -7657,6 +7707,7 @@ async function startServer() {
   app.get('/api/health', (_req: Request, res: Response) => {
     res.json({
       ok: true,
+      app: 'zof-studio',
       host: HOST,
       port: PORT,
       service: 'Zof Studio API',
@@ -8077,10 +8128,10 @@ async function startServer() {
       res.status(503).json({
         ok: false,
         ...studio,
-        port: REMOTION_STUDIO_PORT,
+        port: REMOTION_STUDIO_RENDER_PORT,
         error:
           studio.error ||
-          'تعذر تشغيل Remotion Studio على المنفذ 9578. تحقق من حالة المنفذ ثم أعد المحاولة.',
+          `تعذر تشغيل Remotion Studio على المنفذ ${REMOTION_STUDIO_RENDER_PORT}. تحقق من حالة المنفذ ثم أعد المحاولة.`,
         dataFile: path.relative(PROJECT_ROOT, DATA_FILE),
         projectFile: CURRENT_PROJECT_FILE,
       });
@@ -8089,7 +8140,7 @@ async function startServer() {
     res.json({
       ok: true,
       ...studio,
-      port: REMOTION_STUDIO_PORT,
+      port: REMOTION_STUDIO_RENDER_PORT,
       dataFile: path.relative(PROJECT_ROOT, DATA_FILE),
       projectFile: CURRENT_PROJECT_FILE,
     });
@@ -8115,7 +8166,7 @@ async function startServer() {
     const stopped = await stopRemotionStudioUi();
     res.status(stopped.ok ? 200 : 503).json({
       ...stopped,
-      ...(stopped.ok ? {} : { error: 'تعذر إيقاف Remotion Studio على المنفذ 3333.' }),
+      ...(stopped.ok ? {} : { error: `تعذر إيقاف Remotion Studio على المنفذ ${REMOTION_STUDIO_UI_PORT}.` }),
     });
   });
 
@@ -8142,6 +8193,29 @@ async function startServer() {
         : {}),
     });
   });
+
+  const handleOpenStudioPage = async (req: Request, res: Response) => {
+    const studio = await ensureRemotionStudioUi();
+    if (!studio.running) {
+      res.status(503);
+      res.setHeader('content-type', 'text/html;charset=utf-8');
+      res.setHeader('cache-control', 'no-store');
+      res.end(
+        `<!doctype html><meta charset="utf-8"><title>Remotion Studio</title>` +
+          `<body style="font-family:system-ui,sans-serif;background:#0B0E14;color:#E2E8F0;padding:32px">` +
+          `<h1 style="font-size:18px">Remotion Studio is not available</h1>` +
+          `<p style="color:#94A3B8">${escapeHtml(studio.error || 'Could not start Remotion Studio.')}</p>` +
+          `</body>`,
+      );
+      return;
+    }
+    const hostname = req.hostname || 'localhost';
+    res.setHeader('cache-control', 'no-store');
+    res.redirect(302, `http://${hostname}:${studio.port}/`);
+  };
+
+  app.get('/studio', handleOpenStudioPage);
+  app.get('/studio/', handleOpenStudioPage);
 
   const handleGeneratedSceneStatus = (_req: Request, res: Response) => {
     const project = readProjectState();
@@ -8242,6 +8316,7 @@ async function startServer() {
       captionBottomOffset?: unknown;
       wordsPerScreen?: unknown;
       captionsEnabled?: unknown;
+      respectSafeZone?: unknown;
       brandKit?: unknown;
       sfxEnabled?: unknown;
       sfxVolume?: unknown;
@@ -8375,6 +8450,9 @@ async function startServer() {
     }
     if (typeof body.captionsEnabled === 'boolean') {
       studioSettings.captionsEnabled = body.captionsEnabled;
+    }
+    if (typeof body.respectSafeZone === 'boolean') {
+      studioSettings.respectSafeZone = body.respectSafeZone;
     }
     if (body.brandKit && typeof body.brandKit === 'object') {
       studioSettings.brandKit = normalizeBrandKit(body.brandKit);
@@ -10035,6 +10113,7 @@ async function startServer() {
       captionBottomOffset?: unknown;
       enable25D?: unknown;
       cleanBrollMode?: unknown;
+      respectSafeZone?: unknown;
       tweakInstruction?: unknown;
       voiceoverScript?: unknown;
     };
@@ -10162,6 +10241,12 @@ async function startServer() {
         ? body.cleanBrollMode
         : Boolean(project?.cleanBrollMode)
       : body.cleanBrollMode === true;
+    const respectSafeZone =
+      typeof body.respectSafeZone === 'boolean'
+        ? body.respectSafeZone
+        : tweakInstruction
+          ? Boolean(project?.respectSafeZone)
+          : aspectRatio === '9:16';
     const scenes =
       tweakInstruction && project
         ? project.scenes
@@ -10190,6 +10275,7 @@ async function startServer() {
       fps,
       voiceoverEnabled,
       cleanBrollMode,
+      respectSafeZone,
       voiceId:
         typeof body.voiceId === 'string' && body.voiceId.trim()
           ? body.voiceId.trim()
@@ -10714,6 +10800,7 @@ async function startServer() {
       fps?: unknown;
       voiceoverEnabled?: unknown;
       cleanBrollMode?: unknown;
+      respectSafeZone?: unknown;
       voiceId?: unknown;
       modelId?: unknown;
       stability?: unknown;
@@ -10795,15 +10882,22 @@ async function startServer() {
             voiceoverEnabled: requestVoiceoverEnabled,
             sfxEnabled: requestSfxEnabled,
           });
+    const renderAspectRatio =
+      typeof body.aspectRatio === 'string' ? body.aspectRatio : '9:16';
+    const respectSafeZone =
+      typeof body.respectSafeZone === 'boolean'
+        ? body.respectSafeZone
+        : renderAspectRatio === '9:16';
     const job: RenderJob = {
       id: jobId,
       createdAt: Date.now(),
       scenes: curatedScenes,
       visualStyle: normalizeVisualStyleValue(body.visualStyle, studioSettings.visualStyle),
-      aspectRatio: typeof body.aspectRatio === 'string' ? body.aspectRatio : '9:16',
+      aspectRatio: renderAspectRatio,
       fps,
       voiceoverEnabled: Boolean(body.voiceoverEnabled),
       cleanBrollMode: body.cleanBrollMode === true,
+      respectSafeZone,
       voiceId: typeof body.voiceId === 'string' ? body.voiceId : studioSettings.voiceId,
       modelId: typeof body.modelId === 'string' ? body.modelId : studioSettings.voiceModelId,
       voiceStability: clampNumber(body.stability, studioSettings.voiceStability, 0, 1),
@@ -10911,6 +11005,7 @@ async function startServer() {
       captionBottomOffset: job.captionBottomOffset,
       wordsPerScreen: job.wordsPerScreen,
       captionsEnabled: job.captionsEnabled,
+      respectSafeZone: job.respectSafeZone,
       brandKit: job.brandKit,
       sfxEnabled: job.sfxEnabled,
       sfxVolume: job.sfxVolume,

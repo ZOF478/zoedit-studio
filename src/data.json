@@ -1,58 +1,65 @@
 {
   "meta": {
-    "title": "Here's the secret to a richer soup",
-    "topic": "Clean culinary motion graphic B-Roll scene in Arabic inspired by a recipe cooking tip from ShelfRecipes: toasted spices and simmer timing for rich soup and stew flavor. Start with a smooth camera push-in on a warm dark charcoal culinary canvas with subtle organic motion (@remotion/noise). Animate a clean visual breakdown showing two contrasting stages: \"تحميص سريع\" (quick 20-second spice bloom on medium heat) vs. \"غليان طويل\" (over-boiling bitter spices), using crisp lucide-react icons (Flame, Timer, Sparkles, CheckCircle2) and clean Arabic labels inside the diagram. Highlight the sweet spot with a glowing accent ring and a concise tip badge (\"يحفظ النكهة ويمنع المرارة\") with subtle tactile UI/spark sound effects and zero top-corner title headers.",
-    "description": "Here's the secret to a richer soup · Twenty seconds on medium heat is all · But keep them moving because a single · That quick bloom builds deep warm flavor · Long boiling does the opposite · It drains the aroma and leaves a · So bloom fast"
+    "title": "Stop making generic AI videos",
+    "topic": "Create a high-energy, modern product launch video introducing \"Zof Studio\" (studio.zoedit.com) — an open-source, AI-directed motion graphics studio built with Remotion.\n\nVisual & Narrative Arc (Fast-paced, 30 seconds):\n1. Hook (0-5s): Bold kinetic typography exploding smoothly onto the deep navy canvas: \"Stop making generic AI videos.\" Contrast a dull, repetitive template card that shatters away into clean geometric grid lines.\n2. Reveal (5-12s): Introduce the Zof Studio logo and brand identity with crisp 2.5D depth parallax — showing a single prompt transforming into live React & Remotion timeline layers, animated waveforms, and custom vector motion scenes.\n3. Key Features Showcase (12-22s): Dynamic split-screen and camera-pan beats highlighting three superpowers:\n   - True Creative Variety: Custom-coded motion graphics, charts, and B-Roll scenes instead of rigid templates.\n   - Smart Social Safe Zones: A vertical 9:16 phone frame snapping cleanly inside TikTok, Reels, and Shorts safe margins with karaoke word-by-word captions.\n   - Studio-Grade Audio: ElevenLabs voiceover synced with subtle, crisp UI sound design.\n4. Call to Action (22-30s): Clean, authoritative closing frame featuring \"Zof Studio — Free & Open Source\", displaying the terminal command `zofstudio` and \"Try it at studio.zoedit.com\".\n\nPacing & Motion Rules: Vary layout composition in every single beat (never repeat the same header-plus-card layout twice). Use smooth spring physics, subtle ambient motion, crisp typography hierarchy, and keep all focal elements centered within the safe zone.",
+    "description": "Stop making generic AI videos · Zof Studio turns one prompt into real · No rigid templates just charts B roll · Smart safe zones keep your captions perfectly · Zof Studio is free and open source"
   },
   "width": 1080,
   "height": 1920,
   "fps": 60,
-  "durationInFrames": 2342,
+  "durationInFrames": 2096,
   "style": "stickman",
   "script_language": "en",
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
+  "respect_safe_zone": true,
   "caption": {
-    "animation_style": "auto",
+    "animation_style": "karaoke",
     "words_per_screen": "auto",
     "lead_in": 0.2,
+    "colors": {
+      "background": "#05162A",
+      "text": "#F0F8FF",
+      "highlight": "#5AA9E6"
+    },
+    "bottom_offset": 18,
     "enabled": true
   },
   "brand_kit": {
     "name": "ZOF",
-    "primary": "#BE2523",
-    "secondary": "#0D3745",
-    "accent": "#0D3745",
+    "primary": "#5AA9E6",
+    "secondary": "#255C99",
+    "accent": "#BAE6FD",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#FFFFFF",
-    "text": "#100D05",
-    "muted": "rgba(16, 13, 5, 0.72)",
+    "background": "#05162A",
+    "text": "#F0F8FF",
+    "muted": "rgba(240, 248, 255, 0.72)",
     "watermark": "@ZofStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
   },
   "sfx": {
     "enabled": true,
-    "volume": 0.1
+    "volume": 0.4
   },
   "scenes": [
     {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-1",
-      "kicker": "Here's the secret to a richer soup",
-      "title": "Here's the secret to a richer soup",
-      "subtitle": "Here's the secret to a richer soup",
-      "caption": "Here's the secret to a richer soup: toast your spices first.",
-      "duration": 4.85,
-      "durationInFrames": 291,
-      "audioSrc": "audio/scene-1795390071586-a5a6a144.mp3",
-      "audioDuration": 4.598,
+      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-1",
+      "kicker": "Stop making generic AI videos",
+      "title": "Stop making generic AI videos",
+      "subtitle": "Stop making generic AI videos",
+      "caption": "Stop making generic AI videos.",
+      "duration": 3.1,
+      "durationInFrames": 186,
+      "audioSrc": "audio/scene-1795456353529-8930e3da.mp3",
+      "audioDuration": 2.847,
       "sfxSrc": "sfx/whoosh-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(135deg, rgba(13, 55, 69, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(186, 230, 253, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
       "character": {
         "pose": "explaining",
@@ -65,250 +72,151 @@
         {
           "type": "custom_tsx",
           "component": "Scene1",
-          "title": "Here's the secret to a richer soup",
-          "text": "Here's the secret to a",
+          "title": "Stop making generic AI videos",
+          "text": "Stop making generic AI videos",
           "keywords": [
-            "Here's the secret to a"
+            "Stop making generic AI videos"
           ],
           "data": {
-            "narration": "Here's the secret to a richer soup: toast your spices first.",
+            "narration": "Stop making generic AI videos.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-2",
-      "kicker": "Twenty seconds on medium heat is all",
-      "title": "Twenty seconds on medium heat is all",
-      "subtitle": "Twenty seconds on medium heat is all",
-      "caption": "Twenty seconds on medium heat is all it takes to wake up their oils.",
-      "duration": 4.85,
-      "durationInFrames": 291,
-      "audioSrc": "audio/scene-1795390072196-9c1f2ea5.mp3",
-      "audioDuration": 4.598,
+      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-2",
+      "kicker": "Zof Studio turns one prompt into real",
+      "title": "Zof Studio turns one prompt into real",
+      "subtitle": "Zof Studio turns one prompt into real",
+      "caption": "Zof Studio turns one prompt into real, custom-coded motion graphics, powered by React and Remotion.",
+      "duration": 7.8,
+      "durationInFrames": 468,
+      "audioSrc": "audio/scene-1795456355923-8c2bad28.mp3",
+      "audioDuration": 7.549,
       "sfxSrc": "sfx/pop-soft.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-left",
-      "background": "linear-gradient(215deg, rgba(13, 55, 69, 0.16) 0%, transparent 62%)",
+      "background": "linear-gradient(215deg, rgba(186, 230, 253, 0.16) 0%, transparent 62%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene2",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene2",
-          "title": "Twenty seconds on medium heat is all",
-          "text": "Twenty seconds on medium heat",
+          "title": "Zof Studio turns one prompt into real",
+          "text": "Zof Studio turns one prompt",
           "keywords": [
-            "Twenty seconds on medium heat"
+            "Zof Studio turns one prompt"
           ],
           "data": {
-            "narration": "Twenty seconds on medium heat is all it takes to wake up their oils.",
+            "narration": "Zof Studio turns one prompt into real, custom-coded motion graphics, powered by React and Remotion.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-3",
-      "kicker": "But keep them moving because a single",
-      "title": "But keep them moving because a single",
-      "subtitle": "But keep them moving because a single",
-      "caption": "But keep them moving, because a single bitter scorch can ruin the whole pot.",
-      "duration": 5.666666666666667,
-      "durationInFrames": 340,
-      "audioSrc": "audio/scene-1795390072857-599b467f.mp3",
-      "audioDuration": 5.407,
-      "sfxSrc": "sfx/whoosh-soft.wav",
+      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-3",
+      "kicker": "No rigid templates just charts B roll",
+      "title": "No rigid templates just charts B roll",
+      "subtitle": "No rigid templates just charts B roll",
+      "caption": "No rigid templates—just charts, B-roll, and animated scenes that actually look designed.",
+      "duration": 6.683333333333334,
+      "durationInFrames": 401,
+      "audioSrc": "audio/scene-1795456356787-da614840.mp3",
+      "audioDuration": 6.426,
+      "sfxSrc": "sfx/click-subtle.wav",
       "sfxAt": 0.15,
       "layout": "stacked",
       "camera": "push-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(13, 55, 69, 0.24) 0%, transparent 46%)",
+      "background": "radial-gradient(circle at 82% 18%, rgba(186, 230, 253, 0.24) 0%, transparent 46%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene3",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene3",
-          "title": "But keep them moving because a single",
-          "text": "But keep them moving because",
+          "title": "No rigid templates just charts B roll",
+          "text": "No rigid templates just charts",
           "keywords": [
-            "But keep them moving because"
+            "No rigid templates just charts"
           ],
           "data": {
-            "narration": "But keep them moving, because a single bitter scorch can ruin the whole pot.",
+            "narration": "No rigid templates—just charts, B-roll, and animated scenes that actually look designed.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-4",
-      "kicker": "That quick bloom builds deep warm flavor",
-      "title": "That quick bloom builds deep warm flavor",
-      "subtitle": "That quick bloom builds deep warm flavor",
-      "caption": "That quick bloom builds deep, warm flavor before the liquid ever goes in.",
-      "duration": 5.4,
-      "durationInFrames": 324,
-      "audioSrc": "audio/scene-1795390073520-b30039d9.mp3",
-      "audioDuration": 5.146,
+      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-4",
+      "kicker": "Smart safe zones keep your captions perfectly",
+      "title": "Smart safe zones keep your captions perfectly",
+      "subtitle": "Smart safe zones keep your captions perfectly",
+      "caption": "Smart safe zones keep your captions perfectly framed for TikTok, Reels, and Shorts, with ElevenLabs voiceover synced to every beat.",
+      "duration": 9.016666666666667,
+      "durationInFrames": 541,
+      "audioSrc": "audio/scene-1795456357963-8809d458.mp3",
+      "audioDuration": 8.751,
       "sfxSrc": "sfx/type-tick.wav",
       "sfxAt": 0.15,
       "layout": "overlay",
       "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(13, 55, 69, 0.18) 100%)",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(186, 230, 253, 0.18) 100%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene4",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene4",
-          "title": "That quick bloom builds deep warm flavor",
-          "text": "That quick bloom builds deep",
+          "title": "Smart safe zones keep your captions perfectly",
+          "text": "Smart safe zones keep your",
           "keywords": [
-            "That quick bloom builds deep"
+            "Smart safe zones keep your"
           ],
           "data": {
-            "narration": "That quick bloom builds deep, warm flavor before the liquid ever goes in.",
+            "narration": "Smart safe zones keep your captions perfectly framed for TikTok, Reels, and Shorts, with ElevenLabs voiceover synced to every beat.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-5",
-      "kicker": "Long boiling does the opposite",
-      "title": "Long boiling does the opposite",
-      "subtitle": "Long boiling does the opposite",
-      "caption": "Long boiling does the opposite.",
-      "duration": 2.6166666666666667,
-      "durationInFrames": 157,
-      "audioSrc": "audio/scene-1795390073966-20d20f33.mp3",
-      "audioDuration": 2.351,
-      "sfxSrc": "sfx/pop-soft.wav",
+      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-5",
+      "kicker": "Zof Studio is free and open source",
+      "title": "Zof Studio is free and open source",
+      "subtitle": "Zof Studio is free and open source",
+      "caption": "Zof Studio is free and open source—run zofstudio, or try it at studio.zoedit.com.",
+      "duration": 8.066666666666666,
+      "durationInFrames": 484,
+      "audioSrc": "audio/scene-1795456358903-1fbe0051.mp3",
+      "audioDuration": 7.811,
+      "sfxSrc": "sfx/slide.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-right",
-      "background": "linear-gradient(135deg, rgba(13, 55, 69, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(186, 230, 253, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
+      "character": {
+        "pose": "explaining",
+        "side": "left",
+        "accessory": "tie",
+        "enabled": true
+      },
       "generatedComponent": "Scene5",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene5",
-          "title": "Long boiling does the opposite",
-          "text": "Long boiling does the opposite",
+          "title": "Zof Studio is free and open source",
+          "text": "Zof Studio is free and",
           "keywords": [
-            "Long boiling does the opposite"
+            "Zof Studio is free and"
           ],
           "data": {
-            "narration": "Long boiling does the opposite.",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-6",
-      "kicker": "It drains the aroma and leaves a",
-      "title": "It drains the aroma and leaves a",
-      "subtitle": "It drains the aroma and leaves a",
-      "caption": "It drains the aroma and leaves a harsh, bitter edge behind.",
-      "duration": 4.783333333333333,
-      "durationInFrames": 287,
-      "audioSrc": "audio/scene-1795390074604-4a516cbf.mp3",
-      "audioDuration": 4.519,
-      "sfxSrc": "sfx/slide.wav",
-      "sfxAt": 0.15,
-      "layout": "centered",
-      "camera": "slow-zoom-in",
-      "background": "linear-gradient(215deg, rgba(13, 55, 69, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "ai-free",
-      "generatedComponent": "Scene6",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene6",
-          "title": "It drains the aroma and leaves a",
-          "text": "It drains the aroma and",
-          "keywords": [
-            "It drains the aroma and"
-          ],
-          "data": {
-            "narration": "It drains the aroma and leaves a harsh, bitter edge behind.",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-7",
-      "kicker": "So bloom fast then simmer low and",
-      "title": "So bloom fast then simmer low and",
-      "subtitle": "So bloom fast then simmer low and",
-      "caption": "So bloom fast, then simmer low and slow.",
-      "duration": 4.383333333333334,
-      "durationInFrames": 263,
-      "audioSrc": "audio/scene-1795390075162-048671c3.mp3",
-      "audioDuration": 4.127,
-      "sfxSrc": "sfx/whoosh-soft.wav",
-      "sfxAt": 0.15,
-      "layout": "split",
-      "camera": "pan-left",
-      "background": "radial-gradient(circle at 82% 18%, rgba(13, 55, 69, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "ai-free",
-      "generatedComponent": "Scene7",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene7",
-          "title": "So bloom fast then simmer low and",
-          "text": "So bloom fast then simmer",
-          "keywords": [
-            "So bloom fast then simmer"
-          ],
-          "data": {
-            "narration": "So bloom fast, then simmer low and slow.",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-afd1eb42-0388-482b-a50e-5fd9a5d45c20-8",
-      "kicker": "That's the sweet spot where real flavor",
-      "title": "That's the sweet spot where real flavor",
-      "subtitle": "That's the sweet spot where real flavor",
-      "caption": "That's the sweet spot, where real flavor is saved and bitterness never gets a chance.",
-      "duration": 6.216666666666667,
-      "durationInFrames": 373,
-      "audioSrc": "audio/scene-1795390075897-3da620ba.mp3",
-      "audioDuration": 5.956,
-      "sfxSrc": "sfx/pop-soft.wav",
-      "sfxAt": 0.15,
-      "layout": "stacked",
-      "camera": "push-in",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(13, 55, 69, 0.18) 100%)",
-      "backgroundPreset": "ai-free",
-      "character": {
-        "pose": "pointing",
-        "side": "right",
-        "accessory": "tie",
-        "enabled": true
-      },
-      "generatedComponent": "Scene8",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene8",
-          "title": "That's the sweet spot where real flavor",
-          "text": "That's the sweet spot where",
-          "keywords": [
-            "That's the sweet spot where"
-          ],
-          "data": {
-            "narration": "That's the sweet spot, where real flavor is saved and bitterness never gets a chance.",
+            "narration": "Zof Studio is free and open source—run zofstudio, or try it at studio.zoedit.com.",
             "visualType": "custom-tsx"
           }
         }

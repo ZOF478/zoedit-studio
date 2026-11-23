@@ -56,6 +56,7 @@ const SCRIPT_STORAGE_KEY = 'zof-studio-voiceover-script-v1';
 const PALETTE_STORAGE_KEY = 'zof-studio-active-palette-v1';
 const SFX_STORAGE_KEY = 'zof-studio-sfx-v1';
 const DEPTH_25D_STORAGE_KEY = 'zof-studio-depth-25d-v1';
+const RESPECT_SAFE_ZONE_STORAGE_KEY = 'zof-studio-respect-safe-zone-v1';
 const CAPTION_STORAGE_KEY = 'zof-studio-caption-settings-v1';
 
 const CAPTION_STYLE_VALUES: CaptionAnimationStyle[] = [
@@ -226,6 +227,27 @@ function persistDepth25D(enabled: boolean): void {
   }
 }
 
+function readStoredRespectSafeZone(): boolean | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(RESPECT_SAFE_ZONE_STORAGE_KEY);
+    if (raw === 'true') return true;
+    if (raw === 'false') return false;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function persistRespectSafeZone(enabled: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(RESPECT_SAFE_ZONE_STORAGE_KEY, String(enabled));
+  } catch {
+    // localStorage can be unavailable in private mode.
+  }
+}
+
 const DEFAULT_BRAND_KIT: BrandKit = {
   accentColor: '#E77B40',
   bgColor: '#0B0F17',
@@ -344,6 +366,10 @@ export default function App() {
   );
   const [enable25D, setEnable25D] = useState<boolean>(() => readStoredDepth25D());
   const [cleanBrollMode, setCleanBrollMode] = useState(false);
+  const [respectSafeZone, setRespectSafeZone] = useState<boolean>(() => {
+    const stored = readStoredRespectSafeZone();
+    return stored ?? aspectRatio === '9:16';
+  });
 
   const [elVoices, setElVoices] = useState<ElevenLabsVoice[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
@@ -467,6 +493,9 @@ export default function App() {
           normalizeCaptionBottomOffset(data.preferences.captionBottomOffset)
         );
       }
+      if (typeof data.preferences.respectSafeZone === 'boolean') {
+        setRespectSafeZone(data.preferences.respectSafeZone);
+      }
     }
   }, []);
 
@@ -573,6 +602,10 @@ export default function App() {
   }, [enable25D]);
 
   useEffect(() => {
+    persistRespectSafeZone(respectSafeZone);
+  }, [respectSafeZone]);
+
+  useEffect(() => {
     persistCaptionSettings({
       style: captionStyle,
       colors: captionColors,
@@ -648,6 +681,7 @@ export default function App() {
         captionAnimationStyle: captionStyle,
         captionColors,
         captionBottomOffset,
+        respectSafeZone,
       }),
     });
 
@@ -906,6 +940,7 @@ export default function App() {
           captionColors,
           captionBottomOffset,
           enable25D,
+          respectSafeZone,
           voiceoverScript: voiceConfig.enabled ? voiceoverScript.trim() : undefined,
         }),
       });
@@ -1249,6 +1284,8 @@ export default function App() {
             onChangeEnable25D={setEnable25D}
             cleanBrollMode={cleanBrollMode}
             onChangeCleanBrollMode={setCleanBrollMode}
+            respectSafeZone={respectSafeZone}
+            onChangeRespectSafeZone={setRespectSafeZone}
             brandKit={brandKit}
             onChangeBrandKit={setBrandKit}
             disabled={isRendering}
@@ -1273,6 +1310,7 @@ export default function App() {
               captionColors={captionColors}
               captionBottomOffset={captionBottomOffset}
               captionsEnabled={captionsEnabled && voiceConfig.enabled}
+              respectSafeZone={respectSafeZone}
             />
 
             {generatedSceneCount > 0 ? (

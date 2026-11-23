@@ -385,6 +385,7 @@ export type VideoData = {
   style?: StyleId;
   script_language?: string;
   language?: string;
+  respect_safe_zone?: boolean;
   brand_kit?: BrandKit;
   caption?: CaptionConfig;
   script_pacing?: ScriptPacing;

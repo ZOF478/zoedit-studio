@@ -20,6 +20,7 @@ interface LiveSandboxStageProps {
   captionColors: CaptionColors;
   captionBottomOffset: number;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
   fps?: number;
   embedded?: boolean;
 }
@@ -37,21 +38,44 @@ export function LiveSandboxStage({
   captionColors,
   captionBottomOffset,
   captionsEnabled,
+  respectSafeZone,
   fps = 60,
   embedded = false,
 }: LiveSandboxStageProps) {
   const { t, isRtl } = useI18n();
   const [frameMode, setFrameMode] = useState<SafeZoneMode>('universal');
   const resolution = ASPECT_RESOLUTIONS[aspectRatio] ?? ASPECT_RESOLUTIONS['9:16'];
-  const ratio = `${resolution.width} / ${resolution.height}`;
   const style = resolveCaptionStyle(captionStyle);
   const colors = resolveCaptionColors(captionColors, brandKit);
   const safeOffset = normalizeCaptionBottomOffset(captionBottomOffset);
   const isPortrait = aspectRatio === '9:16';
+  const safeZonePadding = respectSafeZone
+    ? {
+        paddingTop: '13%',
+        paddingBottom: '23%',
+        paddingRight: '16%',
+        paddingLeft: '6%',
+      }
+    : undefined;
+  const safeZoneCaptionInset = respectSafeZone
+    ? { left: '6%', right: '16%' }
+    : undefined;
   const sampleWords = isRtl
     ? ['اصنع', 'فيديوهات', 'تلفت', 'الأنظار', 'بسرعة']
     : ['Design', 'videos', 'that', 'stand', 'out'];
   const activeWord = 2;
+
+  const frameStyle =
+    aspectRatio === '9:16'
+      ? { aspectRatio: '9 / 16', height: '580px', width: 'auto', maxWidth: '100%' }
+      : aspectRatio === '1:1'
+        ? { aspectRatio: '1 / 1', height: '480px', width: 'auto', maxWidth: '100%' }
+        : { aspectRatio: '16 / 9', width: '100%', height: 'auto' };
+
+  const frameClassName =
+    aspectRatio === '9:16'
+      ? 'relative overflow-hidden rounded-[28px] border-2 border-slate-700/80 shadow-2xl'
+      : 'relative overflow-hidden rounded-2xl border border-slate-700/80 shadow-xl';
 
   return (
     <section
@@ -86,13 +110,11 @@ export function LiveSandboxStage({
         </div>
       </div>
 
-      <div className="flex min-w-0 flex-1 items-center justify-center p-3 sm:p-5">
+      <div className="flex min-w-0 w-full flex-1 items-center justify-center rounded-2xl bg-black/30 py-4">
         <div
-          className="relative w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl"
+          className={frameClassName}
           style={{
-            aspectRatio: ratio,
-            maxHeight: isPortrait ? 540 : 460,
-            maxWidth: '100%',
+            ...frameStyle,
             backgroundColor: brandKit.bgColor,
             color: brandKit.textColor,
             fontFamily: 'var(--font-display)',
@@ -106,7 +128,10 @@ export function LiveSandboxStage({
             }}
           />
 
-          <div className="relative flex h-full flex-col p-5 sm:p-7">
+          <div
+            className={`relative flex h-full flex-col ${isPortrait ? 'p-4' : 'p-5 sm:p-7'}`}
+            style={safeZonePadding}
+          >
             <div className="flex items-center justify-between gap-2">
               <span
                 className="rounded-full px-2.5 py-1 text-[10px] font-black tracking-wide"
@@ -130,9 +155,11 @@ export function LiveSandboxStage({
                 {t('هوية بصرية متكاملة', 'Full brand system')}
               </p>
               <h3
-                className="mt-1 font-black leading-[1.15]"
+                className="mt-1 font-black leading-[1.15] break-words"
                 style={{
-                  fontSize: isPortrait ? 'clamp(18px, 4.4vw, 30px)' : 'clamp(16px, 2.6vw, 28px)',
+                  fontSize: isPortrait
+                    ? 'clamp(15px, 3.4vw, 22px)'
+                    : 'clamp(16px, 2.6vw, 28px)',
                   color: brandKit.textColor,
                 }}
               >
@@ -156,7 +183,7 @@ export function LiveSandboxStage({
 
             <div
               className="absolute inset-x-0 flex justify-center px-3"
-              style={{ bottom: `${safeOffset}%` }}
+              style={{ bottom: `${safeOffset}%`, ...safeZoneCaptionInset }}
             >
               <div
                 className="max-w-[92%] text-center font-bold leading-snug"
@@ -166,7 +193,9 @@ export function LiveSandboxStage({
                   border: `1px solid ${colors.text}2e`,
                   borderRadius: 18,
                   padding: isPortrait ? '10px 16px' : '8px 14px',
-                  fontSize: isPortrait ? 'clamp(11px, 2.6vw, 15px)' : 'clamp(10px, 1.5vw, 14px)',
+                  fontSize: isPortrait
+                    ? 'clamp(10px, 2vw, 13px)'
+                    : 'clamp(10px, 1.5vw, 14px)',
                   boxShadow: '0 12px 30px rgba(0,0,0,0.42)',
                   direction: isRtl ? 'rtl' : 'ltr',
                   opacity: captionsEnabled ? 1 : 0.32,

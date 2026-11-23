@@ -189,6 +189,7 @@ export interface ProjectState {
   captionBottomOffset?: number;
   wordsPerScreen?: WordsPerScreen;
   captionsEnabled: boolean;
+  respectSafeZone: boolean;
   brandKit: BrandKit;
   sfxEnabled: boolean;
   sfxVolume: number;
@@ -420,6 +421,7 @@ export interface ApiSettingsStatus {
     captionBottomOffset?: number;
     wordsPerScreen?: WordsPerScreen;
     captionsEnabled?: boolean;
+    respectSafeZone?: boolean;
     brandKit?: BrandKit;
     sfx?: SfxConfig;
     sfxMode?: SfxMode;
@@ -469,6 +471,7 @@ export interface SettingsSavePayload {
   captionBottomOffset?: number;
   wordsPerScreen?: WordsPerScreen;
   captionsEnabled?: boolean;
+  respectSafeZone?: boolean;
   brandKit?: BrandKit;
   sfxEnabled?: boolean;
   sfxVolume?: number;

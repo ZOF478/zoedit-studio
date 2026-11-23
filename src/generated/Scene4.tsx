@@ -5,8 +5,15 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { noise2D } from "@remotion/noise";
-import { CheckCircle2, Sparkles } from "lucide-react";
+import {
+  Camera,
+  Music2,
+  ShieldCheck,
+  Smartphone,
+  Volume2,
+  Video,
+} from "lucide-react";
+import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
@@ -28,40 +35,34 @@ type Props = {
   showCharacter?: boolean;
 };
 
-const NOTES = [
-  { label: "Aroma", value: 0.88 },
-  { label: "Depth", value: 0.93 },
-  { label: "Warmth", value: 0.97 },
+const CLAMP = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+};
+
+const PLATFORMS = [
+  { label: "TikTok", icon: Music2 },
+  { label: "Reels", icon: Camera },
+  { label: "Shorts", icon: Video },
 ];
+
+const CAPTION_WORDS = ["SMART", "SAFE", "ZONES"];
 
 export const Scene4 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const accent = props.accentColor;
-  const spice = "#BE2523";
-  const enter = (i: number) =>
-    spring({
-      frame,
-      fps,
-      delay: i * 12,
-      config: { damping: 15, stiffness: 112, mass: 0.8 },
-    });
+  const { fps, width, height } = useVideoConfig();
+  const unit = Math.min(width, height);
+  const dur = props.durationInFrames;
   const exit = interpolate(
     frame,
-    [
-      Math.max(0, props.durationInFrames - 10),
-      Math.max(1, props.durationInFrames - 1),
-    ],
+    [Math.max(0, dur - 10), Math.max(1, dur - 1)],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    CLAMP,
   );
-  const checkFrame = 170;
-  const check = spring({
-    frame,
-    fps,
-    delay: checkFrame,
-    config: { damping: 12, stiffness: 155 },
-  });
+  const phoneH = Math.min(height * 0.43, (width * 0.42 * 16) / 9);
+  const phoneW = (phoneH * 9) / 16;
+  const safe = spring({ frame: frame - 50, fps, config: { damping: 18, stiffness: 90 } });
+  const activeWord = Math.floor(Math.max(0, frame - 70) / 34) % CAPTION_WORDS.length;
 
   return (
     <AbsoluteFill
@@ -73,322 +74,317 @@ export const Scene4 = (props: Props) => {
     >
       <AbsoluteFill
         style={{
+          background: `radial-gradient(circle at 50% 34%, ${props.accentColor}1e, transparent 58%), radial-gradient(circle at 18% 72%, #255C9930, transparent 55%)`,
+        }}
+      />
+      <svg width={width} height={height} style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
+        {Array.from({ length: 7 }).map((_, i) => (
+          <circle
+            key={`c${i}`}
+            cx={width * (0.1 + i * 0.14)}
+            cy={height * (0.32 + ((i * 7) % 5) * 0.1)}
+            r={unit * (0.03 + (i % 3) * 0.02)}
+            fill="none"
+            stroke={props.accentColor}
+            strokeWidth={1.5}
+            strokeDasharray="4 10"
+          />
+        ))}
+      </svg>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={`pulse${i}`}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: phoneW + 80 + i * 70,
+            height: phoneW + 80 + i * 70,
+            marginLeft: -(phoneW + 80 + i * 70) / 2,
+            marginTop: -(phoneW + 80 + i * 70) / 2,
+            borderRadius: "50%",
+            border: `1px solid ${props.accentColor}22`,
+            transform: `scale(${1 + 0.04 * Math.sin(frame / 30 + i)})`,
+          }}
+        />
+      ))}
+
+      <div
+        style={{
+          position: "absolute",
+          top: "7%",
+          left: 0,
+          right: 0,
+          padding: "0 48px",
+          maxWidth: "88%",
+          direction: "ltr",
+          textAlign: "left",
           opacity: exit,
-          transform: `translateY(${(1 - exit) * 18}px) scale(${1 - (1 - exit) * 0.012})`,
-          backgroundImage:
-            "radial-gradient(circle at 12% 24%, rgba(190,37,35,0.09), transparent 42%), radial-gradient(circle at 88% 68%, rgba(13,55,69,0.09), transparent 44%)",
+          transform: `translateY(${(1 - exit) * -14}px)`,
         }}
       >
         <div
           style={{
-            position: "absolute",
-            top: "6%",
-            left: 0,
-            right: 0,
-            padding: "0 6%",
-            direction: "ltr",
-            textAlign: "left",
+            fontFamily: "monospace",
+            fontSize: 15,
+            letterSpacing: 4,
+            color: props.accentColor,
+            marginBottom: 12,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 14,
-              opacity: enter(0),
-              transform: `translateY(${(1 - enter(0)) * 16}px)`,
-            }}
-          >
-            <span style={{ width: 38, height: 3, background: spice, borderRadius: 2 }} />
-            <span
-              style={{
-                color: accent,
-                fontSize: 19,
-                letterSpacing: 4,
-                fontWeight: 800,
-              }}
-            >
-              THE BLOOM
-            </span>
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              color: props.textColor,
-              fontSize: 66,
-              lineHeight: 1.04,
-              letterSpacing: -1.2,
-              fontWeight: 800,
-              maxWidth: "95%",
-              opacity: enter(1),
-              transform: `translateY(${(1 - enter(1)) * 20}px)`,
-            }}
-          >
-            The quick bloom builds{" "}
-            <span style={{ color: spice }}>deep, warm flavor</span>
-          </h1>
-          <p
-            style={{
-              margin: "12px 0 0",
-              color: props.mutedColor,
-              fontSize: 24,
-              lineHeight: 1.35,
-              fontWeight: 500,
-              opacity: enter(2),
-            }}
-          >
-            All before the liquid ever goes in.
-          </p>
+          SMART SOCIAL SAFE ZONES
         </div>
-
         <div
           style={{
-            position: "absolute",
-            top: "27%",
-            left: "6%",
-            right: "6%",
-            height: "44%",
-            opacity: enter(1),
-            transform: `translateY(${(1 - enter(1)) * 24}px)`,
+            fontFamily: "Inter, system-ui, sans-serif",
+            fontWeight: 900,
+            fontSize: unit * 0.056,
+            lineHeight: 1.12,
+            letterSpacing: -1.5,
+            color: props.textColor,
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              height: "100%",
-              borderRadius: 36,
-              overflow: "hidden",
-              background:
-                "linear-gradient(160deg, rgba(255,255,255,0.95), rgba(13,55,69,0.06))",
-              border: "1px solid rgba(13,55,69,0.14)",
-              boxShadow: "0 24px 54px rgba(13,55,69,0.12)",
-            }}
-          >
+          Smart safe zones keep your{" "}
+          <span style={{ color: props.accentColor }}>captions framed</span>
+        </div>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: "23%",
+          bottom: "27%",
+          left: "6%",
+          right: "6%",
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * 16}px)`,
+        }}
+      >
+        <DepthStage>
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", gap: "5%" }}>
             <div
               style={{
-                position: "absolute",
-                top: "4.5%",
-                left: "6%",
-                right: "6%",
+                width: "44%",
+                height: "100%",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-                direction: "ltr",
+                justifyContent: "center",
               }}
             >
-              <div
+              <SpatialCard
+                enterFrame={4}
+                recedeFrame={250}
+                tiltY={props.isRtl ? -6 : 6}
+                shadowColor="rgba(2,6,23,0.7)"
                 style={{
-                  padding: "11px 20px",
-                  borderRadius: 999,
-                  background: "rgba(190,37,35,0.10)",
-                  color: spice,
-                  fontSize: 23,
-                  fontWeight: 750,
-                  opacity: enter(3),
-                  transform: `scale(${0.86 + enter(3) * 0.14})`,
+                  width: phoneW,
+                  height: phoneH,
+                  borderRadius: 34,
+                  padding: 9,
+                  background: "rgba(240,248,255,0.07)",
+                  border: `2px solid ${props.accentColor}77`,
                 }}
               >
-                Deep flavor, fast
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "10px 15px",
-                  borderRadius: 999,
-                  background: accent,
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                  fontWeight: 700,
-                  opacity: check,
-                  transform: `translateX(${(1 - check) * 14}px)`,
-                }}
-              >
-                <CheckCircle2 size={19} color="#F4C27A" />
-                Bloom complete
-              </div>
-            </div>
-
-            <div
-              style={{
-                position: "absolute",
-                top: "11%",
-                left: "50%",
-                width: "82%",
-                height: "54%",
-                transform: `translateX(-50%) translateY(${Math.sin(frame / 30) * 4}px)`,
-              }}
-            >
-              <svg
-                viewBox="0 0 600 320"
-                preserveAspectRatio="xMidYMid meet"
-                style={{ width: "100%", height: "100%" }}
-              >
-                <circle
-                  cx="300"
-                  cy="170"
-                  r="146"
-                  fill="none"
-                  stroke="rgba(190,37,35,0.14)"
-                  strokeWidth="2"
-                  strokeDasharray="7 13"
-                  transform={`rotate(${frame * 0.35} 300 170)`}
-                />
-                <circle
-                  cx="300"
-                  cy="170"
-                  r="124"
-                  fill="none"
-                  stroke="rgba(13,55,69,0.12)"
-                  strokeWidth="12"
-                  opacity={0.35 + 0.15 * Math.abs(noise2D("scene4-halo", 0, frame / 60))}
-                />
-                <path
-                  d="M150 165 Q168 288 300 294 Q432 288 450 165 Z"
-                  fill={accent}
-                />
-                <ellipse cx="300" cy="165" rx="150" ry="34" fill="#0A2E3A" />
-                <ellipse cx="300" cy="165" rx="128" ry="23" fill={spice} opacity="0.65" />
-                {[0, 1, 2].map((i) => {
-                  const sway = noise2D("scene4-steam", i * 1.4, frame / 45) * 17;
-                  return (
-                    <path
-                      key={i}
-                      d={`M${244 + i * 56} 140 C ${224 + i * 56 + sway} 108, ${272 + i * 56 + sway} 84, ${250 + i * 56} 48`}
-                      stroke="rgba(13,55,69,0.28)"
-                      strokeWidth="7"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeDasharray="10 16"
-                      strokeDashoffset={-frame * 1.7 - i * 10}
-                    />
-                  );
-                })}
-                {[0, 1, 2].map((i) => (
-                  <circle
-                    key={i}
-                    cx={274 + i * 26}
-                    cy={168 + (i % 2) * 5}
-                    r={5 + (i % 2) * 2}
-                    fill="#F4C27A"
-                    opacity={0.8}
-                  />
-                ))}
-              </svg>
-            </div>
-
-            <div
-              style={{
-                position: "absolute",
-                left: "16%",
-                top: "27%",
-                opacity: interpolate(frame, [150, 174], [0, 1], {
-                  extrapolateLeft: "clamp",
-                  extrapolateRight: "clamp",
-                }),
-                transform: `scale(${0.85 + Math.sin(frame / 18) * 0.15})`,
-              }}
-            >
-              <Sparkles size={30} color={spice} />
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                right: "16%",
-                top: "42%",
-                opacity: interpolate(frame, [158, 182], [0, 1], {
-                  extrapolateLeft: "clamp",
-                  extrapolateRight: "clamp",
-                }),
-                transform: `scale(${0.9 + Math.sin(frame / 22 + 2) * 0.12})`,
-              }}
-            >
-              <Sparkles size={24} color={accent} />
-            </div>
-
-            <div
-              style={{
-                position: "absolute",
-                left: "7%",
-                right: "7%",
-                bottom: "5%",
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-                direction: "ltr",
-              }}
-            >
-              {NOTES.map((note, i) => {
-                const grow = interpolate(
-                  frame,
-                  [56 + i * 16, 116 + i * 16],
-                  [0, note.value],
-                  { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-                );
-                return (
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: 26,
+                    overflow: "hidden",
+                    background: `linear-gradient(180deg, #255C9950, ${props.bgColor})`,
+                    border: `1px solid ${props.accentColor}33`,
+                  }}
+                >
                   <div
-                    key={note.label}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 14,
-                      opacity: enter(4 + i),
+                      position: "absolute",
+                      top: 9,
+                      left: "50%",
+                      width: "30%",
+                      height: 7,
+                      marginLeft: "-15%",
+                      borderRadius: 99,
+                      background: "rgba(240,248,255,0.35)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "8%",
+                      bottom: "18%",
+                      left: "8%",
+                      right: "8%",
+                      borderRadius: 16,
+                      border: `2px dashed ${props.accentColor}`,
+                      opacity: safe * 0.75,
+                      transform: `scale(${interpolate(safe, [0, 1], [0.94, 1], CLAMP)})`,
                     }}
                   >
                     <span
                       style={{
-                        width: 92,
-                        color: props.mutedColor,
-                        fontSize: 17,
-                        fontWeight: 800,
-                        letterSpacing: 1.4,
-                        textTransform: "uppercase",
+                        position: "absolute",
+                        top: -9,
+                        left: 10,
+                        padding: "2px 7px",
+                        borderRadius: 6,
+                        background: props.bgColor,
+                        fontFamily: "monospace",
+                        fontSize: 9,
+                        letterSpacing: 1.5,
+                        color: props.accentColor,
                       }}
                     >
-                      {note.label}
+                      SAFE ZONE
                     </span>
-                    <div
-                      style={{
-                        flex: 1,
-                        height: 13,
-                        borderRadius: 99,
-                        background: "rgba(13,55,69,0.09)",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <div
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 7,
+                      top: "42%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
+                      opacity: 0.28,
+                    }}
+                  >
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} style={{ width: 16, height: 16, borderRadius: "50%", background: props.textColor }} />
+                    ))}
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "8%",
+                      right: "8%",
+                      bottom: "21%",
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: 5,
+                      padding: "8px 6px",
+                      borderRadius: 12,
+                      background: "rgba(5,22,42,0.82)",
+                      border: `1px solid ${props.accentColor}44`,
+                    }}
+                  >
+                    {CAPTION_WORDS.map((word, i) => (
+                      <span
+                        key={word}
                         style={{
-                          width: `${grow * 100}%`,
-                          height: "100%",
-                          borderRadius: 99,
-                          background: i === 2 ? spice : accent,
+                          fontFamily: "Inter, system-ui, sans-serif",
+                          fontWeight: 800,
+                          fontSize: phoneW * 0.055,
+                          padding: "3px 4px",
+                          borderRadius: 5,
+                          color: i === activeWord ? props.bgColor : props.textColor,
+                          background: i === activeWord ? props.accentColor : "transparent",
+                          opacity: i === activeWord ? 1 : 0.72,
                         }}
-                      />
-                    </div>
-                    <span
-                      style={{
-                        width: 50,
-                        textAlign: "right",
-                        color: props.textColor,
-                        fontSize: 18,
-                        fontWeight: 800,
-                      }}
-                    >
-                      {Math.round(grow * 100)}%
+                      >
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 10,
+                      bottom: 10,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      opacity: 0.55,
+                    }}
+                  >
+                    <Smartphone size={12} color={props.accentColor} />
+                    <span style={{ fontFamily: "monospace", fontSize: 9, color: props.textColor }}>9:16</span>
+                  </div>
+                </div>
+              </SpatialCard>
+            </div>
+
+            <div
+              style={{
+                flex: 1,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: unit * 0.018,
+              }}
+            >
+              {PLATFORMS.map((platform, i) => {
+                const s = spring({ frame: frame - 40 - i * 12, fps, config: { damping: 14, stiffness: 130 } });
+                return (
+                  <div
+                    key={platform.label}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: `${unit * 0.012}px ${unit * 0.016}px`,
+                      borderRadius: 14,
+                      background: "rgba(240,248,255,0.05)",
+                      border: `1px solid ${props.accentColor}44`,
+                      opacity: s,
+                      transform: `translateX(${interpolate(s, [0, 1], [26, 0], CLAMP)}px)`,
+                    }}
+                  >
+                    <platform.icon size={Math.round(unit * 0.024)} color={props.accentColor} />
+                    <span style={{ fontSize: unit * 0.016, fontWeight: 700, color: props.textColor }}>
+                      {platform.label}
                     </span>
+                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5 }}>
+                      <ShieldCheck size={Math.round(unit * 0.018)} color="#BAE6FD" />
+                      <span style={{ fontFamily: "monospace", fontSize: unit * 0.011, color: props.mutedColor }}>SAFE</span>
+                    </div>
                   </div>
                 );
               })}
+
+              <SpatialCard
+                enterFrame={210}
+                tiltY={props.isRtl ? 6 : -6}
+                shadowColor="rgba(2,6,23,0.6)"
+                style={{
+                  width: "100%",
+                  borderRadius: 18,
+                  padding: `${unit * 0.014}px ${unit * 0.016}px`,
+                  background: "rgba(37,92,153,0.3)",
+                  border: `1px solid ${props.accentColor}66`,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <Volume2 size={Math.round(unit * 0.018)} color={props.accentColor} />
+                  <span style={{ fontSize: unit * 0.012, fontWeight: 700, letterSpacing: 1.5, color: props.textColor }}>
+                    ELEVENLABS VOICEOVER
+                  </span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 3, height: unit * 0.05 }}>
+                  {Array.from({ length: 18 }).map((_, b) => (
+                    <div
+                      key={b}
+                      style={{
+                        flex: 1,
+                        height: `${18 + Math.abs(Math.sin(frame / 7 + b * 0.8)) * 82}%`,
+                        borderRadius: 99,
+                        background: b % 4 === 0 ? "#BAE6FD" : props.accentColor,
+                        opacity: 0.85,
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: unit * 0.01, letterSpacing: 1.5, color: props.mutedColor }}>
+                  SYNCED TO EVERY BEAT
+                </div>
+              </SpatialCard>
             </div>
           </div>
-        </div>
+        </DepthStage>
+      </div>
 
-        <SceneSfx name="pop" frame={12} volume={0.18} />
-      </AbsoluteFill>
+      <SceneSfx name="check" frame={210} volume={0.18} />
     </AbsoluteFill>
   );
 };

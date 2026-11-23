@@ -34,6 +34,8 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
 5. **Arabic RTL & Safe Layout Grid:**
    - Apply `direction: "rtl"` and `lineHeight: 1.4` for Arabic text with `padding: "0 48px"`.
    - Keep the top 22% for headlines and the middle 50% for visuals (`maxWidth: "85%"`). Reserve the bottom caption strip dynamically from `captionBottomOffset` (default 20%, never less than 18% on 9:16) so elements never overlap TikTok/Reels UI or clip off-screen.
+   - **Respect Safe Zone (`respectSafeZone === true` on vertical `9:16`):** keep every primary typography block, card, chart, badge, button, and caption centered inside the platform safe zone — content `top >= 12%`, `bottom <= 78%`, `right <= 84%`, `left >= 6%`. Never place content under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar. Backgrounds, gradients, and decorative layers may remain full-bleed edge-to-edge.
+   - When `respectSafeZone === false`, use the standard full-canvas margins instead of the tighter platform insets.
 
 6. **Multi-Beat Choreography & Subtle Micro-SFX:**
    - Every scene MUST have at least three motion beats: a staggered spring entrance, continuous idle motion for the whole duration, and a visual state change.

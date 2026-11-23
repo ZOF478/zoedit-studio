@@ -1,13 +1,35 @@
 {
   "name": "zof-studio",
   "version": "1.0.0",
-  "description": "My Remotion video",
-  "repository": {},
-  "license": "UNLICENSED",
+  "description": "AI-directed, custom-coded motion graphics studio built on React and Remotion.",
+  "keywords": [
+    "remotion",
+    "motion-graphics",
+    "video",
+    "react",
+    "ai",
+    "text-to-speech",
+    "captions",
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZOF478/zofstudio.git"
+  },
+  "homepage": "https://studio.zoedit.com",
+  "bugs": {
+    "url": "https://github.com/ZOF478/zofstudio/issues"
+  },
+  "license": "MIT",
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24"
   },
-  "private": true,
+  "private": false,
+  "bin": {
+    "zofstudio": "./bin/zofstudio.mjs"
+  },
   "dependencies": {
     "@remotion/cli": "4.0.545",
     "@remotion/google-fonts": "4.0.545",
@@ -40,6 +62,8 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "start": "node ./bin/zofstudio.mjs",
+    "setup": "npm install && npm --prefix dashboard install && (npm link || node ./bin/link-fallback.mjs)",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   },
