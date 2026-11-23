@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { ShieldCheck, Sparkles } from 'lucide-react';
 import { useI18n } from '../i18n';
-import type { BrandKit, CaptionAnimationStyle, CaptionColors } from '../types/studio';
+import type {
+  BrandKit,
+  CaptionAnimationStyle,
+  CaptionColors,
+  WatermarkPosition,
+} from '../types/studio';
 import {
   normalizeCaptionBottomOffset,
   resolveCaptionColors,
@@ -20,6 +25,9 @@ interface LiveSandboxStageProps {
   captionColors: CaptionColors;
   captionBottomOffset: number;
   captionsEnabled: boolean;
+  watermarkEnabled: boolean;
+  watermarkText: string;
+  watermarkPosition: WatermarkPosition;
   respectSafeZone: boolean;
   fps?: number;
   embedded?: boolean;
@@ -38,6 +46,9 @@ export function LiveSandboxStage({
   captionColors,
   captionBottomOffset,
   captionsEnabled,
+  watermarkEnabled,
+  watermarkText,
+  watermarkPosition,
   respectSafeZone,
   fps = 60,
   embedded = false,
@@ -60,6 +71,20 @@ export function LiveSandboxStage({
   const safeZoneCaptionInset = respectSafeZone
     ? { left: '6%', right: '16%' }
     : undefined;
+  const watermarkLabel = watermarkText.trim();
+  const showWatermark = watermarkEnabled && watermarkLabel.length > 0;
+  const watermarkInset =
+    respectSafeZone && isPortrait
+      ? { top: '13%', bottom: '23%', right: '16%', left: '6%' }
+      : { top: '14px', bottom: '14px', right: '14px', left: '14px' };
+  const watermarkPositionStyle: CSSProperties =
+    watermarkPosition === 'top-left'
+      ? { top: watermarkInset.top, left: watermarkInset.left }
+      : watermarkPosition === 'top-right'
+        ? { top: watermarkInset.top, right: watermarkInset.right }
+        : watermarkPosition === 'bottom-left'
+          ? { bottom: watermarkInset.bottom, left: watermarkInset.left }
+          : { bottom: watermarkInset.bottom, right: watermarkInset.right };
   const sampleWords = isRtl
     ? ['اصنع', 'فيديوهات', 'تلفت', 'الأنظار', 'بسرعة']
     : ['Design', 'videos', 'that', 'stand', 'out'];
@@ -132,13 +157,7 @@ export function LiveSandboxStage({
             className={`relative flex h-full flex-col ${isPortrait ? 'p-4' : 'p-5 sm:p-7'}`}
             style={safeZonePadding}
           >
-            <div className="flex items-center justify-between gap-2">
-              <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-black tracking-wide"
-                style={{ backgroundColor: brandKit.primaryColor, color: brandKit.bgColor }}
-              >
-                ZOF STUDIO
-              </span>
+            <div className="flex items-center justify-end gap-2">
               <span
                 className="rounded-full px-2.5 py-1 text-[10px] font-bold"
                 style={{ border: `1px solid ${brandKit.secondaryColor}`, color: brandKit.secondaryColor }}
@@ -232,6 +251,21 @@ export function LiveSandboxStage({
               </span>
             ) : null}
           </div>
+
+          {showWatermark ? (
+            <span
+              dir="auto"
+              className="pointer-events-none absolute z-10 max-w-[76%] truncate rounded-full border px-3 py-1 text-[10px] font-black tracking-wide shadow-lg backdrop-blur-sm"
+              style={{
+                ...watermarkPositionStyle,
+                backgroundColor: `${brandKit.primaryColor}d9`,
+                color: brandKit.bgColor,
+                borderColor: `${brandKit.textColor}33`,
+              }}
+            >
+              {watermarkText}
+            </span>
+          ) : null}
 
           {isPortrait ? (
             <SafeZoneOverlay mode={frameMode} captionBottomOffset={safeOffset} />

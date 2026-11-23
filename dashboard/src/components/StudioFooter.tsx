@@ -32,30 +32,111 @@ interface StudioFooterProps {
   onOpenModal: (modal: StudioInfoModalId) => void;
 }
 
+function ReactLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="-11.5 -10.23174 23 20.46348"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <circle cx="0" cy="0" r="2.05" fill="#61DAFB" />
+      <g stroke="#61DAFB" strokeWidth="1" fill="none">
+        <ellipse rx="11" ry="4.2" />
+        <ellipse rx="11" ry="4.2" transform="rotate(60)" />
+        <ellipse rx="11" ry="4.2" transform="rotate(120)" />
+      </g>
+    </svg>
+  );
+}
+
+const REMOTION_MARK_PATH =
+  'M148.332 92.9015C143.307 93.1742 139.259 93.9713 135.179 95.5236C133.144 96.2893 129.809 97.957 127.973 99.1108C120.295 103.925 114.443 111.162 111.391 119.584C110.782 121.252 109.136 126.57 108.076 130.23C101.018 154.7 97.0112 181.456 96.1511 209.776C96.0148 214.286 96.0148 225.026 96.1511 229.463C96.728 248.237 98.5216 265.187 101.773 282.472C103.095 289.468 105.213 298.866 106.44 303.135C108.947 311.809 114.065 319.193 121.344 324.605C126.221 328.234 131.759 330.668 137.895 331.863C140.853 332.44 144.755 332.702 147.629 332.514C151.604 332.251 159.491 331.192 165.9 330.049C194.786 324.899 221.469 315.679 245.666 302.485C260.99 294.125 274.09 285.074 286.729 274.092C299.326 263.163 310.066 251.405 319.516 238.21C321.708 235.158 322.81 233.375 323.911 231.131C326.743 225.341 328.075 219.583 328.064 213.143C328.064 207.143 326.932 201.815 324.488 196.361C323.313 193.728 322.191 191.84 319.674 188.253C310.402 175.048 300.112 163.542 287.568 152.361C268.122 135.034 245.026 120.822 219.235 110.302C213.644 108.026 208.138 106.022 201.509 103.851C187.475 99.2681 170.106 95.2929 155.411 93.3105C153.104 92.9959 149.968 92.8176 148.332 92.9015Z';
+
+function RemotionLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 250 250"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <g transform="translate(132 126) scale(1) translate(-132 -126)">
+        <g transform="scale(0.688705) translate(-20 -30)">
+          <path d={REMOTION_MARK_PATH} fill="#0B84F3" opacity="0.25" />
+        </g>
+      </g>
+      <g transform="translate(132 126) scale(0.68) translate(-132 -126)">
+        <g transform="scale(0.688705) translate(-20 -30)">
+          <path d={REMOTION_MARK_PATH} fill="#0B84F3" opacity="0.5" />
+        </g>
+      </g>
+      <g transform="translate(132 126) scale(0.36) translate(-132 -126)">
+        <g transform="scale(0.688705) translate(-20 -30)">
+          <path d={REMOTION_MARK_PATH} fill="#0B84F3" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+function OpenCodeLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+      fill="currentColor"
+      fillRule="evenodd"
+    >
+      <path d="M16 8H8v8h8V8zM4 4v16h16V4H4z" />
+    </svg>
+  );
+}
+
+function ElevenLabsLogo({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+      fill="currentColor"
+    >
+      <path d="M5 2h4.8v20H5V2zm9.2 0H19v20h-4.8V2z" />
+    </svg>
+  );
+}
+
 const CREDITS = [
   {
     name: 'React',
     href: 'https://react.dev',
     noteAr: 'الواجهة التفاعلية',
     noteEn: 'interactive UI',
+    Logo: ReactLogo,
   },
   {
     name: 'Remotion',
     href: 'https://www.remotion.dev',
     noteAr: 'تصيير فيديو برمجي',
     noteEn: 'programmatic video rendering',
+    Logo: RemotionLogo,
   },
   {
     name: 'OpenCode',
     href: 'https://opencode.ai',
     noteAr: 'وكيل برمجة المشاهد',
     noteEn: 'autonomous scene-coding agent',
+    Logo: OpenCodeLogo,
   },
   {
     name: 'ElevenLabs',
     href: 'https://elevenlabs.io',
     noteAr: 'التعليق الصوتي وتصميم الصوت',
     noteEn: 'voiceover & sound design',
+    Logo: ElevenLabsLogo,
   },
 ];
 
@@ -77,8 +158,9 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
                   target="_blank"
                   rel="noreferrer"
                   title={t(credit.noteAr, credit.noteEn)}
-                  className="font-semibold text-slate-200 underline-offset-2 transition-colors hover:text-sky-300 hover:underline"
+                  className="inline-flex items-center gap-1 font-semibold text-slate-200 underline-offset-2 transition-colors hover:text-sky-300 hover:underline"
                 >
+                  {credit.Logo ? <credit.Logo className="h-3 w-3 shrink-0" /> : null}
                   {credit.name}
                 </a>
                 <span className="hidden text-slate-500 sm:inline">
@@ -401,6 +483,38 @@ function AboutContent() {
         </InfoCard>
       </div>
 
+      <div className="rounded-xl border border-white/8 bg-[#0E121A] p-3.5">
+        <h3 className="flex items-center gap-2 text-xs font-bold text-slate-100">
+          <Sparkles className="h-3.5 w-3.5 text-sky-300" />
+          {t('التقنيات الأساسية', 'Core tech stack')}
+        </h3>
+        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {CREDITS.map((credit) => (
+            <a
+              key={credit.name}
+              href={credit.href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-w-0 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2 transition-colors hover:border-sky-400/40 hover:bg-white/10"
+            >
+              {credit.Logo ? (
+                <credit.Logo className="h-4 w-4 shrink-0 text-sky-300" />
+              ) : (
+                <span className="h-4 w-4 shrink-0 rounded-full border border-white/20" />
+              )}
+              <span className="min-w-0">
+                <span className="block truncate text-[11px] font-semibold text-slate-200">
+                  {credit.name}
+                </span>
+                <span className="block truncate text-[9px] text-slate-500">
+                  {t(credit.noteAr, credit.noteEn)}
+                </span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <ModalLink href={GITHUB_URL} icon={<Github className="h-3.5 w-3.5" />}>
           {t('استعرض الكود على GitHub', 'Explore the code on GitHub')}
@@ -439,14 +553,20 @@ function ApiGuideContent() {
         'Free coding and scene-writing models served through OpenCode and its partners, with automatic fallback.'
       ),
       steps: [
-        t('ثبّت OpenCode على جهازك.', 'Install OpenCode on your machine.'),
-        t('سجّل الدخول واختر النماذج المجانية.', 'Sign in and select the free models.'),
+        t(
+          'لا حاجة لتثبيت OpenCode يدوياً — فهو مرفق ومثبَّت تلقائياً مع npm run setup.',
+          'No manual install needed — OpenCode CLI is already bundled and installed automatically with npm run setup.'
+        ),
+        t(
+          'سجّل الدخول عبر opencode واختر النماذج المجانية.',
+          'Sign in through opencode and select the free models.'
+        ),
         t(
           'اختر «OpenCode Free Models» داخل Zof Studio.',
           'Choose “OpenCode Free Models” inside Zof Studio.'
         ),
       ],
-      commands: ['npm i -g opencode-ai', 'opencode auth login'],
+      commands: ['opencode auth login'],
       linkLabel: t('موقع OpenCode', 'OpenCode website'),
       disclaimer: t(
         'نماذج OpenCode المجانية يقدّمها OpenCode وشركاؤه، وليست مستضافة أو مملوكة لـ Zof Studio. قد تفرض حدوداً على الاستخدام أو تتغير توفرها في أي وقت.',
@@ -479,18 +599,25 @@ function ApiGuideContent() {
     {
       key: 'elevenlabs',
       name: 'ElevenLabs',
-      href: 'https://elevenlabs.io/app/settings/api-keys',
+      href: 'https://elevenlabs.io/app/developers/api-keys',
       badge: t('مفتاح مطلوب', 'Key required'),
       summary: t(
         'التعليق الصوتي والمؤثرات الصوتية بأصوات واقعية، بما فيها نموذج V4.',
         'Voiceover and sound effects with realistic voices, including the V4 model.'
       ),
       steps: [
-        t('افتح إعدادات مفاتيح API في ElevenLabs.', 'Open ElevenLabs API key settings.'),
+        t(
+          'افتح صفحة مفاتيح API في ElevenLabs للمطورين.',
+          'Open the ElevenLabs developer API keys page.'
+        ),
         t('أنشئ مفتاحاً يبدأ بـ sk_.', 'Generate a key that starts with sk_.'),
         t(
-          'امنح صلاحيات Text-to-Speech وSound Effects.',
-          'Grant Text-to-Speech and Sound Effects permissions.'
+          'فعّل الصلاحيات التالية عند إنشاء المفتاح: Text to Speech Access و Models Access و User Access و History Read.',
+          'Enable these permissions when creating the key: Text to Speech Access, Models Access, User Access, and History Read.'
+        ),
+        t(
+          'تتيح هذه الصلاحيات لعارض الاستخدام والسجل المدمج في Zof Studio عرض الحصة المتبقية والتوليدات السابقة.',
+          'These permissions let Zof Studio’s built-in usage and history viewer display remaining quota and past generations.'
         ),
         t(
           'الصق المفتاح في Zof Studio → إعدادات API.',
@@ -690,7 +817,7 @@ function TermsContent() {
       >
         <p>
           {t(
-            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai وElevenLabs خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. لا تملك Zof Studio النماذج المجانية ولا تضمن استمرارها أو جودتها.',
+            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai و ElevenLabs خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. لا تملك Zof Studio النماذج المجانية ولا تضمن استمرارها أو جودتها.',
             'OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zof Studio does not own or guarantee third-party free models.'
           )}
         </p>

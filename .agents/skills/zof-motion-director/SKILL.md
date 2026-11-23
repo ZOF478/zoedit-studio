@@ -6,10 +6,12 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
 # Zof Studio Motion & Design Rules
 
 1. **Character, Symbolic Emotion & Modesty Rules:**
+   - **NEVER hand-draw crude stickmen or hand-coded geometric circles/rectangles** to represent real objects, religious symbols, electronics, or brand logos. Use `<SmartIcon query="..." brand={...} color="..." size={...} />` for ALL objects, symbols, icons, and company logos, and `<SilhouetteActor pose="..." color="..." size={...} />` for ALL human figures.
    - Keep the Stickman head smooth and clean by default (no detailed anatomical nose, mouth, or ears).
    - **Contextual Symbolic Expressions Only When Needed:** Express emotion descriptively through body posture (`pose` prop), surrounding visual metaphors, and **minimal symbolic cues only** when a scene specifically requires it (e.g., falling teardrop icons for sadness; sharp angled brow lines or small steam puffs for anger; upward celebratory pose with sparkles for joy). Never draw complex realistic faces.
+   - **Featureless human action:** whenever a scene depicts a human action (praying, prostrating, sitting at a glowing screen, standing, walking), render `<SilhouetteActor pose="..." color="..." size={...} />` from `../components/SilhouetteActor`. It is a completely featureless silhouette (no eyes, mouth, nose, ears) and must never be given a face.
    - Never depict women (if a female silhouette is unavoidable, use only a modest, fully obscured back-view silhouette).
-   - Do NOT force the Stickman into every scene; prioritize pure kinetic motion graphics (SVG icons, UI mockups, charts, cards) for 60-70% of scenes.
+   - Do NOT force the Stickman or a silhouette into every scene; prioritize pure kinetic motion graphics (SVG icons, UI mockups, charts, cards) for 60-70% of scenes.
 
 2. **Creative Visual Variety — Never Stamp the Same Layout:**
    - Never default every scene to the identical rigid grid (small kicker + top-left title + subtitle + centered card).
@@ -62,6 +64,8 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
    - Keep continuous idle motion alive until that exit ease begins; the final frames must still move.
 
 9. **Installed Visual Libraries (dynamic scene generation, no rigid templates):**
+   - `@iconify/react` + `simple-icons` power `<SmartIcon />`: it resolves ANY English keyword or brand name into a crisp vector icon or logo. It searches the Iconify API, fetches clean SVG markup, caches it in memory, blocks frames with `delayRender` for at most 4 seconds, and falls back to a styled monogram badge so headless rendering never stalls.
+   - `SilhouetteActor` (`../components/SilhouetteActor`): featureless human silhouette with `standing`, `praying-qiyam`, `praying-sujood`, `sitting-screen`, and animated `walking` poses.
    - `lucide-react` for crisp UI, tech, business, and map icons.
    - `d3-geo` + `topojson-client` + `world-atlas/countries-110m.json` for accurate real-world geographic country borders, projections (`geoMercator` / `geoNaturalEarth1`), and animated coordinate routes.
    - `@remotion/paths` & `@remotion/shapes` for mathematical SVG path interpolation, charts, and geometric shapes.
@@ -80,7 +84,17 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
      `const pathGen = geoPath().projection(projection);`
      `<path d={pathGen(country) ?? ""} />`
      `projection([lon, lat])` converts real `[longitude, latitude]` city coordinates into exact `[x, y]` pixels: Tangier `[-5.8, 35.76]`, Cairo `[31.23, 30.04]`, Mecca `[39.82, 21.42]`.
-   - **Icons** (`lucide-react`): always import crisp icons such as `import { MapPin, Plane, Navigation, ShieldCheck, TrendingUp } from "lucide-react";` and render them (for example `<MapPin size={32} color={accentColor} />`) instead of hand-coding icon `<path>` elements.
+   - **Symbols, concepts & brand logos** (`SmartIcon`): always import the reusable icon component instead of hand-drawing shapes:
+     `import { SmartIcon } from "../components/SmartIcon";`
+     `<SmartIcon query="mosque" size={64} color={accentColor} />`
+     `<SmartIcon query="hourglass" size={48} color={props.accentColor} />`
+     `<SmartIcon query="youtube" brand size={56} />`
+     Pass ANY English keyword or brand name as `query` ("mosque", "facebook", "hourglass", "sword", "brain", "tiktok"). Set `brand` to prefer official company logos. Exact Iconify IDs such as `query="mdi:mosque"` or `query="logos:facebook"` also work. NEVER approximate a mosque, clock, shield, or brand mark with guessed circles/rectangles.
+   - **Human action** (`SilhouetteActor`): whenever a scene depicts a person, import and pose the featureless silhouette instead of drawing a stickman:
+     `import { SilhouetteActor } from "../components/SilhouetteActor";`
+     `<SilhouetteActor pose="praying-qiyam" color={props.characterBody} size={340} />`
+     Supported poses: `standing`, `praying-qiyam`, `praying-sujood`, `sitting-screen`, `walking`. `size` is the rendered height in pixels; the silhouette breathes and strides on its own with `useCurrentFrame()`.
+   - **UI icons** (`lucide-react`): always import crisp icons such as `import { MapPin, Plane, Navigation, TrendingUp } from "lucide-react";` and render them (for example `<MapPin size={32} color={accentColor} />`) instead of hand-coding icon `<path>` elements.
    - **Curves & shapes** (`@remotion/paths` & `@remotion/shapes`): use `import { evolvePath } from "@remotion/paths";` to animate dashed/glowing routes smoothly: `const dash = evolvePath(progress, routePath);` then `<path d={routePath} strokeDasharray={dash.strokeDasharray} strokeDashoffset={dash.strokeDashoffset} />`.
    - **Hand-drawn diagrams & organic motion**: use `roughjs` for whiteboard/hand-drawn requests only with the fixed-seed/`useMemo` pattern in rule 10, and `@remotion/noise` for organic drift; these complement, never replace, the real map and icon libraries.
 

@@ -1,68 +1,70 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import {
-  Camera,
-  Music2,
-  ShieldCheck,
-  Smartphone,
-  Volume2,
-  Video,
-} from "lucide-react";
+import type { CSSProperties } from "react";
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Brain, EyeOff, Heart, ShieldAlert } from "lucide-react";
 import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
-  accentColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
+  accentColor: string; bgColor: string; textColor: string; mutedColor: string;
+  characterBody: string; characterFace: string; characterAccent: string; characterShadow: string;
+  isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[];
+  data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean;
 };
 
-const CLAMP = {
-  extrapolateLeft: "clamp" as const,
-  extrapolateRight: "clamp" as const,
-};
+type Stage = { icon: typeof Heart; label: string; caption: string; enter: number; recede?: number; tone: string };
 
-const PLATFORMS = [
-  { label: "TikTok", icon: Music2 },
-  { label: "Reels", icon: Camera },
-  { label: "Shorts", icon: Video },
-];
+const CRIMSON = "#DC2626";
+const CLAMP = { extrapolateLeft: "clamp" as const, extrapolateRight: "clamp" as const };
 
-const CAPTION_WORDS = ["SMART", "SAFE", "ZONES"];
+const Tendrils = ({ frame, color }: { frame: number; color: string }) => (
+  <svg viewBox="0 0 300 300" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.65 }}>
+    {[
+      "M150 250 C90 220 70 170 105 120 C130 85 120 50 150 20",
+      "M150 260 C210 230 235 180 200 130 C175 95 190 60 160 20",
+      "M40 150 C90 120 100 80 150 90 C200 100 220 70 260 90",
+    ].map((d, i) => (
+      <path
+        key={i}
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth={2}
+        strokeDasharray="5 9"
+        strokeDashoffset={-frame * (0.7 + i * 0.2)}
+        opacity={0.5}
+      />
+    ))}
+  </svg>
+);
 
 export const Scene4 = (props: Props) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
-  const unit = Math.min(width, height);
-  const dur = props.durationInFrames;
+  const s = Math.min(width, height);
   const exit = interpolate(
     frame,
-    [Math.max(0, dur - 10), Math.max(1, dur - 1)],
+    [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
     CLAMP,
   );
-  const phoneH = Math.min(height * 0.43, (width * 0.42 * 16) / 9);
-  const phoneW = (phoneH * 9) / 16;
-  const safe = spring({ frame: frame - 50, fps, config: { damping: 18, stiffness: 90 } });
-  const activeWord = Math.floor(Math.max(0, frame - 70) / 34) % CAPTION_WORDS.length;
+  const stages: Stage[] = [
+    { icon: Heart, label: "تسلل إلى القلب", caption: "القلب", enter: 0, recede: 110, tone: props.accentColor },
+    { icon: Brain, label: "غفلة عن الدين", caption: "العقل", enter: 110, recede: 230, tone: props.textColor },
+    { icon: EyeOff, label: "دون حذر", caption: "الغفلة", enter: 230, tone: CRIMSON },
+  ];
+  const cardStyle: CSSProperties = {
+    position: "absolute" as const,
+    inset: 0,
+    margin: "auto",
+    width: "80%",
+    height: "80%",
+    borderRadius: s * 0.05,
+    padding: s * 0.04,
+    boxSizing: "border-box" as const,
+    background: `linear-gradient(170deg, ${CRIMSON}18, ${props.bgColor} 65%)`,
+    border: `1px solid ${CRIMSON}44`,
+    overflow: "hidden",
+  };
 
   return (
     <AbsoluteFill
@@ -72,319 +74,160 @@ export const Scene4 = (props: Props) => {
         direction: props.isRtl ? "rtl" : "ltr",
       }}
     >
-      <AbsoluteFill
+      <SceneSfx name="check" frame={110} volume={0.18} />
+      <div
         style={{
-          background: `radial-gradient(circle at 50% 34%, ${props.accentColor}1e, transparent 58%), radial-gradient(circle at 18% 72%, #255C9930, transparent 55%)`,
+          position: "absolute",
+          inset: 0,
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * s * 0.012}px)`,
         }}
-      />
-      <svg width={width} height={height} style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
-        {Array.from({ length: 7 }).map((_, i) => (
-          <circle
-            key={`c${i}`}
-            cx={width * (0.1 + i * 0.14)}
-            cy={height * (0.32 + ((i * 7) % 5) * 0.1)}
-            r={unit * (0.03 + (i % 3) * 0.02)}
-            fill="none"
-            stroke={props.accentColor}
-            strokeWidth={1.5}
-            strokeDasharray="4 10"
-          />
-        ))}
-      </svg>
-      {[0, 1, 2].map((i) => (
+      >
         <div
-          key={`pulse${i}`}
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `radial-gradient(circle at 50% 54%, ${CRIMSON}20, transparent 58%)`,
+          }}
+        />
+        <div
           style={{
             position: "absolute",
             left: "50%",
             top: "50%",
-            width: phoneW + 80 + i * 70,
-            height: phoneW + 80 + i * 70,
-            marginLeft: -(phoneW + 80 + i * 70) / 2,
-            marginTop: -(phoneW + 80 + i * 70) / 2,
+            width: s * 0.9,
+            height: s * 0.9,
+            marginLeft: -s * 0.45,
+            marginTop: -s * 0.45,
             borderRadius: "50%",
-            border: `1px solid ${props.accentColor}22`,
-            transform: `scale(${1 + 0.04 * Math.sin(frame / 30 + i)})`,
+            border: `1px dashed ${CRIMSON}33`,
+            transform: `rotate(${frame * 0.25}deg)`,
           }}
         />
-      ))}
-
-      <div
-        style={{
-          position: "absolute",
-          top: "7%",
-          left: 0,
-          right: 0,
-          padding: "0 48px",
-          maxWidth: "88%",
-          direction: "ltr",
-          textAlign: "left",
-          opacity: exit,
-          transform: `translateY(${(1 - exit) * -14}px)`,
-        }}
-      >
         <div
           style={{
-            fontFamily: "monospace",
-            fontSize: 15,
-            letterSpacing: 4,
-            color: props.accentColor,
-            marginBottom: 12,
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: s * 0.62,
+            height: s * 0.62,
+            marginLeft: -s * 0.31,
+            marginTop: -s * 0.31,
+            borderRadius: "50%",
+            border: `1px solid ${props.accentColor}22`,
+            transform: `rotate(${-frame * 0.18}deg)`,
           }}
-        >
-          SMART SOCIAL SAFE ZONES
-        </div>
+        />
+
         <div
           style={{
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontWeight: 900,
-            fontSize: unit * 0.056,
-            lineHeight: 1.12,
-            letterSpacing: -1.5,
-            color: props.textColor,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "22%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 48px",
+            boxSizing: "border-box",
+            textAlign: props.isRtl ? "right" : "left",
+            gap: s * 0.004,
           }}
         >
-          Smart safe zones keep your{" "}
-          <span style={{ color: props.accentColor }}>captions framed</span>
+          <div style={{ fontSize: s * 0.052, fontWeight: 900, color: props.textColor, lineHeight: 1.4 }}>
+            شركيات تتسلل
+          </div>
+          <div style={{ fontSize: s * 0.036, fontWeight: 800, color: CRIMSON, lineHeight: 1.4 }}>
+            لقلبك وعقلك
+          </div>
         </div>
-      </div>
 
-      <div
-        style={{
-          position: "absolute",
-          top: "23%",
-          bottom: "27%",
-          left: "6%",
-          right: "6%",
-          opacity: exit,
-          transform: `translateY(${(1 - exit) * 16}px)`,
-        }}
-      >
-        <DepthStage>
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", gap: "5%" }}>
-            <div
-              style={{
-                width: "44%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <SpatialCard
-                enterFrame={4}
-                recedeFrame={250}
-                tiltY={props.isRtl ? -6 : 6}
-                shadowColor="rgba(2,6,23,0.7)"
-                style={{
-                  width: phoneW,
-                  height: phoneH,
-                  borderRadius: 34,
-                  padding: 9,
-                  background: "rgba(240,248,255,0.07)",
-                  border: `2px solid ${props.accentColor}77`,
-                }}
-              >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: 26,
-                    overflow: "hidden",
-                    background: `linear-gradient(180deg, #255C9950, ${props.bgColor})`,
-                    border: `1px solid ${props.accentColor}33`,
-                  }}
+        <div style={{ position: "absolute", top: "22%", height: "50%", left: 0, right: 0 }}>
+          <DepthStage>
+            {stages.map((stage, i) => {
+              const Icon = stage.icon;
+              const pop = spring({ frame: frame - (stage.enter + 8), fps, config: { damping: 12, stiffness: 150 } });
+              return (
+                <SpatialCard
+                  key={stage.caption}
+                  enterFrame={stage.enter}
+                  recedeFrame={stage.recede}
+                  tiltX={-3}
+                  tiltY={i === 0 ? 5 : i === 1 ? 0 : -5}
+                  style={cardStyle}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 9,
-                      left: "50%",
-                      width: "30%",
-                      height: 7,
-                      marginLeft: "-15%",
-                      borderRadius: 99,
-                      background: "rgba(240,248,255,0.35)",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "8%",
-                      bottom: "18%",
-                      left: "8%",
-                      right: "8%",
-                      borderRadius: 16,
-                      border: `2px dashed ${props.accentColor}`,
-                      opacity: safe * 0.75,
-                      transform: `scale(${interpolate(safe, [0, 1], [0.94, 1], CLAMP)})`,
-                    }}
-                  >
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: -9,
-                        left: 10,
-                        padding: "2px 7px",
-                        borderRadius: 6,
-                        background: props.bgColor,
-                        fontFamily: "monospace",
-                        fontSize: 9,
-                        letterSpacing: 1.5,
-                        color: props.accentColor,
-                      }}
-                    >
-                      SAFE ZONE
-                    </span>
+                  <div style={{ position: "absolute", inset: s * 0.03 }}>
+                    <Tendrils frame={frame} color={stage.tone} />
                   </div>
                   <div
                     style={{
                       position: "absolute",
-                      right: 7,
-                      top: "42%",
+                      inset: 0,
                       display: "flex",
                       flexDirection: "column",
-                      gap: 12,
-                      opacity: 0.28,
-                    }}
-                  >
-                    {[0, 1, 2].map((i) => (
-                      <div key={i} style={{ width: 16, height: 16, borderRadius: "50%", background: props.textColor }} />
-                    ))}
-                  </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: "8%",
-                      right: "8%",
-                      bottom: "21%",
-                      display: "flex",
+                      alignItems: "center",
                       justifyContent: "center",
-                      gap: 5,
-                      padding: "8px 6px",
-                      borderRadius: 12,
-                      background: "rgba(5,22,42,0.82)",
-                      border: `1px solid ${props.accentColor}44`,
+                      gap: s * 0.02,
                     }}
                   >
-                    {CAPTION_WORDS.map((word, i) => (
-                      <span
-                        key={word}
-                        style={{
-                          fontFamily: "Inter, system-ui, sans-serif",
-                          fontWeight: 800,
-                          fontSize: phoneW * 0.055,
-                          padding: "3px 4px",
-                          borderRadius: 5,
-                          color: i === activeWord ? props.bgColor : props.textColor,
-                          background: i === activeWord ? props.accentColor : "transparent",
-                          opacity: i === activeWord ? 1 : 0.72,
-                        }}
-                      >
-                        {word}
-                      </span>
-                    ))}
-                  </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: 10,
-                      bottom: 10,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      opacity: 0.55,
-                    }}
-                  >
-                    <Smartphone size={12} color={props.accentColor} />
-                    <span style={{ fontFamily: "monospace", fontSize: 9, color: props.textColor }}>9:16</span>
-                  </div>
-                </div>
-              </SpatialCard>
-            </div>
-
-            <div
-              style={{
-                flex: 1,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                gap: unit * 0.018,
-              }}
-            >
-              {PLATFORMS.map((platform, i) => {
-                const s = spring({ frame: frame - 40 - i * 12, fps, config: { damping: 14, stiffness: 130 } });
-                return (
-                  <div
-                    key={platform.label}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      padding: `${unit * 0.012}px ${unit * 0.016}px`,
-                      borderRadius: 14,
-                      background: "rgba(240,248,255,0.05)",
-                      border: `1px solid ${props.accentColor}44`,
-                      opacity: s,
-                      transform: `translateX(${interpolate(s, [0, 1], [26, 0], CLAMP)}px)`,
-                    }}
-                  >
-                    <platform.icon size={Math.round(unit * 0.024)} color={props.accentColor} />
-                    <span style={{ fontSize: unit * 0.016, fontWeight: 700, color: props.textColor }}>
-                      {platform.label}
-                    </span>
-                    <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5 }}>
-                      <ShieldCheck size={Math.round(unit * 0.018)} color="#BAE6FD" />
-                      <span style={{ fontFamily: "monospace", fontSize: unit * 0.011, color: props.mutedColor }}>SAFE</span>
+                    <div
+                      style={{
+                        width: s * 0.22,
+                        height: s * 0.22,
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: `2px solid ${stage.tone}66`,
+                        background: `radial-gradient(circle, ${stage.tone}22, transparent 70%)`,
+                        boxShadow: `0 0 60px ${stage.tone}33`,
+                        transform: `scale(${0.8 + pop * 0.2})`,
+                        opacity: pop,
+                        position: "relative",
+                      }}
+                    >
+                      <Icon size={s * 0.11} color={stage.tone} strokeWidth={1.5} />
+                    </div>
+                    <div style={{ textAlign: "center", transform: `translateY(${(1 - pop) * s * 0.02}px)`, opacity: pop, position: "relative" }}>
+                      <div style={{ fontSize: s * 0.028, fontWeight: 900, color: props.textColor }}>{stage.label}</div>
+                      <div style={{ fontSize: s * 0.018, fontWeight: 700, color: props.mutedColor }}>{stage.caption}</div>
+                    </div>
+                    <div style={{ display: "flex", gap: s * 0.012, position: "relative" }}>
+                      {[0, 1, 2].map((j) => {
+                        const b = spring({ frame: frame - j * 12, fps, config: { damping: 14, stiffness: 140 } });
+                        const active = j === i;
+                        return (
+                          <div
+                            key={j}
+                            style={{
+                              opacity: b,
+                              transform: `scale(${0.8 + b * 0.2})`,
+                              fontSize: s * 0.016,
+                              fontWeight: 800,
+                              color: active ? stage.tone : props.mutedColor,
+                              border: `1px solid ${active ? stage.tone : props.textColor}44`,
+                              padding: `${s * 0.008}px ${s * 0.014}px`,
+                              borderRadius: 999,
+                              background: active ? `${stage.tone}18` : "transparent",
+                            }}
+                          >
+                            {["قلب", "عقل", "غفلة"][j] ?? ""}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: s * 0.008, color: CRIMSON, fontSize: s * 0.018, fontWeight: 800, position: "relative", opacity: 0.9 }}>
+                      <ShieldAlert size={s * 0.024} color={CRIMSON} />
+                      <span>خطر خفي</span>
                     </div>
                   </div>
-                );
-              })}
-
-              <SpatialCard
-                enterFrame={210}
-                tiltY={props.isRtl ? 6 : -6}
-                shadowColor="rgba(2,6,23,0.6)"
-                style={{
-                  width: "100%",
-                  borderRadius: 18,
-                  padding: `${unit * 0.014}px ${unit * 0.016}px`,
-                  background: "rgba(37,92,153,0.3)",
-                  border: `1px solid ${props.accentColor}66`,
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <Volume2 size={Math.round(unit * 0.018)} color={props.accentColor} />
-                  <span style={{ fontSize: unit * 0.012, fontWeight: 700, letterSpacing: 1.5, color: props.textColor }}>
-                    ELEVENLABS VOICEOVER
-                  </span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 3, height: unit * 0.05 }}>
-                  {Array.from({ length: 18 }).map((_, b) => (
-                    <div
-                      key={b}
-                      style={{
-                        flex: 1,
-                        height: `${18 + Math.abs(Math.sin(frame / 7 + b * 0.8)) * 82}%`,
-                        borderRadius: 99,
-                        background: b % 4 === 0 ? "#BAE6FD" : props.accentColor,
-                        opacity: 0.85,
-                      }}
-                    />
-                  ))}
-                </div>
-                <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: unit * 0.01, letterSpacing: 1.5, color: props.mutedColor }}>
-                  SYNCED TO EVERY BEAT
-                </div>
-              </SpatialCard>
-            </div>
-          </div>
-        </DepthStage>
+                </SpatialCard>
+              );
+            })}
+          </DepthStage>
+        </div>
       </div>
-
-      <SceneSfx name="check" frame={210} volume={0.18} />
     </AbsoluteFill>
   );
 };

@@ -1,15 +1,15 @@
 {
   "meta": {
-    "title": "Stop making generic AI videos",
-    "topic": "Create a high-energy, modern product launch video introducing \"Zof Studio\" (studio.zoedit.com) — an open-source, AI-directed motion graphics studio built with Remotion.\n\nVisual & Narrative Arc (Fast-paced, 30 seconds):\n1. Hook (0-5s): Bold kinetic typography exploding smoothly onto the deep navy canvas: \"Stop making generic AI videos.\" Contrast a dull, repetitive template card that shatters away into clean geometric grid lines.\n2. Reveal (5-12s): Introduce the Zof Studio logo and brand identity with crisp 2.5D depth parallax — showing a single prompt transforming into live React & Remotion timeline layers, animated waveforms, and custom vector motion scenes.\n3. Key Features Showcase (12-22s): Dynamic split-screen and camera-pan beats highlighting three superpowers:\n   - True Creative Variety: Custom-coded motion graphics, charts, and B-Roll scenes instead of rigid templates.\n   - Smart Social Safe Zones: A vertical 9:16 phone frame snapping cleanly inside TikTok, Reels, and Shorts safe margins with karaoke word-by-word captions.\n   - Studio-Grade Audio: ElevenLabs voiceover synced with subtle, crisp UI sound design.\n4. Call to Action (22-30s): Clean, authoritative closing frame featuring \"Zof Studio — Free & Open Source\", displaying the terminal command `zofstudio` and \"Try it at studio.zoedit.com\".\n\nPacing & Motion Rules: Vary layout composition in every single beat (never repeat the same header-plus-card layout twice). Use smooth spring physics, subtle ambient motion, crisp typography hierarchy, and keep all focal elements centered within the safe zone.",
-    "description": "Stop making generic AI videos · Zof Studio turns one prompt into real · No rigid templates just charts B roll · Smart safe zones keep your captions perfectly · Zof Studio is free and open source"
+    "title": "حلقة واحدة بس قبل النوم",
+    "topic": "Create a high-impact, editorial 9:16 vertical motion graphics reel (45–50 seconds, 60fps) warning about how anime like Naruto introduces hidden polytheistic beliefs (Shinto/Buddhist concepts) and consumes a Muslim's time and prayers.\n\nVisual Rules & Palette:\n- Deep charcoal-obsidian background (#0B0F14), crimson warning accents (#EF4444), clean emerald resolution accents (#10B981), and crisp off-white typography (#F8FAFC) with strict WCAG contrast.\n- Depict any human figure strictly as a smooth, completely featureless silhouette.\n- Use abstract geometric symbols, seals, clocks, and minimalist iconography instead of copyrighted anime characters.\n- Audio: Realistic tactile Foley sound effects only (rapid clock ticking, screen clicks, low rumble, deep breath) — strictly ZERO background music.\n- Respect 9:16 safe zones and synchronize Arabic word-by-word captions with key emphasis highlights.\n\nScene Breakdown:\n1. Hook (0–6s): Giant digital clock rapidly flipping from \"11:30 PM\" to \"04:45 AM\" in crimson as a subtle crescent/Fajr prayer indicator fades out in the background.\n2. Hidden Beliefs (6–22s): Rotating abstract geometric seals and dual-circle balance symbols fracture apart to reveal bold Arabic warning callouts: \"تناسخ الأرواح\" (Reincarnation), \"آلهة الموت\" (Gods of Death), and \"التعاويذ\" (Incantations).\n3. Time & Prayer Drain (22–38s): A fast-filling episode progress bar (\"720 حلقة\") compresses 5 vertical pillars representing the 5 daily prayers down to near zero, beside a featureless silhouette hunched in front of a glowing screen.\n4. Awakening & Resolution (38–50s): Crimson alerts power down into a calm emerald-lit frame; the clock stops completely, displaying the final Arabic reminder cleanly inside the safe zone: \"صلاتك خط أحمر\".",
+    "description": "حلقة واحدة بس قبل النوم · جملة تبدأ بها السهرة وتنتهي بضياع الفجر · في أعمال مثل ناروتو الأمر لا يقف · شركيات تتسلل لقلبك وعقلك وأنت مندمج دون · والخطر لا يقف عند العقيدة مئات الساعات · المسلم أغلى من أن يبيع عقيدته ووقته · اجعل صلاتك خطا أ"
   },
   "width": 1080,
-  "height": 1920,
+  "height": 1080,
   "fps": 60,
-  "durationInFrames": 2096,
+  "durationInFrames": 3247,
   "style": "stickman",
-  "script_language": "en",
+  "script_language": "ar",
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
@@ -19,23 +19,23 @@
     "words_per_screen": "auto",
     "lead_in": 0.2,
     "colors": {
-      "background": "#05162A",
-      "text": "#F0F8FF",
-      "highlight": "#5AA9E6"
+      "background": "#0E1117",
+      "text": "#F8FAFC",
+      "highlight": "#FF6B00"
     },
     "bottom_offset": 18,
     "enabled": true
   },
   "brand_kit": {
     "name": "ZOF",
-    "primary": "#5AA9E6",
-    "secondary": "#255C99",
-    "accent": "#BAE6FD",
+    "primary": "#FF6B00",
+    "secondary": "#1E3A8A",
+    "accent": "#DC2626",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#05162A",
-    "text": "#F0F8FF",
-    "muted": "rgba(240, 248, 255, 0.72)",
+    "background": "#0E1117",
+    "text": "#F8FAFC",
+    "muted": "rgba(248, 250, 252, 0.72)",
     "watermark": "@ZofStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
@@ -46,20 +46,20 @@
   },
   "scenes": [
     {
-      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-1",
-      "kicker": "Stop making generic AI videos",
-      "title": "Stop making generic AI videos",
-      "subtitle": "Stop making generic AI videos",
-      "caption": "Stop making generic AI videos.",
-      "duration": 3.1,
-      "durationInFrames": 186,
-      "audioSrc": "audio/scene-1795456353529-8930e3da.mp3",
-      "audioDuration": 2.847,
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-1",
+      "kicker": "حلقة واحدة بس قبل النوم",
+      "title": "حلقة واحدة بس قبل النوم",
+      "subtitle": "حلقة واحدة بس قبل النوم",
+      "caption": "\"حلقة واحدة بس قبل النوم\"...",
+      "duration": 2.95,
+      "durationInFrames": 177,
+      "audioSrc": "audio/scene-1795468638919-69979e69.mp3",
+      "audioDuration": 2.691,
       "sfxSrc": "sfx/whoosh-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(135deg, rgba(186, 230, 253, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(220, 38, 38, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
       "character": {
         "pose": "explaining",
@@ -72,151 +72,217 @@
         {
           "type": "custom_tsx",
           "component": "Scene1",
-          "title": "Stop making generic AI videos",
-          "text": "Stop making generic AI videos",
+          "title": "حلقة واحدة بس قبل النوم",
+          "text": "حلقة واحدة بس قبل النوم",
           "keywords": [
-            "Stop making generic AI videos"
+            "حلقة واحدة بس قبل النوم"
           ],
           "data": {
-            "narration": "Stop making generic AI videos.",
+            "narration": "\"حلقة واحدة بس قبل النوم\"...",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-2",
-      "kicker": "Zof Studio turns one prompt into real",
-      "title": "Zof Studio turns one prompt into real",
-      "subtitle": "Zof Studio turns one prompt into real",
-      "caption": "Zof Studio turns one prompt into real, custom-coded motion graphics, powered by React and Remotion.",
-      "duration": 7.8,
-      "durationInFrames": 468,
-      "audioSrc": "audio/scene-1795456355923-8c2bad28.mp3",
-      "audioDuration": 7.549,
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-2",
+      "kicker": "جملة تبدأ بها السهرة وتنتهي بضياع الفجر",
+      "title": "جملة تبدأ بها السهرة وتنتهي بضياع الفجر",
+      "subtitle": "جملة تبدأ بها السهرة وتنتهي بضياع الفجر",
+      "caption": "جملة تبدأ بها السهرة، وتنتهي بضياع الفجر واليوم كله.",
+      "duration": 5.666666666666667,
+      "durationInFrames": 340,
+      "audioSrc": "audio/scene-1795468641552-52d53598.mp3",
+      "audioDuration": 5.407,
       "sfxSrc": "sfx/pop-soft.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-left",
-      "background": "linear-gradient(215deg, rgba(186, 230, 253, 0.16) 0%, transparent 62%)",
+      "background": "linear-gradient(215deg, rgba(220, 38, 38, 0.16) 0%, transparent 62%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene2",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene2",
-          "title": "Zof Studio turns one prompt into real",
-          "text": "Zof Studio turns one prompt",
+          "title": "جملة تبدأ بها السهرة وتنتهي بضياع الفجر",
+          "text": "جملة تبدأ بها السهرة وتنتهي",
           "keywords": [
-            "Zof Studio turns one prompt"
+            "جملة تبدأ بها السهرة وتنتهي"
           ],
           "data": {
-            "narration": "Zof Studio turns one prompt into real, custom-coded motion graphics, powered by React and Remotion.",
+            "narration": "جملة تبدأ بها السهرة، وتنتهي بضياع الفجر واليوم كله.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-3",
-      "kicker": "No rigid templates just charts B roll",
-      "title": "No rigid templates just charts B roll",
-      "subtitle": "No rigid templates just charts B roll",
-      "caption": "No rigid templates—just charts, B-roll, and animated scenes that actually look designed.",
-      "duration": 6.683333333333334,
-      "durationInFrames": 401,
-      "audioSrc": "audio/scene-1795456356787-da614840.mp3",
-      "audioDuration": 6.426,
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-3",
+      "kicker": "في أعمال مثل ناروتو الأمر لا يقف",
+      "title": "في أعمال مثل ناروتو الأمر لا يقف",
+      "subtitle": "في أعمال مثل ناروتو الأمر لا يقف",
+      "caption": "في أعمال مثل ناروتو، الأمر لا يقف عند الحماس والصداقة؛ بل تُبنى القصة على عقائد الشنتو والبوذية: تناسخ الأرواح، استدعاء آلهة الموت، والتوسل بقوى خفية...",
+      "duration": 14.466666666666667,
+      "durationInFrames": 868,
+      "audioSrc": "audio/scene-1795468643373-72b1f733.mp3",
+      "audioDuration": 14.211,
       "sfxSrc": "sfx/click-subtle.wav",
       "sfxAt": 0.15,
       "layout": "stacked",
       "camera": "push-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(186, 230, 253, 0.24) 0%, transparent 46%)",
+      "background": "radial-gradient(circle at 82% 18%, rgba(220, 38, 38, 0.24) 0%, transparent 46%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene3",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene3",
-          "title": "No rigid templates just charts B roll",
-          "text": "No rigid templates just charts",
+          "title": "في أعمال مثل ناروتو الأمر لا يقف",
+          "text": "في أعمال مثل ناروتو الأمر",
           "keywords": [
-            "No rigid templates just charts"
+            "في أعمال مثل ناروتو الأمر"
           ],
           "data": {
-            "narration": "No rigid templates—just charts, B-roll, and animated scenes that actually look designed.",
+            "narration": "في أعمال مثل ناروتو، الأمر لا يقف عند الحماس والصداقة؛ بل تُبنى القصة على عقائد الشنتو والبوذية: تناسخ الأرواح، استدعاء آلهة الموت، والتوسل بقوى خفية...",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-4",
-      "kicker": "Smart safe zones keep your captions perfectly",
-      "title": "Smart safe zones keep your captions perfectly",
-      "subtitle": "Smart safe zones keep your captions perfectly",
-      "caption": "Smart safe zones keep your captions perfectly framed for TikTok, Reels, and Shorts, with ElevenLabs voiceover synced to every beat.",
-      "duration": 9.016666666666667,
-      "durationInFrames": 541,
-      "audioSrc": "audio/scene-1795456357963-8809d458.mp3",
-      "audioDuration": 8.751,
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-4",
+      "kicker": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون",
+      "title": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون",
+      "subtitle": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون",
+      "caption": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون حذر.",
+      "duration": 6.05,
+      "durationInFrames": 363,
+      "audioSrc": "audio/scene-1795468644168-a186c235.mp3",
+      "audioDuration": 5.799,
       "sfxSrc": "sfx/type-tick.wav",
       "sfxAt": 0.15,
       "layout": "overlay",
       "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(186, 230, 253, 0.18) 100%)",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(220, 38, 38, 0.18) 100%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene4",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene4",
-          "title": "Smart safe zones keep your captions perfectly",
-          "text": "Smart safe zones keep your",
+          "title": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون",
+          "text": "شركيات تتسلل لقلبك وعقلك وأنت",
           "keywords": [
-            "Smart safe zones keep your"
+            "شركيات تتسلل لقلبك وعقلك وأنت"
           ],
           "data": {
-            "narration": "Smart safe zones keep your captions perfectly framed for TikTok, Reels, and Shorts, with ElevenLabs voiceover synced to every beat.",
+            "narration": "شركيات تتسلل لقلبك وعقلك وأنت مندمج دون حذر.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-2ed39717-341b-49b4-b0ed-6296a1fdabe6-5",
-      "kicker": "Zof Studio is free and open source",
-      "title": "Zof Studio is free and open source",
-      "subtitle": "Zof Studio is free and open source",
-      "caption": "Zof Studio is free and open source—run zofstudio, or try it at studio.zoedit.com.",
-      "duration": 8.066666666666666,
-      "durationInFrames": 484,
-      "audioSrc": "audio/scene-1795456358903-1fbe0051.mp3",
-      "audioDuration": 7.811,
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-5",
+      "kicker": "والخطر لا يقف عند العقيدة مئات الساعات",
+      "title": "والخطر لا يقف عند العقيدة مئات الساعات",
+      "subtitle": "والخطر لا يقف عند العقيدة مئات الساعات",
+      "caption": "والخطر لا يقف عند العقيدة؛ مئات الساعات تُستنزف في عالم خيالي، فتُؤخَّر الصلاة عن وقتها، ويموت الخشوع، ويضيع عمرك في بطولة وهمية.",
+      "duration": 13.183333333333334,
+      "durationInFrames": 791,
+      "audioSrc": "audio/scene-1795468645600-ddc7b488.mp3",
+      "audioDuration": 12.931,
       "sfxSrc": "sfx/slide.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-right",
-      "background": "linear-gradient(135deg, rgba(186, 230, 253, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(220, 38, 38, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
-      "character": {
-        "pose": "explaining",
-        "side": "left",
-        "accessory": "tie",
-        "enabled": true
-      },
       "generatedComponent": "Scene5",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene5",
-          "title": "Zof Studio is free and open source",
-          "text": "Zof Studio is free and",
+          "title": "والخطر لا يقف عند العقيدة مئات الساعات",
+          "text": "والخطر لا يقف عند العقيدة",
           "keywords": [
-            "Zof Studio is free and"
+            "والخطر لا يقف عند العقيدة"
           ],
           "data": {
-            "narration": "Zof Studio is free and open source—run zofstudio, or try it at studio.zoedit.com.",
+            "narration": "والخطر لا يقف عند العقيدة؛ مئات الساعات تُستنزف في عالم خيالي، فتُؤخَّر الصلاة عن وقتها، ويموت الخشوع، ويضيع عمرك في بطولة وهمية.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-6",
+      "kicker": "المسلم أغلى من أن يبيع عقيدته ووقته",
+      "title": "المسلم أغلى من أن يبيع عقيدته ووقته",
+      "subtitle": "المسلم أغلى من أن يبيع عقيدته ووقته",
+      "caption": "المسلم أغلى من أن يبيع عقيدته ووقته لخيال.",
+      "duration": 5.083333333333333,
+      "durationInFrames": 305,
+      "audioSrc": "audio/scene-1795468646264-ac438bef.mp3",
+      "audioDuration": 4.833,
+      "sfxSrc": "sfx/impact-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "centered",
+      "camera": "slow-zoom-in",
+      "background": "linear-gradient(215deg, rgba(220, 38, 38, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene6",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene6",
+          "title": "المسلم أغلى من أن يبيع عقيدته ووقته",
+          "text": "المسلم أغلى من أن يبيع",
+          "keywords": [
+            "المسلم أغلى من أن يبيع"
+          ],
+          "data": {
+            "narration": "المسلم أغلى من أن يبيع عقيدته ووقته لخيال.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-5fee5555-997d-4c28-977e-b545a1d68b44-7",
+      "kicker": "اجعل صلاتك خطا أحمر ولا تسمح لترفيه",
+      "title": "اجعل صلاتك خطا أحمر ولا تسمح لترفيه",
+      "subtitle": "اجعل صلاتك خطا أحمر ولا تسمح لترفيه",
+      "caption": "اجعل صلاتك خطاً أحمر، ولا تسمح لترفيه أن يسرقك من ربك.",
+      "duration": 6.45,
+      "durationInFrames": 387,
+      "audioSrc": "audio/scene-1795468647072-6c3f9211.mp3",
+      "audioDuration": 6.191,
+      "sfxSrc": "sfx/whoosh-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-left",
+      "background": "radial-gradient(circle at 82% 18%, rgba(220, 38, 38, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "ai-free",
+      "character": {
+        "pose": "explaining",
+        "side": "left",
+        "accessory": "badge",
+        "enabled": true
+      },
+      "generatedComponent": "Scene7",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene7",
+          "title": "اجعل صلاتك خطا أحمر ولا تسمح لترفيه",
+          "text": "اجعل صلاتك خطا أحمر ولا",
+          "keywords": [
+            "اجعل صلاتك خطا أحمر ولا"
+          ],
+          "data": {
+            "narration": "اجعل صلاتك خطاً أحمر، ولا تسمح لترفيه أن يسرقك من ربك.",
             "visualType": "custom-tsx"
           }
         }

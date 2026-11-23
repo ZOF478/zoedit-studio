@@ -11,6 +11,9 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 const PACKAGE_JSON = path.join(PROJECT_ROOT, 'package.json');
 const DASHBOARD_DIR = path.join(PROJECT_ROOT, 'dashboard');
 const SERVER_ENTRY = path.join(DASHBOARD_DIR, 'server.ts');
+const LOCAL_BIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '.bin');
+
+process.env.PATH = [LOCAL_BIN_DIR, process.env.PATH].filter(Boolean).join(path.delimiter);
 
 const DEFAULT_PORT = 4789;
 const DEFAULT_HOST = '127.0.0.1';

@@ -1,69 +1,54 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { ArrowUpRight, Code2, Terminal } from "lucide-react";
+import type { CSSProperties } from "react";
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { HeartCrack, TimerOff } from "lucide-react";
 import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
-  accentColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
+  accentColor: string; bgColor: string; textColor: string; mutedColor: string;
+  characterBody: string; characterFace: string; characterAccent: string; characterShadow: string;
+  isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[];
+  data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean;
 };
 
-const CLAMP = {
-  extrapolateLeft: "clamp" as const,
-  extrapolateRight: "clamp" as const,
-};
-
-const NODES = [
-  [12, 24],
-  [26, 44],
-  [44, 22],
-  [58, 50],
-  [72, 26],
-  [84, 46],
-  [38, 68],
-  [66, 70],
-];
-
-const COMMAND = "npx zofstudio";
+const CRIMSON = "#DC2626";
+const PRAYERS = ["الفجر", "الظهر", "العصر", "المغرب", "العشاء"];
+const CLAMP = { extrapolateLeft: "clamp" as const, extrapolateRight: "clamp" as const };
 
 export const Scene5 = (props: Props) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
-  const unit = Math.min(width, height);
-  const dur = props.durationInFrames;
+  const s = Math.min(width, height);
   const exit = interpolate(
     frame,
-    [Math.max(0, dur - 10), Math.max(1, dur - 1)],
+    [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
     CLAMP,
   );
-  const typed = COMMAND.slice(
-    0,
-    Math.max(0, Math.floor(interpolate(frame, [158, 200], [0, COMMAND.length], CLAMP))),
-  );
-  const axisX = 58;
-  const baseY = 190;
-  const ticks = [0, 20, 40, 60];
+  const progress = interpolate(frame, [140, 550], [0, 1], CLAMP);
+  const barEnter = (i: number) =>
+    spring({ frame: frame - (120 + i * 12), fps, config: { damping: 14, stiffness: 140 } });
+  const axisX = 150;
+  const top = 60;
+  const bottom = 350;
+  const barW = 56;
+  const gap = 44;
+  const start = 190;
+  const y = (v: number) => bottom - (v / 100) * (bottom - top);
+  const cardStyle: CSSProperties = {
+    position: "absolute" as const,
+    inset: 0,
+    margin: "auto",
+    borderRadius: s * 0.045,
+    padding: s * 0.032,
+    boxSizing: "border-box" as const,
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: s * 0.02,
+    border: `1px solid ${props.accentColor}44`,
+    background: `linear-gradient(165deg, ${props.accentColor}12, ${props.bgColor} 70%)`,
+    overflow: "hidden",
+  };
 
   return (
     <AbsoluteFill
@@ -73,228 +58,158 @@ export const Scene5 = (props: Props) => {
         direction: props.isRtl ? "rtl" : "ltr",
       }}
     >
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(circle at 76% 24%, ${props.accentColor}22, transparent 56%), radial-gradient(circle at 20% 76%, #255C9933, transparent 55%)`,
-        }}
-      />
-      <svg width={width} height={height} style={{ position: "absolute", inset: 0, opacity: 0.2 }}>
-        {NODES.map(([x, y], i) =>
-          NODES.slice(i + 1).map(([x2, y2], j) => (
-            <line
-              key={`l${i}-${j}`}
-              x1={(x / 100) * width}
-              y1={(y / 100) * height}
-              x2={(x2 / 100) * width}
-              y2={(y2 / 100) * height}
-              stroke={props.accentColor}
-              strokeWidth={1}
-              strokeDasharray="4 10"
-              strokeDashoffset={-(frame * 0.7) % 14}
-            />
-          )),
-        )}
-        {NODES.map(([x, y], i) => (
-          <circle
-            key={`n${i}`}
-            cx={(x / 100) * width}
-            cy={(y / 100) * height}
-            r={4 + Math.abs(Math.sin(frame / 36 + i)) * 3}
-            fill={props.accentColor}
-            opacity={0.6}
-          />
-        ))}
-      </svg>
-
+      <SceneSfx name="check" frame={560} volume={0.18} />
       <div
         style={{
           position: "absolute",
-          top: "7%",
-          left: 0,
-          right: 0,
-          padding: "0 48px",
-          maxWidth: "88%",
-          direction: "ltr",
-          textAlign: "left",
+          inset: 0,
           opacity: exit,
-          transform: `translateY(${(1 - exit) * -14}px)`,
+          transform: `translateY(${(1 - exit) * s * 0.012}px)`,
         }}
       >
         <div
           style={{
-            fontFamily: "monospace",
-            fontSize: 15,
-            letterSpacing: 4,
-            color: props.accentColor,
-            marginBottom: 12,
+            position: "absolute",
+            inset: 0,
+            background: `radial-gradient(circle at 30% 40%, ${CRIMSON}20, transparent 58%)`,
           }}
-        >
-          OPEN SOURCE · FOREVER FREE
-        </div>
+        />
         <div
           style={{
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontWeight: 900,
-            fontSize: unit * 0.06,
-            lineHeight: 1.12,
-            letterSpacing: -1.8,
-            color: props.textColor,
+            position: "absolute",
+            inset: 0,
+            opacity: 0.3,
+            backgroundImage: `linear-gradient(${props.textColor}0D 1px, transparent 1px), linear-gradient(90deg, ${props.textColor}0D 1px, transparent 1px)`,
+            backgroundSize: `${s * 0.1}px ${s * 0.1}px`,
+            transform: `translateY(${(frame * 0.1) % (s * 0.1)}px)`,
+          }}
+        />
+
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "22%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 48px",
+            boxSizing: "border-box",
+            textAlign: props.isRtl ? "right" : "left",
+            gap: s * 0.006,
           }}
         >
-          Zof Studio is free and{" "}
-          <span style={{ color: props.accentColor }}>open source.</span>
+          <div style={{ fontSize: s * 0.044, fontWeight: 900, color: props.textColor, lineHeight: 1.4 }}>
+            الخطر لا يقف عند العقيدة
+          </div>
+          <div style={{ width: s * 0.22, height: 4, background: CRIMSON, borderRadius: 999 }} />
         </div>
-      </div>
 
-      <div
-        style={{
-          position: "absolute",
-          top: "23%",
-          bottom: "27%",
-          left: "6%",
-          right: "6%",
-          opacity: exit,
-          transform: `translateY(${(1 - exit) * 16}px)`,
-        }}
-      >
-        <DepthStage style={{ flexDirection: "column", gap: unit * 0.02 }}>
-          <SpatialCard
-            enterFrame={8}
-            recedeFrame={150}
-            tiltY={props.isRtl ? -7 : 7}
-            shadowColor="rgba(2,6,23,0.65)"
-            style={{
-              width: "90%",
-              maxWidth: 660,
-              height: "56%",
-              borderRadius: 24,
-              padding: "16px 20px",
-              background: "rgba(240,248,255,0.05)",
-              border: `1px solid ${props.accentColor}55`,
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontFamily: "monospace", fontSize: 12, letterSpacing: 2.5, color: props.textColor }}>
-                COST TO LAUNCH
-              </span>
-              <span
-                style={{
-                  fontFamily: "monospace",
-                  fontSize: 10,
-                  letterSpacing: 1.5,
-                  color: props.accentColor,
-                  padding: "4px 8px",
-                  borderRadius: 99,
-                  border: `1px solid ${props.accentColor}55`,
-                }}
-              >
-                MIT LICENSE
-              </span>
-            </div>
-            <svg viewBox="0 0 560 230" style={{ width: "100%", height: "auto", display: "block" }}>
-              <line x1={axisX} y1={16} x2={axisX} y2={baseY} stroke={props.accentColor} strokeWidth={1.5} opacity={0.45} />
-              <line x1={axisX} y1={baseY} x2={530} y2={baseY} stroke={props.accentColor} strokeWidth={1.5} opacity={0.45} />
-              {ticks.map((tick) => {
-                const y = baseY - (tick / 60) * 150;
-                return (
-                  <g key={tick}>
-                    <line x1={axisX} y1={y} x2={530} y2={y} stroke={props.accentColor} strokeWidth={1} strokeDasharray="3 9" opacity={0.18} />
-                    <text x={axisX - 14} y={y + 4} textAnchor="end" fontSize={11} fill={props.mutedColor} fontFamily="monospace">
-                      ${tick}
-                    </text>
-                  </g>
-                );
-              })}
-              {[
-                { label: "Template tools", value: 49, x: 118, color: "rgba(240,248,255,0.3)", caption: "$49 / mo" },
-                { label: "Zof Studio", value: 0, x: 308, color: props.accentColor, caption: "FREE" },
-              ].map((bar, i) => {
-                const s = spring({ frame: frame - 24 - i * 12, fps, config: { damping: 16, stiffness: 105 } });
-                const h = bar.value === 0 ? 5 * s : (bar.value / 60) * 150 * s;
-                return (
-                  <g key={bar.label}>
-                    <rect x={bar.x} y={baseY - h} width={104} height={h} rx={7} fill={bar.color} />
-                    <text x={bar.x + 52} y={baseY - h - 10} textAnchor="middle" fontSize={14} fontWeight={800} fill={props.textColor} fontFamily="monospace">
-                      {bar.caption}
-                    </text>
-                    <text x={bar.x + 52} y={baseY + 22} textAnchor="middle" fontSize={12} fill={props.mutedColor} fontFamily="monospace">
-                      {bar.label}
-                    </text>
-                  </g>
-                );
-              })}
-              <text x={axisX} y={16} fontSize={10} fill={props.mutedColor} fontFamily="monospace">
-                USD / MONTH
-              </text>
-            </svg>
-          </SpatialCard>
+        <div style={{ position: "absolute", top: "22%", height: "50%", left: 0, right: 0 }}>
+          <DepthStage>
+            <SpatialCard
+              enterFrame={0}
+              recedeFrame={120}
+              tiltX={-3}
+              tiltY={props.isRtl ? 5 : -5}
+              style={{ ...cardStyle, width: "64%", height: "72%" }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: s * 0.02, color: CRIMSON }}>
+                <TimerOff size={s * 0.07} color={CRIMSON} />
+                <span style={{ fontSize: s * 0.022, fontWeight: 800, color: props.mutedColor }}>في عالم خيالي</span>
+              </div>
+              <div style={{ fontSize: s * 0.16, fontWeight: 900, color: props.textColor, lineHeight: 1 }}>٧٢٠</div>
+              <div style={{ fontSize: s * 0.04, fontWeight: 900, color: props.accentColor }}>حلقة</div>
+              <div style={{ fontSize: s * 0.024, fontWeight: 700, color: props.mutedColor }}>مئات الساعات</div>
+            </SpatialCard>
 
-          <SpatialCard
-            enterFrame={150}
-            tiltY={props.isRtl ? 5 : -5}
-            shadowColor="rgba(0,0,0,0.7)"
-            style={{
-              width: "90%",
-              maxWidth: 620,
-              borderRadius: 20,
-              padding: "14px 18px",
-              background: "rgba(5,22,42,0.96)",
-              border: `1px solid ${props.accentColor}88`,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#5AA9E6" }} />
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#BAE6FD", opacity: 0.7 }} />
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#255C99" }} />
-              <Terminal size={14} color={props.mutedColor} style={{ marginLeft: 6 }} />
-              <span style={{ fontFamily: "monospace", fontSize: 10, color: props.mutedColor, letterSpacing: 1 }}>bash · zof-studio</span>
-            </div>
-            <div style={{ fontFamily: "monospace", fontSize: unit * 0.03, color: props.textColor, letterSpacing: 0.5 }}>
-              <span style={{ color: props.accentColor, marginRight: 8 }}>$</span>
-              {typed}
-              <span style={{ color: props.accentColor, opacity: Math.sin(frame / 7) > 0 ? 1 : 0 }}>▌</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
-              <ArrowUpRight size={Math.round(unit * 0.022)} color={props.accentColor} />
-              <span style={{ fontSize: unit * 0.02, fontWeight: 800, color: props.textColor }}>studio.zoedit.com</span>
-              <span style={{ marginLeft: "auto", fontFamily: "monospace", fontSize: unit * 0.011, color: props.mutedColor }}>
-                TRY IT FREE
-              </span>
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 12 }}>
-              {["OPEN SOURCE", "ZERO COST", "COMMUNITY"].map((chip, i) => {
-                const s = spring({ frame: frame - 220 - i * 12, fps, config: { damping: 14, stiffness: 130 } });
-                return (
-                  <span
-                    key={chip}
+            <SpatialCard
+              enterFrame={120}
+              recedeFrame={560}
+              tiltX={-2}
+              tiltY={props.isRtl ? -4 : 4}
+              style={{ ...cardStyle, width: "90%", height: "88%" }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: s * 0.008 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", color: props.textColor, fontSize: s * 0.02, fontWeight: 800 }}>
+                  <span>تقدم الحلقات</span>
+                  <span style={{ color: props.accentColor }}>٧٢٠ حلقة</span>
+                </div>
+                <div style={{ height: s * 0.012, background: `${props.textColor}15`, borderRadius: 999, overflow: "hidden" }}>
+                  <div
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      opacity: s,
-                      transform: `translateY(${interpolate(s, [0, 1], [10, 0], CLAMP)}px)`,
-                      fontFamily: "monospace",
-                      fontSize: 10,
-                      letterSpacing: 1,
-                      color: props.textColor,
-                      padding: "5px 9px",
-                      borderRadius: 99,
-                      border: `1px solid ${props.accentColor}44`,
-                      background: "rgba(90,169,230,0.1)",
+                      width: `${Math.min(100, progress * 100)}%`,
+                      height: "100%",
+                      borderRadius: 999,
+                      background: `linear-gradient(90deg, ${props.accentColor}, ${CRIMSON})`,
                     }}
-                  >
-                    {i === 0 && <Code2 size={11} color={props.accentColor} />}
-                    {chip}
-                  </span>
-                );
-              })}
-            </div>
-          </SpatialCard>
-        </DepthStage>
-      </div>
+                  />
+                </div>
+              </div>
+              <div style={{ display: "flex", width: "100%", flex: 1, minHeight: 0 }}>
+                <svg viewBox="0 0 700 420" style={{ width: "100%", height: "100%" }}>
+                  {[0, 50, 100].map((t) => (
+                    <g key={t}>
+                      <line x1={axisX} x2={670} y1={y(t)} y2={y(t)} stroke={`${props.textColor}18`} strokeWidth="1" />
+                      <text x={axisX - 14} y={y(t) + 5} textAnchor="end" fill={props.mutedColor} fontSize="16">
+                        {t}٪
+                      </text>
+                    </g>
+                  ))}
+                  <line x1={axisX} x2={axisX} y1={top} y2={bottom} stroke={`${props.textColor}44`} strokeWidth="2" />
+                  <text x={axisX} y={36} textAnchor="start" fill={props.mutedColor} fontSize="16">
+                    نسبة الالتزام
+                  </text>
+                  <line x1={axisX} x2={670} y1={y(20)} y2={y(20)} stroke={CRIMSON} strokeWidth="2" strokeDasharray="6 6" opacity={0.7} />
+                  <text x={axisX - 14} y={y(20) - 6} textAnchor="end" fill={CRIMSON} fontSize="14">
+                    خط الصلاة
+                  </text>
+                  {PRAYERS.map((name, i) => {
+                    const enter = barEnter(i);
+                    const h = Math.max(0, (100 - progress * 92) * enter);
+                    const x = start + i * (barW + gap);
+                    return (
+                      <g key={name}>
+                        <rect x={x} y={top} width={barW} height={bottom - top} rx={12} fill={`${props.textColor}08`} />
+                        <rect
+                          x={x}
+                          y={y(h)}
+                          width={barW}
+                          height={y(0) - y(h)}
+                          rx={12}
+                          fill={i === 4 ? CRIMSON : props.accentColor}
+                          opacity={0.88}
+                        />
+                        <text x={x + barW / 2} y={bottom + 28} textAnchor="middle" fill={props.textColor} fontSize="16">
+                          {name}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+            </SpatialCard>
 
-      <SceneSfx name="pop" frame={150} volume={0.18} />
+            <SpatialCard
+              enterFrame={560}
+              tiltX={-2}
+              tiltY={props.isRtl ? -5 : 5}
+              style={{ ...cardStyle, width: "72%", height: "68%" }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: s * 0.018, width: "100%", height: "100%" }}>
+                <HeartCrack size={s * 0.11} color={CRIMSON} />
+                <div style={{ fontSize: s * 0.05, fontWeight: 900, color: props.textColor }}>الخشوع يموت</div>
+                <div style={{ fontSize: s * 0.026, fontWeight: 800, color: props.mutedColor }}>والصلاة تُؤخّر</div>
+                <div style={{ fontSize: s * 0.018, fontWeight: 800, color: CRIMSON, border: `1px solid ${CRIMSON}55`, padding: `${s * 0.008}px ${s * 0.018}px`, borderRadius: 999 }}>
+                  النتيجة
+                </div>
+              </div>
+            </SpatialCard>
+          </DepthStage>
+        </div>
+      </div>
     </AbsoluteFill>
   );
 };

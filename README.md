@@ -57,7 +57,7 @@ npm run setup
 npm start
 ```
 
-`npm run setup` installs both the Remotion project dependencies and the dashboard dependencies, then links the `zofstudio` command. If `npm link` cannot write to the global npm prefix, it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`) without failing setup. `npm start` launches the smart CLI and opens the dashboard when possible.
+`npm run setup` installs everything in one step: the Remotion project dependencies, the dashboard dependencies, the bundled OpenCode CLI (via the `opencode-ai` package), and the linked `zofstudio` command. If `npm link` cannot write to the global npm prefix, it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`) without failing setup. `npm start` launches the smart CLI and opens the dashboard when possible.
 
 To link the command manually:
 
@@ -86,7 +86,7 @@ Every provider is optional and independent. Open the dashboard, choose **API & K
 | --- | --- | --- |
 | OpenCode Free Models | Free scene-writing models (via OpenCode) | <https://opencode.ai> |
 | DeepSeek | Low-cost structured script generation | <https://platform.deepseek.com/api_keys> |
-| ElevenLabs | Voiceover, sound effects, and V4 voices | <https://elevenlabs.io/app/settings/api-keys> |
+| ElevenLabs | Voiceover, sound effects, and V4 voices | <https://elevenlabs.io/app/developers/api-keys> |
 | OpenRouter | Access to hundreds of models with one key | <https://openrouter.ai/keys> |
 | Kie.ai | OpenAI-compatible chat completions | <https://kie.ai/api-key> |
 | Custom provider | Any OpenAI-compatible endpoint (Groq, Together, Ollama, vLLM) | Your own endpoint |
@@ -97,8 +97,9 @@ Every provider is optional and independent. Open the dashboard, choose **API & K
 
 OpenCode free models are provided by **OpenCode and its upstream partners** — they are **not hosted or owned by Zof Studio**. They may have rate limits or change availability at any time. No Zof Studio account is required.
 
+OpenCode CLI is **already bundled and installed automatically** with `npm run setup` — there is no separate manual install. Zof Studio prepends its bundled `node_modules/.bin` to `PATH`, so the `opencode` binary is always resolved automatically. Just sign in to enable the free models:
+
 ```bash
-npm i -g opencode-ai
 opencode auth login
 ```
 
@@ -113,9 +114,9 @@ Then select **OpenCode Free Models** in Zof Studio. Website: <https://opencode.a
 
 ### 3. ElevenLabs
 
-1. Open <https://elevenlabs.io/app/settings/api-keys>.
+1. Open <https://elevenlabs.io/app/developers/api-keys>.
 2. Generate an API key (`sk_...`).
-3. Grant **Text-to-Speech** and **Sound Effects** permissions.
+3. Grant the **Text to Speech Access**, **Models Access**, **User Access**, and **History Read** permissions. These permissions let Zof Studio's built-in usage and history viewer display your remaining quota and past generations.
 4. Paste the key into Zof Studio under **API & Keys**.
 
 ### 4. OpenRouter

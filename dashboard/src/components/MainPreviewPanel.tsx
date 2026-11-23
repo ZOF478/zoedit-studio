@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { MonitorPlay, Sparkles } from 'lucide-react';
 import { useI18n } from '../i18n';
-import type { BrandKit, CaptionAnimationStyle, CaptionColors } from '../types/studio';
+import type {
+  BrandKit,
+  CaptionAnimationStyle,
+  CaptionColors,
+  WatermarkPosition,
+} from '../types/studio';
 import { LivePreviewStage } from './LivePreviewStage';
 import { LiveSandboxStage } from './LiveSandboxStage';
 
@@ -20,6 +25,9 @@ interface MainPreviewPanelProps {
   captionColors: CaptionColors;
   captionBottomOffset: number;
   captionsEnabled: boolean;
+  watermarkEnabled: boolean;
+  watermarkText: string;
+  watermarkPosition: WatermarkPosition;
   respectSafeZone: boolean;
 }
 
@@ -36,6 +44,9 @@ export function MainPreviewPanel({
   captionColors,
   captionBottomOffset,
   captionsEnabled,
+  watermarkEnabled,
+  watermarkText,
+  watermarkPosition,
   respectSafeZone,
 }: MainPreviewPanelProps) {
   const { t } = useI18n();
@@ -104,6 +115,9 @@ export function MainPreviewPanel({
           captionColors={captionColors}
           captionBottomOffset={captionBottomOffset}
           captionsEnabled={captionsEnabled}
+          watermarkEnabled={watermarkEnabled}
+          watermarkText={watermarkText}
+          watermarkPosition={watermarkPosition}
           respectSafeZone={respectSafeZone}
           fps={fps}
           embedded

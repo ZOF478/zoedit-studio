@@ -1322,6 +1322,9 @@ export default function App() {
               captionColors={captionColors}
               captionBottomOffset={captionBottomOffset}
               captionsEnabled={captionsEnabled && voiceConfig.enabled}
+              watermarkEnabled={brandKit.watermarkEnabled}
+              watermarkText={brandKit.watermark}
+              watermarkPosition={brandKit.watermarkPosition ?? 'top-left'}
               respectSafeZone={respectSafeZone}
             />
 

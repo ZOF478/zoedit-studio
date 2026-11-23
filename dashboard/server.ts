@@ -23,6 +23,9 @@ import {
 
 const DASHBOARD_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(DASHBOARD_DIR, '..');
+const LOCAL_BIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '.bin');
+
+process.env.PATH = [LOCAL_BIN_DIR, process.env.PATH].filter(Boolean).join(path.delimiter);
 const DATA_FILE = path.join(PROJECT_ROOT, 'src', 'data.json');
 const AUDIO_DIR = path.join(PROJECT_ROOT, 'public', 'audio');
 const SFX_DIR = path.join(PROJECT_ROOT, 'public', 'sfx');
@@ -445,12 +448,16 @@ const HOST = process.env.HOST || '127.0.0.1';
 const REMOTION_STUDIO_RENDER_PORT = 9578;
 const REMOTION_STUDIO_UI_PORT = Number(process.env.REMOTION_STUDIO_PORT) || 3333;
 const OPENCODE_RUN_TIMEOUT_MS = 600000;
+const RENDER_STALL_TIMEOUT_MS = 120_000;
+const RENDER_STALL_CHECK_INTERVAL_MS = 5_000;
 const STRICT_EFFICIENCY_RULE =
   'STRICT EFFICIENCY & NO-LOOP RULE: Write each scene file cleanly in ONE single pass (keep each scene concise, under ~220 lines of clean TypeScript). After writing all scene files and `index.ts`, run at most ONE `npx tsc --noEmit` check. Fix actual TypeScript compiler errors ONLY if any exist, and exit immediately. NEVER run repeated cosmetic micro-edits on font sizes, padding, colors, or coordinates after writing a file.';
 const CRISP_VECTOR_MAP_RULE =
   '- When the prompt requests a map or geographical route, use real geographic data, never hand-guessed borders: import worldData from "world-atlas/countries-110m.json", convert with feature() from "topojson-client", and project with geoMercator()/geoNaturalEarth1() + geoPath() from "d3-geo". Add a subtle coordinate grid, a glowing animated route curve (evolvePath from "@remotion/paths"), and crisp lucide-react pins sized to the target aspect ratio (16:9 or 9:16).';
 const ZOF_LIBRARY_CAPABILITIES = [
   '## INSTALLED VISUAL LIBRARIES (available for dynamic scene generation)',
+  '- `@iconify/react` + `simple-icons` via `<SmartIcon />` from `../components/SmartIcon`: resolves ANY English keyword or brand name into a crisp vector icon or logo. It searches the Iconify API, fetches clean SVG markup, caches it in memory, blocks frames with `delayRender` for at most 4 seconds, and falls back to a styled monogram badge so headless rendering never stalls or shows a broken image.',
+  '- `SilhouetteActor` from `../components/SilhouetteActor`: a completely featureless human silhouette (no eyes, mouth, nose, or ears) with `standing`, `praying-qiyam`, `praying-sujood`, `sitting-screen`, and self-animating `walking` poses.',
   '- `lucide-react`: crisp UI, tech, business, and map icons (for example `import { MapPin, Plane, Navigation, ShieldCheck, TrendingUp } from "lucide-react";`). Never hand-code icon `<path>` elements when a lucide icon exists.',
   '- `d3-geo` + `topojson-client` + `world-atlas/countries-110m.json`: accurate real-world geographic country borders, projections (`geoMercator` / `geoNaturalEarth1`), and animated coordinate routes.',
   '- `@remotion/paths` & `@remotion/shapes`: mathematical SVG path interpolation, charts, and geometric shapes.',
@@ -458,8 +465,23 @@ const ZOF_LIBRARY_CAPABILITIES = [
   '- `@remotion/noise`: organic subtle motion and natural drift.',
   '',
   '## STRICT NO-FALLBACK RULE (apply on the first pass)',
+  '- NEVER hand-draw crude geometric shapes or stickmen from scratch to represent real objects, religious symbols, clocks, devices, or brands. No guessed circles, rectangles, or `<path>` approximations for a mosque, clock, shield, logo, or human.',
   '- NEVER draw continents, country borders, map coastlines, or recognizable brand/UI icons manually with guessed SVG `<path>` coordinates.',
-  '- If a real library is whitelisted for the job (world-atlas + d3-geo for maps, lucide-react for icons), hand-drawing an approximation instead is a failure. Use the exact patterns below.',
+  '- If a real library or component is whitelisted for the job (world-atlas + d3-geo for maps, lucide-react for UI icons, SmartIcon for symbols/brands, SilhouetteActor for human action), hand-drawing an approximation instead is a failure. Use the exact patterns below.',
+  '',
+  '### Symbols, concepts & brand logos (SmartIcon)',
+  'import { SmartIcon } from "../components/SmartIcon";',
+  '<SmartIcon query="mosque" size={64} color={props.accentColor} />',
+  '<SmartIcon query="hourglass" size={48} color={props.accentColor} />',
+  '<SmartIcon query="shield check" size={48} color={props.accentColor} />',
+  '<SmartIcon query="youtube" brand size={56} color={props.textColor} />',
+  '<SmartIcon query="tiktok" brand size={56} />',
+  'Pass ANY English keyword or brand name as `query` (for example "mosque", "facebook", "hourglass", "sword", "brain", "tiktok"). SmartIcon searches Iconify and resolves the icon automatically. Set `brand` to prefer official logos. You may also pass an exact Iconify ID such as `query="mdi:mosque"` or `query="logos:facebook"`. SmartIcon accepts `query`, `size`, `color`, `brand`, and optional `style`/`className`/`title`. NEVER hand-draw the symbol or logo yourself.',
+  '',
+  '### Human action (SilhouetteActor)',
+  'import { SilhouetteActor } from "../components/SilhouetteActor";',
+  '<SilhouetteActor pose="praying-qiyam" color={props.characterBody} size={340} />',
+  'Poses: "standing" | "praying-qiyam" | "praying-sujood" | "sitting-screen" | "walking". Size is the rendered height in pixels; the silhouette breathes and strides on its own via useCurrentFrame(). The silhouette is strictly featureless, so never add eyes, mouth, nose, or ears.',
   '',
   '### Real-world maps (d3-geo + topojson-client + world-atlas)',
   'import worldData from "world-atlas/countries-110m.json";',
@@ -4679,6 +4701,35 @@ function runRemotionRender(
 
     let lastProgress = 0;
     let stderrBuffer = '';
+    let settled = false;
+    let lastFrameProgressAt = Date.now();
+    let stallWatchdog: ReturnType<typeof setInterval> | null = null;
+
+    const stopStallWatchdog = () => {
+      if (stallWatchdog !== null) {
+        clearInterval(stallWatchdog);
+        stallWatchdog = null;
+      }
+    };
+
+    const terminateStalledRender = (reason: string) => {
+      if (settled) return;
+      settled = true;
+      stopStallWatchdog();
+      onLog('error', reason);
+      try {
+        if (child.pid && process.platform !== 'win32') {
+          process.kill(-child.pid, 'SIGTERM');
+        } else {
+          child.kill('SIGTERM');
+        }
+      } catch {
+        // Process already exited.
+      }
+      const forceKill = setTimeout(() => killProcessTree(child), 5_000);
+      forceKill.unref?.();
+      reject(new Error(reason));
+    };
 
     const handleLine = (line: string) => {
       const trimmed = line.trim();
@@ -4686,6 +4737,7 @@ function runRemotionRender(
 
       const fraction = trimmed.match(/(\d+)\s*\/\s*(\d+)/);
       if (fraction) {
+        lastFrameProgressAt = Date.now();
         const rendered = Number(fraction[1]);
         const total = Number(fraction[2]);
         if (total > 0) {
@@ -4699,6 +4751,7 @@ function runRemotionRender(
 
       const percent = trimmed.match(/(\d{1,3})%/);
       if (percent) {
+        lastFrameProgressAt = Date.now();
         const pct = Math.min(99, Math.max(lastProgress, Number(percent[1])));
         if (pct !== lastProgress) {
           lastProgress = pct;
@@ -4730,12 +4783,29 @@ function runRemotionRender(
       for (const line of lines) handleLine(line);
     });
 
+    stallWatchdog = setInterval(() => {
+      if (settled) return;
+      if (Date.now() - lastFrameProgressAt >= RENDER_STALL_TIMEOUT_MS) {
+        terminateStalledRender(
+          `توقف عرض Remotion: لم تتقدّم معالجة الإطارات لمدة ${Math.round(
+            RENDER_STALL_TIMEOUT_MS / 1000,
+          )} ثانية. تم إنهاء العملية المتوقفة لتجنب التعليق.`,
+        );
+      }
+    }, RENDER_STALL_CHECK_INTERVAL_MS);
+
     child.on('error', (error) => {
+      if (settled) return;
+      settled = true;
+      stopStallWatchdog();
       reject(error);
     });
 
     child.on('close', (code) => {
       if (stderrBuffer.trim()) handleLine(stderrBuffer);
+      if (settled) return;
+      settled = true;
+      stopStallWatchdog();
       if (code !== 0) {
         reject(new Error(`Remotion render exited with code ${code ?? 'unknown'}`));
         return;
@@ -5758,10 +5828,16 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   'react',
   'remotion',
   '../components/Stickman',
+  '../components/SilhouetteActor',
+  '../../src/components/SilhouetteActor',
+  '../components/SmartIcon',
+  '../../src/components/SmartIcon',
   '../components/SceneSfx',
   '../../src/components/SceneSfx',
   '../components/Depth25D',
   '../../src/components/Depth25D',
+  '@iconify/react',
+  'simple-icons',
   '@remotion/google-fonts',
   '@remotion/noise',
   '@remotion/paths',
@@ -6121,13 +6197,13 @@ async function requestCustomSceneCode(options: {
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".',
+    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".',
     'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
     'type Props = { accentColor: string; bgColor: string; textColor: string; mutedColor: string; characterBody: string; characterFace: string; characterAccent: string; characterShadow: string; isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[]; data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean; };',
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
-    'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman component only when showCharacter is true.',
+    'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman only when showCharacter is true; for human actions (praying, prostrating, sitting at a screen, standing, walking) use <SilhouetteActor pose="..." /> instead. For symbols, concepts, clocks, religious symbols, and brand logos always use <SmartIcon query="..." /> (add brand for company logos) — never hand-draw them from guessed shapes.',
     ZOF_LIBRARY_CAPABILITIES,
     'Strictly apply accentColor and bgColor. Respect isRtl for text direction and composition.',
     `Write every visible label in ${languageMeta.name} (${languageMeta.native}), direction ${languageMeta.dir.toUpperCase()}; never leave English placeholders such as TIME or VALUE when the video language is not English.`,
@@ -7223,8 +7299,8 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     : [];
 
   const allowedImportsRule = depth25DEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.';
   const { width, height } = aspectDimensions(job.aspectRatio);
   const watermarkRule = job.brandKit.watermarkEnabled
     ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
@@ -7338,8 +7414,22 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- Follow the per-scene "character" line in the scene list. When it says NONE, build the scene entirely from kinetic motion graphics with no Stickman figure, no silhouette, and no stand-in human shape.',
     '- Never add the Stickman as decoration or default filler, and never force it into data, chart, comparison, or process scenes.',
     '',
+    '## ICONS, BRAND LOGOS & HUMAN SILHOUETTES (mandatory)',
+    '- NEVER draw crude stickmen or hand-coded geometric circles/rectangles to represent real objects, religious symbols, electronics, or brand logos. Do not approximate a mosque, clock, phone, shield, or brand mark with guessed circles/rectangles/paths.',
+    '- Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, electronics, and company logos:',
+    '  import { SmartIcon } from "../components/SmartIcon";',
+    '  <SmartIcon query="mosque" size={64} color={props.accentColor} />',
+    '  <SmartIcon query="hourglass" size={48} color={props.accentColor} />',
+    '  <SmartIcon query="shield check" size={48} color={props.accentColor} />',
+    '  <SmartIcon query="youtube" brand size={56} color={props.textColor} />',
+    '  Pass ANY English keyword or brand name to `query` (mosque, facebook, hourglass, sword, brain, tiktok). Set `brand` for company logos. An exact Iconify ID like `query="mdi:mosque"` or `query="logos:facebook"` also works. SmartIcon searches Iconify, caches the SVG, and falls back to a clean monogram badge so headless rendering never stalls.',
+    '- Use <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures (praying, prostrating, sitting at a screen, standing, walking):',
+    '  import { SilhouetteActor } from "../components/SilhouetteActor";',
+    '  <SilhouetteActor pose="praying-qiyam" color={props.characterBody} size={340} />',
+    '  poses: "standing" | "praying-qiyam" | "praying-sujood" | "sitting-screen" | "walking". Size is the rendered height in pixels; the silhouette animates itself with useCurrentFrame(). It is strictly featureless — never add eyes, mouth, nose, or ears.',
+    '',
     '## SPEED CONTRACT — DO NOT INSPECT THE CODEBASE',
-    '- Do NOT run `cat`, `sed`, `head`, `tail`, `rg`, `grep`, `ls`, or any file-reading command on src/components/Stickman.tsx, src/types.ts, src/theme.ts, src/config.ts, src/data.json, or package.json.',
+    '- Do NOT run `cat`, `sed`, `head`, `tail`, `rg`, `grep`, `ls`, or any file-reading command on src/components/Stickman.tsx, src/components/SilhouetteActor.tsx, src/components/SmartIcon.tsx, src/types.ts, src/theme.ts, src/config.ts, src/data.json, or package.json.',
     '- After writing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run `npm`, build, test, or render commands. The host validates and renders after you finish.',
     '- Go straight to writing the files below with the write tool. No exploration step, no plan file.',
     '',
@@ -7506,8 +7596,8 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
   const { width, height } = aspectDimensions(job.aspectRatio);
   const depth25DTweakEnabled = job.enable25D === true;
   const allowedTweakImports = depth25DTweakEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SceneSfx", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".';
 
   return [
     'You are the surgical Remotion scene editor for Zof Studio.',
@@ -7541,7 +7631,8 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
     `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
     '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. At most one subtle `<SceneSfx name="pop|check|whoosh|sparkle" />` may be preserved per scene at volume 0.15–0.22, never at frame 0 or at the scene ending; remove any bell/chime/ding/success sound.',
-    '- Keep the Stickman inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
+    '- Keep the Stickman or SilhouetteActor inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
+    '- Never hand-draw symbols, religious icons, clocks, devices, or brand logos. Use `import { SmartIcon } from "../components/SmartIcon";` with any English keyword or brand name plus `brand` for logos. For human action use `import { SilhouetteActor } from "../components/SilhouetteActor";` with poses standing, praying-qiyam, praying-sujood, sitting-screen, or walking; keep it strictly featureless.',
     CRISP_VECTOR_MAP_RULE,
     ...cleanBrollPromptSection(job.cleanBrollMode),
     '- Use the exact active palette hex values from the scene props; never replace them with #1D150C or #E77B40 fallbacks.',
@@ -9675,7 +9766,7 @@ async function startServer() {
       'Preserve every non-target scene exactly as-is. Never touch narration, title, durationSec, audio files, audioSrc, audioDataUrl, or audioDuration.',
       'Only update surgical visual fields: pose, visualType, visualLabel, visualValue, visualPrompt, visualSvg, layout, camera, background, backgroundPreset, visualKeywords, motif, showCharacter, customCodeBrief, characters, characterLayout, ambientScene, sfxCues, sfxAt.',
       'Keep the overall video duration identical. Do not change durationSec.',
-      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "../components/Stickman", and "../components/SceneSfx". Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
+      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "@iconify/react", "simple-icons", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", and "../components/SceneSfx". Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, and company logos, and <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures — never hand-draw them. Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
       'The TSX module must export exactly one named component with the same component name as the existing generatedComponent when provided.',
       'Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so the segment stays animated. Respect RTL Arabic text when language is ar.',
       `Prioritize the requested aspect ratio (${aspectRatio}) while keeping the TSX responsive: read width/height from useVideoConfig(), derive isLandscape = width > height and isSquare = width === height, and use percentage/flex containers with minHeight 0 so switching to 9:16, 16:9, or 1:1 never clips or overflows.`,

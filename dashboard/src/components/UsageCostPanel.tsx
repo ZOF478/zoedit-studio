@@ -347,7 +347,7 @@ export function UsageCostPanel({
         <p className="flex items-start gap-2 text-[11px] leading-relaxed text-slate-400">
           <Film className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
           {t(
-            'التصيير يتم محلياً عبر Remotion لذلك تكلفة الإطارات $0.00 — تُحتسب فقط استدعاءات الذكاء الاصطناعي وElevenLabs.',
+            'التصيير يتم محلياً عبر Remotion لذلك تكلفة الإطارات $0.00 — تُحتسب فقط استدعاءات الذكاء الاصطناعي و ElevenLabs.',
             'Rendering runs locally through Remotion, so frames cost $0.00 — only AI and ElevenLabs calls are billed.'
           )}
         </p>
