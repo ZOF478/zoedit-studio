@@ -43,28 +43,90 @@ Zof Studio is built with care on:
 - **[OpenCode](https://opencode.ai)** — autonomous scene-coding agent.
 - **[ElevenLabs](https://elevenlabs.io)** — voiceover and sound design.
 
-## Requirements
+## Prerequisites
 
-- Node.js `20.19+`, `22.13+`, or `24+`
-- npm
+- **Node.js v20+** — use `20.19+`, `22.13+`, or `24+`.
+- **npm** — included with Node.js.
+- **FFmpeg** — required for video rendering and audio muxing.
 
-## Quick Start
+Verify everything in one command:
 
 ```bash
-git clone https://github.com/ZOF478/zofstudio.git
-cd zofstudio
-npm run setup
-npm start
+node -v && ffmpeg -version
 ```
 
-`npm run setup` installs everything in one step: the Remotion project dependencies, the dashboard dependencies, the bundled OpenCode CLI (via the `opencode-ai` package), and the linked `zofstudio` command. If `npm link` cannot write to the global npm prefix, it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`) without failing setup. `npm start` launches the smart CLI and opens the dashboard when possible.
+FFmpeg install examples: `brew install ffmpeg` (macOS), `sudo apt install ffmpeg` (Debian/Ubuntu), `winget install Gyan.FFmpeg` (Windows).
 
-To link the command manually:
+## Installation & Quick Start
+
+### Step 1 — Clone & install globally
 
 ```bash
-npm link
+git clone https://github.com/ZOF478/zofstudio.git zof-studio
+cd zof-studio
+npm install -g .
+```
+
+`npm install -g .` registers the `zofstudio` command in the global PATH on Windows, macOS, and Linux. Its `postinstall` step automatically installs the dashboard dependencies and verifies the global command, so the first launch works immediately. If the global npm prefix is not writable, run `npm run setup`; it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`). For development from a clone, `npm link` links the same command without reinstalling.
+
+### Step 2 — Run on a local computer (Windows / macOS / Linux)
+
+```bash
 zofstudio
 ```
+
+Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Remotion assets relative to the package installation directory. It binds only to `127.0.0.1`, starts the dashboard at `http://localhost:4789`, and opens your browser automatically once `/api/health` is ready. Closing the terminal cleanly stops the dashboard and all background Remotion processes.
+
+### Step 3 — Run on a remote VPS / server (secure SSH tunnel)
+
+`zofstudio` stays bound to `127.0.0.1` by design, so the dashboard is never exposed directly to the internet. Access it through an encrypted SSH tunnel.
+
+1. **From your local computer terminal**, open the tunnel:
+
+   ```bash
+   ssh -L 4789:127.0.0.1:4789 -L 3333:127.0.0.1:3333 user@your-server-ip
+   ```
+
+2. **Inside that SSH session**, install once and run `zofstudio`:
+
+   ```bash
+   git clone https://github.com/ZOF478/zofstudio.git zof-studio
+   cd zof-studio
+   npm install -g .
+   zofstudio
+   ```
+
+3. **Open `http://localhost:4789` in your local browser.** The CLI prints the exact tunnel command for your server, including the detected IP and both ports.
+
+### CLI options & troubleshooting
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--port <number>` | `4789` | Dashboard port. If busy, the CLI scans `4789`–`4809` for the first free port. |
+| `--no-open` | off | Do not open a browser. Useful for VPS, containers, and headless machines. |
+| `--open` | off | Force-open the browser even when an SSH session is detected. |
+| `--help`, `-h` | — | Print usage, flags, and examples. |
+| `--version`, `-v` | — | Print the installed version. |
+
+The CLI reuses an already-running Zof Studio instance and automatically reclaims stale Zof Studio listeners. Remotion Studio uses the first free port in `3333`–`3353`. The dashboard is served at `/`; open `/studio/` to launch Remotion Studio.
+
+If a port still looks stuck, reclaim it manually:
+
+```bash
+# macOS / Linux
+lsof -ti tcp:4789 | xargs kill -9
+# or
+fuser -k 4789/tcp
+```
+
+```powershell
+# Windows PowerShell
+Get-NetTCPConnection -LocalPort 4789 |
+  Select-Object -ExpandProperty OwningProcess |
+  ForEach-Object { Stop-Process -Id $_ -Force }
+```
+
+### Provider keys
 
 Configure your provider keys in either of two ways:
 
@@ -97,7 +159,7 @@ Every provider is optional and independent. Open the dashboard, choose **API & K
 
 OpenCode free models are provided by **OpenCode and its upstream partners** — they are **not hosted or owned by Zof Studio**. They may have rate limits or change availability at any time. No Zof Studio account is required.
 
-OpenCode CLI is **already bundled and installed automatically** with `npm run setup` — there is no separate manual install. Zof Studio prepends its bundled `node_modules/.bin` to `PATH`, so the `opencode` binary is always resolved automatically. Just sign in to enable the free models:
+OpenCode CLI is **already bundled and installed automatically** with the global `npm install -g .` step (or `npm run setup`) — there is no separate manual install. Zof Studio prepends its bundled `node_modules/.bin` to `PATH`, so the `opencode` binary is always resolved automatically. Just sign in to enable the free models:
 
 ```bash
 opencode auth login
@@ -147,41 +209,22 @@ An honest founder note: ElevenLabs was selected after extensive real-world produ
 
 ## Security & Key Privacy
 
-API keys are stored strictly locally in `~/.zof-studio/settings.json` and are never sent to Zof Studio servers. Usage and generated content are your responsibility. If you expose the app publicly, add authentication at your reverse proxy: the studio can spend API credits and run renders.
+Zof Studio binds to `127.0.0.1` and is local-only by design. The server validates the `Host` header and checks `Origin`/`Referer` on state-changing requests to block DNS rebinding and cross-site request forgery. For remote access, use the SSH tunnel workflow above instead of exposing the port directly.
 
-## CLI Options
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--port <number>` | `4789` | Dashboard port. If busy, the CLI scans `4789`–`4809` for the first free port. |
-| `--host <addr>` | `127.0.0.1` | Bind address. The default keeps the studio local-only. |
-| `--no-open` | off | Do not open a browser. Useful for VPS, containers, and headless machines. |
-| `--open` | off | Force-open the browser even when `SSH_CONNECTION` is set (for SSH port-forwarding). |
-| `--version`, `-v` | — | Print the installed version. |
-| `--help`, `-h` | — | Print usage and examples. |
-
-The CLI reuses an already-running Zof Studio instance on the target port instead of spawning a duplicate. Remotion Studio automatically uses the first free port in `3333`–`3353`. Browser auto-open is skipped when `SSH_CONNECTION` is present unless `--open` is passed.
-
-The dashboard is served at `/`. Open `/studio/` on the dashboard to launch Remotion Studio; it starts the dedicated Studio process on its free port and redirects there. The same Studio is also reachable directly on that port (for example `http://localhost:3333`).
-
-```bash
-zofstudio
-zofstudio --port 4800
-zofstudio --host 0.0.0.0 --no-open
-```
+API keys are stored strictly locally in `~/.zof-studio/settings.json` and are never sent to Zof Studio servers. Usage and generated content are your responsibility.
 
 ## Headless VPS / PM2
 
-Use `--no-open` on servers without a desktop session:
+Use `--no-open` on servers without a desktop session, then connect through the SSH tunnel shown above:
 
 ```bash
 npm install -g pm2
-pm2 start ./bin/zofstudio.mjs --name zof-studio -- --port 4799 --host 0.0.0.0 --no-open
+pm2 start ./bin/zofstudio.mjs --name zof-studio -- --port 4799 --no-open
 pm2 save
 pm2 startup
 ```
 
-Put a reverse proxy (Caddy, Nginx, or similar) in front of the dashboard, and set `APP_URL` in `.env` to the public URL.
+The dashboard still binds to `127.0.0.1`; it is not exposed publicly.
 
 ## Environment Variables
 

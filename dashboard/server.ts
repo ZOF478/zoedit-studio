@@ -1,6 +1,7 @@
 import { execFile, spawn, type ChildProcess } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import type { Server as HttpServer } from 'node:http';
 import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
@@ -43,7 +44,8 @@ const SCENE_CACHE_DIR = path.join(OUT_DIR, 'scene-cache');
 const SCENE_CACHE_INDEX_FILE = path.join(SCENE_CACHE_DIR, 'index.json');
 const TRANSITION_DURATION_IN_FRAMES = 16;
 
-dotenv.config({ path: path.join(DASHBOARD_DIR, '.env') });
+dotenv.config({ path: path.join(PROJECT_ROOT, '.env'), quiet: true });
+dotenv.config({ path: path.join(DASHBOARD_DIR, '.env'), quiet: true });
 
 type AiProviderId = 'opencode-free' | 'deepseek' | 'openrouter' | 'kieai' | 'custom';
 
@@ -522,6 +524,20 @@ const ALLOWED_LOCAL_ORIGINS = new Set([
   `http://localhost:${REMOTION_STUDIO_UI_PORT}`,
   `http://127.0.0.1:${REMOTION_STUDIO_UI_PORT}`,
 ]);
+
+const ALLOWED_HOSTS = new Set([
+  `localhost:${PORT}`,
+  `127.0.0.1:${PORT}`,
+  `[::1]:${PORT}`,
+]);
+
+const ALLOWED_STATE_ORIGINS = new Set([
+  `http://localhost:${PORT}`,
+  `http://127.0.0.1:${PORT}`,
+  `http://[::1]:${PORT}`,
+]);
+
+const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 const OPENROUTER_MODEL_MAP: Record<string, string> = {
   'deepseek/deepseek-v4.1-flash': 'deepseek/deepseek-v4.1-flash:free',
@@ -3235,6 +3251,8 @@ type MediaFileInfo = {
 let remotionStudioProcess: ChildProcess | null = null;
 let remotionStudioUiProcess: ChildProcess | null = null;
 let lastStudioSpawnError: string | null = null;
+let dashboardHttpServer: HttpServer | null = null;
+let dashboardShuttingDown = false;
 
 type StudioProcessKind = 'studio' | 'studio-ui';
 
@@ -3289,6 +3307,36 @@ function killAllExportProcesses(): void {
     killProcessTree(child);
   }
   activeExportProcesses.clear();
+}
+
+function shutdownDashboard(exitCode = 0): void {
+  if (dashboardShuttingDown) return;
+  dashboardShuttingDown = true;
+
+  const forceExit = setTimeout(() => process.exit(exitCode), 3000);
+  forceExit.unref();
+
+  try {
+    killAllExportProcesses();
+  } catch {
+    // Best-effort cleanup.
+  }
+
+  for (const kind of ['studio', 'studio-ui'] as const) {
+    const child = trackedStudioProcess(kind);
+    if (isProcessAlive(child)) {
+      killProcessTree(child);
+    }
+    setTrackedStudioProcess(kind, null);
+  }
+
+  if (!dashboardHttpServer) {
+    process.exit(exitCode);
+    return;
+  }
+
+  dashboardHttpServer.close(() => process.exit(exitCode));
+  dashboardHttpServer.closeAllConnections?.();
 }
 
 function isExportCancelled(jobId: string): boolean {
@@ -3383,6 +3431,25 @@ function isProcessAlive(child: ChildProcess | null): child is ChildProcess {
       child.signalCode === null &&
       !child.killed,
   );
+}
+
+function isZombiePid(pid: number): boolean {
+  try {
+    const stat = fs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+    const state = stat.slice(stat.lastIndexOf(')') + 2).charAt(0);
+    return state === 'Z' || state === 'X' || state === 'x';
+  } catch {
+    return false;
+  }
+}
+
+function isPidRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'EPERM') return false;
+  }
+  return !isZombiePid(pid);
 }
 
 function trackedStudioProcess(kind: StudioProcessKind): ChildProcess | null {
@@ -7753,6 +7820,20 @@ async function validateGeneratedScenes(): Promise<{ ok: boolean; errors: string 
 }
 
 async function startServer() {
+  process.once('SIGHUP', () => shutdownDashboard(129));
+  process.once('SIGINT', () => shutdownDashboard(130));
+  process.once('SIGTERM', () => shutdownDashboard(143));
+
+  const launcherPid = Number(process.env.ZOF_LAUNCHER_PID);
+  if (Number.isInteger(launcherPid) && launcherPid > 1) {
+    const launcherWatchdog = setInterval(() => {
+      if (isPidRunning(launcherPid)) return;
+      console.warn('[lifecycle] launcher process exited; stopping dashboard and Remotion Studio.');
+      shutdownDashboard(0);
+    }, 2000);
+    launcherWatchdog.unref();
+  }
+
   rehydrateStudioSettingsFromSources();
   fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
   if (!fs.existsSync(CURRENT_PROJECT_FILE)) {
@@ -7775,9 +7856,30 @@ async function startServer() {
   syncGeneratedRegistry();
 
   const app = express();
-  app.use(express.json({ limit: '2mb' }));
 
   app.use((req: Request, res: Response, next: NextFunction) => {
+    const host = (req.headers.host || '').trim().toLowerCase();
+    if (!ALLOWED_HOSTS.has(host)) {
+      res.status(403).type('text/plain').send('Forbidden');
+      return;
+    }
+
+    if (STATE_CHANGING_METHODS.has(req.method)) {
+      const source = req.headers.origin || req.headers.referer;
+      let requestOrigin = '';
+      if (typeof source === 'string') {
+        try {
+          requestOrigin = new URL(source).origin;
+        } catch {
+          requestOrigin = '';
+        }
+      }
+      if (!ALLOWED_STATE_ORIGINS.has(requestOrigin)) {
+        res.status(403).type('text/plain').send('Forbidden');
+        return;
+      }
+    }
+
     const origin = req.headers.origin;
     if (origin && ALLOWED_LOCAL_ORIGINS.has(origin)) {
       res.setHeader('Access-Control-Allow-Origin', origin);
@@ -7791,6 +7893,8 @@ async function startServer() {
     }
     next();
   });
+
+  app.use(express.json({ limit: '2mb' }));
 
   app.use('/audio', express.static(AUDIO_DIR, { fallthrough: false }));
   app.use('/sfx', express.static(SFX_DIR, { fallthrough: false }));
@@ -11375,7 +11479,7 @@ async function startServer() {
     }
   }
 
-  app.listen(PORT, HOST, () => {
+  dashboardHttpServer = app.listen(PORT, HOST, () => {
     console.log(`Zof Studio server listening on http://${HOST}:${PORT}`);
     console.log(`Remotion project: ${PROJECT_ROOT}`);
   });

@@ -402,6 +402,76 @@ function AboutContent() {
         </div>
       </div>
 
+      <div className="rounded-xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/10 via-sky-500/5 to-transparent p-4">
+        <h3 className="flex items-center gap-2 font-display text-sm font-bold text-slate-50">
+          <Rocket className="h-4 w-4 text-emerald-300" />
+          {t('التثبيت والتشغيل (حاسوب محلي أو VPS)', 'Install & run (local PC or VPS)')}
+        </h3>
+        <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
+          {t(
+            'المتطلبات: Node.js v20+ وnpm وFFmpeg. تحقق منها أولاً:',
+            'Prerequisites: Node.js v20+, npm, and FFmpeg. Verify them first:'
+          )}
+        </p>
+        <pre
+          dir="ltr"
+          className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
+        >
+          {'$ node -v && ffmpeg -version'}
+        </pre>
+        <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
+          {t(
+            '1. استنسخ المشروع وثبّته عالمياً:',
+            '1. Clone the project and install it globally:'
+          )}
+        </p>
+        <pre
+          dir="ltr"
+          className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
+        >
+          {'$ git clone https://github.com/ZOF478/zofstudio.git zof-studio\n$ cd zof-studio\n$ npm install -g .'}
+        </pre>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+          {t(
+            'يثبّت postinstall اعتماديات لوحة التحكم ويسجّل أمر zofstudio العالمي تلقائياً.',
+            'The postinstall step installs the dashboard dependencies and registers the global zofstudio command automatically.'
+          )}
+        </p>
+        <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
+          {t('2. شغّله على حاسوب محلي:', '2. Run on a local computer:')}
+        </p>
+        <pre
+          dir="ltr"
+          className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
+        >
+          {'$ zofstudio'}
+        </pre>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+          {t(
+            'يبدأ على http://localhost:4789 ويفتح المتصفح تلقائياً. إغلاق الطرفية يوقف جميع العمليات.',
+            'Starts at http://localhost:4789 and opens the browser automatically. Closing the terminal stops all background processes.'
+          )}
+        </p>
+        <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
+          {t(
+            '3. على VPS أو خادم بعيد، استخدم نفق SSH آمناً:',
+            '3. On a VPS or remote server, use a secure SSH tunnel:'
+          )}
+        </p>
+        <pre
+          dir="ltr"
+          className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
+        >
+          {'$ ssh -L 4789:127.0.0.1:4789 -L 3333:127.0.0.1:3333 user@your-server-ip'}
+        </pre>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+          {t(
+            'داخل جلسة SSH شغّل zofstudio، ثم افتح http://localhost:4789 في متصفحك المحلي. يبقى الخادم مرتبطاً بـ 127.0.0.1 للأمان.',
+            'Inside that SSH session run zofstudio, then open http://localhost:4789 in your local browser. The server stays bound to 127.0.0.1 for security.'
+          )}
+        </p>
+      </div>
+
       <InfoCard
         icon={<Heart className="h-3.5 w-3.5" />}
         title={t('لماذا ElevenLabs (V4)؟', 'Why ElevenLabs (V4)?')}
@@ -554,8 +624,8 @@ function ApiGuideContent() {
       ),
       steps: [
         t(
-          'لا حاجة لتثبيت OpenCode يدوياً — فهو مرفق ومثبَّت تلقائياً مع npm run setup.',
-          'No manual install needed — OpenCode CLI is already bundled and installed automatically with npm run setup.'
+          'لا حاجة لتثبيت OpenCode يدوياً — فهو مرفق ومثبَّت تلقائياً مع npm install -g . أو npm run setup.',
+          'No manual install needed — OpenCode CLI is already bundled and installed automatically with npm install -g . or npm run setup.'
         ),
         t(
           'سجّل الدخول عبر opencode واختر النماذج المجانية.',
