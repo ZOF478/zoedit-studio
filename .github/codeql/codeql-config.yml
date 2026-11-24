@@ -1,0 +1,4 @@
+name: "Zof Studio CodeQL config"
+
+paths-ignore:
+  - archive/**
