@@ -188,9 +188,14 @@ export function MediaLibraryPanel({
             className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/8 bg-[#0B0E14] px-3 py-2"
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate font-mono text-[11px] text-slate-200" dir="ltr">
-                {file.name}
+              <p className="truncate text-[11px] font-semibold text-slate-200">
+                {kind === 'video' && file.title ? file.title : file.name}
               </p>
+              {kind === 'video' && file.title ? (
+                <p className="truncate font-mono text-[10px] text-slate-500" dir="ltr">
+                  {file.name}
+                </p>
+              ) : null}
               <p className="text-[10px] text-slate-500">
                 {formatSize(file.size)} · {formatDate(file.modified)}
               </p>
@@ -208,7 +213,7 @@ export function MediaLibraryPanel({
                   </a>
                   <a
                     href={file.url}
-                    download={file.name}
+                    download={file.downloadName || file.name}
                     className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 px-2 py-1 text-[10px] text-emerald-200 hover:bg-emerald-500/10"
                   >
                     <Download className="h-3 w-3" />

@@ -12,6 +12,7 @@ import {
   Info,
   KeyRound,
   Lock,
+  Mail,
   Rocket,
   Scale,
   Server,
@@ -145,7 +146,7 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
 
   return (
     <footer className="mt-6 border-t border-white/8 bg-[#080B11]/95">
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-3 py-5 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mx-auto flex w-full max-w-[1920px] flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="min-w-0 space-y-2">
           <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] leading-relaxed text-slate-400">
             <Heart className="h-3 w-3 shrink-0 text-rose-300" />
@@ -191,6 +192,13 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
           <FooterLink href={GITHUB_URL} icon={<Github className="h-3.5 w-3.5" />}>
             GitHub
           </FooterLink>
+          <FooterLink
+            href="mailto:zofstudio@zoedit.com"
+            icon={<Mail className="h-3.5 w-3.5" />}
+            external={false}
+          >
+            {t('تواصل معنا', 'Contact')}
+          </FooterLink>
           <FooterLink href={SITE_URL} icon={<ExternalLink className="h-3.5 w-3.5" />}>
             studio.zoedit.com
           </FooterLink>
@@ -225,21 +233,22 @@ function FooterLink({
   href,
   icon,
   children,
+  external = true,
 }: {
   href: string;
   icon: ReactNode;
   children: ReactNode;
+  external?: boolean;
 }) {
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noreferrer"
+      {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
       className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#0E121A] px-2.5 py-1.5 text-[10px] font-semibold text-slate-300 transition-colors hover:border-sky-400/40 hover:text-slate-100"
     >
       {icon}
       <span>{children}</span>
-      <ArrowUpRight className="h-2.5 w-2.5 text-slate-500" />
+      {external ? <ArrowUpRight className="h-2.5 w-2.5 text-slate-500" /> : null}
     </a>
   );
 }
@@ -469,8 +478,8 @@ function AboutContent() {
         </p>
         <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
           {t(
-            'من طرفيتك المحلية، افتح النفق:',
-            'From your local terminal, open the tunnel:'
+            '1. من طرفية حاسوبك المحلي، افتح نفق SSH:',
+            '1. From your local computer terminal, open the SSH tunnel:'
           )}
         </p>
         <pre
@@ -479,10 +488,22 @@ function AboutContent() {
         >
           {'$ ssh -L 4789:127.0.0.1:4789 -L 3333:127.0.0.1:3333 user@your-server-ip'}
         </pre>
-        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+        <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
           {t(
-            'داخل جلسة SSH شغّل zofstudio، ثم افتح http://localhost:4789 في متصفحك المحلي. يبقى الخادم مرتبطاً بـ 127.0.0.1 للأمان.',
-            'Inside that SSH session run zofstudio, then open http://localhost:4789 in your local browser. The server stays bound to 127.0.0.1 for security.'
+            '2. داخل جلسة SSH نفسها، شغّل Zof Studio:',
+            '2. Inside that SSH session, launch Zof Studio:'
+          )}
+        </p>
+        <pre
+          dir="ltr"
+          className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
+        >
+          {'$ zofstudio'}
+        </pre>
+        <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+          {t(
+            '3. افتح http://localhost:4789 في متصفحك المحلي. يبقى الخادم مرتبطاً بـ 127.0.0.1 للأمان.',
+            '3. Open http://localhost:4789 in your local browser. The server stays bound to 127.0.0.1 for security.'
           )}
         </p>
       </div>

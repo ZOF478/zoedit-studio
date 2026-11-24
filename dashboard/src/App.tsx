@@ -269,6 +269,14 @@ function nowTimeLabel(): string {
   return new Date().toLocaleTimeString('en-GB', { hour12: false });
 }
 
+function stripAnsi(value: string): string {
+  return value
+    .replace(/\u001b\][^\u0007]*(?:\u0007|\u001b\\)/g, '')
+    .replace(/\u001b\[[0-?]*[ -/]*[@-~]/g, '')
+    .replace(/\[(?:\d{1,2}(?:;\d{1,2})*)m/g, '')
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '');
+}
+
 function createExportSteps(fps: FpsOption, t: Translator): RenderStepState[] {
   return [
     {
@@ -419,7 +427,7 @@ export default function App() {
           timestamp: nowTimeLabel(),
           step,
           level,
-          message,
+          message: stripAnsi(message),
         },
       ]);
     },
@@ -436,6 +444,17 @@ export default function App() {
     },
     []
   );
+
+  useEffect(() => {
+    if (!isRendering) return;
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isRendering]);
 
   const applyApiStatus = useCallback((data: ApiSettingsStatus) => {
     setApiStatus(data);
@@ -954,6 +973,7 @@ export default function App() {
           enable25D,
           respectSafeZone,
           voiceoverScript: voiceConfig.enabled ? voiceoverScript.trim() : undefined,
+          uiLanguage: lang,
         }),
       });
 
@@ -1018,6 +1038,8 @@ export default function App() {
         const payload = JSON.parse((ev as MessageEvent).data) as {
           outputUrl?: string | null;
           outputFile?: string | null;
+          outputName?: string | null;
+          title?: string | null;
           fileSizeBytes?: number;
         };
 
@@ -1049,6 +1071,10 @@ export default function App() {
           mimeType: 'video/mp4',
           extension: 'mp4',
           fileSizeBytes: payload.fileSizeBytes ?? 0,
+          downloadName:
+            payload.outputName ||
+            payload.outputFile?.split(/[\\/]/).pop() ||
+            undefined,
         });
         setHistoryKey((prev) => prev + 1);
         appendLog(
@@ -1271,7 +1297,7 @@ export default function App() {
         disabled={isRendering}
       />
 
-      <main className="mx-auto w-full max-w-[1440px] min-w-0 flex-1 overflow-x-hidden px-3 py-4 sm:px-5 lg:py-6">
+      <main className="mx-auto w-full max-w-[1920px] min-w-0 flex-1 overflow-x-hidden px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
         {!notificationBannerDismissed ? (
           <div className="mb-4 min-w-0">
             <NotificationPermissionBanner
@@ -1306,7 +1332,7 @@ export default function App() {
 
         <div
           dir="ltr"
-          className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_420px]"
+          className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(380px,420px)] xl:gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(420px,460px)]"
         >
           <div dir={dir} className="min-w-0 w-full max-w-full space-y-4">
             <MainPreviewPanel

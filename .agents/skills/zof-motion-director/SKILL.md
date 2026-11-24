@@ -32,6 +32,7 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
    - Never use CSS transitions; animate strictly with Remotion `interpolate()` and `spring()`.
    - **Chart margins:** offset every Y-axis tick label from the axis line with `textAnchor="end"` and `x={axisX - 14}`, and reserve at least 56px of left padding so values such as `10x`, `20x`, `30x` are never struck through by the axis stroke.
    - **Card clearance:** keep all floating cards and 2.5D `SpatialCard` surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap). Never let a card sit on a chart line or tick.
+   - **2.5D non-overlap & sizing:** never place two text-bearing `SpatialCard` layers at the same `(x, y)` at the same time. Keep only one focal text card centered per beat; separate simultaneous text cards on the vertical/grid axis with a generous (`>=32px`) gap, and stagger their enter/recede timing so previous copy is dimmed, blurred, and moved fully off the focal center before the next card arrives. Background depth planes must be subtle, non-text decorative parallax elements only. Size every card to its content (`auto`/`max-content` or a bounded `maxHeight`); never stretch a tall empty box down toward the caption zone.
 
 5. **Arabic RTL & Safe Layout Grid:**
    - Apply `direction: "rtl"` and `lineHeight: 1.4` for Arabic text with `padding: "0 48px"`.

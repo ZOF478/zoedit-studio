@@ -205,6 +205,8 @@ export interface MediaFileInfo {
   size: number;
   modified: number;
   url: string;
+  title?: string;
+  downloadName?: string;
 }
 
 export interface MediaLibraryResponse {

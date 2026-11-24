@@ -53,7 +53,7 @@ export function TopHeader({
 
   return (
     <header className="sticky top-0 z-30 min-w-0 overflow-x-hidden border-b border-white/8 bg-[#0B0E14]/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1440px] min-w-0 flex-wrap items-center justify-between gap-3 px-3 py-2.5 sm:px-5">
+      <div className="mx-auto flex w-full max-w-[1920px] min-w-0 flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
         <a
           href="#top"
           title={t(

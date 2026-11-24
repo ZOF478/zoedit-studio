@@ -6,6 +6,7 @@ import {
   Clock,
   Download,
   Film,
+  Info,
   Loader2,
   PlayCircle,
   Square,
@@ -112,7 +113,9 @@ export function RenderMonitorPanel({
     if (!renderedVideo) return;
     const link = document.createElement('a');
     link.href = renderedVideo.blobUrl;
-    link.download = `zof-studio-${aspectRatio.replace(':', 'x')}-${fps}fps.${renderedVideo.extension}`;
+    link.download =
+      renderedVideo.downloadName ||
+      `zof-studio-${aspectRatio.replace(':', 'x')}-${fps}fps.${renderedVideo.extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -253,6 +256,18 @@ export function RenderMonitorPanel({
               );
             })}
           </div>
+
+          {isRendering ? (
+            <p className="flex items-start gap-2 rounded-lg border border-amber-400/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" />
+              <span>
+                {t(
+                  'العمل جارٍ في الخلفية — قد يبدو التقدم متوقفاً مؤقتاً أثناء كتابة المشاهد أو الريندر، يرجى عدم إعادة تحميل الصفحة أو الإلغاء.',
+                  'Processing in the background — progress may appear paused while scenes are coded or rendered. Please do not refresh the page or cancel.'
+                )}
+              </span>
+            </p>
+          ) : null}
         </div>
 
         <div className="space-y-2">

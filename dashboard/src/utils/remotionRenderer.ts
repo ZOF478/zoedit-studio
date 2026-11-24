@@ -394,6 +394,7 @@ export interface RenderedVideoResult {
   mimeType: string;
   extension: string;
   fileSizeBytes: number;
+  downloadName?: string;
 }
 
 export async function renderScenesToVideo(params: {

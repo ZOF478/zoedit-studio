@@ -42,6 +42,7 @@ const STUDIO_LOG_FILE = path.join(ZOF_HOME_DIR, 'remotion-studio.log');
 const USAGE_FILE = path.join(ZOF_HOME_DIR, 'usage.json');
 const SCENE_CACHE_DIR = path.join(OUT_DIR, 'scene-cache');
 const SCENE_CACHE_INDEX_FILE = path.join(SCENE_CACHE_DIR, 'index.json');
+const MEDIA_TITLES_FILE = path.join(OUT_DIR, 'media-titles.json');
 const TRANSITION_DURATION_IN_FRAMES = 16;
 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env'), quiet: true });
@@ -316,6 +317,9 @@ interface RenderJob {
   respectSafeZone: boolean;
   enable25D: boolean;
   elevenlabsKey: string;
+  uiLanguage: UiLanguage;
+  title?: string;
+  outputName?: string;
   masterPrompt?: string;
   tweakInstruction?: string;
   targetDuration?: ExportTargetDuration;
@@ -1043,6 +1047,16 @@ function normalizeScriptDepth(value: unknown, fallback = 'analytical'): string {
   return typeof value === 'string' && (SCRIPT_DEPTH_VALUES as readonly string[]).includes(value)
     ? value
     : fallback;
+}
+
+type UiLanguage = 'ar' | 'en';
+
+function normalizeUiLanguage(value: unknown, fallback: UiLanguage = 'ar'): UiLanguage {
+  return value === 'en' || value === 'ar' ? value : fallback;
+}
+
+function uiText(job: Pick<RenderJob, 'uiLanguage'>, ar: string, en: string): string {
+  return job.uiLanguage === 'en' ? en : ar;
 }
 
 const CREATIVE_CODE_MODES = ['creative', 'fast'] as const;
@@ -3246,6 +3260,8 @@ type MediaFileInfo = {
   size: number;
   modified: number;
   url: string;
+  title?: string;
+  downloadName?: string;
 };
 
 let remotionStudioProcess: ChildProcess | null = null;
@@ -3349,7 +3365,107 @@ function throwIfExportCancelled(jobId: string): void {
   }
 }
 
+interface MediaTitleRecord {
+  title: string;
+  downloadName: string;
+  jobId?: string;
+  createdAt: number;
+}
+
+function readMediaTitleMap(): Record<string, MediaTitleRecord> {
+  try {
+    const raw = JSON.parse(fs.readFileSync(MEDIA_TITLES_FILE, 'utf8')) as unknown;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+    const result: Record<string, MediaTitleRecord> = {};
+    for (const [name, value] of Object.entries(raw as Record<string, unknown>)) {
+      if (!value || typeof value !== 'object') continue;
+      const record = value as Record<string, unknown>;
+      if (typeof record.title !== 'string' || !record.title.trim()) continue;
+      result[name] = {
+        title: record.title.trim().slice(0, 140),
+        downloadName:
+          typeof record.downloadName === 'string' && record.downloadName.trim()
+            ? record.downloadName.trim()
+            : name,
+        jobId: typeof record.jobId === 'string' ? record.jobId : undefined,
+        createdAt: Number.isFinite(Number(record.createdAt))
+          ? Number(record.createdAt)
+          : Date.now(),
+      };
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+function writeMediaTitleMap(map: Record<string, MediaTitleRecord>): void {
+  const entries = Object.entries(map).sort((a, b) => b[1].createdAt - a[1].createdAt);
+  const trimmed = Object.fromEntries(entries.slice(0, 500));
+  writeJsonFile(MEDIA_TITLES_FILE, trimmed);
+}
+
+function slugifyToAscii(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['’"`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48)
+    .replace(/-+$/g, '');
+}
+
+function dateStamp(timestamp: number): string {
+  const date = new Date(timestamp);
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}`;
+}
+
+function deriveVideoTitle(job: RenderJob, prompt: string): string {
+  const cleaned = prompt.replace(/\s+/g, ' ').replace(/^[#>*\-\s]+/, '').trim();
+  if (cleaned) {
+    const firstSentence = cleaned.split(/(?<=[.!?])\s/)[0] || cleaned;
+    const concise = firstSentence
+      .replace(/^(?:create|make|generate|write|design|produce)\s+(?:a|an|the)?\s*/i, '')
+      .trim();
+    const title = (concise || cleaned).slice(0, 80).replace(/[\s,;:.\-]+$/, '');
+    if (title) return title;
+  }
+  const sceneTitle = job.scenes.find((scene) => scene.title?.trim())?.title?.trim();
+  return sceneTitle ? sceneTitle.slice(0, 80) : 'Zof Studio video';
+}
+
+function makeOutputName(title: string, jobId: string, createdAt: number): string {
+  const slug = slugifyToAscii(title) || 'zof-studio-video';
+  return `${slug}-${dateStamp(createdAt)}-${jobId.slice(0, 6)}.mp4`;
+}
+
+function renderOutputPath(job: RenderJob): string {
+  return job.outputName
+    ? path.join(OUT_DIR, job.outputName)
+    : path.join(OUT_DIR, `${job.id}.mp4`);
+}
+
+function registerMediaTitle(fileName: string | undefined, title: string, jobId?: string): void {
+  if (!fileName) return;
+  const map = readMediaTitleMap();
+  map[fileName] = {
+    title: title.trim().slice(0, 140) || fileName,
+    downloadName: fileName,
+    jobId,
+    createdAt: Date.now(),
+  };
+  try {
+    writeMediaTitleMap(map);
+  } catch (error) {
+    console.warn('[media] failed to persist video title metadata', error);
+  }
+}
+
 function listMediaFiles(dir: string, type: MediaFileInfo['type'], urlPrefix: string): MediaFileInfo[] {
+  const titles = type === 'video' ? readMediaTitleMap() : {};
   try {
     return fs
       .readdirSync(dir, { withFileTypes: true })
@@ -3361,12 +3477,16 @@ function listMediaFiles(dir: string, type: MediaFileInfo['type'], urlPrefix: str
       .map((entry) => {
         const filePath = path.join(dir, entry.name);
         const stat = fs.statSync(filePath);
+        const meta = titles[entry.name];
         return {
           name: entry.name,
           type,
           size: stat.size,
           modified: stat.mtimeMs,
           url: `${urlPrefix}/${encodeURIComponent(entry.name)}`,
+          ...(meta
+            ? { title: meta.title, downloadName: meta.downloadName }
+            : {}),
         };
       })
       .sort((a, b) => b.modified - a.modified);
@@ -4040,6 +4160,7 @@ function buildProjectVideoData(project: ProjectStatePayload): ParentVideoData {
     captionsEnabled: project.captionsEnabled,
     enable25D: false,
     elevenlabsKey: '',
+    uiLanguage: 'ar',
     status: 'queued',
   };
   return buildParentVideoData(job, project.topic);
@@ -4732,7 +4853,7 @@ function runRemotionRender(
 
     fs.mkdirSync(OUT_DIR, { recursive: true });
 
-    const outputPath = options?.outputPath ?? path.join(OUT_DIR, `${job.id}.mp4`);
+    const outputPath = options?.outputPath ?? renderOutputPath(job);
     const propsPath = options?.propsPath ?? path.join(OUT_DIR, `${job.id}.props.json`);
     writeJsonFile(propsPath, { data: videoData });
 
@@ -4896,6 +5017,7 @@ async function concatSceneSegments(
   outputPath: string,
   fps: number,
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
+  uiLanguage: UiLanguage,
 ): Promise<void> {
   const inputArgs = segmentFiles.flatMap((file) => ['-i', file]);
   const audioFilters = segmentFiles
@@ -4911,7 +5033,12 @@ async function concatSceneSegments(
     .map((_, index) => `[${index}:v:0][a${index}]`)
     .join('');
   const filter = `${audioFilters};${concatInputs}concat=n=${segmentFiles.length}:v=1:a=1[v][a]`;
-  onLog('info', `دمج ${segmentFiles.length} مقطعاً مخزناً في الفيديو النهائي...`);
+  onLog(
+    'info',
+    uiLanguage === 'en'
+      ? `Merging ${segmentFiles.length} cached segments into the final video...`
+      : `دمج ${segmentFiles.length} مقطعاً مخزناً في الفيديو النهائي...`,
+  );
   const result = await runCommand(
     'ffmpeg',
     [
@@ -4964,6 +5091,7 @@ async function renderJobWithSceneCache(
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
   onTimeRemaining?: (remainingSec: number) => void,
 ): Promise<{ outputPath: string; outputFile: string }> {
+  const tr = (ar: string, en: string) => uiText(job, ar, en);
   try {
     throwIfExportCancelled(job.id);
     fs.mkdirSync(SCENE_CACHE_DIR, { recursive: true });
@@ -5014,7 +5142,10 @@ async function renderJobWithSceneCache(
         );
         onLog(
           'info',
-          `المقطع ${index + 1}/${job.scenes.length}: تصيير الإطارات ${timing.startFrame}–${endFrame} (لا يوجد كاش مطابق).`,
+          tr(
+            `المقطع ${index + 1}/${job.scenes.length}: تصيير الإطارات ${timing.startFrame}–${endFrame} (لا يوجد كاش مطابق).`,
+            `Segment ${index + 1}/${job.scenes.length}: rendering frames ${timing.startFrame}–${endFrame} (no matching cache).`,
+          ),
         );
         let segmentFraction = 0;
         const segmentProgress = (progress: number) => {
@@ -5077,11 +5208,20 @@ async function renderJobWithSceneCache(
         };
         cacheChanged = true;
         saveSceneArtifactCache();
-        onLog('success', `المقطع ${index + 1}: تم تحديث كاش المحتوى ${hash.slice(0, 10)}.`);
+        onLog(
+          'success',
+          tr(
+            `المقطع ${index + 1}: تم تحديث كاش المحتوى ${hash.slice(0, 10)}.`,
+            `Segment ${index + 1}: content cache updated (${hash.slice(0, 10)}).`,
+          ),
+        );
       } else {
         onLog(
           'success',
-          `المقطع ${index + 1}: إعادة استخدام تصيير مخزن (${hash.slice(0, 10)}) — بدون إعادة معالجة.`,
+          tr(
+            `المقطع ${index + 1}: إعادة استخدام تصيير مخزن (${hash.slice(0, 10)}) — بدون إعادة معالجة.`,
+            `Segment ${index + 1}: recycled cached render (${hash.slice(0, 10)}) — no re-processing.`,
+          ),
         );
       }
 
@@ -5091,13 +5231,14 @@ async function renderJobWithSceneCache(
     }
 
     if (cacheChanged) saveSceneArtifactCache();
-    const outputPath = path.join(OUT_DIR, `${job.id}.mp4`);
+    const outputPath = renderOutputPath(job);
     await concatSceneSegments(
       segmentFiles,
       timings.map((timing) => timing.frames / job.fps),
       outputPath,
       job.fps,
       onLog,
+      job.uiLanguage,
     );
     onProgress(100);
     return {
@@ -5109,7 +5250,10 @@ async function renderJobWithSceneCache(
     const message = error instanceof Error ? error.message : 'unknown segment cache error';
     onLog(
       'warn',
-      `تعذر مسار التصيير المقطعي (${message}) — سيتم التحويل إلى تصيير كامل آمن.`,
+      tr(
+        `تعذر مسار التصيير المقطعي (${message}) — سيتم التحويل إلى تصيير كامل آمن.`,
+        `Segmented render path failed (${message}) — falling back to a safe full render.`,
+      ),
     );
     return runRemotionRender(
       job,
@@ -5221,6 +5365,7 @@ async function applyMeasuredAudioDuration(
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
   sceneNumber: number,
   fps: number,
+  uiLanguage: UiLanguage,
 ): Promise<number | null> {
   let duration = explicitDuration;
   if ((!duration || duration <= 0) && scene.audioSrc) {
@@ -5233,7 +5378,9 @@ async function applyMeasuredAudioDuration(
   scene.durationSec = frames / fps;
   onLog(
     'info',
-    `المشهد ${sceneNumber}: مدة الصوت الفعلية ${duration.toFixed(2)}s → durationInFrames=${frames} (${(frames / fps).toFixed(2)}s، هامش 0.25s).`,
+    uiLanguage === 'en'
+      ? `Scene ${sceneNumber}: measured audio ${duration.toFixed(2)}s → durationInFrames=${frames} (${(frames / fps).toFixed(2)}s, 0.25s padding).`
+      : `المشهد ${sceneNumber}: مدة الصوت الفعلية ${duration.toFixed(2)}s → durationInFrames=${frames} (${(frames / fps).toFixed(2)}s، هامش 0.25s).`,
   );
   return duration;
 }
@@ -5244,9 +5391,16 @@ async function synthesizeSceneVoice(
   index: number,
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
 ): Promise<boolean> {
+  const tr = (ar: string, en: string) => uiText(job, ar, en);
   if (!scene.narration.trim()) return false;
   if (!job.elevenlabsKey) {
-    onLog('warn', 'لا يوجد مفتاح ElevenLabs — سيتم استخدام الصوت المحفوظ إن وجد.');
+    onLog(
+      'warn',
+      tr(
+        'لا يوجد مفتاح ElevenLabs — سيتم استخدام الصوت المحفوظ إن وجد.',
+        'No ElevenLabs key found — using any saved audio instead.',
+      ),
+    );
     return false;
   }
   try {
@@ -5275,7 +5429,13 @@ async function synthesizeSceneVoice(
     );
 
     if (!ttsResp.ok) {
-      onLog('warn', `المشهد ${index + 1}: تعذر توليد الصوت (${ttsResp.status}).`);
+      onLog(
+        'warn',
+        tr(
+          `المشهد ${index + 1}: تعذر توليد الصوت (${ttsResp.status}).`,
+          `Scene ${index + 1}: audio generation failed (${ttsResp.status}).`,
+        ),
+      );
       return false;
     }
 
@@ -5292,11 +5452,20 @@ async function synthesizeSceneVoice(
     };
     onLog(
       'success',
-      `المشهد ${index + 1}: تم توليد صوت ElevenLabs (${job.modelId}, ${job.voiceId.slice(0, 8)}) إلى public/${scene.audioSrc} · ${billedCharacters} حرف.`,
+      tr(
+        `المشهد ${index + 1}: تم توليد صوت ElevenLabs (${job.modelId}, ${job.voiceId.slice(0, 8)}) إلى public/${scene.audioSrc} · ${billedCharacters} حرف.`,
+        `Scene ${index + 1}: generated ElevenLabs audio (${job.modelId}, ${job.voiceId.slice(0, 8)}) into public/${scene.audioSrc} · ${billedCharacters} chars.`,
+      ),
     );
     return true;
   } catch {
-    onLog('warn', `المشهد ${index + 1}: انتهت مهلة توليد الصوت عبر ElevenLabs.`);
+    onLog(
+      'warn',
+      tr(
+        `المشهد ${index + 1}: انتهت مهلة توليد الصوت عبر ElevenLabs.`,
+        `Scene ${index + 1}: ElevenLabs audio generation timed out.`,
+      ),
+    );
     return false;
   }
 }
@@ -5305,6 +5474,7 @@ async function prepareSceneAudio(
   job: RenderJob,
   onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void,
 ): Promise<number> {
+  const tr = (ar: string, en: string) => uiText(job, ar, en);
   let generated = 0;
 
   if (!job.voiceoverEnabled) {
@@ -5315,14 +5485,23 @@ async function prepareSceneAudio(
       const scene = job.scenes[index];
       onLog(
         'info',
-        `المشهد ${index + 1}: التعليق الصوتي مغلق — مدة بصرية ${scene.durationSec.toFixed(1)}s مع إبقاء المؤثرات.`,
+        tr(
+          `المشهد ${index + 1}: التعليق الصوتي مغلق — مدة بصرية ${scene.durationSec.toFixed(1)}s مع إبقاء المؤثرات.`,
+          `Scene ${index + 1}: voiceover is off — visual duration ${scene.durationSec.toFixed(1)}s with SFX preserved.`,
+        ),
       );
     }
     return 0;
   }
 
   if (!job.elevenlabsKey) {
-    onLog('warn', 'التعليق الصوتي مفعّل لكن مفتاح ElevenLabs غير متوفر — سيتم استخدام أي صوت محفوظ.');
+    onLog(
+      'warn',
+      tr(
+        'التعليق الصوتي مفعّل لكن مفتاح ElevenLabs غير متوفر — سيتم استخدام أي صوت محفوظ.',
+        'Voiceover is on but no ElevenLabs key is available — using any saved audio.',
+      ),
+    );
   }
 
   const cache = loadSceneArtifactCache();
@@ -5346,7 +5525,13 @@ async function prepareSceneAudio(
       const saved = saveAudioDataUrl(scene.audioDataUrl);
       if (saved) {
         scene.audioSrc = saved;
-        onLog('info', `المشهد ${index + 1}: حفظ الصوت المرفق في public/${saved}.`);
+        onLog(
+          'info',
+          tr(
+            `المشهد ${index + 1}: حفظ الصوت المرفق في public/${saved}.`,
+            `Scene ${index + 1}: saved attached audio to public/${saved}.`,
+          ),
+        );
       }
     }
 
@@ -5362,11 +5547,15 @@ async function prepareSceneAudio(
           onLog,
           index + 1,
           job.fps,
+          job.uiLanguage,
         );
         if (appliedCached) {
           onLog(
             'success',
-            `المشهد ${index + 1}: إعادة استخدام الصوت المخزن (${cachedAudio.audioSrc}) بدون إعادة توليد.`,
+            tr(
+              `المشهد ${index + 1}: إعادة استخدام الصوت المخزن (${cachedAudio.audioSrc}) بدون إعادة توليد.`,
+              `Scene ${index + 1}: recycled cached audio (${cachedAudio.audioSrc}) without regenerating.`,
+            ),
           );
           continue;
         }
@@ -5389,6 +5578,7 @@ async function prepareSceneAudio(
       onLog,
       index + 1,
       job.fps,
+      job.uiLanguage,
     );
     if (!applied) {
       const estimate = estimateNarrationDuration(scene.narration);
@@ -5398,7 +5588,10 @@ async function prepareSceneAudio(
       scene.durationSec = frames / job.fps;
       onLog(
         'warn',
-        `المشهد ${index + 1}: تعذر قياس الصوت — تم تقدير ${(frames / job.fps).toFixed(2)}s من النص.`,
+        tr(
+          `المشهد ${index + 1}: تعذر قياس الصوت — تم تقدير ${(frames / job.fps).toFixed(2)}s من النص.`,
+          `Scene ${index + 1}: could not measure audio — estimated ${(frames / job.fps).toFixed(2)}s from the script.`,
+        ),
       );
     }
 
@@ -7452,8 +7645,11 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           '## 2.5D SPATIAL DEPTH MODE (ENABLED)',
           '- Import exactly: import { DepthStage, SpatialCard } from "../components/Depth25D";',
           '- Wrap the scene visual stage in <DepthStage> so every card shares perspective: 1200px and transformStyle: "preserve-3d".',
-          '- Choreograph multi-plane card layering: build an ordered stack of 2–5 <SpatialCard> layers. Each new card uses enterFrame to spring smoothly toward the viewer at translateZ(0).',
-          '- When the next card arrives, pass the previous card a recedeFrame so it smoothly recedes backward into Z-space (translateZ(-150px), scale(0.84), opacity 0.45, blur(2px), dynamic drop shadow) while the new active card rises forward in front of it.',
+          '- NEVER stack two text-bearing cards at the same (x, y) at the same time. Only ONE focal text card may occupy the center at any beat. Separate any simultaneous text cards clearly on the vertical/grid axis with a generous gap (at least 32px) and distinct grid cells.',
+          '- Background depth layers must be subtle, non-text decorative parallax planes (glows, grids, silhouettes, ambient shapes) at low opacity. Never hide readable copy behind a foreground card.',
+          '- Build a time-staggered Z-space stack of 2–5 <SpatialCard> layers: each new text card enters with enterFrame and springs toward translateZ(0) only AFTER the previous text card receives a recedeFrame and has cleared the center. Stagger entrances/exits so the focal card is unambiguous.',
+          '- When a text card recedes, move it fully away from the focal center as well as backward in Z-space (translateZ(-150px), scale(0.84), opacity <= 0.45, blur(2px), dynamic drop shadow) so its text is no longer legible or overlapping the active card.',
+          '- Size every card from its content: use auto height / max-content or a bounded maxHeight. NEVER stretch a card into a tall empty box down toward the caption zone; keep padding balanced and cards compact around their actual copy.',
           '- Use tiltX/tiltY for a subtle physical card tilt. Keep the active card sharp and readable, and let receded cards become dim depth layers.',
           '- Mirror x offsets and text alignment for props.isRtl when language is ar, and use the exact active palette hex values for card surfaces, borders, glows, and shadows.',
           '- Every scene must visibly progress cards forward and backward through Z-space over time; do not use DepthStage/SpatialCard as a flat fade substitute.',
@@ -7709,6 +7905,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     ...(depth25DTweakEnabled
       ? [
           '- Preserve 2.5D spatial depth: keep importing { DepthStage, SpatialCard } from "../components/Depth25D" and keep the multi-plane Z-space card enter/recede choreography intact unless the tweak explicitly changes it.',
+          '- Preserve the 2.5D non-overlap safeguards: never stack two text-bearing cards at the same (x, y) simultaneously, keep only one focal text card centered per beat, leave a generous >=32px gap between simultaneous cards, keep background depth layers non-text and subtle, and size cards to their content instead of stretching tall empty boxes.',
         ]
       : []),
     allowedTweakImports,
@@ -8280,6 +8477,17 @@ async function startServer() {
     }
     try {
       fs.unlinkSync(filePath);
+      if (type === 'video') {
+        const titles = readMediaTitleMap();
+        if (titles[name]) {
+          delete titles[name];
+          try {
+            writeMediaTitleMap(titles);
+          } catch {
+            // Metadata cleanup is best effort.
+          }
+        }
+      }
       res.json({ ok: true, deleted: [`${type}/${name}`] });
     } catch (error) {
       res.status(500).json({
@@ -10311,6 +10519,7 @@ async function startServer() {
       respectSafeZone?: unknown;
       tweakInstruction?: unknown;
       voiceoverScript?: unknown;
+      uiLanguage?: unknown;
     };
 
     const prompt =
@@ -10523,11 +10732,16 @@ async function startServer() {
       captionsEnabled,
       enable25D,
       elevenlabsKey,
+      uiLanguage: normalizeUiLanguage(body.uiLanguage),
       masterPrompt: prompt || project?.topic || '',
       tweakInstruction: tweakInstruction || undefined,
       targetDuration,
       status: 'queued',
     };
+
+    const videoTitle = deriveVideoTitle(job, prompt || project?.topic || '');
+    job.title = videoTitle;
+    job.outputName = makeOutputName(videoTitle, job.id, job.createdAt);
 
     if (!acquireExportLock(jobId)) {
       res.status(409).json({
@@ -10557,7 +10771,9 @@ async function startServer() {
       aspectRatio,
       totalScenes: scenes.length,
       totalDurationSec: scenes.reduce((total, scene) => total + scene.durationSec, 0),
-      outputFile: path.relative(PROJECT_ROOT, path.join(OUT_DIR, `${jobId}.mp4`)),
+      outputFile: path.relative(PROJECT_ROOT, renderOutputPath(job)),
+      title: job.title || null,
+      outputName: job.outputName || null,
     });
   });
 
@@ -10608,6 +10824,7 @@ async function startServer() {
       status: 'pending' | 'active' | 'completed' | 'error',
       progress: number,
     ) => sendEvent('step', { step, status, progress });
+    const tr = (ar: string, en: string) => uiText(job, ar, en);
 
     const buildTimings = () =>
       job.scenes.map((scene, index) => ({
@@ -10626,6 +10843,8 @@ async function startServer() {
         fps: job.fps,
         timings,
         outputFile: job.outputFile || null,
+        outputName: job.outputName || null,
+        title: job.title || null,
         outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
         fileSizeBytes: job.outputSize ?? null,
       });
@@ -10639,18 +10858,27 @@ async function startServer() {
     if (job.status === 'cancelled') {
       sendEvent('cancelled', {
         jobId: job.id,
-        message: job.error || 'تم إيقاف عملية التصدير.',
+        message: job.error || tr('تم إيقاف عملية التصدير.', 'Export was cancelled.'),
       });
       res.end();
       return;
     }
     if (job.status === 'error') {
-      sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
+      sendEvent('error', {
+        message: job.error || tr('فشلت عملية التصدير.', 'Export failed.'),
+      });
       res.end();
       return;
     }
     if (job.status === 'rendering') {
-      sendLog('render', 'info', 'مهمة التصدير قيد التنفيذ بالفعل — في انتظار اكتمالها...');
+      sendLog(
+        'render',
+        'info',
+        tr(
+          'مهمة التصدير قيد التنفيذ بالفعل — في انتظار اكتمالها...',
+          'The export job is already running — waiting for it to finish...',
+        ),
+      );
       const poll = setInterval(() => {
         if (job.status === 'completed') {
           clearInterval(poll);
@@ -10660,12 +10888,14 @@ async function startServer() {
           clearInterval(poll);
           sendEvent('cancelled', {
             jobId: job.id,
-            message: job.error || 'تم إيقاف عملية التصدير.',
+            message: job.error || tr('تم إيقاف عملية التصدير.', 'Export was cancelled.'),
           });
           if (!closed) res.end();
         } else if (job.status === 'error') {
           clearInterval(poll);
-          sendEvent('error', { message: job.error || 'فشلت عملية التصدير.' });
+          sendEvent('error', {
+            message: job.error || tr('فشلت عملية التصدير.', 'Export failed.'),
+          });
           if (!closed) res.end();
         }
       }, 500);
@@ -10685,14 +10915,27 @@ async function startServer() {
           'audio',
           'info',
           job.tweakInstruction
-            ? `التعديل السريع على ${job.scenes.length} مشاهد — الحفاظ على التوقيت والصوت الحاليين.`
+            ? tr(
+                `التعديل السريع على ${job.scenes.length} مشاهد — الحفاظ على التوقيت والصوت الحاليين.`,
+                `Quick tweak across ${job.scenes.length} scenes — preserving current timing and audio.`,
+              )
             : job.voiceoverEnabled
-              ? `تقسيم السكربت الصوتي المعتمد إلى ${job.scenes.length} مشاهد/جمل كاملة — المدة تُحسب من صوت ElevenLabs الفعلي بدون تمديد.`
-              : `وضع الإخراج البصري المباشر من البرومبت الرئيسي إلى ${job.scenes.length} مشهداً — المدة المستهدفة: ${
-                  job.targetDuration === 'auto'
-                    ? 'تلقائية'
-                    : `${job.targetDuration}s`
-                } (بدون تعليق صوتي).`,
+              ? tr(
+                  `تقسيم السكربت الصوتي المعتمد إلى ${job.scenes.length} مشاهد/جمل كاملة — المدة تُحسب من صوت ElevenLabs الفعلي بدون تمديد.`,
+                  `Splitting the approved voiceover script into ${job.scenes.length} complete scenes/sentences — duration follows the real ElevenLabs audio with no padding.`,
+                )
+              : tr(
+                  `وضع الإخراج البصري المباشر من البرومبت الرئيسي إلى ${job.scenes.length} مشهداً — المدة المستهدفة: ${
+                    job.targetDuration === 'auto'
+                      ? 'تلقائية'
+                      : `${job.targetDuration}s`
+                  } (بدون تعليق صوتي).`,
+                  `Visual-only mode from the master prompt into ${job.scenes.length} scenes — target duration: ${
+                    job.targetDuration === 'auto'
+                      ? 'auto'
+                      : `${job.targetDuration}s`
+                  } (no voiceover).`,
+                ),
         );
         if (job.tweakInstruction) {
           const missingAudio = job.scenes.some(
@@ -10704,7 +10947,10 @@ async function startServer() {
             sendLog(
               'audio',
               'info',
-              'التعديل السريع: بعض المشاهد لا تملك صوتاً محفوظاً — سيتم تجهيز الصوت المفقود فقط.',
+              tr(
+                'التعديل السريع: بعض المشاهد لا تملك صوتاً محفوظاً — سيتم تجهيز الصوت المفقود فقط.',
+                'Quick tweak: some scenes have no saved audio — only the missing audio will be prepared.',
+              ),
             );
             const generated = await prepareSceneAudio(job, (level, message) =>
               sendLog('audio', level, message),
@@ -10712,15 +10958,24 @@ async function startServer() {
             sendLog(
               'audio',
               'success',
-              `تم تجهيز ${generated} مقطع صوتي مفقود مع إعادة استخدام الصوت المخزن للمشاهد الأخرى.`,
+              tr(
+                `تم تجهيز ${generated} مقطع صوتي مفقود مع إعادة استخدام الصوت المخزن للمشاهد الأخرى.`,
+                `Prepared ${generated} missing audio segment(s) while reusing cached audio for the other scenes.`,
+              ),
             );
           } else {
             sendLog(
               'audio',
               'success',
               job.voiceoverEnabled
-                ? 'التعديل السريع: إعادة استخدام التعليق الصوتي الحالي بالكامل دون إعادة توليد.'
-                : 'التعديل السريع: وضع الإخراج البصري المباشر — الحفاظ على التوقيت البصري الحالي دون TTS.',
+                ? tr(
+                    'التعديل السريع: إعادة استخدام التعليق الصوتي الحالي بالكامل دون إعادة توليد.',
+                    'Quick tweak: reusing the full current voiceover without regenerating.',
+                  )
+                : tr(
+                    'التعديل السريع: وضع الإخراج البصري المباشر — الحفاظ على التوقيت البصري الحالي دون TTS.',
+                    'Quick tweak: visual-only mode — preserving current visual timing without TTS.',
+                  ),
             );
           }
           job.audioPrepared = true;
@@ -10732,7 +10987,10 @@ async function startServer() {
           sendLog(
             'audio',
             'success',
-            `تم تجهيز ${generated} مقطع صوتي عبر ElevenLabs وقياس المدد الفعلية لكل مشهد.`,
+            tr(
+              `تم تجهيز ${generated} مقطع صوتي عبر ElevenLabs وقياس المدد الفعلية لكل مشهد.`,
+              `Prepared ${generated} ElevenLabs audio segment(s) and measured the real duration of every scene.`,
+            ),
           );
           if (job.usage) {
             recordUsage({
@@ -10749,9 +11007,14 @@ async function startServer() {
           sendLog(
             'audio',
             'success',
-            `وضع الإخراج البصري المباشر — بدون TTS، تم ضبط ${job.scenes.length} مشهداً على ${Math.round(
-              totalSeconds * job.fps,
-            )} إطاراً (${totalSeconds}s @ ${job.fps}fps).`,
+            tr(
+              `وضع الإخراج البصري المباشر — بدون TTS، تم ضبط ${job.scenes.length} مشهداً على ${Math.round(
+                totalSeconds * job.fps,
+              )} إطاراً (${totalSeconds}s @ ${job.fps}fps).`,
+              `Visual-only mode — no TTS; set ${job.scenes.length} scenes to ${Math.round(
+                totalSeconds * job.fps,
+              )} frames (${totalSeconds}s @ ${job.fps}fps).`,
+            ),
           );
         }
 
@@ -10762,7 +11025,10 @@ async function startServer() {
         sendLog(
           'audio',
           'success',
-          `التوقيت النهائي: ${plannedFrames} إطاراً بمعدل ${job.fps}fps.`,
+          tr(
+            `التوقيت النهائي: ${plannedFrames} إطاراً بمعدل ${job.fps}fps.`,
+            `Final timing: ${plannedFrames} frames at ${job.fps}fps.`,
+          ),
         );
         syncExportProject(job);
         resetActiveCompositionMetadata(job);
@@ -10778,17 +11044,30 @@ async function startServer() {
           sendLog(
             'code',
             'info',
-            'التعديل السريع: opencode سيعدل مشاهد src/generated الحالية دون إعادة توليدها.',
+            tr(
+              'التعديل السريع: opencode سيعدل مشاهد src/generated الحالية دون إعادة توليدها.',
+              'Quick tweak: opencode will edit the current src/generated scenes without regenerating them.',
+            ),
           );
         } else {
           sendLog(
             'code',
             'info',
-            'تشغيل opencode headless لكتابة مشاهد Remotion مخصصة في src/generated/.',
+            tr(
+              'تشغيل opencode headless لكتابة مشاهد Remotion مخصصة في src/generated/.',
+              'Running opencode headless to write bespoke Remotion scenes in src/generated/.',
+            ),
           );
           const removed = cleanGeneratedTsxCache();
           if (removed.length > 0) {
-            sendLog('code', 'info', `تنظيف ${removed.length} مكوّن مولّد سابق.`);
+            sendLog(
+              'code',
+              'info',
+              tr(
+                `تنظيف ${removed.length} مكوّن مولّد سابق.`,
+                `Cleaned ${removed.length} previously generated component(s).`,
+              ),
+            );
           }
         }
         const openCodePrompt = job.tweakInstruction
@@ -10814,7 +11093,9 @@ async function startServer() {
           }
           if (isExportCancelled(job.id)) throw error;
           const message =
-            error instanceof Error ? error.message : 'فشل تشغيل opencode.';
+            error instanceof Error
+              ? error.message
+              : tr('فشل تشغيل opencode.', 'opencode failed to run.');
           sendLog('code', 'error', message);
           throw error;
         } finally {
@@ -10827,7 +11108,10 @@ async function startServer() {
           sendLog(
             'code',
             'info',
-            `تم تنظيف مؤثرات المشاهد لتبقى ناعمة وواحدة فقط دون أي جرس أو نغمة نهاية (${sanitizedSfxFiles.length} ملف).`,
+            tr(
+              `تم تنظيف مؤثرات المشاهد لتبقى ناعمة وواحدة فقط دون أي جرس أو نغمة نهاية (${sanitizedSfxFiles.length} ملف).`,
+              `Sanitized scene SFX to stay soft and single per scene with no bells or ending tones (${sanitizedSfxFiles.length} file(s)).`,
+            ),
           );
         }
 
@@ -10836,14 +11120,20 @@ async function startServer() {
           if (sourceErrors.length > 0) {
             restoreGeneratedSceneFiles(generatedSnapshot!);
             throw new Error(
-              `فشل التحقق من ملفات التعديل السريع وتم استرجاع النسخة السابقة: ${sourceErrors.join(' | ')}`,
+              tr(
+                `فشل التحقق من ملفات التعديل السريع وتم استرجاع النسخة السابقة: ${sourceErrors.join(' | ')}`,
+                `Quick-tweak source validation failed and the previous version was restored: ${sourceErrors.join(' | ')}`,
+              ),
             );
           }
           const validation = await validateGeneratedScenes();
           if (!validation.ok) {
             restoreGeneratedSceneFiles(generatedSnapshot!);
             throw new Error(
-              `فشل التحقق من TypeScript للتعديل السريع وتم استرجاع النسخة السابقة: ${validation.errors}`,
+              tr(
+                `فشل التحقق من TypeScript للتعديل السريع وتم استرجاع النسخة السابقة: ${validation.errors}`,
+                `Quick-tweak TypeScript validation failed and the previous version was restored: ${validation.errors}`,
+              ),
             );
           }
           attachGeneratedComponents(job, true);
@@ -10857,7 +11147,10 @@ async function startServer() {
             sendLog(
               'code',
               'warn',
-              `مشاهد opencode لم تجتز TypeScript — سيتم إصلاح المشاهد المتأثرة فقط. ${validation.errors}`,
+              tr(
+                `مشاهد opencode لم تجتز TypeScript — سيتم إصلاح المشاهد المتأثرة فقط. ${validation.errors}`,
+                `opencode scenes failed TypeScript — repairing only the affected scenes. ${validation.errors}`,
+              ),
             );
             let repairedNames = repairFailingGeneratedScenes(
               job,
@@ -10878,13 +11171,19 @@ async function startServer() {
                 `[export] generated scenes still failed after targeted repair:\n${validation.errors}`,
               );
               throw new Error(
-                `تعذر التحقق من مشاهد Remotion المولّدة بعد إصلاح المشاهد المتأثرة فقط: ${validation.errors}`,
+                tr(
+                  `تعذر التحقق من مشاهد Remotion المولّدة بعد إصلاح المشاهد المتأثرة فقط: ${validation.errors}`,
+                  `Could not validate the generated Remotion scenes after repairing only the affected scenes: ${validation.errors}`,
+                ),
               );
             }
             sendLog(
               'code',
               'warn',
-              `تم إصلاح المشاهد المتأثرة فقط (${repairedNames.join(', ')}) بتخطيطات بديلة متنوعة.`,
+              tr(
+                `تم إصلاح المشاهد المتأثرة فقط (${repairedNames.join(', ')}) بتخطيطات بديلة متنوعة.`,
+                `Repaired only the affected scenes (${repairedNames.join(', ')}) with varied fallback layouts.`,
+              ),
             );
           }
           attachGeneratedComponents(job);
@@ -10918,8 +11217,14 @@ async function startServer() {
           'code',
           'success',
           job.tweakInstruction
-            ? `تم تطبيق التعديل السريع على ${job.scenes.length} مشهداً مع الحفاظ على الصوت الحالي.`
-            : `opencode كتب ${job.scenes.length} مشهداً مخصصاً وأُضيفت إلى سجل src/generated.`,
+            ? tr(
+                `تم تطبيق التعديل السريع على ${job.scenes.length} مشهداً مع الحفاظ على الصوت الحالي.`,
+                `Applied the quick tweak across ${job.scenes.length} scenes while preserving current audio.`,
+              )
+            : tr(
+                `opencode كتب ${job.scenes.length} مشهداً مخصصاً وأُضيفت إلى سجل src/generated.`,
+                `opencode wrote ${job.scenes.length} bespoke scenes and registered them in src/generated.`,
+              ),
         );
         sendStep('code', 'completed', 70);
         throwIfExportCancelled(job.id);
@@ -10941,7 +11246,10 @@ async function startServer() {
         sendLog(
           'render',
           'info',
-          `بدء تصيير MainComposition (${job.aspectRatio} @ ${job.fps}fps).`,
+          tr(
+            `بدء تصيير MainComposition (${job.aspectRatio} @ ${job.fps}fps).`,
+            `Starting MainComposition render (${job.aspectRatio} @ ${job.fps}fps).`,
+          ),
         );
 
         const result = await renderJobWithSceneCache(
@@ -10962,18 +11270,32 @@ async function startServer() {
         } catch {
           job.outputSize = undefined;
         }
+        registerMediaTitle(job.outputName, job.title || job.masterPrompt || job.id, job.id);
         syncExportProject(job);
         sendStep('render', 'completed', 100);
-        sendLog('render', 'success', `اكتمل التصدير: ${result.outputFile}`);
+        sendLog(
+          'render',
+          'success',
+          tr(
+            `اكتمل التصدير: ${result.outputFile}`,
+            `Export complete: ${result.outputFile}`,
+          ),
+        );
         emitComplete();
       } catch (error) {
         if (isExportCancelled(job.id)) {
           job.status = 'cancelled';
-          job.error = 'تم إيقاف عملية التصدير بواسطة المستخدم.';
+          job.error = tr(
+            'تم إيقاف عملية التصدير بواسطة المستخدم.',
+            'Export was cancelled by the user.',
+          );
           sendEvent('cancelled', { jobId: job.id, message: job.error });
         } else {
           job.status = 'error';
-          job.error = error instanceof Error ? error.message : 'فشلت عملية التصدير.';
+          job.error =
+            error instanceof Error
+              ? error.message
+              : tr('فشلت عملية التصدير.', 'Export failed.');
           sendEvent('error', { message: job.error });
         }
       } finally {
@@ -11019,6 +11341,7 @@ async function startServer() {
       captionBottomOffset?: unknown;
       wordsPerScreen?: unknown;
       captionsEnabled?: unknown;
+      uiLanguage?: unknown;
     };
 
     if (!Array.isArray(body.scenes) || body.scenes.length === 0) {
@@ -11142,8 +11465,13 @@ async function startServer() {
         Boolean(body.captionsEnabled) && Boolean(body.voiceoverEnabled),
       enable25D: false,
       elevenlabsKey,
+      uiLanguage: normalizeUiLanguage(body.uiLanguage),
       status: 'queued',
     };
+
+    const videoTitle = deriveVideoTitle(job, topic);
+    job.title = videoTitle;
+    job.outputName = makeOutputName(videoTitle, job.id, job.createdAt);
 
     // Generate the selected ElevenLabs voice for EVERY scene before Remotion starts.
     // Each scene duration is then measured from the produced MP3 with ffprobe.
@@ -11219,7 +11547,9 @@ async function startServer() {
       audioPrepared: true,
       totalDurationSec: job.scenes.reduce((total, scene) => total + scene.durationSec, 0),
       dataFile: path.relative(PROJECT_ROOT, DATA_FILE),
-      outputFile: path.relative(PROJECT_ROOT, path.join(OUT_DIR, `${jobId}.mp4`)),
+      outputFile: path.relative(PROJECT_ROOT, renderOutputPath(job)),
+      title: job.title || null,
+      outputName: job.outputName || null,
       usage: renderUsage,
       usageSummary: buildUsageResponse(),
     });
@@ -11249,6 +11579,8 @@ async function startServer() {
       jobId: job.id,
       status: job.status,
       outputFile: job.outputFile || null,
+      outputName: job.outputName || null,
+      title: job.title || null,
       outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
       error: job.error || null,
     });
@@ -11286,6 +11618,7 @@ async function startServer() {
     ) => {
       sendEvent('log', { step, level, message });
     };
+    const tr = (ar: string, en: string) => uiText(job, ar, en);
 
     const buildTimings = () => {
       let cursorFrame = 0;
@@ -11315,6 +11648,8 @@ async function startServer() {
         fps: job.fps,
         timings,
         outputFile: job.outputFile || null,
+        outputName: job.outputName || null,
+        title: job.title || null,
         outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
         fileSizeBytes: job.outputSize ?? null,
       });
@@ -11327,13 +11662,22 @@ async function startServer() {
     }
 
     if (job.status === 'error') {
-      sendEvent('error', { message: job.error || 'فشلت عملية التصيير.' });
+      sendEvent('error', {
+        message: job.error || tr('فشلت عملية التصيير.', 'Render failed.'),
+      });
       res.end();
       return;
     }
 
     if (job.status === 'rendering') {
-      sendLog('render', 'info', 'مهمة التصيير قيد التنفيذ بالفعل — في انتظار اكتمالها...');
+      sendLog(
+        'render',
+        'info',
+        tr(
+          'مهمة التصيير قيد التنفيذ بالفعل — في انتظار اكتمالها...',
+          'The render job is already running — waiting for it to finish...',
+        ),
+      );
       const poll = setInterval(() => {
         if (job.status === 'completed') {
           clearInterval(poll);
@@ -11341,7 +11685,9 @@ async function startServer() {
           if (!closed) res.end();
         } else if (job.status === 'error') {
           clearInterval(poll);
-          sendEvent('error', { message: job.error || 'فشلت عملية التصيير.' });
+          sendEvent('error', {
+            message: job.error || tr('فشلت عملية التصيير.', 'Render failed.'),
+          });
           if (!closed) res.end();
         }
       }, 500);
@@ -11353,22 +11699,46 @@ async function startServer() {
 
     const runPipeline = async () => {
       sendEvent('step', { step: 'script', status: 'active', progress: 10 });
-      sendLog('script', 'info', `تجهيز ${job.scenes.length} مشاهد في src/data.json بنمط ${job.visualStyle}`);
+      sendLog(
+        'script',
+        'info',
+        tr(
+          `تجهيز ${job.scenes.length} مشاهد في src/data.json بنمط ${job.visualStyle}`,
+          `Preparing ${job.scenes.length} scenes in src/data.json using ${job.visualStyle} style`,
+        ),
+      );
       let videoData = buildParentVideoData(job);
       job.videoData = videoData;
       writeJsonFile(DATA_FILE, videoData);
       sendEvent('step', { step: 'script', status: 'completed', progress: 25 });
-      sendLog('script', 'success', 'تمت مزامنة السكربت مع src/data.json في مشروع Remotion.');
+      sendLog(
+        'script',
+        'success',
+        tr(
+          'تمت مزامنة السكربت مع src/data.json في مشروع Remotion.',
+          'Script synced with src/data.json in the Remotion project.',
+        ),
+      );
 
       sendEvent('step', { step: 'voices', status: 'active', progress: 35 });
       if (job.voiceoverEnabled) {
         sendLog(
           'voices',
           'info',
-          `المسار الصوتي ${job.modelId} جاهز للصوت ${job.voiceId.slice(0, 8)} عبر public/audio.`,
+          tr(
+            `المسار الصوتي ${job.modelId} جاهز للصوت ${job.voiceId.slice(0, 8)} عبر public/audio.`,
+            `Voice track ${job.modelId} is ready for voice ${job.voiceId.slice(0, 8)} via public/audio.`,
+          ),
         );
       } else {
-        sendLog('voices', 'warn', 'التعليق الصوتي معطّل — سيتم التصيير بدون تعليق صوتي.');
+        sendLog(
+          'voices',
+          'warn',
+          tr(
+            'التعليق الصوتي معطّل — سيتم التصيير بدون تعليق صوتي.',
+            'Voiceover is disabled — rendering without voiceover.',
+          ),
+        );
       }
       const audioCount = job.audioPrepared
         ? job.scenes.filter((scene) => Boolean(scene.audioSrc)).length
@@ -11379,7 +11749,10 @@ async function startServer() {
         sendLog(
           'voices',
           'success',
-          `تم تجهيز ${audioCount} ملف صوتي عبر ElevenLabs قبل بدء التصيير مع قياس المدد الفعلية.`,
+          tr(
+            `تم تجهيز ${audioCount} ملف صوتي عبر ElevenLabs قبل بدء التصيير مع قياس المدد الفعلية.`,
+            `Prepared ${audioCount} ElevenLabs audio file(s) before rendering with measured real durations.`,
+          ),
         );
       }
       videoData = buildParentVideoData(job);
@@ -11390,30 +11763,52 @@ async function startServer() {
       sendLog(
         'voices',
         'success',
-        `تم تجهيز ${audioCount} ملف صوتي في public/audio وربطها بـ src/data.json.`,
+        tr(
+          `تم تجهيز ${audioCount} ملف صوتي في public/audio وربطها بـ src/data.json.`,
+          `Prepared ${audioCount} audio file(s) in public/audio and linked them to src/data.json.`,
+        ),
       );
 
       sendEvent('step', { step: 'sync', status: 'active', progress: 60 });
       sendLog(
         'sync',
         'info',
-        `الجدول الزمني: ${totalFrames} إطاراً بمعدل ${job.fps}fps (${totalDurationSec.toFixed(1)} ثانية).`,
+        tr(
+          `الجدول الزمني: ${totalFrames} إطاراً بمعدل ${job.fps}fps (${totalDurationSec.toFixed(1)} ثانية).`,
+          `Timeline: ${totalFrames} frames at ${job.fps}fps (${totalDurationSec.toFixed(1)} seconds).`,
+        ),
       );
       sendLog(
         'sync',
         job.sfxEnabled ? 'success' : 'warn',
         job.sfxEnabled
-          ? `المؤثرات الصوتية مفعّلة بمستوى ${Math.round(job.sfxVolume * 100)}% باستخدام public/sfx.`
-          : 'المؤثرات الصوتية معطّلة لهذا التصيير.',
+          ? tr(
+              `المؤثرات الصوتية مفعّلة بمستوى ${Math.round(job.sfxVolume * 100)}% باستخدام public/sfx.`,
+              `SFX are enabled at ${Math.round(job.sfxVolume * 100)}% using public/sfx.`,
+            )
+          : tr(
+              'المؤثرات الصوتية معطّلة لهذا التصيير.',
+              'SFX are disabled for this render.',
+            ),
       );
       sendEvent('step', { step: 'sync', status: 'completed', progress: 75 });
-      sendLog('sync', 'success', `اكتملت مزامنة ${timings.length} مشاهد مع MainComposition.`);
+      sendLog(
+        'sync',
+        'success',
+        tr(
+          `اكتملت مزامنة ${timings.length} مشاهد مع MainComposition.`,
+          `Synced ${timings.length} scenes with MainComposition.`,
+        ),
+      );
 
       sendEvent('step', { step: 'render', status: 'active', progress: 82 });
       sendLog(
         'render',
         'info',
-        `بدء npx remotion render MainComposition (${job.aspectRatio} @ ${job.fps}fps, concurrency=2, nice -n 19)...`,
+        tr(
+          `بدء npx remotion render MainComposition (${job.aspectRatio} @ ${job.fps}fps, concurrency=2, nice -n 19)...`,
+          `Starting npx remotion render MainComposition (${job.aspectRatio} @ ${job.fps}fps, concurrency=2, nice -n 19)...`,
+        ),
       );
 
       try {
@@ -11443,13 +11838,24 @@ async function startServer() {
         } catch {
           job.outputSize = undefined;
         }
+        registerMediaTitle(job.outputName, job.title || job.id, job.id);
 
         sendEvent('step', { step: 'render', status: 'completed', progress: 100 });
-        sendLog('render', 'success', `اكتمل تصيير MainComposition إلى ${result.outputFile}.`);
+        sendLog(
+          'render',
+          'success',
+          tr(
+            `اكتمل تصيير MainComposition إلى ${result.outputFile}.`,
+            `MainComposition render complete: ${result.outputFile}.`,
+          ),
+        );
         emitComplete();
       } catch (error) {
         job.status = 'error';
-        job.error = error instanceof Error ? error.message : 'فشل تصيير Remotion.';
+        job.error =
+          error instanceof Error
+            ? error.message
+            : tr('فشل تصيير Remotion.', 'Remotion render failed.');
         sendEvent('step', { step: 'render', status: 'error', progress: 100 });
         sendLog('render', 'error', job.error);
         sendEvent('error', { message: job.error });

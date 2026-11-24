@@ -1,58 +1,47 @@
-import type { CSSProperties } from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { Clock3, MoonStar, ShieldCheck } from "lucide-react";
-import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
+import { SmartIcon } from "../components/SmartIcon";
 import { Stickman } from "../components/Stickman";
 
 type Props = {
-  accentColor: string; bgColor: string; textColor: string; mutedColor: string;
-  characterBody: string; characterFace: string; characterAccent: string; characterShadow: string;
-  isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[];
-  data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean;
+  accentColor: string;
+  bgColor: string;
+  textColor: string;
+  mutedColor: string;
+  characterBody: string;
+  characterFace: string;
+  characterAccent: string;
+  characterShadow: string;
+  isRtl: boolean;
+  language: string;
+  title?: string;
+  text?: string;
+  keywords?: string[];
+  data?: Record<string, unknown>;
+  durationInFrames: number;
+  showCharacter?: boolean;
 };
 
-const CRIMSON = "#DC2626";
-const EMERALD = "#10B981";
-const PRAYERS = ["الفجر", "الظهر", "العصر", "المغرب", "العشاء"];
-const CLAMP = { extrapolateLeft: "clamp" as const, extrapolateRight: "clamp" as const };
+const SURFACE = "#162033";
+const LINKS = [
+  { icon: "github", brand: true, label: "GITHUB", value: "github.com/ZOF478/zofstudio" },
+  { icon: "globe", brand: false, label: "WEBSITE", value: "studio.zoedit.com" },
+];
 
 export const Scene7 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps, width, height } = useVideoConfig();
-  const s = Math.min(width, height);
+  const { fps, width, durationInFrames } = useVideoConfig();
   const exit = interpolate(
     frame,
-    [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
+    [Math.max(0, durationInFrames - 10), Math.max(1, durationInFrames - 1)],
     [1, 0],
-    CLAMP,
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
-  const red = interpolate(frame, [100, 160], [0, 1], CLAMP);
-  const marker = interpolate(frame, [20, 120], [4, 52], CLAMP);
-  const calm = interpolate(frame, [240, 320], [0, 1], CLAMP);
-  const clockTick = interpolate(frame, [150, 175], [0, 18], CLAMP);
-  const secondAngle = 210 + clockTick;
-  const minuteAngle = 60 + clockTick / 12;
-  const hourAngle = 120 + clockTick / 60;
-  const nodeSpring = (i: number) =>
-    spring({ frame: frame - i * 12, fps, config: { damping: 14, stiffness: 150 } });
-  const cardStyle: CSSProperties = {
-    position: "absolute" as const,
-    inset: 0,
-    margin: "auto",
-    width: "94%",
-    height: "84%",
-    borderRadius: s * 0.045,
-    padding: s * 0.035,
-    boxSizing: "border-box" as const,
-    display: "flex",
-    flexDirection: "column" as const,
-    justifyContent: "center",
-    gap: s * 0.02,
-    background: `linear-gradient(165deg, ${props.bgColor}, ${CRIMSON}18)`,
-    border: `1px solid ${CRIMSON}55`,
-    overflow: "hidden",
-  };
+  const callout = 1 + 0.035 * Math.sin(frame / 7);
+  const badge = spring({ frame: frame - 80, fps, config: { damping: 13, stiffness: 150 } });
+  const glow = 0.5 + 0.5 * Math.sin(frame / 12);
+  const brand = spring({ frame, fps, config: { damping: 15, stiffness: 120 } });
+  const titleSize = Math.min(width * 0.07, 74);
 
   return (
     <AbsoluteFill
@@ -62,185 +51,265 @@ export const Scene7 = (props: Props) => {
         direction: props.isRtl ? "rtl" : "ltr",
       }}
     >
-      <SceneSfx name="pop" frame={120} volume={0.18} />
       <div
         style={{
           position: "absolute",
           inset: 0,
+          background: `radial-gradient(circle at 42% 48%, ${props.accentColor}26, transparent 60%)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          opacity: 0.05,
+          backgroundImage: `linear-gradient(${props.textColor} 1px, transparent 1px), linear-gradient(90deg, ${props.textColor} 1px, transparent 1px)`,
+          backgroundSize: "100px 100px",
+        }}
+      />
+      {Array.from({ length: 14 }, (_, i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            left: `${(i * 53) % 100}%`,
+            top: `${(i * 29) % 100}%`,
+            width: 3,
+            height: 3,
+            borderRadius: "50%",
+            backgroundColor: props.accentColor,
+            opacity: 0.16 + 0.14 * Math.sin(frame / 22 + i),
+            transform: `translateY(${Math.sin(frame / 38 + i) * 18}px)`,
+          }}
+        />
+      ))}
+
+      <div
+        style={{
           opacity: exit,
-          transform: `translateY(${(1 - exit) * s * 0.012}px)`,
+          transform: `translateY(${(1 - exit) * 20}px) scale(${0.985 + exit * 0.015})`,
+          height: "100%",
+          width: "100%",
         }}
       >
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            background: `radial-gradient(circle at 40% 50%, ${CRIMSON}18, transparent 60%)`,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: calm,
-            background: `radial-gradient(circle at 50% 58%, ${EMERALD}26, transparent 62%)`,
-          }}
-        />
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: `${(i * 43) % 100}%`,
-              top: `${(i * 57) % 100}%`,
-              width: s * 0.005,
-              height: s * 0.005,
-              borderRadius: "50%",
-              background: i % 3 === 0 ? EMERALD : props.accentColor,
-              opacity: 0.18 + 0.2 * Math.sin(frame / 26 + i),
-              transform: `translateY(${Math.sin(frame / 34 + i) * 10}px)`,
-            }}
-          />
-        ))}
-
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "22%",
+            top: "7%",
+            left: 48,
+            right: 48,
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "0 48px",
-            boxSizing: "border-box",
-            textAlign: props.isRtl ? "right" : "left",
-            gap: s * 0.006,
+            alignItems: "center",
+            gap: 16,
+            direction: "ltr",
+            textAlign: "left",
+            opacity: brand,
+            transform: `translateY(${(1 - brand) * 24}px)`,
           }}
         >
-          <div style={{ fontSize: s * 0.056, fontWeight: 900, color: props.textColor, lineHeight: 1.4 }}>
-            صلاتك خط أحمر
+          <div
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 18,
+              backgroundColor: props.accentColor,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: props.bgColor,
+              fontSize: 36,
+              fontWeight: 900,
+              boxShadow: `0 0 ${20 + glow * 18}px ${props.accentColor}88`,
+              flexShrink: 0,
+            }}
+          >
+            Z
           </div>
-          <div style={{ fontSize: s * 0.03, fontWeight: 800, color: EMERALD, lineHeight: 1.4 }}>
-            ولا تسمح لترفيه
+          <div>
+            <div
+              style={{
+                color: props.textColor,
+                fontSize: titleSize,
+                fontWeight: 900,
+                letterSpacing: -1,
+                lineHeight: 1,
+              }}
+            >
+              ZOF STUDIO
+            </div>
+            <div
+              style={{
+                color: props.accentColor,
+                fontSize: 15,
+                fontWeight: 800,
+                letterSpacing: 3,
+                marginTop: 8,
+              }}
+            >
+              LINK IN BIO + GITHUB
+            </div>
           </div>
-          <div style={{ width: s * 0.2, height: 4, background: CRIMSON, borderRadius: 999 }} />
         </div>
 
         <div
           style={{
             position: "absolute",
-            top: "22%",
-            height: "50%",
-            left: 0,
-            right: 0,
+            top: "25%",
+            left: 48,
+            width: "58%",
             display: "flex",
-            alignItems: "center",
-            gap: s * 0.02,
-            padding: "0 40px",
-            boxSizing: "border-box",
+            flexDirection: "column",
+            gap: 14,
           }}
         >
-          <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
-            <DepthStage>
-              <SpatialCard enterFrame={0} recedeFrame={150} tiltX={-3} tiltY={props.isRtl ? 5 : -5} style={cardStyle}>
-                <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", opacity: 0.07 }}>
-                  <MoonStar size={s * 0.2} color={props.textColor} />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: s * 0.01, color: props.accentColor, fontSize: s * 0.02, fontWeight: 800, position: "relative" }}>
-                  <MoonStar size={s * 0.028} color={props.accentColor} />
-                  <span>الصلوات الخمس</span>
-                </div>
-                <div style={{ position: "absolute", top: s * 0.025, left: s * 0.03, color: props.mutedColor, fontSize: s * 0.018, fontWeight: 800, opacity: 0.8 * (1 - red) }}>
-                  الوقت يمضي
-                </div>
-                <div style={{ position: "relative", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: s * 0.015 }}>
-                  <div style={{ position: "absolute", top: s * 0.011, left: 0, right: 0, height: 2, background: `${props.textColor}22` }} />
-                  <div style={{ position: "absolute", top: s * 0.009, right: 0, height: s * 0.006, width: `${red * 100}%`, background: CRIMSON, borderRadius: 999, boxShadow: `0 0 18px ${CRIMSON}88` }} />
-                  <div style={{ position: "absolute", top: 0, right: `${marker}%`, width: s * 0.022, height: s * 0.022, borderRadius: "50%", background: props.textColor, boxShadow: `0 0 16px ${CRIMSON}`, transform: "translateX(50%)" }} />
-                  {PRAYERS.map((name, i) => {
-                    const n = nodeSpring(i);
-                    return (
-                      <div
-                        key={name}
-                        style={{
-                          width: "18%",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: s * 0.008,
-                          position: "relative",
-                          opacity: n,
-                          transform: `scale(${0.8 + n * 0.2})`,
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: s * 0.022,
-                            height: s * 0.022,
-                            borderRadius: "50%",
-                            background: i === 0 ? CRIMSON : props.accentColor,
-                            boxShadow: `0 0 14px ${i === 0 ? CRIMSON : props.accentColor}66`,
-                          }}
-                        />
-                        <div style={{ fontSize: s * 0.016, fontWeight: 700, color: props.mutedColor, textAlign: "center" }}>{name}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </SpatialCard>
-
-              <SpatialCard enterFrame={150} recedeFrame={260} tiltX={-3} tiltY={props.isRtl ? -4 : 4} style={cardStyle}>
-                <div style={{ display: "flex", alignItems: "center", gap: s * 0.01, color: CRIMSON, fontSize: s * 0.02, fontWeight: 800 }}>
-                  <Clock3 size={s * 0.028} color={CRIMSON} />
-                  <span>توقّف العدّ</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: s * 0.03, width: "100%" }}>
-                  <svg viewBox="0 0 200 200" style={{ width: s * 0.22, height: s * 0.22 }}>
-                    <circle cx="100" cy="100" r="82" fill="none" stroke={`${props.textColor}33`} strokeWidth="4" />
-                    {[0, 30, 60, 90, 120, 150].map((a) => (
-                      <line key={a} x1="100" y1="24" x2="100" y2="34" transform={`rotate(${a} 100 100)`} stroke={`${props.textColor}55`} strokeWidth="2" />
-                    ))}
-                    <line x1="100" y1="100" x2="100" y2="48" transform={`rotate(${hourAngle} 100 100)`} stroke={props.textColor} strokeWidth="5" strokeLinecap="round" />
-                    <line x1="100" y1="100" x2="100" y2="34" transform={`rotate(${minuteAngle} 100 100)`} stroke={props.accentColor} strokeWidth="3" strokeLinecap="round" />
-                    <line x1="100" y1="100" x2="100" y2="30" transform={`rotate(${secondAngle} 100 100)`} stroke={CRIMSON} strokeWidth="2" strokeLinecap="round" />
-                    <circle cx="100" cy="100" r="6" fill={CRIMSON} />
-                  </svg>
-                  <div style={{ display: "flex", flexDirection: "column", gap: s * 0.008, textAlign: props.isRtl ? "right" : "left" }}>
-                    <div style={{ fontSize: s * 0.045, fontWeight: 900, color: props.textColor, lineHeight: 1.3 }}>أوقف السهرة</div>
-                    <div style={{ fontSize: s * 0.022, fontWeight: 700, color: props.mutedColor }}>قبل الفجر</div>
+          {LINKS.map((link, i) => {
+            const enter = spring({
+              frame: frame - i * 12,
+              fps,
+              config: { damping: 200, stiffness: 120 },
+            });
+            return (
+              <div
+                key={link.value}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  padding: "18px 20px",
+                  borderRadius: 20,
+                  backgroundColor: SURFACE,
+                  border: `1px solid ${props.accentColor}55`,
+                  boxShadow: `0 12px 34px #00000055`,
+                  opacity: enter,
+                  transform: `translateX(${(1 - enter) * -26}px)`,
+                }}
+              >
+                <SmartIcon
+                  query={link.icon}
+                  brand={link.brand}
+                  size={34}
+                  color={props.accentColor}
+                />
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      color: props.mutedColor,
+                      fontSize: 11,
+                      fontWeight: 800,
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {link.label}
+                  </div>
+                  <div
+                    style={{
+                      color: props.textColor,
+                      fontSize: 19,
+                      fontWeight: 800,
+                      marginTop: 5,
+                      letterSpacing: -0.4,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {link.value}
                   </div>
                 </div>
-              </SpatialCard>
+              </div>
+            );
+          })}
+        </div>
 
-              <SpatialCard
-                enterFrame={260}
-                tiltX={-2}
-                tiltY={props.isRtl ? -4 : 4}
-                style={{ ...cardStyle, border: `1px solid ${EMERALD}55`, background: `linear-gradient(165deg, ${props.bgColor}, ${EMERALD}22)` }}
-              >
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: s * 0.02, width: "100%", height: "100%" }}>
-                  <ShieldCheck size={s * 0.12} color={EMERALD} />
-                  <div style={{ fontSize: s * 0.06, fontWeight: 900, color: props.textColor }}>حافظ عليها</div>
-                  <div style={{ fontSize: s * 0.025, fontWeight: 800, color: EMERALD }}>صلاتك أولاً</div>
-                </div>
-              </SpatialCard>
-            </DepthStage>
+        <div
+          style={{
+            position: "absolute",
+            top: "44%",
+            left: 48,
+            width: "58%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 16px",
+              borderRadius: 999,
+              border: `1px solid ${props.accentColor}77`,
+              backgroundColor: `${props.accentColor}12`,
+              opacity: badge,
+              transform: `translateY(${(1 - badge) * 18}px)`,
+            }}
+          >
+            <SmartIcon query="sparkles" size={20} color={props.accentColor} />
+            <div
+              style={{
+                color: props.accentColor,
+                fontSize: 13,
+                fontWeight: 900,
+                letterSpacing: 1.5,
+              }}
+            >
+              FREE & OPEN SOURCE
+            </div>
           </div>
+          <div
+            style={{
+              color: props.textColor,
+              fontSize: Math.min(width * 0.065, 68),
+              fontWeight: 900,
+              lineHeight: 1.08,
+              letterSpacing: -1.5,
+              transform: `scale(${callout})`,
+              transformOrigin: "left center",
+              textShadow: `0 0 ${24 + glow * 16}px ${props.accentColor}66`,
+            }}
+          >
+            What are you
+            <br />
+            waiting for?
+          </div>
+          <div
+            style={{
+              color: props.mutedColor,
+              fontSize: 16,
+              fontWeight: 700,
+              letterSpacing: 1,
+            }}
+          >
+            Clone it. Run it. Render it.
+          </div>
+        </div>
 
-          <div style={{ width: Math.round(s * 0.3), height: Math.round(s * 0.43), position: "relative", flexShrink: 0 }}>
+        {props.showCharacter !== false && (
+          <div
+            style={{
+              position: "absolute",
+              right: 40,
+              bottom: "30%",
+              width: 260,
+              height: 380,
+            }}
+          >
             <Stickman
-              pose="pointing"
+              pose="celebrating"
               color={props.characterBody}
               faceColor={props.characterFace}
               accent={props.characterAccent}
               shadow={props.characterShadow}
-              delay={0}
+              accessory="badge"
+              delay={12}
             />
           </div>
-        </div>
+        )}
       </div>
+
+      <SceneSfx name="pop" frame={80} volume={0.18} />
     </AbsoluteFill>
   );
 };

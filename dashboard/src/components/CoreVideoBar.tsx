@@ -276,6 +276,14 @@ export function CoreVideoBar({
                 tone="violet"
               />
             </div>
+            {enable25D ? (
+              <p className="rounded-lg border border-violet-400/15 bg-violet-500/[0.06] px-2 py-1.5 text-[9px] leading-relaxed text-violet-200/80">
+                {t(
+                  'تفعيل عمق 2.5D يضيف طبقات حركة إضافية وقد يزيد وقت كتابة المشاهد والريندر قليلاً.',
+                  'Enabling 2.5D depth adds layered motion and may slightly increase scene coding & render time.'
+                )}
+              </p>
+            ) : null}
             <div className="flex items-center gap-2 rounded-lg border border-amber-400/20 bg-[#10141D] px-2 py-1.5">
               <Clapperboard className="h-3.5 w-3.5 shrink-0 text-amber-300" />
               <span className="min-w-0 flex-1 text-start text-[10px] font-semibold leading-snug text-slate-300">
