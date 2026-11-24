@@ -47,7 +47,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Typecheck dashboard
-        run: npm --prefix dashboard exec tsc -- --noEmit
+        run: npm --prefix dashboard exec tsc -- --noEmit -p dashboard/tsconfig.json
 
       - name: Build dashboard
         run: npm --prefix dashboard run build

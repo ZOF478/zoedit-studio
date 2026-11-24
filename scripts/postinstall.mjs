@@ -66,6 +66,7 @@ function installDashboardDependencies() {
     'install',
     '--prefix',
     DASHBOARD_DIR,
+    '--legacy-peer-deps',
     '--no-audit',
     '--no-fund',
     '--loglevel=error',
