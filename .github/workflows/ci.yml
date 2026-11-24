@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, typecheck, build, and smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ZOF_SKIP_DASHBOARD_INSTALL: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            dashboard/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install dashboard dependencies
+        run: npm --prefix dashboard ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck root project
+        run: npx tsc --noEmit
+
+      - name: Typecheck dashboard
+        run: npm --prefix dashboard exec tsc -- --noEmit
+
+      - name: Build dashboard
+        run: npm --prefix dashboard run build
+
+      - name: CLI smoke test (--help)
+        run: node ./bin/zofstudio.mjs --help
+
+      - name: CLI smoke test (--version)
+        run: |
+          version="$(node ./bin/zofstudio.mjs --version)"
+          package_version="$(node -p "require('./package.json').version")"
+          test "$version" = "$package_version"
+          echo "zofstudio version: $version"
+
+      - name: Audit root dependencies
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Audit dashboard dependencies
+        run: npm --prefix dashboard audit --audit-level=high
+        continue-on-error: true
