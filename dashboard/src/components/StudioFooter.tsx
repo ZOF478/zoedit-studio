@@ -438,7 +438,16 @@ function AboutContent() {
           )}
         </p>
         <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
-          {t('2. شغّله على حاسوب محلي:', '2. Run on a local computer:')}
+          {t(
+            '2. شغّل Zof Studio (اختر إعدادك):',
+            '2. Launch Zof Studio (choose your setup):'
+          )}
+        </p>
+        <p className="mt-2 text-[11px] font-semibold leading-relaxed text-slate-200">
+          {t(
+            'الخيار أ: حاسوب محلي (Windows / macOS / Linux)',
+            'Option A: Local computer (Windows / macOS / Linux)'
+          )}
         </p>
         <pre
           dir="ltr"
@@ -452,10 +461,16 @@ function AboutContent() {
             'Starts at http://localhost:4789 and opens the browser automatically. Closing the terminal stops all background processes.'
           )}
         </p>
-        <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
+        <p className="mt-3 text-[11px] font-semibold leading-relaxed text-slate-200">
           {t(
-            '3. على VPS أو خادم بعيد، استخدم نفق SSH آمناً:',
-            '3. On a VPS or remote server, use a secure SSH tunnel:'
+            'الخيار ب: خادم VPS بعيد (نفق SSH آمن)',
+            'Option B: Remote VPS / server (secure SSH tunnel)'
+          )}
+        </p>
+        <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+          {t(
+            'من طرفيتك المحلية، افتح النفق:',
+            'From your local terminal, open the tunnel:'
           )}
         </p>
         <pre

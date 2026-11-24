@@ -69,7 +69,9 @@ npm install -g .
 
 `npm install -g .` registers the `zofstudio` command in the global PATH on Windows, macOS, and Linux. Its `postinstall` step automatically installs the dashboard dependencies and verifies the global command, so the first launch works immediately. If the global npm prefix is not writable, run `npm run setup`; it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`). For development from a clone, `npm link` links the same command without reinstalling.
 
-### Step 2 — Run on a local computer (Windows / macOS / Linux)
+### Step 2 — Launch Zof Studio (choose your setup)
+
+#### Option A: Local computer (Windows / macOS / Linux)
 
 ```bash
 zofstudio
@@ -77,7 +79,7 @@ zofstudio
 
 Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Remotion assets relative to the package installation directory. It binds only to `127.0.0.1`, starts the dashboard at `http://localhost:4789`, and opens your browser automatically once `/api/health` is ready. Closing the terminal cleanly stops the dashboard and all background Remotion processes.
 
-### Step 3 — Run on a remote VPS / server (secure SSH tunnel)
+#### Option B: Remote VPS / server (secure SSH tunnel)
 
 `zofstudio` stays bound to `127.0.0.1` by design, so the dashboard is never exposed directly to the internet. Access it through an encrypted SSH tunnel.
 
@@ -87,12 +89,9 @@ Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Rem
    ssh -L 4789:127.0.0.1:4789 -L 3333:127.0.0.1:3333 user@your-server-ip
    ```
 
-2. **Inside that SSH session**, install once and run `zofstudio`:
+2. **Inside that SSH session**, run `zofstudio` (installed once in Step 1):
 
    ```bash
-   git clone https://github.com/ZOF478/zofstudio.git zof-studio
-   cd zof-studio
-   npm install -g .
    zofstudio
    ```
 
@@ -219,7 +218,7 @@ Use `--no-open` on servers without a desktop session, then connect through the S
 
 ```bash
 npm install -g pm2
-pm2 start ./bin/zofstudio.mjs --name zof-studio -- --port 4799 --no-open
+pm2 start ./bin/zofstudio.mjs --name zof-studio -- --no-open
 pm2 save
 pm2 startup
 ```
@@ -247,6 +246,7 @@ Keys entered in the dashboard take precedence and are persisted locally in `~/.z
 ```text
 zof-studio/
 ├── bin/zofstudio.mjs       Smart CLI launcher
+├── scripts/                Setup, install, and maintenance scripts
 ├── dashboard/              Express + Vite studio UI and API
 ├── src/                    Remotion composition and generated scenes
 ├── public/                 SFX and generated audio (audio is git-ignored)
