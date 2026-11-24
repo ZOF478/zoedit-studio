@@ -67,7 +67,7 @@
     "build": "remotion bundle",
     "start": "node ./bin/zofstudio.mjs",
     "postinstall": "node ./scripts/postinstall.mjs",
-    "setup": "npm install && npm --prefix dashboard install && (npm link || node ./bin/link-fallback.mjs)",
+    "setup": "npm install && npm --prefix dashboard install --legacy-peer-deps && (npm link || node ./bin/link-fallback.mjs)",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   },
