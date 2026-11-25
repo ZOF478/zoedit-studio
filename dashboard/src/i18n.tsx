@@ -18,11 +18,11 @@ interface I18nValue {
   t: (ar: string, en: string) => string;
 }
 
-const STORAGE_KEY = 'zof-studio-lang';
+const STORAGE_KEY = 'zoedit-studio-lang';
 
 const SITE_TITLES: Record<Lang, string> = {
-  ar: 'Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي',
-  en: 'Zof Studio — AI-Directed Motion Graphics Studio',
+  ar: 'Zoedit Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي',
+  en: 'Zoedit Studio — AI-Directed Motion Graphics Studio',
 };
 
 const SITE_DESCRIPTIONS: Record<Lang, string> = {

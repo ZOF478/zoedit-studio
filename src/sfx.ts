@@ -1,4 +1,4 @@
-import type { Scene, SfxCueSound } from "./types";
+import type { Scene } from "./types";
 
 export const SFX_FILES = {
   "whoosh-soft": "whoosh-soft.wav",
@@ -9,16 +9,16 @@ export const SFX_FILES = {
   "type-tick": "type-tick.wav",
   "toggle-soft": "toggle-soft.wav",
   "impact-soft": "impact-soft.wav",
-  "whoosh-fast": "whoosh-soft.wav",
-  "whoosh-deep": "whoosh-soft.wav",
-  "pop-bubble": "pop-soft.wav",
-  "pop-sharp": "click-subtle.wav",
-  "typing-click": "type-tick.wav",
-  "alert-warning": "toggle-soft.wav",
+  "whoosh-fast": "whoosh-fast.wav",
+  "whoosh-deep": "whoosh-deep.wav",
+  "pop-bubble": "pop-bubble.wav",
+  "pop-sharp": "pop-sharp.wav",
+  "typing-click": "typing-click.wav",
+  "alert-warning": "alert-warning.wav",
   "cash-register": "cash-register.wav",
-  "cinematic-hit": "impact-soft.wav",
-  "bass-drop": "impact-soft.wav",
-  "riser-build": "slide.wav",
+  "cinematic-hit": "cinematic-hit.wav",
+  "bass-drop": "bass-drop.wav",
+  "riser-build": "riser-build.wav",
 } as const;
 
 export type SfxCatalogId = keyof typeof SFX_FILES;
@@ -50,7 +50,8 @@ export const DEFAULT_SFX_VOLUME = 0.2;
 
 export const DEFAULT_SFX_CUE_VOLUME = 0.18;
 
-export const SFX_CUE_FILES: Record<SfxCueSound, string> = {
+export const SFX_CUE_FILES: Record<string, string> = {
+  ...SFX_FILES,
   pop: "pop-soft.wav",
   tick: "type-tick.wav",
   whoosh: "whoosh-soft.wav",

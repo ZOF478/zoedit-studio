@@ -3,12 +3,22 @@ export type SfxKind = 'whoosh' | 'pop' | 'click';
 export type SfxCatalogId =
   | 'whoosh-soft'
   | 'whoosh-whip'
+  | 'whoosh-fast'
+  | 'whoosh-deep'
   | 'pop-soft'
+  | 'pop-bubble'
+  | 'pop-sharp'
   | 'click-subtle'
   | 'slide'
   | 'type-tick'
+  | 'typing-click'
   | 'toggle-soft'
-  | 'impact-soft';
+  | 'alert-warning'
+  | 'impact-soft'
+  | 'cinematic-hit'
+  | 'bass-drop'
+  | 'riser-build'
+  | 'cash-register';
 
 export interface SfxDefinition {
   id: SfxCatalogId;
@@ -27,19 +37,29 @@ export const SFX_CATALOG: SfxDefinition[] = [
   { id: 'type-tick', file: 'type-tick.wav', labelAr: 'نقر كتابة', labelEn: 'Type Tick', durationSec: 0.05 },
   { id: 'toggle-soft', file: 'toggle-soft.wav', labelAr: 'تبديل ناعم', labelEn: 'Soft Toggle', durationSec: 0.62 },
   { id: 'impact-soft', file: 'impact-soft.wav', labelAr: 'ضربة خفيفة', labelEn: 'Soft Impact', durationSec: 0.2 },
+  { id: 'whoosh-fast', file: 'whoosh-fast.wav', labelAr: 'Whoosh سريع', labelEn: 'Fast Whoosh', durationSec: 0.16 },
+  { id: 'whoosh-deep', file: 'whoosh-deep.wav', labelAr: 'Whoosh عميق', labelEn: 'Deep Whoosh', durationSec: 0.16 },
+  { id: 'pop-bubble', file: 'pop-bubble.wav', labelAr: 'Pop فقاعي', labelEn: 'Bubble Pop', durationSec: 0.14 },
+  { id: 'pop-sharp', file: 'pop-sharp.wav', labelAr: 'Pop حاد', labelEn: 'Sharp Pop', durationSec: 0.07 },
+  { id: 'typing-click', file: 'typing-click.wav', labelAr: 'نقر كتابة', labelEn: 'Typing Click', durationSec: 0.05 },
+  { id: 'alert-warning', file: 'alert-warning.wav', labelAr: 'تنبيه', labelEn: 'Warning Alert', durationSec: 0.62 },
+  { id: 'cash-register', file: 'cash-register.wav', labelAr: 'آلة نقد', labelEn: 'Cash Register', durationSec: 0.3 },
+  { id: 'cinematic-hit', file: 'cinematic-hit.wav', labelAr: 'ضربة سينمائية', labelEn: 'Cinematic Hit', durationSec: 0.2 },
+  { id: 'bass-drop', file: 'bass-drop.wav', labelAr: 'Bass Drop', labelEn: 'Bass Drop', durationSec: 0.2 },
+  { id: 'riser-build', file: 'riser-build.wav', labelAr: 'Riser Build', labelEn: 'Riser Build', durationSec: 0.4 },
 ];
 
 export const LEGACY_SFX_FILES: Record<string, string> = {
-  'whoosh-fast': 'whoosh-soft.wav',
-  'whoosh-deep': 'whoosh-soft.wav',
-  'pop-bubble': 'pop-soft.wav',
-  'pop-sharp': 'click-subtle.wav',
-  'typing-click': 'type-tick.wav',
-  'alert-warning': 'toggle-soft.wav',
+  'whoosh-fast': 'whoosh-fast.wav',
+  'whoosh-deep': 'whoosh-deep.wav',
+  'pop-bubble': 'pop-bubble.wav',
+  'pop-sharp': 'pop-sharp.wav',
+  'typing-click': 'typing-click.wav',
+  'alert-warning': 'alert-warning.wav',
   'cash-register': 'cash-register.wav',
-  'cinematic-hit': 'impact-soft.wav',
-  'bass-drop': 'impact-soft.wav',
-  'riser-build': 'slide.wav',
+  'cinematic-hit': 'cinematic-hit.wav',
+  'bass-drop': 'bass-drop.wav',
+  'riser-build': 'riser-build.wav',
 };
 
 export const MAX_SCENE_SFX_VOLUME = 0.25;

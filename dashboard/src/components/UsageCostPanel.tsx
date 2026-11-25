@@ -216,7 +216,12 @@ export function UsageCostPanel({
                 </p>
               </>
             ) : eleven?.hint ? (
-              <p className="mt-1.5 text-[11px] leading-relaxed text-amber-300">{eleven.hint}</p>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-amber-300">
+                {t(
+                  'فعّل صلاحية User: Read في مفتاح ElevenLabs لعرض الرصيد المتبقي.',
+                  'Enable the User: Read scope on your ElevenLabs key to show the remaining quota.'
+                )}
+              </p>
             ) : (
               <p className="mt-1.5 text-[11px] text-slate-400">
                 {eleven?.error ||
@@ -278,7 +283,7 @@ export function UsageCostPanel({
             {t('تفصيل الاستهلاك والتكلفة', 'Itemized usage & cost')}
           </h3>
           <span className="font-mono text-[10px] text-slate-500" dir="ltr">
-            {usage?.usageFile || '~/.zof-studio/usage.json'}
+            {usage?.usageFile || '~/.zoedit-studio/usage.json'}
           </span>
         </div>
 

@@ -1,4 +1,5 @@
 import type { SfxCue, SfxCueSound } from "../types";
+import { SFX_FILES } from "../sfx";
 
 type CueElement = Record<string, unknown> & { type?: unknown };
 
@@ -9,7 +10,6 @@ export type BuildSfxCuesInput = {
   durationSec: number;
   elements: CueElement[];
   mode?: SfxCueMode;
-  maxCues?: number;
 };
 
 const asStrings = (value: unknown): string[] => {
@@ -47,7 +47,6 @@ export const buildStaggeredSfxCues = ({
   durationSec,
   elements,
   mode = "voiceover",
-  maxCues,
 }: BuildSfxCuesInput): SfxCue[] => {
   const safeFps = Math.max(1, Math.round(fps));
   const durationFrames = Math.max(
@@ -237,15 +236,13 @@ export const buildStaggeredSfxCues = ({
     cues.push({ frameOffset: beat(0.28), sound: "pop", volume: 0.18 });
   }
 
-  const limit = maxCues ?? 1;
-  return cues
-    .sort((a, b) => a.frameOffset - b.frameOffset)
-    .slice(0, Math.max(0, limit));
+  return cues.sort((a, b) => a.frameOffset - b.frameOffset);
 };
 
 export const normalizeSfxCues = (raw: unknown): SfxCue[] | undefined => {
   if (!Array.isArray(raw)) return undefined;
   const validSounds = new Set<SfxCueSound>([
+    ...(Object.keys(SFX_FILES) as SfxCueSound[]),
     "pop",
     "tick",
     "whoosh",

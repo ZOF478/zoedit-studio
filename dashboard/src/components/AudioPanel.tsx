@@ -237,7 +237,7 @@ export function AudioPanel({
     setModelsLoading(true);
     try {
       const response = await fetch(`${apiBaseUrl}/elevenlabs/models`, {
-        headers: sessionToken ? { 'x-zof-session': sessionToken } : {},
+        headers: sessionToken ? { 'x-zoedit-session': sessionToken } : {},
       });
       if (!response.ok) return;
       const data = (await response.json()) as { models?: ElevenLabsModel[] };
@@ -328,6 +328,37 @@ export function AudioPanel({
     setPlayingVoiceId(null);
   };
 
+  const playSfxVolumeTest = useCallback(async () => {
+    if (typeof window === 'undefined') return;
+    const AudioContextConstructor =
+      window.AudioContext ??
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextConstructor) return;
+    try {
+      const context = new AudioContextConstructor();
+      await context.resume().catch(() => undefined);
+      const now = context.currentTime;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, now);
+      oscillator.frequency.exponentialRampToValueAtTime(540, now + 0.16);
+      const targetGain = Math.max(0.0001, Math.min(1, sfx.volume));
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(targetGain, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.24);
+      oscillator.onended = () => {
+        void context.close();
+      };
+    } catch {
+      // Audio preview is best-effort; some browsers may block AudioContext.
+    }
+  }, [sfx.volume]);
+
   const handlePlayPreview = async () => {
     if (!selectedVoice) return;
     if (playingVoiceId === selectedVoice.voice_id) {
@@ -356,12 +387,12 @@ export function AudioPanel({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+          ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
         },
         body: JSON.stringify({
           text: t(
-            `مرحباً، أنا ${selectedVoice.name.split('—')[0].trim()}، وهذا اختبار لجودة التعليق الصوتي في استوديو زوف.`,
-            `Hi, I'm ${selectedVoice.name.split('—')[0].trim()}, and this is a voice quality test for Zof Studio.`
+            `مرحباً، أنا ${selectedVoice.name.split('—')[0].trim()}، وهذا اختبار لجودة التعليق الصوتي في استوديو زويد.`,
+            `Hi, I'm ${selectedVoice.name.split('—')[0].trim()}, and this is a voice quality test for Zoedit Studio.`
           ),
           voiceId: selectedVoice.voice_id,
           modelId: voiceover.modelId,
@@ -370,6 +401,7 @@ export function AudioPanel({
           style: voiceover.style,
           speakerBoost: voiceover.speakerBoost,
           speed: voiceover.speed,
+          uiLanguage: lang,
         }),
       });
       const data = (await response.json()) as {
@@ -392,8 +424,8 @@ export function AudioPanel({
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(
         t(
-          'مرحباً بكم في استوديو زوف لإنتاج الفيديو بالذكاء الاصطناعي.',
-          'Welcome to Zof Studio for AI-powered video production.'
+          'مرحباً بكم في استوديو زويد لإنتاج الفيديو بالذكاء الاصطناعي.',
+          'Welcome to Zoedit Studio for AI-powered video production.'
         )
       );
       utterance.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
@@ -414,7 +446,10 @@ export function AudioPanel({
       const response = await fetch(
         `${apiBaseUrl}/elevenlabs/voices/${encodeURIComponent(voiceId)}`,
         {
-          headers: sessionToken ? { 'x-zof-session': sessionToken } : {},
+          headers: {
+            ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
+            'x-zoedit-ui-lang': lang,
+          },
         }
       );
       const data = (await response.json()) as {
@@ -852,6 +887,16 @@ export function AudioPanel({
             <span className="w-10 shrink-0 text-end font-mono text-[10px] text-slate-400 tabular-nums">
               {Math.round(sfx.volume * 100)}%
             </span>
+            <button
+              type="button"
+              onClick={() => void playSfxVolumeTest()}
+              disabled={disabled}
+              title={t('تجربة مستوى المؤثرات الصوتية', 'Test the current SFX volume')}
+              className="inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-1 text-[9px] font-bold text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+            >
+              <Play className="h-2.5 w-2.5 fill-current" />
+              {t('تجربة الصوت', 'Test Volume')}
+            </button>
           </div>
 
           <p className="flex items-center gap-1.5 text-[10px] text-slate-500">

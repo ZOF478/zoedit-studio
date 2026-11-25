@@ -85,7 +85,7 @@ const COPY: Record<SandboxScriptLanguage, SandboxCopy> = {
     heroTitle: "هوية بصرية متوازنة",
     heroSubtitle: "نفس الألوان على خلفية متحركة وكابشن متزامن",
     heroCaption: "هكذا يبدو الستايل والألوان قبل توليد السكربت",
-    heroBadge: "زوف ستوديو",
+    heroBadge: "زويد ستوديو",
     heroElementKicker: "ستايل حي",
     heroElementSubtitle: "هوية العلامة والخلفية المتحركة",
     chartKicker: "حركة",
@@ -116,7 +116,7 @@ const COPY: Record<SandboxScriptLanguage, SandboxCopy> = {
     heroTitle: "A balanced visual identity",
     heroSubtitle: "The same palette across motion and synced captions",
     heroCaption: "This is how style and color feel before the script is generated",
-    heroBadge: "ZOF STUDIO",
+    heroBadge: "ZOEDIT STUDIO",
     heroElementKicker: "Live theme sandbox",
     heroElementSubtitle: "Brand Kit + Animated Background",
     chartKicker: "MOTION",
@@ -274,7 +274,7 @@ const buildSandboxData = (props: ThemeSandboxProps): VideoData => {
 
   return {
     meta: {
-      title: "Zof Studio Theme Sandbox",
+      title: "Zoedit Studio Theme Sandbox",
       topic: "live-theme-sandbox",
       description: "Instant brand, background, style and caption preview",
     },
@@ -290,7 +290,7 @@ const buildSandboxData = (props: ThemeSandboxProps): VideoData => {
       enabled: props.captionsEnabled,
     },
     brand_kit: {
-      name: "ZOF",
+      name: "ZOEDIT",
       primary: props.accentColor,
       accent: props.accentColor,
       secondary: props.accentColor,
@@ -298,7 +298,7 @@ const buildSandboxData = (props: ThemeSandboxProps): VideoData => {
       watermark:
         typeof props.watermark === "string"
           ? props.watermark.trim().slice(0, 60)
-          : "@ZofStudio",
+          : "@ZoeditStudio",
       watermark_enabled: props.watermarkEnabled !== false,
       watermark_position: props.watermarkPosition ?? "top-left",
     },

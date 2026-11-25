@@ -1,9 +1,9 @@
 ---
-name: zof-motion-director
-description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, and visual branding rules for Zof Studio videos.
+name: zoedit-motion-director
+description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, and visual branding rules for Zoedit Studio videos.
 ---
 
-# Zof Studio Motion & Design Rules
+# Zoedit Studio Motion & Design Rules
 
 1. **Character, Symbolic Emotion & Modesty Rules:**
    - **NEVER hand-draw crude stickmen or hand-coded geometric circles/rectangles** to represent real objects, religious symbols, electronics, or brand logos. Use `<SmartIcon query="..." brand={...} color="..." size={...} />` for ALL objects, symbols, icons, and company logos, and `<SilhouetteActor pose="..." color="..." size={...} />` for ALL human figures.
@@ -26,29 +26,34 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
      - `static`: render one clean, readable subtitle block.
    - Use the exact caption colors supplied: pill background, base text, and active-word highlight. Never substitute brand defaults when custom caption colors are provided.
    - Respect the chosen `captionBottomOffset` (default `20%` from the bottom on `9:16`). Never render content under the caption strip, and keep the strip above TikTok / Reels / Shorts bottom UI overlays.
+   - **Solid card & container contrast:** every card, icon badge, chip, callout, chart panel, legend, tooltip, and container MUST use a solid (or >= 0.88-opacity) fill from `props.surfaceColor` / `props.secondaryColor`. Never use `transparent`, near-transparent rgba(), or background-only gradients. Pair each surface with a subtle 1-2px border and a soft shadow so it stands out from `props.bgColor`.
 
 4. **SVG Geometry & Motion Alignment:**
    - Align every directional object's rotation angle (`rotate(...)`) with its movement vector `(dx, dy)` (e.g., a rocket moving up-right must tilt clockwise ~35-45deg, never left).
    - Never use CSS transitions; animate strictly with Remotion `interpolate()` and `spring()`.
+   - **Continuous strokes:** draw every chart line, curve, connector, route, and vector path as ONE continuous `<path>` (or documented `<polyline>`) with `fill="none"`. Animate with `pathLength={1}`, `strokeDasharray={1}`, `strokeDashoffset={1 - progress}` or `evolvePath()`. Never use fixed dash arrays such as `"6 6"`, pixel-length dashes, or split a series into fragments.
+   - **Chart direction protection:** wrap each chart/map SVG and plot container in `direction: "ltr"` and never set `direction: "rtl"` on the SVG itself. NEVER mirror charts with `transform: "scaleX(-1)"`, `flexDirection: "row-reverse"`, or swapped x/width values when `props.isRtl` is true; only text blocks and navigation icons may mirror.
    - **Chart margins:** offset every Y-axis tick label from the axis line with `textAnchor="end"` and `x={axisX - 14}`, and reserve at least 56px of left padding so values such as `10x`, `20x`, `30x` are never struck through by the axis stroke.
    - **Card clearance:** keep all floating cards and 2.5D `SpatialCard` surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap). Never let a card sit on a chart line or tick.
    - **2.5D non-overlap & sizing:** never place two text-bearing `SpatialCard` layers at the same `(x, y)` at the same time. Keep only one focal text card centered per beat; separate simultaneous text cards on the vertical/grid axis with a generous (`>=32px`) gap, and stagger their enter/recede timing so previous copy is dimmed, blurred, and moved fully off the focal center before the next card arrives. Background depth planes must be subtle, non-text decorative parallax elements only. Size every card to its content (`auto`/`max-content` or a bounded `maxHeight`); never stretch a tall empty box down toward the caption zone.
 
 5. **Arabic RTL & Safe Layout Grid:**
    - Apply `direction: "rtl"` and `lineHeight: 1.4` for Arabic text with `padding: "0 48px"`.
+   - Use the shared multilingual font stack (`'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif`); the composition loads Cairo plus the correct Noto Sans script font before rendering. Never fall back to a bare `sans-serif`.
+   - Set `direction` and `textAlign` explicitly from `props.isRtl`, use lineHeight 1.35-1.6 for body/cards and 1.2-1.35 for headlines (never below 1.15), and allow wrapping so Arabic diacritics and tall scripts never clip or overlap.
    - Keep the top 22% for headlines and the middle 50% for visuals (`maxWidth: "85%"`). Reserve the bottom caption strip dynamically from `captionBottomOffset` (default 20%, never less than 18% on 9:16) so elements never overlap TikTok/Reels UI or clip off-screen.
    - **Respect Safe Zone (`respectSafeZone === true` on vertical `9:16`):** keep every primary typography block, card, chart, badge, button, and caption centered inside the platform safe zone — content `top >= 12%`, `bottom <= 78%`, `right <= 84%`, `left >= 6%`. Never place content under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar. Backgrounds, gradients, and decorative layers may remain full-bleed edge-to-edge.
    - When `respectSafeZone === false`, use the standard full-canvas margins instead of the tighter platform insets.
 
-6. **Multi-Beat Choreography & Subtle Micro-SFX:**
+6. **Multi-Beat Choreography & Smart Event-Synced SFX:**
    - Every scene MUST have at least three motion beats: a staggered spring entrance, continuous idle motion for the whole duration, and a visual state change.
    - Stagger every list item, card, badge, row, node, and icon with `spring()` delayed by exactly `index * 12` frames. Never reveal a group as one block.
    - Keep continuous subtle idle motion alive: floating sine drift, pulsing rings/halos, animated SVG path dashoffset/morphs, slow orbits, or breathing scale. Never freeze.
-   - SFX are optional and strictly limited: use **at most ONE** subtle `<SceneSfx>` per scene, only on the single most important key visual transition/state change. Preferred clean CC0 names are `pop` (soft pop), `check` (subtle click), `whoosh` (soft whoosh), and `sparkle` (soft pop):
+   - Use as many subtle `<SceneSfx>` cues per scene as the concrete visual actions warrant; there is **no fixed cue-count cap**. Inspect the full installed SFX library in `public/sfx` and choose the best-fit sound for text reveals/typing, button/badge/icon entrances, chart/data/number reveals, card/panel entrances, impacts, risers, whooshes, and mid-scene transitions. Friendly aliases `pop`, `tick`, `check`, `whoosh`, and `sparkle` remain available, but every catalog id is valid.
      `import { SceneSfx } from "../components/SceneSfx";`
-     `<SceneSfx name="pop" | "check" | "whoosh" | "sparkle" frame={triggerFrame} volume={0.18} />`
-   - Keep SFX volume between `0.15` and `0.22`, never above `0.25`, and leave at least 0.6s of breathing room after the sound.
-   - **Never use bells, chimes, dings, success jingles, alarms, or notification sounds.** `ding-success.wav` and `notification-chime.wav` are strictly forbidden. Never place any SFX at frame 0, at a scene ending, at a transition boundary, or inside the final 20% of `props.durationInFrames`; scenes must end in silence. The composition owns the transition whoosh. If unsure, omit the sound entirely. SceneSfx respects the global SFX toggle and renders nothing when SFX are off.
+     `<SceneSfx name="<any-installed-sfx-id>" frame={triggerFrame} volume={0.18} />`
+   - Mix cues naturally and subordinate to narration; vary density with the action and avoid clutter. If an action genuinely needs no sound, omit it.
+   - **STRICT NEGATIVE RULE: never use unsolicited loud, generic, or cheesy victory/success chimes, achievement bells, or celebration fanfares at the very end of the video unless the user prompt explicitly asks for one.** Otherwise use the full SFX library creatively wherever an action warrants audio. SceneSfx respects the global SFX toggle and renders nothing when SFX are off.
 
 7. **Strict Non-Overlap Bounding Zones:**
    - Place the Stickman in a dedicated column/corner pinned with `left: 60` or `right: 60` inside a fixed-size absolute wrapper (for example 260x380).
@@ -69,13 +74,18 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
    - `SilhouetteActor` (`../components/SilhouetteActor`): featureless human silhouette with `standing`, `praying-qiyam`, `praying-sujood`, `sitting-screen`, and animated `walking` poses.
    - `lucide-react` for crisp UI, tech, business, and map icons.
    - `d3-geo` + `topojson-client` + `world-atlas/countries-110m.json` for accurate real-world geographic country borders, projections (`geoMercator` / `geoNaturalEarth1`), and animated coordinate routes.
-   - `@remotion/paths` & `@remotion/shapes` for mathematical SVG path interpolation, charts, and geometric shapes.
+   - `@remotion/paths` & `@remotion/shapes` for mathematical SVG path interpolation, chart geometry, and shape primitives (`Rect`, `Circle`, `Triangle`, `Star`, `Pie`) instead of hand-computed shape math.
+   - `@remotion/transitions` provides transition primitives/timings; the composition owns scene-to-scene transitions, so do not rebuild a transition shell inside a scene.
+   - `@remotion/google-fonts` for an additional specific font family when typography genuinely needs it; otherwise inherit the shared multilingual stack.
+   - `d3-scale` for real chart scales and tick generation instead of guessed pixel positions.
+   - `colord` for color mixing, tints, shades, and contrast-safe variants instead of manual hex math.
    - `roughjs` for hand-drawn / whiteboard-style diagrams only with the deterministic seed + `useMemo` pattern in rule 10, and `@remotion/noise` for organic subtle motion.
-   - These libraries are available for bespoke, on-demand composition; never convert them into fixed scene templates.
+   - **Installed package inventory:** scene/runtime packages are `remotion`, `react`, `react-dom`, `@remotion/paths`, `@remotion/shapes`, `@remotion/noise`, `@remotion/transitions`, `@remotion/google-fonts`, `@iconify/react`, `simple-icons`, `lucide-react`, `d3-geo`, `d3-scale`, `topojson-client`, `world-atlas`, `roughjs`, and `colord`. Dashboard-only packages (`@remotion/player`, `motion`, `@google/genai`, `express`, `dotenv`, `vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`) must never be imported into scene files. Tooling (`@remotion/cli`, `opencode-ai`, `typescript`, `eslint`, `prettier`, `@types/*`) is not a scene dependency.
+   - **ALWAYS prefer an installed library over reinventing its capability** with raw manual SVG coordinates, hand-written geometry math, or basic CSS fallbacks. These libraries are available for bespoke, on-demand composition; never convert them into fixed scene templates.
 
 10. **Strict No-Fallback Rule (use these exact patterns on the first pass):**
    - NEVER draw continents, country borders, map coastlines, or recognizable brand/UI icons manually with guessed SVG `<path>` coordinates.
-   - If a whitelisted real library fits the job (world-atlas + d3-geo for maps, lucide-react for icons), hand-drawing an approximation instead is a failure. Use the patterns below.
+   - If an installed library fits the job (world-atlas + d3-geo for maps, lucide-react for icons, SmartIcon for symbols/brands, SilhouetteActor for humans, @remotion/shapes for geometry, @remotion/paths for curves, d3-scale for charts, colord for color derivation), hand-drawing or rebuilding it manually is a failure. Use the installed library.
    - **Real-world maps** (`world-atlas` + `topojson-client` + `d3-geo`):
      `import worldData from "world-atlas/countries-110m.json";`
      `import { feature } from "topojson-client";`
@@ -102,10 +112,11 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
 11. **Clean B-Roll Mode (`cleanBrollMode`) — explicit user toggle only:**
    - Never hide headers, titles, kickers, or structured typography merely because `voiceoverEnabled === false`. There is no blanket silent-mode rule that suppresses them.
    - Apply the Clean B-Roll layout ONLY when `cleanBrollMode === true`:
-     - **Zero top header:** render NO top `<header>`, kicker, scene title, title badge, top banner, or prompt-echo descriptive text. Do not reserve a top 22% headline band.
-     - Render only diegetic labels inside the graphic: city names, data values, axis labels, map labels, and explicitly requested callout cards.
+     - **Remove main headlines, titles, kickers, badges, text-only slides, and decorative copy.** Do not reserve a top 22% headline band.
+     - **Preserve brief essential in-scene information:** short data labels, chart numbers, axis values, map/route names, legend keys, and diagram annotations needed to understand the visual. Keep them small, concise, and secondary.
      - Frame the primary visual full-bleed at `100%` width and height with a smooth camera pan/zoom instead of boxing it in a small card.
-     - Offset Y-axis ticks with `textAnchor="end"` and `x={axisX - 14}` (≥56px left padding) so axis strokes never cross numbers such as `10x` / `20x` / `30x`; keep floating cards fully outside chart lines with a ≥24px gap.
+     - Keep preserved chart labels offset from strokes: Y-axis values use `textAnchor="end"` with `x={axisX - 14}` and at least 56px left padding.
+     - Captions, when enabled, stay composition-owned as an optional overlay. Voiceover (TTS) and captions remain independently optional.
    - When `cleanBrollMode === false` (even if `voiceoverEnabled === false`), allow and render full typography, titles, kickers, and structured headers normally so silent text-driven videos remain possible.
 
 12. **Deterministic `roughjs` (zero frame-by-frame jitter):**
@@ -116,6 +127,7 @@ description: Strict motion graphics, RTL Arabic layout, SVG geometry alignment, 
    - Animate drawing progress strictly with SVG `strokeDasharray` / `strokeDashoffset` or `evolvePath()` from `@remotion/paths`; the hand-drawn geometry itself must stay identical across frames for silky-smooth 60fps output.
 
 13. **Video Language & On-Screen Copy:**
+   - **Language-neutral visual quality:** build the SAME visual hierarchy, structured cards, icon badges, chart density, layered parallax, and multi-beat motion for every language. Only the visible strings are localized; never simplify or flatten the design for Arabic, Hebrew, Hindi, or any other non-Latin script.
    - Localize EVERY visible string to the selected video language: scene titles, key-phrases, axis titles, tick labels, legends, cards, badges, callouts, buttons, and UI mockup text.
    - Never leave English placeholders such as `TIME`, `VALUE`, `TOTAL`, `GROWTH`, or `REVENUE` when a non-English language is selected (for Arabic use `الزمن` / `القيمة` / `الإجمالي` / `النمو` / `الإيرادات`).
    - This applies even when `voiceoverEnabled === false`; silent videos must keep all on-screen copy in the selected language.

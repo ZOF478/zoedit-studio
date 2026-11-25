@@ -1,4 +1,4 @@
-Zof Studio SFX credits
+Zoedit Studio SFX credits
 ======================
 
 Interface sounds (click-subtle, type-tick, pop-soft, toggle-soft, impact-soft, cash-register)

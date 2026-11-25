@@ -56,7 +56,7 @@ export function ModelSearchSelect({
       setError(null);
       try {
         const headers: Record<string, string> = {};
-        if (sessionToken) headers['x-zof-session'] = sessionToken;
+        if (sessionToken) headers['x-zoedit-session'] = sessionToken;
         const res = await fetch(
           `${apiBaseUrl}/provider-models?provider=${encodeURIComponent(provider)}&refresh=${
             refresh ? 1 : 0

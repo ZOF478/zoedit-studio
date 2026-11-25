@@ -15,4 +15,4 @@ data/*
 public/audio/*
 !public/audio/.gitkeep
 *.log
-.zof_*
+.zoedit_*

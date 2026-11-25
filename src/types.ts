@@ -198,7 +198,25 @@ export type SfxCueSound =
   | "whoosh"
   | "rise"
   | "impact"
-  | "chime";
+  | "chime"
+  | "whoosh-soft"
+  | "whoosh-whip"
+  | "whoosh-fast"
+  | "whoosh-deep"
+  | "pop-soft"
+  | "pop-bubble"
+  | "pop-sharp"
+  | "click-subtle"
+  | "slide"
+  | "type-tick"
+  | "typing-click"
+  | "toggle-soft"
+  | "alert-warning"
+  | "impact-soft"
+  | "cinematic-hit"
+  | "bass-drop"
+  | "riser-build"
+  | "cash-register";
 
 export type SfxCue = {
   frameOffset: number;

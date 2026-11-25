@@ -1,65 +1,64 @@
 {
   "meta": {
-    "title": "For just 0 01 you can create",
-    "topic": "Create a high-impact, fast-paced 9:16 vertical motion graphics promo reel (55–60 seconds, 60fps) in English showcasing Zof Studio — an open-source AI-directed motion graphics studio powered by React, Remotion, and OpenCode.\n\nStrict Color Palette & Aesthetic:\n- Background: #080B11 (deep obsidian dark canvas)\n- Primary Text: #F8FAFC (crisp high-contrast white typography)\n- Primary Accent: #0EA5E9 (electric sky blue for key buttons, active outlines, and glow accents)\n- Secondary Surfaces: #162033 (elevated dark slate cards, panels, and UI containers)\n- Highlight Accent: #38BDF8 (bright cyan-sky glow for keyword highlights, badges, and motion trails)\n- Typography: Bold, high-contrast modern English kinetic typography in #F8FAFC with #38BDF8 dynamic word highlights, smooth spring physics, and TikTok/Reels safe-zone framing.\n- Avoid rigid templates; use custom programmatic React/Remotion animations: code-to-motion morphs, timeline keyframes, 2.5D layered depth cards (#162033), and terminal command animations.\n\nScene-by-Scene Breakdown (sync strictly with the English spoken script):\n- Scene 1 (0–8s | Hook): Split-screen contrast on #080B11 — a cluttered, slow traditional timeline with a spinning loading wheel vs. a sleek #162033 card bordered in #0EA5E9 where \"$0.01\" slams onto screen in #F8FAFC with a glowing #38BDF8 shockwave.\n- Scene 2 (8–18s | The Problem vs. Solution): Spinning clocks (\"Hours of manual keyframes\") shattering into clean #162033 code cards displaying glowing #38BDF8 TSX/Remotion code that automatically assembles into smooth 60fps motion graphics.\n- Scene 3 (18–30s | How It Works): Animated UI mockup of Zof Studio's \"Master Mind\" prompt box (#162033 surface, #0EA5E9 active border) typing a single idea, triggering a 3-step pipeline: AI Scene Coding -> ElevenLabs Voiceover -> Synced Karaoke Captions.\n- Scene 4 (30–44s | Open-Source & Privacy): Terminal window (#162033) typing `zofstudio` and launching `http://localhost:4789` with a sleek #0EA5E9 outlined shield badge (\"100% Open Source • Local-First • Free Models Supported\").\n- Scene 5 (44–54s | The Meta Reveal): Dramatic zoom-out revealing that this exact video currently playing is being rendered inside Zof Studio's Remotion timeline at 60fps, highlighted by a #162033 badge with #0EA5E9 border: \"Rendered by Zof Studio itself\".\n- Scene 6 (54–60s | CTA): Bold final end-card on #080B11 featuring the Zof Studio brand mark, GitHub link `github.com/ZOF478/zofstudio`, and `studio.zoedit.com` framed in #0EA5E9 with a pulsing \"What are you waiting for?\" callout in #F8FAFC.",
-    "description": "For just 0 01 you can create · Forget rigid repetitive templates and forget heavy · With Zof Studio you type your idea · and syncs your captions automatically at a · It s 100 open source runs locally · And by the way this entire video · Lin"
+    "title": "فيديو حول",
+    "topic": "فيديو حول منصتنا ZoEdit Studio",
+    "description": "فيديو حول · منصتنا ZoEdit · Studio"
   },
   "width": 1080,
   "height": 1920,
   "fps": 60,
-  "durationInFrames": 2972,
+  "durationInFrames": 1816,
   "style": "stickman",
-  "script_language": "en",
+  "script_language": "ar",
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
-  "respect_safe_zone": false,
+  "respect_safe_zone": true,
   "caption": {
     "animation_style": "static",
     "words_per_screen": "auto",
     "lead_in": 0.2,
     "colors": {
-      "background": "#162033",
+      "background": "#072233",
       "text": "#F8FAFC",
-      "highlight": "#0EA5E9"
+      "highlight": "#00A6F4"
     },
     "bottom_offset": 18,
-    "enabled": true
+    "enabled": false
   },
   "brand_kit": {
-    "name": "ZOF",
-    "primary": "#0EA5E9",
-    "secondary": "#162033",
-    "accent": "#38BDF8",
+    "name": "ZOEDIT",
+    "primary": "#00A6F4",
+    "secondary": "#072233",
+    "accent": "#00A6F4",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#080B11",
+    "background": "#0E121A",
     "text": "#F8FAFC",
     "muted": "rgba(248, 250, 252, 0.72)",
-    "watermark": "@ZofStudio",
+    "watermark": "@ZoeditStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
   },
   "sfx": {
     "enabled": true,
-    "volume": 0.5
+    "volume": 0.65
   },
   "scenes": [
     {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-1",
-      "kicker": "For just 0 01 you can create",
-      "title": "For just 0 01 you can create",
-      "subtitle": "For just 0 01 you can create",
-      "caption": "For just $0.01… you can create a professional motion graphics video today that used to take hours of manual animation!",
-      "duration": 7.966666666666667,
-      "durationInFrames": 478,
-      "audioSrc": "audio/scene-1795536115120-f6f22d3c.mp3",
-      "audioDuration": 7.706,
+      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-1",
+      "kicker": "فيديو حول",
+      "title": "فيديو حول",
+      "subtitle": "فيديو حول",
+      "caption": "",
+      "duration": 10,
+      "durationInFrames": 600,
+      "audioSrc": "",
       "sfxSrc": "sfx/whoosh-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(0, 166, 244, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
       "character": {
         "pose": "explaining",
@@ -72,217 +71,83 @@
         {
           "type": "custom_tsx",
           "component": "Scene1",
-          "title": "For just 0 01 you can create",
-          "text": "For just 0 01 you",
+          "title": "فيديو حول",
+          "text": "فيديو حول",
           "keywords": [
-            "For just 0 01 you"
+            "فيديو حول"
           ],
           "data": {
-            "narration": "For just $0.01… you can create a professional motion graphics video today that used to take hours of manual animation!",
+            "narration": "فيديو حول",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-2",
-      "kicker": "Forget rigid repetitive templates and forget heavy",
-      "title": "Forget rigid repetitive templates and forget heavy",
-      "subtitle": "Forget rigid repetitive templates and forget heavy",
-      "caption": "Forget rigid, repetitive templates, and forget heavy software that slows down your computer.",
-      "duration": 5.9,
-      "durationInFrames": 354,
-      "audioSrc": "audio/scene-1795536118353-11e51d6b.mp3",
-      "audioDuration": 5.642,
+      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-2",
+      "kicker": "منصتنا ZoEdit",
+      "title": "منصتنا ZoEdit",
+      "subtitle": "منصتنا ZoEdit",
+      "caption": "",
+      "duration": 10,
+      "durationInFrames": 600,
+      "audioSrc": "",
       "sfxSrc": "sfx/pop-soft.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-left",
-      "background": "linear-gradient(215deg, rgba(56, 189, 248, 0.16) 0%, transparent 62%)",
+      "background": "linear-gradient(215deg, rgba(0, 166, 244, 0.16) 0%, transparent 62%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene2",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene2",
-          "title": "Forget rigid repetitive templates and forget heavy",
-          "text": "Forget rigid repetitive templates and",
+          "title": "منصتنا ZoEdit",
+          "text": "منصتنا ZoEdit",
           "keywords": [
-            "Forget rigid repetitive templates and"
+            "منصتنا ZoEdit"
           ],
           "data": {
-            "narration": "Forget rigid, repetitive templates, and forget heavy software that slows down your computer.",
+            "narration": "منصتنا ZoEdit",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-3",
-      "kicker": "With Zof Studio you type your idea",
-      "title": "With Zof Studio you type your idea",
-      "subtitle": "With Zof Studio you type your idea",
-      "caption": "With Zof Studio, you type your idea in a single prompt… and an AI agent writes real scene code programmatically in Remotion, generates natural voiceover,",
-      "duration": 10.05,
-      "durationInFrames": 603,
-      "audioSrc": "audio/scene-1795536122197-458f341e.mp3",
-      "audioDuration": 9.796,
+      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-3",
+      "kicker": "Studio",
+      "title": "Studio",
+      "subtitle": "Studio",
+      "caption": "",
+      "duration": 10,
+      "durationInFrames": 600,
+      "audioSrc": "",
       "sfxSrc": "sfx/click-subtle.wav",
       "sfxAt": 0.15,
       "layout": "stacked",
       "camera": "push-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.24) 0%, transparent 46%)",
+      "background": "radial-gradient(circle at 82% 18%, rgba(0, 166, 244, 0.24) 0%, transparent 46%)",
       "backgroundPreset": "ai-free",
+      "character": {
+        "pose": "explaining",
+        "side": "left",
+        "accessory": "tie",
+        "enabled": true
+      },
       "generatedComponent": "Scene3",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene3",
-          "title": "With Zof Studio you type your idea",
-          "text": "With Zof Studio you type",
+          "title": "Studio",
+          "text": "Studio",
           "keywords": [
-            "With Zof Studio you type"
+            "Studio"
           ],
           "data": {
-            "narration": "With Zof Studio, you type your idea in a single prompt… and an AI agent writes real scene code programmatically in Remotion, generates natural voiceover,",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-4",
-      "kicker": "and syncs your captions automatically at a",
-      "title": "and syncs your captions automatically at a",
-      "subtitle": "and syncs your captions automatically at a",
-      "caption": "and syncs your captions automatically at a smooth 60 frames per second.",
-      "duration": 4.616666666666666,
-      "durationInFrames": 277,
-      "audioSrc": "audio/scene-1795536124449-26068af9.mp3",
-      "audioDuration": 4.362,
-      "sfxSrc": "sfx/type-tick.wav",
-      "sfxAt": 0.15,
-      "layout": "overlay",
-      "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(56, 189, 248, 0.18) 100%)",
-      "backgroundPreset": "ai-free",
-      "generatedComponent": "Scene4",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene4",
-          "title": "and syncs your captions automatically at a",
-          "text": "and syncs your captions automatically",
-          "keywords": [
-            "and syncs your captions automatically"
-          ],
-          "data": {
-            "narration": "and syncs your captions automatically at a smooth 60 frames per second.",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-5",
-      "kicker": "It s 100 open source runs locally",
-      "title": "It s 100 open source runs locally",
-      "subtitle": "It s 100 open source runs locally",
-      "caption": "It’s 100% open-source, runs locally on your machine with full privacy, and supports both free and ultra-low-cost models.",
-      "duration": 8.7,
-      "durationInFrames": 522,
-      "audioSrc": "audio/scene-1795536128032-7e9777d1.mp3",
-      "audioDuration": 8.438,
-      "sfxSrc": "sfx/slide.wav",
-      "sfxAt": 0.15,
-      "layout": "split",
-      "camera": "pan-right",
-      "background": "linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, transparent 58%)",
-      "backgroundPreset": "ai-free",
-      "generatedComponent": "Scene5",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene5",
-          "title": "It s 100 open source runs locally",
-          "text": "It s 100 open source",
-          "keywords": [
-            "It s 100 open source"
-          ],
-          "data": {
-            "narration": "It’s 100% open-source, runs locally on your machine with full privacy, and supports both free and ultra-low-cost models.",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-6",
-      "kicker": "And by the way this entire video",
-      "title": "And by the way this entire video",
-      "subtitle": "And by the way this entire video",
-      "caption": "And by the way… this entire video you’re watching right now was designed, coded, and rendered inside Zof Studio itself!",
-      "duration": 8.3,
-      "durationInFrames": 498,
-      "audioSrc": "audio/scene-1795536130888-f8713ed1.mp3",
-      "audioDuration": 8.046,
-      "sfxSrc": "sfx/impact-soft.wav",
-      "sfxAt": 0.15,
-      "layout": "centered",
-      "camera": "slow-zoom-in",
-      "background": "linear-gradient(215deg, rgba(56, 189, 248, 0.16) 0%, transparent 62%)",
-      "backgroundPreset": "ai-free",
-      "generatedComponent": "Scene6",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene6",
-          "title": "And by the way this entire video",
-          "text": "And by the way this",
-          "keywords": [
-            "And by the way this"
-          ],
-          "data": {
-            "narration": "And by the way… this entire video you’re watching right now was designed, coded, and rendered inside Zof Studio itself!",
-            "visualType": "custom-tsx"
-          }
-        }
-      ]
-    },
-    {
-      "id": "scene-ce83c08b-e7ca-4113-ad0b-3680e8a114c7-7",
-      "kicker": "Link in bio and on GitHub what",
-      "title": "Link in bio and on GitHub what",
-      "subtitle": "Link in bio and on GitHub what",
-      "caption": "Link in bio and on GitHub… what are you waiting for?",
-      "duration": 3.7333333333333334,
-      "durationInFrames": 224,
-      "audioSrc": "audio/scene-1795536132544-3c9712cb.mp3",
-      "audioDuration": 3.474,
-      "sfxSrc": "sfx/whoosh-soft.wav",
-      "sfxAt": 0.15,
-      "layout": "split",
-      "camera": "pan-left",
-      "background": "radial-gradient(circle at 82% 18%, rgba(56, 189, 248, 0.24) 0%, transparent 46%)",
-      "backgroundPreset": "ai-free",
-      "character": {
-        "pose": "explaining",
-        "side": "left",
-        "accessory": "badge",
-        "enabled": true
-      },
-      "generatedComponent": "Scene7",
-      "elements": [
-        {
-          "type": "custom_tsx",
-          "component": "Scene7",
-          "title": "Link in bio and on GitHub what",
-          "text": "Link in bio and on",
-          "keywords": [
-            "Link in bio and on"
-          ],
-          "data": {
-            "narration": "Link in bio and on GitHub… what are you waiting for?",
+            "narration": "Studio",
             "visualType": "custom-tsx"
           }
         }

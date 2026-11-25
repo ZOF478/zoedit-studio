@@ -13,7 +13,8 @@ const PACKAGE_JSON = path.join(PROJECT_ROOT, 'package.json');
 const DASHBOARD_DIR = path.join(PROJECT_ROOT, 'dashboard');
 const SERVER_ENTRY = path.join(DASHBOARD_DIR, 'server.ts');
 const LOCAL_BIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '.bin');
-const STATE_DIR = path.join(os.homedir(), '.zof-studio');
+const PROJECT_DIR_NAME = path.basename(PROJECT_ROOT).toLowerCase();
+const STATE_DIR = path.join(os.homedir(), '.zoedit-studio');
 const RUNTIME_STATE_FILE = path.join(STATE_DIR, 'runtime.json');
 
 process.env.PATH = [LOCAL_BIN_DIR, process.env.PATH].filter(Boolean).join(path.delimiter);
@@ -93,12 +94,12 @@ function isProcessRunning(pid) {
 
 function printHelp() {
   const version = readVersion();
-  console.log(`zofstudio ${version}
+  console.log(`zoedit-studio ${version}
 
 AI-directed motion graphics studio built on React and Remotion.
 
 Usage:
-  zofstudio [options]
+  zoedit-studio [options]
 
 Options:
   --port <number>   Dashboard port (default: ${DEFAULT_PORT})
@@ -109,15 +110,15 @@ Options:
   --help, -h        Print this help
 
 Examples:
-  zofstudio
-  zofstudio --port 4800
-  zofstudio --open
-  zofstudio --no-open
+  zoedit-studio
+  zoedit-studio --port 4800
+  zoedit-studio --open
+  zoedit-studio --no-open
 `);
 }
 
 function fail(message) {
-  console.error(`zofstudio: ${message}`);
+  console.error(`zoedit-studio: ${message}`);
   process.exit(1);
 }
 
@@ -227,7 +228,7 @@ async function fetchHealth(port, host) {
     });
     if (!response.ok) return null;
     const health = await response.json();
-    if (health && (health.app === 'zof-studio' || health.service === 'Zof Studio API')) {
+    if (health && (health.app === 'zoedit-studio' || health.service === 'Zoedit Studio API')) {
       return health;
     }
   } catch {
@@ -286,13 +287,13 @@ async function findPidsOnPort(port) {
   return [];
 }
 
-function isZofServerPid(pid) {
+function isStudioServerPid(pid) {
   try {
     const cmdline = fs.readFileSync(`/proc/${pid}/cmdline`, 'utf8').replace(/\0/g, ' ');
-    if (cmdline.includes('server.ts') && cmdline.includes('zof-studio')) return true;
+    if (cmdline.includes('server.ts') && cmdline.includes(PROJECT_DIR_NAME)) return true;
     try {
       const cwd = fs.realpathSync(`/proc/${pid}/cwd`);
-      return cmdline.includes('server.ts') && cwd.includes('zof-studio');
+      return cmdline.includes('server.ts') && cwd.toLowerCase().includes(PROJECT_DIR_NAME);
     } catch {
       return false;
     }
@@ -310,7 +311,7 @@ async function inspectServerPort(port, host) {
   const health = await fetchHealth(port, host);
   if (!health) {
     const pids = await findPidsOnPort(port);
-    if (pids.some(isZofServerPid)) return { status: 'stale', pids };
+    if (pids.some(isStudioServerPid)) return { status: 'stale', pids };
     return { status: 'busy' };
   }
 
@@ -367,7 +368,7 @@ async function resolveServerPort(requestedPort, host) {
   if (direct.status === 'running') return { port: requestedPort, existing: true };
   if (direct.status === 'free') return { port: requestedPort, existing: false };
   if (direct.status === 'stale') {
-    console.log(`zofstudio: reclaiming stale dashboard listener on port ${requestedPort}...`);
+    console.log(`zoedit-studio: reclaiming stale dashboard listener on port ${requestedPort}...`);
     if (await reclaimStaleServer(requestedPort, host, direct.state)) {
       return { port: requestedPort, existing: false };
     }
@@ -419,7 +420,7 @@ function spawnServer(port, host, remotionPort) {
       PORT: String(port),
       HOST: host,
       REMOTION_STUDIO_PORT: String(remotionPort),
-      ZOF_LAUNCHER_PID: String(process.pid),
+      ZOEDIT_LAUNCHER_PID: String(process.pid),
     },
     stdio: 'inherit',
     detached: process.platform !== 'win32',
@@ -465,7 +466,7 @@ async function detectPublicIPv4() {
     try {
       const response = await fetch(endpoint, {
         signal: AbortSignal.timeout(1500),
-        headers: { 'User-Agent': 'zofstudio' },
+        headers: { 'User-Agent': 'zoedit-studio' },
       });
       if (!response.ok) continue;
       const text = (await response.text()).trim();
@@ -498,7 +499,7 @@ function getRemoteUser() {
 
 function printHeader() {
   console.log('');
-  console.log(`  Zof Studio ${readVersion()}`);
+  console.log(`  Zoedit Studio ${readVersion()}`);
   console.log('  ----------------------------------------');
 }
 
@@ -540,7 +541,7 @@ async function printBanner(options, port, remotionPort, existing) {
   } else {
     printLocalBanner(port, remotionPort, options.host);
   }
-  if (existing) console.log('  Reusing the existing Zof Studio instance.');
+  if (existing) console.log('  Reusing the existing Zoedit Studio instance.');
   console.log('');
 }
 
@@ -661,7 +662,7 @@ async function main() {
   }
 
   const remotionPort = await resolveRemotionPort(options.host);
-  console.log(`Starting Zof Studio on port ${resolution.port}...`);
+  console.log(`Starting Zoedit Studio on port ${resolution.port}...`);
 
   serverProcess = spawnServer(resolution.port, options.host, remotionPort);
   writeRuntimeState({
@@ -674,20 +675,20 @@ async function main() {
   });
   serverProcess.once('error', (error) => {
     clearRuntimeState(serverProcess?.pid);
-    console.error(`zofstudio: failed to start dashboard server: ${error.message}`);
+    console.error(`zoedit-studio: failed to start dashboard server: ${error.message}`);
     process.exit(1);
   });
   serverProcess.once('exit', (code, signal) => {
     clearRuntimeState(serverProcess?.pid);
     if (shuttingDown) return;
     const reason = signal ? `signal ${signal}` : `code ${code ?? 1}`;
-    console.error(`zofstudio: dashboard server exited (${reason})`);
+    console.error(`zoedit-studio: dashboard server exited (${reason})`);
     process.exit(code ?? 1);
   });
 
   const health = await waitForReady(resolution.port, options.host, serverProcess);
   if (!health) {
-    console.error('zofstudio: dashboard server did not become ready in time.');
+    console.error('zoedit-studio: dashboard server did not become ready in time.');
     shutdown(1);
     return;
   }
@@ -697,6 +698,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(`zofstudio: ${error instanceof Error ? error.message : String(error)}`);
+  console.error(`zoedit-studio: ${error instanceof Error ? error.message : String(error)}`);
   process.exit(1);
 });

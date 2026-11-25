@@ -135,6 +135,6 @@ export const calculateMetadata: CalculateMetadataFunction<MainProps> = ({
     height: settings.height,
     fps: settings.fps,
     durationInFrames: getTotalDurationInFrames(data, settings.fps),
-    defaultOutName: `${data.meta?.title?.trim() || "zof-studio"}`,
+    defaultOutName: `${data.meta?.title?.trim() || "zoedit-studio"}`,
   };
 };

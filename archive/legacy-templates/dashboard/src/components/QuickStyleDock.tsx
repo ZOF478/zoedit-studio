@@ -117,7 +117,7 @@ export function QuickStyleDock({
                 }`}
               >
                 <div
-                  className="zof-bg-preview h-7 w-full overflow-hidden"
+                  className="zoedit-bg-preview h-7 w-full overflow-hidden"
                   style={{ background: preset.preview }}
                 />
                 <span className="block truncate px-1.5 py-1 text-[9px] font-semibold text-slate-200">

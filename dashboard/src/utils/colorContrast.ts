@@ -25,9 +25,9 @@ export type PalettePreset = {
 
 export const PALETTE_PRESETS: PalettePreset[] = [
   {
-    id: 'zof-sunrise',
-    labelAr: 'شروق زوف',
-    labelEn: 'Zof Sunrise',
+    id: 'zoedit-sunrise',
+    labelAr: 'شروق زويد',
+    labelEn: 'Zoedit Sunrise',
     colors: {
       bgColor: '#1D150C',
       textColor: '#FFF7ED',

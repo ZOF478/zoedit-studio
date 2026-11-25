@@ -52,7 +52,7 @@ export function MediaLibraryPanel({
   const PAGE_SIZE = 5;
 
   const headers: Record<string, string> = sessionToken
-    ? { 'x-zof-session': sessionToken }
+    ? { 'x-zoedit-session': sessionToken }
     : {};
 
   const fetchMedia = useCallback(async () => {
@@ -258,14 +258,14 @@ export function MediaLibraryPanel({
             onClick={() => void cleanUnused()}
             className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-200 hover:bg-amber-500/20 cursor-pointer"
           >
-            {t('تنظيف الصوت غير المستخدم', 'Clean unused audio')}
+            {t('تنظيف الصوت غير المستخدم', 'Clean Unused Audio')}
           </button>
           <button
             type="button"
             onClick={() => void cleanGeneratedTsx()}
             className="rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-2 text-xs font-semibold text-fuchsia-200 hover:bg-fuchsia-500/20 cursor-pointer"
           >
-            {t('تنظيف كاش TSX المولّد', 'Clean generated TSX cache')}
+            {t('تنظيف كاش TSX المولّد', 'Clean Generated TSX Cache')}
           </button>
           <button
             type="button"
@@ -308,7 +308,7 @@ export function MediaLibraryPanel({
           },
           {
             id: 'sfx' as const,
-            label: t('المؤثرات', 'SFX'),
+            label: t('المؤثرات', 'Effects'),
             icon: Sparkles,
             color: 'text-amber-400',
             files: sfx,

@@ -1,12 +1,12 @@
 # Legacy Templates & Rigid Presets (Archived)
 
-**Archive path:** `~/zof-studio/archive/legacy-templates/`
+**Archive path:** `~/zoedit-studio/archive/legacy-templates/`
 
 This folder preserves the original rigid, pre-built scene/card templates, preset
 background/style libraries, and manual scene-builder components. Nothing was
 deleted — every legacy file is kept here for reference or future reuse.
 
-Zof Studio no longer uses these templates in its export pipeline. The live
+Zoedit Studio no longer uses these templates in its export pipeline. The live
 studio is a single-prompt, direct-export pipeline:
 
 1. Audio & timing from the master prompt.

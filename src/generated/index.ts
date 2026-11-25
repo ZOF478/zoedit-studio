@@ -2,13 +2,12 @@ import type { ComponentType } from "react";
 import { Scene1 } from "./Scene1";
 import { Scene2 } from "./Scene2";
 import { Scene3 } from "./Scene3";
-import { Scene4 } from "./Scene4";
-import { Scene5 } from "./Scene5";
-import { Scene6 } from "./Scene6";
-import { Scene7 } from "./Scene7";
 
 export type GeneratedSceneProps = {
   accentColor: string;
+  secondaryColor: string;
+  surfaceColor: string;
+  surfaceAltColor: string;
   bgColor: string;
   textColor: string;
   mutedColor: string;
@@ -33,8 +32,4 @@ export const GENERATED_SCENES: Record<
   "Scene1": Scene1,
   "Scene2": Scene2,
   "Scene3": Scene3,
-  "Scene4": Scene4,
-  "Scene5": Scene5,
-  "Scene6": Scene6,
-  "Scene7": Scene7,
 };

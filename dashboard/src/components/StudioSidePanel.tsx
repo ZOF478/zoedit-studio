@@ -15,7 +15,7 @@ import type {
 } from '../types/studio';
 import { AgentDirectorPanel } from './AgentDirectorPanel';
 import { AudioPanel } from './AudioPanel';
-import { ColorsPanel } from './ColorsPanel';
+import { ThemeBrandPanel } from './ThemeBrandPanel';
 import { DirectorScriptPanel } from './DirectorScriptPanel';
 import { MediaLibraryPanel } from './MediaLibraryPanel';
 
@@ -104,18 +104,18 @@ export function StudioSidePanel({
   const [activeTab, setActiveTab] = useState<SideTabId>('director');
 
   const tabs: Array<{ id: SideTabId; label: string; icon: typeof Mic }> = [
-    { id: 'director', label: t('المخرج والعقل', 'Director & brain'), icon: BrainCircuit },
-    { id: 'audio', label: t('الصوت', 'Audio'), icon: Mic },
-    { id: 'colors', label: t('الألوان', 'Colors'), icon: Palette },
-    { id: 'exports', label: t('المُصدّرات', 'Exports'), icon: Film },
+    { id: 'director', label: t('المخرج الذكي', 'AI Director'), icon: BrainCircuit },
+    { id: 'audio', label: t('الصوت و TTS', 'Audio & TTS'), icon: Mic },
+    { id: 'colors', label: t('الثيم والعلامة', 'Theme & Brand'), icon: Palette },
+    { id: 'exports', label: t('التصدير والكاش', 'Exports & Cache'), icon: Film },
   ];
 
   return (
-    <div className="min-w-0 w-full max-w-full space-y-3">
+    <div className="flex h-full min-h-0 min-w-0 w-full max-w-full flex-col gap-2">
       <div
         role="tablist"
         aria-label={t('أقسام لوحة التحكم', 'Control panel sections')}
-        className="grid grid-cols-4 gap-0.5 rounded-xl border border-white/[0.08] bg-[#0B0E14] p-1"
+        className="grid shrink-0 grid-cols-2 gap-0.5 rounded-xl border border-white/[0.08] bg-[#0B0E14] p-1"
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -140,6 +140,7 @@ export function StudioSidePanel({
         })}
       </div>
 
+      <div className="min-h-0 flex-1 overflow-y-auto pb-1 pe-0.5">
       {activeTab === 'director' ? (
         <div className="space-y-3">
           <AgentDirectorPanel
@@ -195,7 +196,7 @@ export function StudioSidePanel({
       ) : null}
 
       {activeTab === 'colors' ? (
-        <ColorsPanel
+        <ThemeBrandPanel
           brandKit={brandKit}
           onChangeBrandKit={onChangeBrandKit}
           disabled={disabled}
@@ -209,6 +210,7 @@ export function StudioSidePanel({
           refreshKey={historyKey}
         />
       ) : null}
+      </div>
     </div>
   );
 }

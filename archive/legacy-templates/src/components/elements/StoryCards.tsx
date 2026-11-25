@@ -289,7 +289,7 @@ export const NotificationCard = ({ el, theme, layout, delay }: NotificationProps
               color: tone,
             }}
           >
-            {el.app ?? "ZOF STUDIO"}
+            {el.app ?? "ZOEDIT STUDIO"}
           </span>
           <span
             style={{

@@ -134,7 +134,7 @@ export function ApiSettingsDrawer({
     setVisibleKeys((prev) => ({ ...prev, [key]: !prev[key] }));
   const activeProvider = providers.find((provider) => provider.id === selectedAiProvider);
   const selectedModel = models.find((model) => model.id === selectedAiModel);
-  const settingsFile = status.settingsFile || '~/.zof-studio/settings.json';
+  const settingsFile = status.settingsFile || '~/.zoedit-studio/settings.json';
   const configuredLabel = (configured?: boolean, mask?: string) =>
     configured ? t(`مفعّل · ${mask || ''}`, `Active · ${mask || ''}`) : t('غير مضاف', 'Not set');
 

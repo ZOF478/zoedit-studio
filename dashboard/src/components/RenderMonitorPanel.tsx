@@ -38,6 +38,8 @@ interface RenderMonitorPanelProps {
   renderRemainingUpdatedAt?: number | null;
   onCancelRender?: () => void;
   isCancelling?: boolean;
+  showOutput?: boolean;
+  showStartButton?: boolean;
 }
 
 export function RenderMonitorPanel({
@@ -57,6 +59,8 @@ export function RenderMonitorPanel({
   renderRemainingUpdatedAt = null,
   onCancelRender,
   isCancelling = false,
+  showOutput = true,
+  showStartButton = true,
 }: RenderMonitorPanelProps) {
   const { t } = useI18n();
   const [showLogs, setShowLogs] = useState(false);
@@ -115,7 +119,7 @@ export function RenderMonitorPanel({
     link.href = renderedVideo.blobUrl;
     link.download =
       renderedVideo.downloadName ||
-      `zof-studio-${aspectRatio.replace(':', 'x')}-${fps}fps.${renderedVideo.extension}`;
+      `zoedit-studio-${aspectRatio.replace(':', 'x')}-${fps}fps.${renderedVideo.extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -123,35 +127,37 @@ export function RenderMonitorPanel({
 
   return (
     <section id="render-monitor" className="space-y-5">
-      <div className="rounded-xl border border-white/8 bg-[#10141D] p-5 space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/8 pb-4">
-          <div>
-            <h2 className="font-display text-base font-bold text-slate-100">
-              {t('بدء تصدير الفيديو', 'Start video export')}
-            </h2>
-            <p className="mt-0.5 font-mono text-xs text-slate-400" dir="ltr">
-              {aspectRatio} @ {fps}fps · {totalDurationSec.toFixed(1)}s ({totalFrames} frames)
-            </p>
-          </div>
+      <div className={`rounded-xl border border-white/8 bg-[#10141D] ${showStartButton ? 'p-5 space-y-5' : 'p-3 space-y-4'}`}>
+        {showStartButton ? (
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/8 pb-4">
+            <div>
+              <h2 className="font-display text-base font-bold text-slate-100">
+                {t('بدء تصدير الفيديو', 'Start video export')}
+              </h2>
+              <p className="mt-0.5 font-mono text-xs text-slate-400" dir="ltr">
+                {aspectRatio} @ {fps}fps · {totalDurationSec.toFixed(1)}s ({totalFrames} frames)
+              </p>
+            </div>
 
-          <button
-            type="button"
-            disabled={isRendering || !canStart}
-            onClick={onStartRender}
-            className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
-          >
-            {isRendering ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Film className="h-4 w-4" />
-            )}
-            <span>
-              {isRendering
-                ? t('جاري تصدير الفيديو...', 'Exporting video...')
-                : t('بدء تصدير الفيديو', 'Start video export')}
-            </span>
-          </button>
-        </div>
+            <button
+              type="button"
+              disabled={isRendering || !canStart}
+              onClick={onStartRender}
+              className="inline-flex items-center gap-2 rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {isRendering ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Film className="h-4 w-4" />
+              )}
+              <span>
+                {isRendering
+                  ? t('جاري تصدير الفيديو...', 'Exporting video...')
+                  : t('بدء تصدير الفيديو', 'Start video export')}
+              </span>
+            </button>
+          </div>
+        ) : null}
 
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -332,6 +338,7 @@ export function RenderMonitorPanel({
         </div>
       </div>
 
+      {showOutput ? (
       <div id="video-output" className="rounded-xl border border-white/8 bg-[#10141D] p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -381,6 +388,7 @@ export function RenderMonitorPanel({
           </div>
         )}
       </div>
+      ) : null}
     </section>
   );
 }

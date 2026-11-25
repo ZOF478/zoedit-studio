@@ -220,7 +220,7 @@ export function PrimaryCommandBar({
           onChange={(event) =>
             onChangeBrandKit({ ...brandKit, watermark: event.target.value })
           }
-          placeholder="@ZofStudio"
+          placeholder="@ZoeditStudio"
           className="min-w-[120px] flex-1 rounded-lg border border-white/10 bg-[#10141D] px-2.5 py-1.5 text-[11px] text-slate-100 placeholder:text-slate-600 focus:border-sky-400 focus:outline-none disabled:opacity-40"
         />
         <WatermarkPositionPicker

@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { ShieldCheck, Sparkles } from 'lucide-react';
+import { Maximize2, ShieldCheck, Sparkles } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type {
   BrandKit,
@@ -17,6 +17,10 @@ import {
   SafeZoneSwitcher,
   type SafeZoneMode,
 } from './SafeZoneOverlay';
+import {
+  PREVIEW_ASPECT_RESOLUTIONS,
+  PreviewStageShell,
+} from './PreviewStageShell';
 
 interface LiveSandboxStageProps {
   aspectRatio: string;
@@ -32,12 +36,6 @@ interface LiveSandboxStageProps {
   fps?: number;
   embedded?: boolean;
 }
-
-const ASPECT_RESOLUTIONS: Record<string, { width: number; height: number }> = {
-  '16:9': { width: 1920, height: 1080 },
-  '1:1': { width: 1080, height: 1080 },
-  '9:16': { width: 1080, height: 1920 },
-};
 
 export function LiveSandboxStage({
   aspectRatio,
@@ -55,7 +53,7 @@ export function LiveSandboxStage({
 }: LiveSandboxStageProps) {
   const { t, isRtl } = useI18n();
   const [frameMode, setFrameMode] = useState<SafeZoneMode>('universal');
-  const resolution = ASPECT_RESOLUTIONS[aspectRatio] ?? ASPECT_RESOLUTIONS['9:16'];
+  const resolution = PREVIEW_ASPECT_RESOLUTIONS[aspectRatio] ?? PREVIEW_ASPECT_RESOLUTIONS['9:16'];
   const style = resolveCaptionStyle(captionStyle);
   const colors = resolveCaptionColors(captionColors, brandKit);
   const safeOffset = normalizeCaptionBottomOffset(captionBottomOffset);
@@ -90,62 +88,37 @@ export function LiveSandboxStage({
     : ['Design', 'videos', 'that', 'stand', 'out'];
   const activeWord = 2;
 
-  const frameStyle =
-    aspectRatio === '9:16'
-      ? { aspectRatio: '9 / 16', height: '580px', width: 'auto', maxWidth: '100%' }
-      : aspectRatio === '1:1'
-        ? { aspectRatio: '1 / 1', height: '480px', width: 'auto', maxWidth: '100%' }
-        : { aspectRatio: '16 / 9', width: '100%', height: 'auto' };
-
-  const frameClassName =
-    aspectRatio === '9:16'
-      ? 'relative overflow-hidden rounded-[28px] border-2 border-slate-700/80 shadow-2xl'
-      : 'relative overflow-hidden rounded-2xl border border-slate-700/80 shadow-xl';
-
   return (
-    <section
-      className={
-        embedded
-          ? 'flex min-w-0 w-full max-w-full flex-col overflow-hidden'
-          : 'flex min-w-0 w-full max-w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0E121A] shadow-[0_24px_70px_-40px_rgba(56,189,248,0.55)]'
+    <PreviewStageShell
+      title={t('مساحة المعاينة الحية', 'Live sandbox')}
+      icon={
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-fuchsia-400/30 bg-fuchsia-500/10 text-fuchsia-300">
+          <Sparkles className="h-3.5 w-3.5" />
+        </span>
       }
-    >
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-white/8 px-4 py-3 sm:px-5">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-fuchsia-400/30 bg-fuchsia-500/10 text-fuchsia-300">
-              <Sparkles className="h-3.5 w-3.5" />
-            </span>
-            <h2 className="truncate font-display text-sm font-bold text-slate-100">
-              {t('مساحة المعاينة الحية', 'Live sandbox')}
-            </h2>
-          </div>
-          <p className="mt-0.5 truncate font-mono text-[11px] text-slate-400 tabular-nums" dir="ltr">
-            {aspectRatio} · {resolution.width}×{resolution.height} · {fps}fps
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {isPortrait ? (
-            <SafeZoneSwitcher mode={frameMode} onChange={setFrameMode} />
-          ) : null}
+      metadata={<>{aspectRatio} · {fps}fps</>}
+      aspectRatio={aspectRatio}
+      embedded={embedded}
+      frameStyle={{
+        backgroundColor: brandKit.bgColor,
+        color: brandKit.textColor,
+        fontFamily: 'var(--font-display)',
+        direction: isRtl ? 'rtl' : 'ltr',
+      }}
+      actions={
+        <>
+          <SafeZoneSwitcher mode={frameMode} onChange={setFrameMode} />
           <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold text-emerald-200">
             <ShieldCheck className="h-3 w-3" />
             {t(`كابشن عند ${safeOffset}%`, `Captions at ${safeOffset}%`)}
           </span>
-        </div>
-      </div>
-
-      <div className="flex min-w-0 w-full flex-1 items-center justify-center rounded-2xl bg-black/30 py-4">
-        <div
-          className={frameClassName}
-          style={{
-            ...frameStyle,
-            backgroundColor: brandKit.bgColor,
-            color: brandKit.textColor,
-            fontFamily: 'var(--font-display)',
-            direction: isRtl ? 'rtl' : 'ltr',
-          }}
-        >
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-[#0B0E14] px-2.5 py-1 text-[10px] font-semibold text-slate-300">
+            <Maximize2 className="h-3 w-3 text-slate-400" />
+            {resolution.width}×{resolution.height}
+          </span>
+        </>
+      }
+    >
           <div
             className="absolute inset-0"
             style={{
@@ -270,8 +243,6 @@ export function LiveSandboxStage({
           {isPortrait ? (
             <SafeZoneOverlay mode={frameMode} captionBottomOffset={safeOffset} />
           ) : null}
-        </div>
-      </div>
-    </section>
+    </PreviewStageShell>
   );
 }

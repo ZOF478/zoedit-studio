@@ -1,4 +1,4 @@
-name: "Zof Studio CodeQL config"
+name: "Zoedit Studio CodeQL config"
 
 paths-ignore:
   - archive/**

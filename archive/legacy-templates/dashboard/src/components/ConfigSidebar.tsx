@@ -468,7 +468,7 @@ export function ConfigSidebar({
                   } ${isAi ? 'col-span-2' : ''}`}
                 >
                   <div
-                    className={`zof-bg-preview relative w-full overflow-hidden ${isAi ? 'h-12' : 'h-9'}`}
+                    className={`zoedit-bg-preview relative w-full overflow-hidden ${isAi ? 'h-12' : 'h-9'}`}
                     style={{ background: preset.preview }}
                   >
                     {isAi ? (
@@ -532,7 +532,7 @@ export function ConfigSidebar({
               value={brandKit.watermark}
               disabled={!brandKit.watermarkEnabled}
               onChange={(e) => onChangeBrandKit({ ...brandKit, watermark: e.target.value })}
-              placeholder="@ZofStudio"
+              placeholder="@ZoeditStudio"
               className="w-full rounded-lg border border-white/10 bg-[#10141D] px-2.5 py-1.5 text-[11px] text-slate-100 placeholder:text-slate-600 focus:border-sky-400 focus:outline-none disabled:opacity-40"
             />
             <WatermarkPositionPicker
@@ -855,7 +855,7 @@ export function ConfigSidebar({
           onChange={(event) =>
             onChangeBrandKit({ ...brandKit, watermark: event.target.value })
           }
-          placeholder="@ZofStudio"
+          placeholder="@ZoeditStudio"
           className="w-full min-w-0 rounded-lg border border-white/10 bg-[#10141D] px-2.5 py-1.5 text-[11px] text-slate-100 placeholder:text-slate-600 focus:border-sky-400 focus:outline-none disabled:opacity-40"
         />
         <WatermarkPositionPicker

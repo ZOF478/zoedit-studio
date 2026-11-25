@@ -37,13 +37,16 @@ import {
   SFX_CUE_FILES,
 } from "./sfx";
 import type { CaptionConfig, Scene, SceneElement, SfxCue } from "./types";
-import { ensureCairoFont, FONT_FAMILY } from "./fonts";
+import { ensureSceneFonts, FONT_FAMILY } from "./fonts";
 
 type CustomTsxElement = Extract<SceneElement, { type: "custom_tsx" }>;
 
 type ScenePalette = {
   background: string;
   accent: string;
+  secondary: string;
+  surface: string;
+  surfaceAlt: string;
   text: string;
   muted: string;
   characterBody: string;
@@ -143,10 +146,30 @@ const withAlpha = (hex: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${clamped})`;
 };
 
+const mixHex = (a: string, b: string, amount: number): string => {
+  const parse = (hex: string) => {
+    const value = hex.replace("#", "");
+    return [0, 2, 4].map((offset) =>
+      Number.parseInt(value.slice(offset, offset + 2), 16),
+    );
+  };
+  const [r1, g1, b1] = parse(a);
+  const [r2, g2, b2] = parse(b);
+  const ratio = Math.min(1, Math.max(0, amount));
+  const channel = (from: number, to: number) =>
+    Math.round(from + (to - from) * ratio)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${channel(r1, r2)}${channel(g1, g2)}${channel(b1, b2)}`;
+};
+
 const buildPalette = (scene: Scene, brand: Record<string, unknown>): ScenePalette => {
   const background = safeHex(brand.background, FALLBACK_BACKGROUND);
   const accent = safeHex(brand.accent ?? brand.primary, FALLBACK_ACCENT);
+  const secondary = safeHex(brand.secondary, accent);
   const isDark = hexLuminance(background) < 0.4;
+  const surface = mixHex(secondary, background, isDark ? 0.16 : 0.24);
+  const surfaceAlt = mixHex(secondary, background, isDark ? 0.3 : 0.4);
   const text = safeHex(
     brand.text,
     isDark ? "#F8FAFC" : "#0F172A",
@@ -158,6 +181,9 @@ const buildPalette = (scene: Scene, brand: Record<string, unknown>): ScenePalett
   return {
     background,
     accent,
+    secondary,
+    surface,
+    surfaceAlt,
     text,
     muted,
     characterBody: isDark ? "#E2E8F0" : "#111827",
@@ -216,7 +242,7 @@ const FallbackScene = ({
     [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
-  const title = scene.title?.trim() || "Zof Studio";
+  const title = scene.title?.trim() || "Zoedit Studio";
   const caption = scene.caption?.trim() || "";
 
   return (
@@ -298,7 +324,7 @@ const FallbackScene = ({
             letterSpacing: "0.06em",
           }}
         >
-          ZOF STUDIO
+          ZOEDIT STUDIO
         </div>
         <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1.1 }}>
           {title}
@@ -686,6 +712,9 @@ const GeneratedScene = ({
         <GeneratedSceneBoundary fallback={fallback}>
           <GeneratedComponent
             accentColor={palette.accent}
+            secondaryColor={palette.secondary}
+            surfaceColor={palette.surface}
+            surfaceAltColor={palette.surfaceAlt}
             bgColor={palette.background}
             textColor={palette.text}
             mutedColor={palette.muted}
@@ -741,8 +770,8 @@ const TransitionWhooshes = ({
 };
 
 export const MainComposition = ({ data }: MainProps) => {
-  ensureCairoFont();
   const settings = getVideoSettings(data);
+  ensureSceneFonts(settings.language);
   const timings = getSceneTimings(data, settings.fps);
   const brandKit = (data.brand_kit ?? {}) as Record<string, unknown>;
   const palette = buildPalette({}, brandKit);

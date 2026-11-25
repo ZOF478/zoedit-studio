@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { CheckCircle2, TriangleAlert, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { BarChart3, CheckCircle2, Download, Film, ListChecks, MonitorPlay, PanelLeft, SlidersHorizontal, TriangleAlert, X } from 'lucide-react';
 import { ApiSettingsDrawer } from './components/ApiSettingsDrawer';
 import { CoreVideoBar } from './components/CoreVideoBar';
+import { EditorTimeline, type TimelineScene } from './components/EditorTimeline';
+import { PanelResizeHandle } from './components/PanelResizeHandle';
 import { MainPreviewPanel } from './components/MainPreviewPanel';
 import { NotificationPermissionBanner } from './components/NotificationPermissionBanner';
 import { QuickTweakPanel } from './components/QuickTweakPanel';
 import { RenderMonitorPanel } from './components/RenderMonitorPanel';
-import { StudioFooter, StudioInfoModal, type StudioInfoModalId } from './components/StudioFooter';
+import { StudioGuideModal } from './components/StudioGuideModal';
+import { StudioInfoModal, type StudioInfoModalId } from './components/StudioFooter';
 import { StudioSidePanel } from './components/StudioSidePanel';
 import { TopHeader } from './components/TopHeader';
 import { UsageCostPanel } from './components/UsageCostPanel';
@@ -52,13 +55,84 @@ import {
 
 type Translator = (ar: string, en: string) => string;
 
-const PROMPT_STORAGE_KEY = 'zof-studio-master-prompt-v1';
-const SCRIPT_STORAGE_KEY = 'zof-studio-voiceover-script-v1';
-const PALETTE_STORAGE_KEY = 'zof-studio-active-palette-v1';
-const SFX_STORAGE_KEY = 'zof-studio-sfx-v1';
-const DEPTH_25D_STORAGE_KEY = 'zof-studio-depth-25d-v1';
-const RESPECT_SAFE_ZONE_STORAGE_KEY = 'zof-studio-respect-safe-zone-v1';
-const CAPTION_STORAGE_KEY = 'zof-studio-caption-settings-v1';
+type GeneratedSceneSummary = {
+  id: string;
+  title: string;
+  index: number;
+  component?: string;
+  durationSec: number;
+  hasAudio: boolean;
+  exists: boolean;
+};
+
+type InspectorTabId = 'render' | 'usage';
+type MobilePaneId = 'tools' | 'player' | 'inspector';
+
+const PROMPT_STORAGE_KEY = 'zoedit-studio-master-prompt-v1';
+const SCRIPT_STORAGE_KEY = 'zoedit-studio-voiceover-script-v1';
+const PALETTE_STORAGE_KEY = 'zoedit-studio-active-palette-v1';
+const SFX_STORAGE_KEY = 'zoedit-studio-sfx-v1';
+const DEPTH_25D_STORAGE_KEY = 'zoedit-studio-depth-25d-v1';
+const RESPECT_SAFE_ZONE_STORAGE_KEY = 'zoedit-studio-respect-safe-zone-v1';
+const CAPTION_STORAGE_KEY = 'zoedit-studio-caption-settings-v1';
+const WORKSPACE_LAYOUT_KEY = 'zoedit-studio-workspace-layout-v2';
+const WORKSPACE_SETTINGS_KEY = 'zoedit-studio-workspace-settings-v1';
+
+const LEGACY_STORAGE_PREFIX = ['zof', 'studio'].join('-');
+const STORAGE_SUFFIXES = [
+  'lang',
+  'master-prompt-v1',
+  'voiceover-script-v1',
+  'active-palette-v1',
+  'sfx-v1',
+  'depth-25d-v1',
+  'respect-safe-zone-v1',
+  'caption-settings-v1',
+];
+if (typeof window !== 'undefined') {
+  try {
+    for (const suffix of STORAGE_SUFFIXES) {
+      const canonical = `zoedit-studio-${suffix}`;
+      if (window.localStorage.getItem(canonical) !== null) continue;
+      const legacy = window.localStorage.getItem(`${LEGACY_STORAGE_PREFIX}-${suffix}`);
+      if (legacy !== null) window.localStorage.setItem(canonical, legacy);
+    }
+  } catch {
+    // Storage migration is best-effort and must never block the workspace.
+  }
+}
+
+type WorkspaceLayout = {
+  leftWidth: number;
+  rightWidth: number;
+  timelineHeight: number;
+};
+
+const DEFAULT_WORKSPACE_LAYOUT: WorkspaceLayout = {
+  leftWidth: 300,
+  rightWidth: 360,
+  timelineHeight: 110,
+};
+
+function readWorkspaceLayout(): WorkspaceLayout {
+  if (typeof window === 'undefined') return DEFAULT_WORKSPACE_LAYOUT;
+  try {
+    const raw = window.localStorage.getItem(WORKSPACE_LAYOUT_KEY);
+    if (!raw) return DEFAULT_WORKSPACE_LAYOUT;
+    const parsed = JSON.parse(raw) as Partial<WorkspaceLayout>;
+    const read = (value: unknown, fallback: number, min: number, max: number) => {
+      const numeric = Number(value);
+      return Number.isFinite(numeric) ? Math.min(max, Math.max(min, numeric)) : fallback;
+    };
+    return {
+      leftWidth: read(parsed.leftWidth, DEFAULT_WORKSPACE_LAYOUT.leftWidth, 220, 560),
+      rightWidth: read(parsed.rightWidth, DEFAULT_WORKSPACE_LAYOUT.rightWidth, 260, 620),
+      timelineHeight: read(parsed.timelineHeight, DEFAULT_WORKSPACE_LAYOUT.timelineHeight, 110, 360),
+    };
+  } catch {
+    return DEFAULT_WORKSPACE_LAYOUT;
+  }
+}
 
 const CAPTION_STYLE_VALUES: CaptionAnimationStyle[] = [
   'auto',
@@ -255,10 +329,173 @@ const DEFAULT_BRAND_KIT: BrandKit = {
   textColor: '#F8FAFC',
   primaryColor: '#38BDF8',
   secondaryColor: '#FBBF24',
-  watermark: '@ZofStudio',
+  watermark: '@ZoeditStudio',
   watermarkEnabled: true,
   watermarkPosition: 'top-left',
 };
+
+const DEFAULT_VOICE_CONFIG: VoiceoverConfig = {
+  enabled: true,
+  modelId: 'eleven_multilingual_v2',
+  voiceId: 'pNInz6obpgDQGcFmaJgB',
+  stability: 0.5,
+  similarityBoost: 0.75,
+  style: 0,
+  speakerBoost: true,
+  speed: 1,
+};
+
+const EXPORT_DURATION_VALUES: ExportTargetDuration[] = [
+  '3',
+  '5',
+  '8',
+  '12',
+  '15',
+  '30',
+  '45',
+  '60',
+  '90',
+  'auto',
+];
+const ASPECT_RATIO_VALUES: AspectRatio[] = ['9:16', '16:9', '1:1'];
+const FPS_VALUES: FpsOption[] = [30, 60];
+const WATERMARK_POSITION_VALUES: Array<NonNullable<BrandKit['watermarkPosition']>> = [
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+];
+
+type StoredWorkspaceSettings = {
+  targetDuration?: ExportTargetDuration;
+  aspectRatio?: AspectRatio;
+  fps?: FpsOption;
+  scriptLanguage?: ScriptLanguage;
+  voiceConfig?: VoiceoverConfig;
+  captionsEnabled?: boolean;
+  sfx?: SfxConfig;
+  enable25D?: boolean;
+  cleanBrollMode?: boolean;
+  respectSafeZone?: boolean;
+  brandKit?: BrandKit;
+  selectedAiProvider?: AiProviderId;
+  selectedAiModel?: AiScriptModelId;
+};
+
+function clampStoredNumber(value: unknown, fallback: number, min: number, max: number): number {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.min(max, Math.max(min, numeric)) : fallback;
+}
+
+function readStoredBrandKit(value: unknown): BrandKit | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  const next: BrandKit = { ...DEFAULT_BRAND_KIT };
+  for (const key of PALETTE_COLOR_KEYS) {
+    const raw = record[key];
+    if (typeof raw === 'string' && HEX_COLOR_PATTERN.test(raw.trim())) {
+      next[key] = raw.trim().toUpperCase();
+    }
+  }
+  if (typeof record.watermark === 'string') {
+    next.watermark = record.watermark.slice(0, 80);
+  }
+  if (typeof record.watermarkEnabled === 'boolean') {
+    next.watermarkEnabled = record.watermarkEnabled;
+  }
+  if (
+    typeof record.watermarkPosition === 'string' &&
+    WATERMARK_POSITION_VALUES.includes(
+      record.watermarkPosition as NonNullable<BrandKit['watermarkPosition']>,
+    )
+  ) {
+    next.watermarkPosition = record.watermarkPosition as NonNullable<
+      BrandKit['watermarkPosition']
+    >;
+  }
+  return next;
+}
+
+function readStoredWorkspaceSettings(): StoredWorkspaceSettings | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(WORKSPACE_SETTINGS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (!parsed || typeof parsed !== 'object') return null;
+    const result: StoredWorkspaceSettings = {};
+
+    if (EXPORT_DURATION_VALUES.includes(parsed.targetDuration as ExportTargetDuration)) {
+      result.targetDuration = parsed.targetDuration as ExportTargetDuration;
+    }
+    if (ASPECT_RATIO_VALUES.includes(parsed.aspectRatio as AspectRatio)) {
+      result.aspectRatio = parsed.aspectRatio as AspectRatio;
+    }
+    if (FPS_VALUES.includes(Number(parsed.fps) as FpsOption)) {
+      result.fps = Number(parsed.fps) as FpsOption;
+    }
+    if (typeof parsed.scriptLanguage === 'string' && parsed.scriptLanguage.trim()) {
+      result.scriptLanguage = parsed.scriptLanguage.trim();
+    }
+    if (parsed.voiceConfig && typeof parsed.voiceConfig === 'object') {
+      const voice = parsed.voiceConfig as Record<string, unknown>;
+      result.voiceConfig = {
+        enabled:
+          typeof voice.enabled === 'boolean' ? voice.enabled : DEFAULT_VOICE_CONFIG.enabled,
+        modelId:
+          typeof voice.modelId === 'string' && voice.modelId.trim()
+            ? voice.modelId.trim()
+            : DEFAULT_VOICE_CONFIG.modelId,
+        voiceId:
+          typeof voice.voiceId === 'string' && voice.voiceId.trim()
+            ? voice.voiceId.trim()
+            : DEFAULT_VOICE_CONFIG.voiceId,
+        stability: clampStoredNumber(voice.stability, DEFAULT_VOICE_CONFIG.stability, 0, 1),
+        similarityBoost: clampStoredNumber(
+          voice.similarityBoost,
+          DEFAULT_VOICE_CONFIG.similarityBoost,
+          0,
+          1,
+        ),
+        style: clampStoredNumber(voice.style, DEFAULT_VOICE_CONFIG.style, 0, 1),
+        speakerBoost:
+          typeof voice.speakerBoost === 'boolean'
+            ? voice.speakerBoost
+            : DEFAULT_VOICE_CONFIG.speakerBoost,
+        speed: clampStoredNumber(voice.speed, DEFAULT_VOICE_CONFIG.speed, 0.7, 1.2),
+      };
+    }
+    if (typeof parsed.captionsEnabled === 'boolean') {
+      result.captionsEnabled = parsed.captionsEnabled;
+    }
+    if (parsed.sfx && typeof parsed.sfx === 'object') {
+      const sfxRecord = parsed.sfx as Record<string, unknown>;
+      result.sfx = {
+        enabled: typeof sfxRecord.enabled === 'boolean' ? sfxRecord.enabled : true,
+        volume: clampStoredNumber(sfxRecord.volume, DEFAULT_SFX_CONFIG.volume, 0, 1),
+      };
+    }
+    for (const key of ['enable25D', 'cleanBrollMode', 'respectSafeZone'] as const) {
+      if (typeof parsed[key] === 'boolean') {
+        result[key] = parsed[key] as boolean;
+      }
+    }
+    const brandKit = readStoredBrandKit(parsed.brandKit);
+    if (brandKit) result.brandKit = brandKit;
+    if (
+      typeof parsed.selectedAiProvider === 'string' &&
+      AI_PROVIDERS.some((provider) => provider.id === parsed.selectedAiProvider)
+    ) {
+      result.selectedAiProvider = parsed.selectedAiProvider as AiProviderId;
+    }
+    if (typeof parsed.selectedAiModel === 'string' && parsed.selectedAiModel.trim()) {
+      result.selectedAiModel = parsed.selectedAiModel.trim();
+    }
+    return result;
+  } catch {
+    return null;
+  }
+}
 
 const DEFAULT_PROMPT_AR =
   'كيف تصنع فيديوهات تعليمية قصيرة بالذكاء الاصطناعي وتضاعف التفاعل';
@@ -304,7 +541,7 @@ function createExportSteps(fps: FpsOption, t: Translator): RenderStepState[] {
 }
 
 export default function App() {
-  const { t, dir, lang } = useI18n();
+  const { t, dir, lang, isRtl } = useI18n();
   const defaultBaseUrl =
     typeof window !== 'undefined' && window.location.port === '4789'
       ? 'http://localhost:4789/api'
@@ -313,12 +550,20 @@ export default function App() {
   const [apiBaseUrl, setApiBaseUrl] = useState<string>(defaultBaseUrl);
   const [sessionToken, setSessionToken] = useState<string>('');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [footerModal, setFooterModal] = useState<StudioInfoModalId | null>(null);
+  const [inspectorTab, setInspectorTab] = useState<InspectorTabId>('render');
+  const [mobilePane, setMobilePane] = useState<MobilePaneId>('player');
   const usageTracker = useStudioUsage(apiBaseUrl, sessionToken);
+  const [initialWorkspaceSettings] = useState<StoredWorkspaceSettings | null>(
+    readStoredWorkspaceSettings
+  );
 
-  const [selectedAiProvider, setSelectedAiProvider] = useState<AiProviderId>('opencode-free');
+  const [selectedAiProvider, setSelectedAiProvider] = useState<AiProviderId>(
+    initialWorkspaceSettings?.selectedAiProvider ?? 'opencode-free'
+  );
   const [selectedAiModel, setSelectedAiModel] = useState<AiScriptModelId>(
-    'deepseek/deepseek-v4.1-flash:free'
+    initialWorkspaceSettings?.selectedAiModel ?? 'deepseek/deepseek-v4.1-flash:free'
   );
   const [apiStatus, setApiStatus] = useState<ApiSettingsStatus>({
     openrouterConfigured: false,
@@ -341,30 +586,35 @@ export default function App() {
   const [isGeneratingScript, setIsGeneratingScript] = useState(false);
   const [scriptError, setScriptError] = useState<string | null>(null);
   const [scriptNotice, setScriptNotice] = useState<string | null>(null);
-  const [targetDuration, setTargetDuration] = useState<ExportTargetDuration>('60');
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>('9:16');
-  const [fps, setFps] = useState<FpsOption>(60);
-  const [brandKit, setBrandKit] = useState<BrandKit>(() => ({
-    ...DEFAULT_BRAND_KIT,
-    ...(readStoredPalette() ?? {}),
-  }));
+  const [targetDuration, setTargetDuration] = useState<ExportTargetDuration>(
+    initialWorkspaceSettings?.targetDuration ?? '60'
+  );
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>(
+    initialWorkspaceSettings?.aspectRatio ?? '9:16'
+  );
+  const [fps, setFps] = useState<FpsOption>(initialWorkspaceSettings?.fps ?? 60);
+  const [brandKit, setBrandKit] = useState<BrandKit>(() =>
+    initialWorkspaceSettings?.brandKit
+      ? initialWorkspaceSettings.brandKit
+      : {
+          ...DEFAULT_BRAND_KIT,
+          ...(readStoredPalette() ?? {}),
+        }
+  );
   const hadStoredPaletteAtBootRef = useRef(Boolean(readStoredPalette()));
-  const [scriptLanguage, setScriptLanguage] = useState<ScriptLanguage>('ar');
-  const [voiceConfig, setVoiceConfig] = useState<VoiceoverConfig>({
-    enabled: true,
-    modelId: 'eleven_multilingual_v2',
-    voiceId: 'pNInz6obpgDQGcFmaJgB',
-    stability: 0.5,
-    similarityBoost: 0.75,
-    style: 0,
-    speakerBoost: true,
-    speed: 1,
-  });
+  const [scriptLanguage, setScriptLanguage] = useState<ScriptLanguage>(
+    normalizeVideoLanguage(initialWorkspaceSettings?.scriptLanguage ?? 'ar')
+  );
+  const [voiceConfig, setVoiceConfig] = useState<VoiceoverConfig>(
+    initialWorkspaceSettings?.voiceConfig ?? DEFAULT_VOICE_CONFIG
+  );
   const [sfx, setSfx] = useState<SfxConfig>(
-    () => readStoredSfx() ?? DEFAULT_SFX_CONFIG
+    () => initialWorkspaceSettings?.sfx ?? readStoredSfx() ?? DEFAULT_SFX_CONFIG
   );
   const hadStoredSfxAtBootRef = useRef(Boolean(readStoredSfx()));
-  const [captionsEnabled, setCaptionsEnabled] = useState(true);
+  const [captionsEnabled, setCaptionsEnabled] = useState(
+    initialWorkspaceSettings?.captionsEnabled ?? true
+  );
   const [storedCaptionSettings] = useState<StoredCaptionSettings | null>(
     readStoredCaptionSettings
   );
@@ -377,11 +627,19 @@ export default function App() {
   const [captionBottomOffset, setCaptionBottomOffset] = useState<number>(
     () => storedCaptionSettings?.bottomOffset ?? DEFAULT_CAPTION_BOTTOM_OFFSET
   );
-  const [enable25D, setEnable25D] = useState<boolean>(() => readStoredDepth25D());
-  const [cleanBrollMode, setCleanBrollMode] = useState(false);
+  const [enable25D, setEnable25D] = useState<boolean>(
+    () => initialWorkspaceSettings?.enable25D ?? readStoredDepth25D()
+  );
+  const [cleanBrollMode, setCleanBrollMode] = useState<boolean>(
+    initialWorkspaceSettings?.cleanBrollMode ?? false
+  );
   const [respectSafeZone, setRespectSafeZone] = useState<boolean>(() => {
+    if (typeof initialWorkspaceSettings?.respectSafeZone === 'boolean') {
+      return initialWorkspaceSettings.respectSafeZone;
+    }
     const stored = readStoredRespectSafeZone();
-    return stored ?? aspectRatio === '9:16';
+    const defaultSafeZone = (initialWorkspaceSettings?.aspectRatio ?? '9:16') === '9:16';
+    return stored ?? defaultSafeZone;
   });
 
   const [elVoices, setElVoices] = useState<ElevenLabsVoice[]>([]);
@@ -396,6 +654,12 @@ export default function App() {
   const [renderedVideo, setRenderedVideo] = useState<RenderedVideoResult | null>(null);
   const [exportedVideoUrl, setExportedVideoUrl] = useState<string | null>(null);
   const [generatedSceneCount, setGeneratedSceneCount] = useState(0);
+  const [generatedScenes, setGeneratedScenes] = useState<GeneratedSceneSummary[]>([]);
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+  const [timelineLogsOpen, setTimelineLogsOpen] = useState(false);
+  const [workspaceLayout, setWorkspaceLayout] = useState<WorkspaceLayout>(readWorkspaceLayout);
+  const [resizingPanel, setResizingPanel] = useState<'left' | 'right' | 'timeline' | null>(null);
+  const workspaceRef = useRef<HTMLElement | null>(null);
   const [quickTweakInstruction, setQuickTweakInstruction] = useState('');
   const [quickTweakNotice, setQuickTweakNotice] = useState<string | null>(null);
   const [quickTweakBusy, setQuickTweakBusy] = useState(false);
@@ -458,7 +722,11 @@ export default function App() {
 
   const applyApiStatus = useCallback((data: ApiSettingsStatus) => {
     setApiStatus(data);
-    if (data.preferences) {
+    if (!data.preferences) return;
+    // Local workspace settings are the source of truth on reload. Server
+    // preferences only seed defaults on the very first run.
+    const useServerPreferences = initialWorkspaceSettings === null;
+    if (useServerPreferences) {
       if (data.preferences.provider) setSelectedAiProvider(data.preferences.provider);
       if (data.preferences.modelId) setSelectedAiModel(data.preferences.modelId);
       if (data.preferences.voiceId || data.preferences.voiceModelId) {
@@ -503,32 +771,59 @@ export default function App() {
       if (typeof data.preferences.captionsEnabled === 'boolean') {
         setCaptionsEnabled(data.preferences.captionsEnabled);
       }
-      if (data.preferences.captionAnimationStyle) {
-        setCaptionStyle(resolveCaptionStyle(data.preferences.captionAnimationStyle));
-      }
-      if (data.preferences.captionColors) {
-        setCaptionColors((prev) => ({
-          ...prev,
-          ...data.preferences?.captionColors,
-        }));
-      }
-      if (typeof data.preferences.captionBottomOffset === 'number') {
-        setCaptionBottomOffset(
-          normalizeCaptionBottomOffset(data.preferences.captionBottomOffset)
-        );
-      }
       if (typeof data.preferences.respectSafeZone === 'boolean') {
         setRespectSafeZone(data.preferences.respectSafeZone);
       }
     }
-  }, []);
+    if (data.preferences.captionAnimationStyle) {
+      setCaptionStyle(resolveCaptionStyle(data.preferences.captionAnimationStyle));
+    }
+    if (data.preferences.captionColors) {
+      setCaptionColors((prev) => ({
+        ...prev,
+        ...data.preferences?.captionColors,
+      }));
+    }
+    if (typeof data.preferences.captionBottomOffset === 'number') {
+      setCaptionBottomOffset(
+        normalizeCaptionBottomOffset(data.preferences.captionBottomOffset)
+      );
+    }
+  }, [initialWorkspaceSettings]);
 
   const refreshGeneratedScenes = useCallback(async () => {
     try {
       const res = await fetch(`${apiBaseUrl}/generated/status`);
       if (!res.ok) return;
-      const data = (await res.json()) as { count?: number; hasGenerated?: boolean };
-      setGeneratedSceneCount(data.hasGenerated ? data.count || 0 : 0);
+      const data = (await res.json()) as {
+        count?: number;
+        hasGenerated?: boolean;
+        scenes?: Array<{
+          id?: string;
+          title?: string;
+          index?: number;
+          component?: string;
+          durationSec?: number;
+          hasAudio?: boolean;
+          exists?: boolean;
+        }>;
+      };
+      const scenes: GeneratedSceneSummary[] = (data.scenes ?? [])
+        .filter((scene) => scene.id)
+        .map((scene, index) => ({
+          id: String(scene.id),
+          title: scene.title || `Scene ${scene.index ?? index + 1}`,
+          index: Number(scene.index) || index + 1,
+          component: scene.component,
+          durationSec: Math.max(0.1, Number(scene.durationSec) || 4),
+          hasAudio: Boolean(scene.hasAudio),
+          exists: scene.exists !== false,
+        }));
+      setGeneratedScenes(scenes);
+      setGeneratedSceneCount(data.hasGenerated ? data.count || scenes.length : scenes.length);
+      setSelectedSceneId((prev) =>
+        prev && scenes.some((scene) => scene.id === prev) ? prev : scenes[0]?.id ?? null
+      );
     } catch {
       // Generated scene status is optional.
     }
@@ -545,7 +840,7 @@ export default function App() {
   const fetchElevenLabsVoices = useCallback(async (baseUrl: string, token: string) => {
     setLoadingCatalog(true);
     try {
-      const headers: Record<string, string> = token ? { 'x-zof-session': token } : {};
+      const headers: Record<string, string> = token ? { 'x-zoedit-session': token } : {};
       const res = await fetch(`${baseUrl}/elevenlabs/voices`, { headers });
       if (!res.ok) return;
       const data = (await res.json()) as { voices?: ElevenLabsVoice[] };
@@ -645,6 +940,75 @@ export default function App() {
   }, [captionStyle, captionColors, captionBottomOffset]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const settings: StoredWorkspaceSettings = {
+        targetDuration,
+        aspectRatio,
+        fps,
+        scriptLanguage,
+        voiceConfig,
+        captionsEnabled,
+        sfx,
+        enable25D,
+        cleanBrollMode,
+        respectSafeZone,
+        brandKit,
+        selectedAiProvider,
+        selectedAiModel,
+      };
+      window.localStorage.setItem(WORKSPACE_SETTINGS_KEY, JSON.stringify(settings));
+    } catch {
+      // localStorage can be unavailable in private mode.
+    }
+  }, [
+    targetDuration,
+    aspectRatio,
+    fps,
+    scriptLanguage,
+    voiceConfig,
+    captionsEnabled,
+    sfx,
+    enable25D,
+    cleanBrollMode,
+    respectSafeZone,
+    brandKit,
+    selectedAiProvider,
+    selectedAiModel,
+  ]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(WORKSPACE_LAYOUT_KEY, JSON.stringify(workspaceLayout));
+    } catch {
+      // localStorage can be unavailable in private mode.
+    }
+  }, [workspaceLayout]);
+
+  useEffect(() => {
+    const clampToViewport = () => {
+      const width = workspaceRef.current?.getBoundingClientRect().width ?? window.innerWidth;
+      if (width < 1024) return;
+      setWorkspaceLayout((previous) => {
+        const leftWidth = Math.min(
+          previous.leftWidth,
+          Math.max(220, Math.min(560, width - previous.rightWidth - 300)),
+        );
+        const rightWidth = Math.min(
+          previous.rightWidth,
+          Math.max(260, Math.min(620, width - leftWidth - 300)),
+        );
+        return leftWidth === previous.leftWidth && rightWidth === previous.rightWidth
+          ? previous
+          : { ...previous, leftWidth, rightWidth };
+      });
+    };
+    clampToViewport();
+    window.addEventListener('resize', clampToViewport);
+    return () => window.removeEventListener('resize', clampToViewport);
+  }, []);
+
+  useEffect(() => {
     if (!isRendering) {
       setSteps(createExportSteps(fps, t));
     }
@@ -662,12 +1026,12 @@ export default function App() {
     setNotificationPermission(permission);
     if (permission === 'granted') {
       showDesktopNotification(
-        t('إشعارات Zof Studio مفعّلة', 'Zof Studio notifications enabled'),
+        t('إشعارات Zoedit Studio مفعّلة', 'Zoedit Studio notifications enabled'),
         t(
           'سنخبرك فور اكتمال تصدير الفيديو.',
           'We will let you know as soon as your video export finishes.'
         ),
-        'zof-permission'
+        'zoedit-permission'
       );
       showToast(
         t('تم تفعيل الإشعارات', 'Notifications enabled'),
@@ -686,7 +1050,7 @@ export default function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+        ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
       },
       body: JSON.stringify({
         ...keys,
@@ -736,7 +1100,7 @@ export default function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+            ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
           },
           body: JSON.stringify({ aiProvider: provider, aiModel: model }),
         });
@@ -792,7 +1156,8 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+          ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
+          'x-zoedit-ui-lang': lang,
         },
         body: JSON.stringify({
           topic,
@@ -937,7 +1302,7 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+          ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
         },
         body: JSON.stringify({
           prompt: masterPrompt,
@@ -1107,9 +1472,9 @@ export default function App() {
         );
         playCompletionChime();
         showDesktopNotification(
-          t('اكتمل التصدير في Zof Studio', 'Zof Studio export complete'),
+          t('اكتمل التصدير في Zoedit Studio', 'Zoedit Studio export complete'),
           completionBody,
-          'zof-render-complete'
+          'zoedit-render-complete'
         );
         showToast(t('اكتمل تصدير الفيديو', 'Your video export is ready'), completionBody, 'success');
       });
@@ -1228,9 +1593,9 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(sessionToken ? { 'x-zof-session': sessionToken } : {}),
+          ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
         },
-        body: JSON.stringify({ jobId: activeJobId }),
+        body: JSON.stringify({ jobId: activeJobId, uiLanguage: lang }),
       });
       if (!res.ok) {
         const payload = (await res.json().catch(() => null)) as
@@ -1280,10 +1645,134 @@ export default function App() {
     if (isShortDuration(targetDuration)) setCleanBrollMode(true);
   };
 
+  const handleSelectTimelineScene = (scene: TimelineScene) => {
+    setSelectedSceneId(scene.id);
+    if (!exportedVideoUrl) return;
+    const target = document.getElementById('studio-main-video') as HTMLVideoElement | null;
+    if (!target) return;
+    const sceneIndex = generatedScenes.findIndex((item) => item.id === scene.id);
+    if (sceneIndex < 0) return;
+    const offset = generatedScenes
+      .slice(0, sceneIndex)
+      .reduce((sum, item) => sum + Math.max(0.1, item.durationSec), 0);
+    try {
+      target.currentTime = Math.min(offset, Number.isFinite(target.duration) ? target.duration : offset);
+      target.focus({ preventScroll: true });
+    } catch {
+      // Seeking is a best-effort preview enhancement.
+    }
+  };
+
+  const handleDownloadVideo = () => {
+    if (!renderedVideo) return;
+    const link = document.createElement('a');
+    link.href = renderedVideo.blobUrl;
+    link.download =
+      renderedVideo.downloadName ||
+      `zoedit-studio-${aspectRatio.replace(':', 'x')}-${fps}fps.${renderedVideo.extension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const inspectorTabs: Array<{ id: InspectorTabId; label: string; icon: typeof Film }> = [
+    { id: 'render', label: t('التصدير والسجل', 'Render & Logs'), icon: ListChecks },
+    { id: 'usage', label: t('الاستخدام والرصيد', 'Usage & Balance'), icon: BarChart3 },
+  ];
+
+  const mobilePanes: Array<{ id: MobilePaneId; label: string; icon: typeof Film }> = [
+    { id: 'tools', label: t('الأدوات', 'Tools'), icon: PanelLeft },
+    { id: 'player', label: t('المشغل', 'Player'), icon: MonitorPlay },
+    { id: 'inspector', label: t('المفتش', 'Inspector'), icon: SlidersHorizontal },
+  ];
+
+  const timelineScenes: TimelineScene[] = generatedScenes.map((scene) => ({
+    id: scene.id,
+    title: scene.title,
+    index: scene.index,
+    durationSec: scene.durationSec,
+    hasAudio: scene.hasAudio,
+  }));
+
+  const workspaceStyle = {
+    '--left-pane': `${workspaceLayout.leftWidth}px`,
+    '--right-pane': `${workspaceLayout.rightWidth}px`,
+    '--timeline-h': `${workspaceLayout.timelineHeight}px`,
+  } as CSSProperties;
+
+  const beginPanelResize =
+    (panel: 'left' | 'right' | 'timeline') => (event: ReactPointerEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const startLayout = workspaceLayout;
+      const rect = workspaceRef.current?.getBoundingClientRect();
+      const availableWidth = rect?.width ?? window.innerWidth;
+      const availableHeight = rect?.height ?? window.innerHeight;
+      const previousCursor = document.body.style.cursor;
+      const previousSelect = document.body.style.userSelect;
+      setResizingPanel(panel);
+      document.body.style.cursor = panel === 'timeline' ? 'row-resize' : 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      const handleMove = (moveEvent: PointerEvent) => {
+        if (panel === 'timeline') {
+          const delta = startY - moveEvent.clientY;
+          const maxHeight = Math.max(130, availableHeight - 220);
+          setWorkspaceLayout((previous) => ({
+            ...previous,
+            timelineHeight: Math.min(maxHeight, Math.max(110, startLayout.timelineHeight + delta)),
+          }));
+          return;
+        }
+        const delta =
+          panel === 'left'
+            ? isRtl
+              ? startX - moveEvent.clientX
+              : moveEvent.clientX - startX
+            : isRtl
+              ? moveEvent.clientX - startX
+              : startX - moveEvent.clientX;
+        if (panel === 'left') {
+          const maxWidth = Math.max(220, Math.min(560, availableWidth - startLayout.rightWidth - 300));
+          setWorkspaceLayout((previous) => ({
+            ...previous,
+            leftWidth: Math.min(maxWidth, Math.max(220, startLayout.leftWidth + delta)),
+          }));
+        } else {
+          const maxWidth = Math.max(260, Math.min(620, availableWidth - startLayout.leftWidth - 300));
+          setWorkspaceLayout((previous) => ({
+            ...previous,
+            rightWidth: Math.min(maxWidth, Math.max(260, startLayout.rightWidth + delta)),
+          }));
+        }
+      };
+
+      const handleUp = () => {
+        setResizingPanel(null);
+        document.body.style.cursor = previousCursor;
+        document.body.style.userSelect = previousSelect;
+        window.removeEventListener('pointermove', handleMove);
+        window.removeEventListener('pointerup', handleUp);
+        window.removeEventListener('pointercancel', handleUp);
+      };
+
+      window.addEventListener('pointermove', handleMove);
+      window.addEventListener('pointerup', handleUp);
+      window.addEventListener('pointercancel', handleUp);
+    };
+
   return (
-    <div id="top" dir={dir} className="flex min-h-screen w-full min-w-0 flex-col overflow-x-hidden bg-[#0B0E14] text-slate-100">
+    <div
+      id="top"
+      dir={dir}
+      className="flex h-screen w-full min-w-0 flex-col overflow-hidden bg-[#0B0E14] text-slate-100"
+    >
       <TopHeader
         onOpenSettings={() => setSettingsOpen(true)}
+        onOpenGuide={() => setGuideOpen(true)}
+        onExport={() => void handleStartExport()}
+        exportDisabled={isRendering || !masterPrompt.trim()}
         voiceoverEnabled={voiceConfig.enabled}
         onToggleVoiceover={toggleVoiceover}
         projectTotalUsd={usageTracker.usage?.project.totalUsd || 0}
@@ -1297,165 +1786,278 @@ export default function App() {
         disabled={isRendering}
       />
 
-      <main className="mx-auto w-full max-w-[1920px] min-w-0 flex-1 overflow-x-hidden px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-        {!notificationBannerDismissed ? (
-          <div className="mb-4 min-w-0">
-            <NotificationPermissionBanner
-              permission={notificationPermission}
-              onEnable={() => void handleEnableNotifications()}
-              onDismiss={() => setNotificationBannerDismissed(true)}
-            />
-          </div>
-        ) : null}
+      <div className="flex h-9 shrink-0 items-center gap-1 border-b border-white/8 bg-[#080B11] px-2 lg:hidden">
+        {mobilePanes.map((pane) => {
+          const Icon = pane.icon;
+          const active = mobilePane === pane.id;
+          return (
+            <button
+              key={pane.id}
+              type="button"
+              onClick={() => setMobilePane(pane.id)}
+              aria-pressed={active}
+              className={`inline-flex h-7 flex-1 items-center justify-center gap-1.5 rounded-md border text-[10px] font-bold transition-colors cursor-pointer ${
+                active
+                  ? 'border-sky-400/40 bg-sky-500/15 text-sky-100'
+                  : 'border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200'
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {pane.label}
+            </button>
+          );
+        })}
+      </div>
 
-        <div className="mb-4 min-w-0">
-          <CoreVideoBar
-            aspectRatio={aspectRatio}
-            onChangeAspectRatio={setAspectRatio}
-            scriptLanguage={scriptLanguage}
-            onChangeScriptLanguage={handleScriptLanguageChange}
-            fps={fps}
-            onChangeFps={setFps}
-            targetDuration={targetDuration}
-            onChangeTargetDuration={handleTargetDurationChange}
-            enable25D={enable25D}
-            onChangeEnable25D={setEnable25D}
-            cleanBrollMode={cleanBrollMode}
-            onChangeCleanBrollMode={setCleanBrollMode}
-            respectSafeZone={respectSafeZone}
-            onChangeRespectSafeZone={setRespectSafeZone}
-            brandKit={brandKit}
-            onChangeBrandKit={setBrandKit}
-            disabled={isRendering}
+      <main
+        ref={workspaceRef}
+        style={workspaceStyle}
+        className="workspace-main min-h-0 flex-1 w-full min-w-0 overflow-hidden p-2"
+      >
+        <div className="workspace-columns min-h-0 min-w-0 overflow-hidden">
+          <aside
+            dir={dir}
+            className={`${mobilePane === 'tools' ? 'flex' : 'hidden'} min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0E14] lg:flex`}
+          >
+            <div className="h-full min-h-0 flex-1 overflow-hidden p-2">
+              <StudioSidePanel
+                providers={availableProviders}
+                models={availableModels}
+                selectedAiProvider={selectedAiProvider}
+                onChangeAiProvider={handleChangeAiProvider}
+                selectedAiModel={selectedAiModel}
+                onChangeAiModel={handleChangeAiModel}
+                onOpenSettings={() => setSettingsOpen(true)}
+                masterPrompt={masterPrompt}
+                onChangeMasterPrompt={setMasterPrompt}
+                brandKit={brandKit}
+                onChangeBrandKit={setBrandKit}
+                voiceover={voiceConfig}
+                onChangeVoiceover={handleVoiceoverChange}
+                voices={elVoices}
+                loadingVoices={loadingCatalog}
+                onRefreshVoices={() => void fetchElevenLabsVoices(apiBaseUrl, sessionToken)}
+                onVoiceImported={handleVoiceImported}
+                sfx={sfx}
+                onChangeSfx={setSfx}
+                captionsEnabled={captionsEnabled}
+                onChangeCaptionsEnabled={setCaptionsEnabled}
+                captionStyle={captionStyle}
+                onChangeCaptionStyle={setCaptionStyle}
+                captionColors={captionColors}
+                onChangeCaptionColors={setCaptionColors}
+                captionBottomOffset={captionBottomOffset}
+                onChangeCaptionBottomOffset={setCaptionBottomOffset}
+                voiceoverScript={voiceoverScript}
+                onChangeVoiceoverScript={setVoiceoverScript}
+                onGenerateVoiceoverScript={(options) => {
+                  void handleGenerateVoiceoverScript(options);
+                }}
+                isGeneratingScript={isGeneratingScript}
+                scriptError={scriptError}
+                scriptNotice={scriptNotice}
+                apiBaseUrl={apiBaseUrl}
+                sessionToken={sessionToken}
+                historyKey={historyKey}
+                disabled={isRendering}
+              />
+            </div>
+          </aside>
+
+          <PanelResizeHandle
+            orientation="vertical"
+            active={resizingPanel === 'left'}
+            onPointerDown={beginPanelResize('left')}
           />
-        </div>
 
-        <div
-          dir="ltr"
-          className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(380px,420px)] xl:gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(420px,460px)]"
-        >
-          <div dir={dir} className="min-w-0 w-full max-w-full space-y-4">
-            <MainPreviewPanel
-              videoUrl={exportedVideoUrl}
-              aspectRatio={aspectRatio}
-              fps={fps}
-              title={masterPrompt.trim().slice(0, 80)}
-              isRendering={isRendering}
-              statusText={statusText}
-              apiBaseUrl={apiBaseUrl}
-              brandKit={brandKit}
-              captionStyle={captionStyle}
-              captionColors={captionColors}
-              captionBottomOffset={captionBottomOffset}
-              captionsEnabled={captionsEnabled && voiceConfig.enabled}
-              watermarkEnabled={brandKit.watermarkEnabled}
-              watermarkText={brandKit.watermark}
-              watermarkPosition={brandKit.watermarkPosition ?? 'top-left'}
-              respectSafeZone={respectSafeZone}
-            />
+          <section
+            dir={dir}
+            className={`${mobilePane === 'player' ? 'flex' : 'hidden'} min-h-0 min-w-0 flex-col gap-2 overflow-hidden lg:flex`}
+          >
+            <div className="shrink-0">
+              <CoreVideoBar
+                aspectRatio={aspectRatio}
+                onChangeAspectRatio={setAspectRatio}
+                scriptLanguage={scriptLanguage}
+                onChangeScriptLanguage={handleScriptLanguageChange}
+                fps={fps}
+                onChangeFps={setFps}
+                targetDuration={targetDuration}
+                onChangeTargetDuration={handleTargetDurationChange}
+                enable25D={enable25D}
+                onChangeEnable25D={setEnable25D}
+                cleanBrollMode={cleanBrollMode}
+                onChangeCleanBrollMode={setCleanBrollMode}
+                respectSafeZone={respectSafeZone}
+                onChangeRespectSafeZone={setRespectSafeZone}
+                brandKit={brandKit}
+                onChangeBrandKit={setBrandKit}
+                showWatermark={false}
+                variant="toolbar"
+                disabled={isRendering}
+              />
+            </div>
 
-            {generatedSceneCount > 0 ? (
+            <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-white/10 bg-[#0B0E14]">
+              <MainPreviewPanel
+                videoUrl={exportedVideoUrl}
+                aspectRatio={aspectRatio}
+                fps={fps}
+                title={masterPrompt.trim().slice(0, 80)}
+                isRendering={isRendering}
+                statusText={statusText}
+                apiBaseUrl={apiBaseUrl}
+                brandKit={brandKit}
+                captionStyle={captionStyle}
+                captionColors={captionColors}
+                captionBottomOffset={captionBottomOffset}
+                captionsEnabled={captionsEnabled && voiceConfig.enabled}
+                watermarkEnabled={brandKit.watermarkEnabled}
+                watermarkText={brandKit.watermark}
+                watermarkPosition={brandKit.watermarkPosition ?? 'top-left'}
+                respectSafeZone={respectSafeZone}
+              />
+            </div>
+
+            <div className="shrink-0">
               <QuickTweakPanel
                 value={quickTweakInstruction}
                 onChange={setQuickTweakInstruction}
                 onSubmit={() => {
                   const instruction = quickTweakInstruction.trim();
-                  if (!instruction || isRendering) return;
+                  if (!instruction || isRendering || generatedSceneCount === 0) return;
                   void handleStartExport({ tweakInstruction: instruction });
                 }}
                 sceneCount={generatedSceneCount}
-                disabled={isRendering}
+                disabled={isRendering || generatedSceneCount === 0}
                 busy={quickTweakBusy}
                 notice={quickTweakNotice}
               />
+            </div>
+
+            {renderedVideo ? (
+              <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2">
+                <div className="min-w-0">
+                  <p className="truncate text-[11px] font-bold text-emerald-100">
+                    {t('الفيديو النهائي جاهز', 'Final video is ready')}
+                  </p>
+                  <p className="truncate font-mono text-[10px] text-emerald-200/70" dir="ltr">
+                    {(renderedVideo.fileSizeBytes / (1024 * 1024)).toFixed(2)} MB · {renderedVideo.extension.toUpperCase()}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadVideo}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-emerald-400 px-4 py-2 text-xs font-black text-emerald-950 transition-colors hover:bg-emerald-300 cursor-pointer"
+                >
+                  <Download className="h-4 w-4" />
+                  {t('تحميل الفيديو', 'Download Video')}
+                </button>
+              </div>
             ) : null}
+          </section>
 
-            <div className="min-w-0 w-full max-w-full rounded-2xl border border-sky-500/20 bg-[#0D1119] p-3 sm:p-5">
-              <RenderMonitorPanel
-                steps={steps}
-                logs={logs}
-                overallProgress={overallProgress}
-                isRendering={isRendering}
-                canStart={Boolean(masterPrompt.trim())}
-                onStartRender={() => void handleStartExport()}
-                renderedVideo={renderedVideo}
-                totalDurationSec={
-                  targetDuration === 'auto' ? 0 : Number(targetDuration)
-                }
-                totalFrames={
-                  targetDuration === 'auto' ? 0 : Number(targetDuration) * fps
-                }
-                fps={fps}
-                aspectRatio={aspectRatio}
-                renderStartedAt={renderStartedAt}
-                renderRemainingSec={renderRemaining?.seconds ?? null}
-                renderRemainingUpdatedAt={renderRemaining?.updatedAt ?? null}
-                onCancelRender={() => void handleCancelExport()}
-                isCancelling={isCancelling}
-              />
+          <PanelResizeHandle
+            orientation="vertical"
+            active={resizingPanel === 'right'}
+            onPointerDown={beginPanelResize('right')}
+          />
+
+          <aside
+            dir={dir}
+            className={`${mobilePane === 'inspector' ? 'flex' : 'hidden'} min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0E14] lg:flex`}
+          >
+            <div className="flex shrink-0 items-center gap-1 border-b border-white/8 bg-[#080B11] p-1.5">
+              {inspectorTabs.map((item) => {
+                const Icon = item.icon;
+                const active = inspectorTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setInspectorTab(item.id)}
+                    aria-pressed={active}
+                    className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg px-1.5 py-2 text-[10px] font-bold transition-colors cursor-pointer ${
+                      active
+                        ? 'bg-sky-500/15 text-sky-100 ring-1 ring-inset ring-sky-400/30'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                    }`}
+                  >
+                    <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-sky-300' : ''}`} />
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="min-w-0 w-full max-w-full rounded-2xl border border-white/8 bg-[#0D1119] p-3 sm:p-5">
-              <UsageCostPanel
-                usage={usageTracker.usage}
-                balances={usageTracker.balances}
-                loadingUsage={usageTracker.loadingUsage}
-                loadingBalances={usageTracker.loadingBalances}
-                notice={usageTracker.notice}
-                voiceoverEnabled={voiceConfig.enabled}
-                onRefresh={() => usageTracker.refreshAll()}
-                onReset={() => usageTracker.resetUsage()}
-              />
-            </div>
-          </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-2">
+              {inspectorTab === 'render' ? (
+                <RenderMonitorPanel
+                  steps={steps}
+                  logs={logs}
+                  overallProgress={overallProgress}
+                  isRendering={isRendering}
+                  canStart={Boolean(masterPrompt.trim())}
+                  onStartRender={() => void handleStartExport()}
+                  renderedVideo={renderedVideo}
+                  totalDurationSec={targetDuration === 'auto' ? 0 : Number(targetDuration)}
+                  totalFrames={targetDuration === 'auto' ? 0 : Number(targetDuration) * fps}
+                  fps={fps}
+                  aspectRatio={aspectRatio}
+                  renderStartedAt={renderStartedAt}
+                  renderRemainingSec={renderRemaining?.seconds ?? null}
+                  renderRemainingUpdatedAt={renderRemaining?.updatedAt ?? null}
+                  onCancelRender={() => void handleCancelExport()}
+                  isCancelling={isCancelling}
+                  showOutput={false}
+                  showStartButton={false}
+                />
+              ) : null}
 
-          <aside dir={dir} className="min-w-0 w-full max-w-full">
-            <StudioSidePanel
-              providers={availableProviders}
-              models={availableModels}
-              selectedAiProvider={selectedAiProvider}
-              onChangeAiProvider={handleChangeAiProvider}
-              selectedAiModel={selectedAiModel}
-              onChangeAiModel={handleChangeAiModel}
-              onOpenSettings={() => setSettingsOpen(true)}
-              masterPrompt={masterPrompt}
-              onChangeMasterPrompt={setMasterPrompt}
-              brandKit={brandKit}
-              onChangeBrandKit={setBrandKit}
-              voiceover={voiceConfig}
-              onChangeVoiceover={handleVoiceoverChange}
-              voices={elVoices}
-              loadingVoices={loadingCatalog}
-              onRefreshVoices={() => void fetchElevenLabsVoices(apiBaseUrl, sessionToken)}
-              onVoiceImported={handleVoiceImported}
-              sfx={sfx}
-              onChangeSfx={setSfx}
-              captionsEnabled={captionsEnabled}
-              onChangeCaptionsEnabled={setCaptionsEnabled}
-              captionStyle={captionStyle}
-              onChangeCaptionStyle={setCaptionStyle}
-              captionColors={captionColors}
-              onChangeCaptionColors={setCaptionColors}
-              captionBottomOffset={captionBottomOffset}
-              onChangeCaptionBottomOffset={setCaptionBottomOffset}
-              voiceoverScript={voiceoverScript}
-              onChangeVoiceoverScript={setVoiceoverScript}
-              onGenerateVoiceoverScript={(options) => {
-                void handleGenerateVoiceoverScript(options);
-              }}
-              isGeneratingScript={isGeneratingScript}
-              scriptError={scriptError}
-              scriptNotice={scriptNotice}
-              apiBaseUrl={apiBaseUrl}
-              sessionToken={sessionToken}
-              historyKey={historyKey}
-              disabled={isRendering}
-            />
+              {inspectorTab === 'usage' ? (
+                <UsageCostPanel
+                  usage={usageTracker.usage}
+                  balances={usageTracker.balances}
+                  loadingUsage={usageTracker.loadingUsage}
+                  loadingBalances={usageTracker.loadingBalances}
+                  notice={usageTracker.notice}
+                  voiceoverEnabled={voiceConfig.enabled}
+                  onRefresh={() => usageTracker.refreshAll()}
+                  onReset={() => usageTracker.resetUsage()}
+                />
+              ) : null}
+            </div>
           </aside>
         </div>
+
+        <PanelResizeHandle
+          orientation="horizontal"
+          active={resizingPanel === 'timeline'}
+          onPointerDown={beginPanelResize('timeline')}
+        />
+
+        <EditorTimeline
+          scenes={timelineScenes}
+          selectedSceneId={selectedSceneId}
+          onSelectScene={handleSelectTimelineScene}
+          voiceoverEnabled={voiceConfig.enabled}
+          captionsEnabled={captionsEnabled && voiceConfig.enabled}
+          logs={logs}
+          logsOpen={timelineLogsOpen}
+          onToggleLogs={() => setTimelineLogsOpen((value) => !value)}
+          isRendering={isRendering}
+        />
       </main>
 
-      <StudioFooter onOpenModal={setFooterModal} />
+      {!notificationBannerDismissed ? (
+        <div className="fixed bottom-3 end-3 z-40 w-[min(92vw,360px)]">
+          <NotificationPermissionBanner
+            permission={notificationPermission}
+            onEnable={() => void handleEnableNotifications()}
+            onDismiss={() => setNotificationBannerDismissed(true)}
+          />
+        </div>
+      ) : null}
 
       <ApiSettingsDrawer
         open={settingsOpen}
@@ -1474,6 +2076,15 @@ export default function App() {
         onOpenSetupGuide={() => {
           setSettingsOpen(false);
           setFooterModal('api');
+        }}
+      />
+
+      <StudioGuideModal
+        open={guideOpen}
+        onClose={() => setGuideOpen(false)}
+        onOpenInfoModal={(modal) => {
+          setGuideOpen(false);
+          setFooterModal(modal);
         }}
       />
 

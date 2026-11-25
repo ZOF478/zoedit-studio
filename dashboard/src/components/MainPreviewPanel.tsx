@@ -66,11 +66,11 @@ export function MainPreviewPanel({
   ];
 
   return (
-    <section className="min-w-0 w-full max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0E121A] shadow-[0_24px_70px_-40px_rgba(56,189,248,0.55)]">
+    <section className="flex h-full min-h-0 min-w-0 w-full max-w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0E121A] shadow-[0_24px_70px_-40px_rgba(56,189,248,0.55)]">
       <div
         role="tablist"
         aria-label={t('أقسام المعاينة المركزية', 'Central preview sections')}
-        className="flex flex-wrap items-center gap-1 border-b border-white/8 bg-[#0B0E14] p-1.5"
+        className="flex shrink-0 flex-wrap items-center gap-1 border-b border-white/8 bg-[#0B0E14] p-1.5"
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -95,7 +95,7 @@ export function MainPreviewPanel({
         })}
       </div>
 
-      <div className={activeTab === 'video' ? 'block' : 'hidden'}>
+      <div className={activeTab === 'video' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}>
         <LivePreviewStage
           videoUrl={videoUrl}
           aspectRatio={aspectRatio}
@@ -107,7 +107,7 @@ export function MainPreviewPanel({
           embedded
         />
       </div>
-      <div className={activeTab === 'sandbox' ? 'block' : 'hidden'}>
+      <div className={activeTab === 'sandbox' ? 'flex min-h-0 flex-1 flex-col overflow-hidden' : 'hidden'}>
         <LiveSandboxStage
           aspectRatio={aspectRatio}
           brandKit={brandKit}

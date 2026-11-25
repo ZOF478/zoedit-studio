@@ -11,7 +11,16 @@ body {
 }
 
 body {
-  font-family: "Cairo", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  font-family:
+    "Cairo", "Noto Sans", "Noto Sans Arabic", "Noto Sans Hebrew",
+    "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Gurmukhi",
+    "Noto Sans Gujarati", "Noto Sans Tamil", "Noto Sans Telugu",
+    "Noto Sans Kannada", "Noto Sans Malayalam", "Noto Sans Sinhala",
+    "Noto Sans Thai", "Noto Sans Khmer", "Noto Sans Myanmar",
+    "Noto Sans Ethiopic", "Noto Sans Armenian", "Noto Sans Georgian",
+    "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC",
+    "Segoe UI", system-ui,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

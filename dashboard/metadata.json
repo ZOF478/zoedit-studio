@@ -1,5 +1,5 @@
 {
-  "name": "Zof Studio",
+  "name": "Zoedit Studio",
   "description": "استوديو ذكي لإنتاج فيديوهات Remotion باللغة العربية مع توليد النصوص بالذكاء الاصطناعي والتعليق الصوتي عبر ElevenLabs",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

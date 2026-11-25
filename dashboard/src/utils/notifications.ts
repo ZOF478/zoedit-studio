@@ -17,7 +17,7 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   }
 }
 
-export function showDesktopNotification(title: string, body: string, tag = 'zof-render'): boolean {
+export function showDesktopNotification(title: string, body: string, tag = 'zoedit-render'): boolean {
   if (typeof window === 'undefined' || !('Notification' in window)) return false;
   if (Notification.permission !== 'granted') return false;
   try {

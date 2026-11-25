@@ -1,16 +1,205 @@
 <!doctype html>
-<html lang="ar" dir="rtl" class="dark">
+<html
+  lang="ar"
+  dir="rtl"
+  class="dark"
+  style="background-color:#0B0E14;color-scheme:dark;"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي</title>
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0B0E14" />
+    <title>Zoedit Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي</title>
     <meta name="description" content="استوديو موشن جرافيك ذكي يكتب مشاهد Remotion مخصصة بالكود، مع تعليق صوتي عبر ElevenLabs وترجمة متزامنة وتأطير آمن لمنصات الفيديو." />
-    <meta property="og:title" content="Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي" />
+    <meta property="og:title" content="Zoedit Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي" />
     <meta property="og:description" content="استوديو موشن جرافيك ذكي يكتب مشاهد Remotion مخصصة بالكود، مع تعليق صوتي عبر ElevenLabs وترجمة متزامنة وتأطير آمن لمنصات الفيديو." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Zof Studio — AI-Directed Motion Graphics Studio" />
+    <meta name="twitter:title" content="Zoedit Studio — AI-Directed Motion Graphics Studio" />
     <meta name="twitter:description" content="An AI-directed motion graphics studio that writes bespoke Remotion scene code, with ElevenLabs voiceover, synced captions, and platform-safe framing." />
+    <style>
+      :root {
+        color-scheme: dark;
+        background-color: #0b0e14;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background-color: #0b0e14 !important;
+        color: #f8fafc;
+      }
+
+      body {
+        overflow: hidden;
+        font-family: "Cairo", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      #root {
+        min-height: 100vh;
+        background-color: #0b0e14;
+      }
+
+      #zoedit-splash {
+        position: relative;
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 34%, rgba(56, 189, 248, 0.12) 0%, transparent 36%),
+          radial-gradient(circle at 50% 72%, rgba(231, 123, 64, 0.08) 0%, transparent 34%),
+          #0b0e14;
+        color: #f8fafc;
+        font-family: "Cairo", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+      }
+
+      #zoedit-splash * {
+        box-sizing: border-box;
+      }
+
+      .ze-splash-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding: 24px;
+        text-align: center;
+        animation: ze-splash-in 260ms ease-out both;
+      }
+
+      .ze-splash-mark {
+        display: grid;
+        width: 58px;
+        height: 58px;
+        place-items: center;
+        border: 1px solid rgba(56, 189, 248, 0.38);
+        border-radius: 16px;
+        background:
+          linear-gradient(135deg, rgba(56, 189, 248, 0.26), rgba(231, 123, 64, 0.18)),
+          #0e121a;
+        box-shadow:
+          0 0 42px -12px rgba(56, 189, 248, 0.75),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        color: #e0f2fe;
+        font-size: 27px;
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        line-height: 1;
+      }
+
+      .ze-splash-title {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 23px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+
+      .ze-splash-title span {
+        color: #7dd3fc;
+      }
+
+      .ze-splash-spinner {
+        position: relative;
+        width: 34px;
+        height: 34px;
+        margin-top: 4px;
+        border: 3px solid rgba(56, 189, 248, 0.16);
+        border-top-color: #38bdf8;
+        border-right-color: rgba(231, 123, 64, 0.85);
+        border-radius: 999px;
+        box-shadow: 0 0 26px -6px rgba(56, 189, 248, 0.55);
+        animation: ze-splash-spin 0.9s linear infinite;
+      }
+
+      .ze-splash-status {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .ze-splash-status-ar {
+        margin: -6px 0 0;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .ze-splash-line {
+        position: relative;
+        width: 156px;
+        height: 2px;
+        margin-top: 2px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.12);
+      }
+
+      .ze-splash-line::after {
+        position: absolute;
+        inset-block: 0;
+        width: 42%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, transparent, #38bdf8, rgba(231, 123, 64, 0.9), transparent);
+        content: "";
+        animation: ze-splash-pulse 1.25s ease-in-out infinite;
+      }
+
+      @keyframes ze-splash-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes ze-splash-pulse {
+        0% {
+          inset-inline-start: -45%;
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        80% {
+          opacity: 1;
+        }
+        100% {
+          inset-inline-start: 105%;
+          opacity: 0;
+        }
+      }
+
+      @keyframes ze-splash-in {
+        from {
+          opacity: 0;
+          transform: translateY(6px) scale(0.985);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ze-splash-inner,
+        .ze-splash-spinner,
+        .ze-splash-line::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,8 +207,22 @@
       rel="stylesheet"
     />
   </head>
-  <body class="bg-[#0B0E14] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-sky-100">
-    <div id="root"></div>
+  <body
+    class="bg-[#0B0E14] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-sky-100"
+    style="margin:0;min-height:100vh;background-color:#0B0E14;color:#F8FAFC;"
+  >
+    <div id="root" style="min-height:100vh;background-color:#0B0E14;">
+      <div id="zoedit-splash" role="status" aria-live="polite" aria-label="Loading Zoedit Studio">
+        <div class="ze-splash-inner">
+          <div class="ze-splash-mark" aria-hidden="true">Z</div>
+          <h1 class="ze-splash-title">Zoedit <span>Studio</span></h1>
+          <div class="ze-splash-spinner" aria-hidden="true"></div>
+          <p class="ze-splash-status">Loading workspace...</p>
+          <p class="ze-splash-status-ar" lang="ar" dir="rtl">جارٍ تحميل مساحة العمل...</p>
+          <div class="ze-splash-line" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -7,16 +7,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const BIN = path.join(ROOT, 'bin', 'zofstudio.mjs');
+const BIN = path.join(ROOT, 'bin', 'zoedit-studio.mjs');
 const DASHBOARD_DIR = path.join(ROOT, 'dashboard');
 const IS_WINDOWS = process.platform === 'win32';
 
 function log(message) {
-  console.log(`zofstudio: ${message}`);
+  console.log(`zoedit-studio: ${message}`);
 }
 
 function warn(message) {
-  console.warn(`zofstudio: ${message}`);
+  console.warn(`zoedit-studio: ${message}`);
 }
 
 function runNpm(args, capture = false) {
@@ -54,7 +54,7 @@ function dashboardDependenciesReady() {
 }
 
 function installDashboardDependencies() {
-  if (process.env.ZOF_SKIP_DASHBOARD_INSTALL === '1') return;
+  if (process.env.ZOEDIT_SKIP_DASHBOARD_INSTALL === '1') return;
   if (!fs.existsSync(path.join(DASHBOARD_DIR, 'package.json'))) return;
   if (dashboardDependenciesReady()) {
     log('dashboard dependencies are ready.');
@@ -108,7 +108,7 @@ function readGlobalPrefix() {
 
 function writePosixLauncher(dir) {
   fs.mkdirSync(dir, { recursive: true });
-  const binPath = path.join(dir, 'zofstudio');
+  const binPath = path.join(dir, 'zoedit-studio');
   fs.writeFileSync(binPath, `#!/bin/sh\nexec node ${JSON.stringify(BIN)} "$@"\n`, {
     mode: 0o755,
   });
@@ -132,7 +132,7 @@ function linkIntoPath(globalBinDir) {
   if (!targetDir) return false;
 
   const binPath = writePosixLauncher(targetDir);
-  log(`linked ${binPath} so zofstudio is available from any directory.`);
+  log(`linked ${binPath} so zoedit-studio is available from any directory.`);
   return true;
 }
 

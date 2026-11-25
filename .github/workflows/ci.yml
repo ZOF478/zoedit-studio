@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      ZOF_SKIP_DASHBOARD_INSTALL: "1"
+      ZOEDIT_SKIP_DASHBOARD_INSTALL: "1"
 
     steps:
       - name: Checkout repository
@@ -53,14 +53,14 @@ jobs:
         run: npm --prefix dashboard run build
 
       - name: CLI smoke test (--help)
-        run: node ./bin/zofstudio.mjs --help
+        run: node ./bin/zoedit-studio.mjs --help
 
       - name: CLI smoke test (--version)
         run: |
-          version="$(node ./bin/zofstudio.mjs --version)"
+          version="$(node ./bin/zoedit-studio.mjs --version)"
           package_version="$(node -p "require('./package.json').version")"
           test "$version" = "$package_version"
-          echo "zofstudio version: $version"
+          echo "zoedit-studio version: $version"
 
       - name: Audit root dependencies
         run: npm audit --audit-level=high

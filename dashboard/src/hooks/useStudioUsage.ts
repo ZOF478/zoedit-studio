@@ -37,7 +37,7 @@ function addUsageDelta(target: UsageResponse, delta: UsageDelta): UsageResponse 
 }
 
 export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [usage, setUsage] = useState<UsageResponse | null>(null);
   const [balances, setBalances] = useState<LiveBalancesResponse | null>(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
@@ -45,10 +45,10 @@ export function useStudioUsage(apiBaseUrl: string, sessionToken: string) {
   const [notice, setNotice] = useState<string | null>(null);
 
   const headers = useMemo<Record<string, string>>(() => {
-    const next: Record<string, string> = {};
-    if (sessionToken) next['x-zof-session'] = sessionToken;
+    const next: Record<string, string> = { 'x-zoedit-ui-lang': lang };
+    if (sessionToken) next['x-zoedit-session'] = sessionToken;
     return next;
-  }, [sessionToken]);
+  }, [sessionToken, lang]);
 
   const refreshUsage = useCallback(async () => {
     setLoadingUsage(true);

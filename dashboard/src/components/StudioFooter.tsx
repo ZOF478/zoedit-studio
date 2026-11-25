@@ -24,9 +24,9 @@ import { useI18n } from '../i18n';
 
 export type StudioInfoModalId = 'about' | 'api' | 'terms';
 
-const GITHUB_URL = 'https://github.com/ZOF478/zofstudio';
+const GITHUB_URL = 'https://github.com/ZOF478/zoedit-studio';
 const SITE_URL = 'https://studio.zoedit.com';
-const ZOFEDIT_URL = 'https://zoedit.com';
+const ZOEDIT_URL = 'https://zoedit.com';
 const REMOTION_LICENSE_URL = 'https://www.remotion.dev/license';
 
 interface StudioFooterProps {
@@ -171,7 +171,7 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
             ))}
           </p>
           <p className="text-[10px] text-slate-500">
-            © {new Date().getFullYear()} Zof Studio ·{' '}
+            © {new Date().getFullYear()} Zoedit Studio ·{' '}
             {t('مفتوح المصدر بترخيص MIT', 'Open source under the MIT license')}
           </p>
         </div>
@@ -193,7 +193,7 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
             GitHub
           </FooterLink>
           <FooterLink
-            href="mailto:zofstudio@zoedit.com"
+            href="mailto:studio@zoedit.com"
             icon={<Mail className="h-3.5 w-3.5" />}
             external={false}
           >
@@ -284,8 +284,8 @@ export function StudioInfoModal({ modal, onClose }: StudioInfoModalProps) {
   };
   const subtitles: Record<StudioInfoModalId, string> = {
     about: t(
-      'كيف بُني Zof Studio، ولماذا يقدّم فيديو مخصصاً بتكلفة أقل.',
-      'How Zof Studio was engineered to deliver custom video at a lower cost.'
+      'كيف بُني Zoedit Studio، ولماذا يقدّم فيديو مخصصاً بتكلفة أقل.',
+      'How Zoedit Studio was engineered to deliver custom video at a lower cost.'
     ),
     api: t(
       'خطوات الحصول على المفاتيح وتفعيل كل مزود.',
@@ -393,7 +393,7 @@ function AboutContent() {
       <div className="rounded-xl border border-amber-400/25 bg-gradient-to-br from-amber-500/10 via-rose-500/5 to-transparent p-4">
         <h3 className="flex items-center gap-2 font-display text-sm font-bold text-slate-50">
           <Rocket className="h-4 w-4 text-amber-300" />
-          {t('قصة بناء Zof Studio', 'Why I Built Zof Studio')}
+          {t('قصة بناء Zoedit Studio', 'Why I Built Zoedit Studio')}
         </h3>
         <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
           {t(
@@ -402,7 +402,7 @@ function AboutContent() {
           )}
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
-          <ModalLink href={ZOFEDIT_URL} icon={<ExternalLink className="h-3.5 w-3.5" />}>
+          <ModalLink href={ZOEDIT_URL} icon={<ExternalLink className="h-3.5 w-3.5" />}>
             zoedit.com
           </ModalLink>
           <ModalLink href={SITE_URL} icon={<ExternalLink className="h-3.5 w-3.5" />}>
@@ -438,18 +438,18 @@ function AboutContent() {
           dir="ltr"
           className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
         >
-          {'$ git clone https://github.com/ZOF478/zofstudio.git zof-studio\n$ cd zof-studio\n$ npm install -g .'}
+          {'$ git clone https://github.com/ZOF478/zoedit-studio.git zoedit-studio\n$ cd zoedit-studio\n$ npm install -g .'}
         </pre>
         <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
           {t(
-            'يثبّت postinstall اعتماديات لوحة التحكم ويسجّل أمر zofstudio العالمي تلقائياً.',
-            'The postinstall step installs the dashboard dependencies and registers the global zofstudio command automatically.'
+            'يثبّت postinstall اعتماديات لوحة التحكم ويسجّل أمر zoedit-studio العالمي تلقائياً.',
+            'The postinstall step installs the dashboard dependencies and registers the global zoedit-studio command automatically.'
           )}
         </p>
         <p className="mt-3 text-[12px] leading-relaxed text-slate-300">
           {t(
-            '2. شغّل Zof Studio (اختر إعدادك):',
-            '2. Launch Zof Studio (choose your setup):'
+            '2. شغّل Zoedit Studio (اختر إعدادك):',
+            '2. Launch Zoedit Studio (choose your setup):'
           )}
         </p>
         <p className="mt-2 text-[11px] font-semibold leading-relaxed text-slate-200">
@@ -462,7 +462,7 @@ function AboutContent() {
           dir="ltr"
           className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
         >
-          {'$ zofstudio'}
+          {'$ zoedit-studio'}
         </pre>
         <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
           {t(
@@ -490,15 +490,15 @@ function AboutContent() {
         </pre>
         <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
           {t(
-            '2. داخل جلسة SSH نفسها، شغّل Zof Studio:',
-            '2. Inside that SSH session, launch Zof Studio:'
+            '2. داخل جلسة SSH نفسها، شغّل Zoedit Studio:',
+            '2. Inside that SSH session, launch Zoedit Studio:'
           )}
         </p>
         <pre
           dir="ltr"
           className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-[#07090E] px-3 py-2 font-mono text-[10px] leading-relaxed text-sky-200"
         >
-          {'$ zofstudio'}
+          {'$ zoedit-studio'}
         </pre>
         <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
           {t(
@@ -531,8 +531,8 @@ function AboutContent() {
         </h3>
         <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
           {t(
-            'بُني Zof Studio عبر اختيار ودمج أفضل أوليات التصميم الحركي، ومهارات Remotion، وتأطير المناطق الآمنة، وخطوط البرومبت الذكية. النتيجة: فيديوهات مكتوبة بالكود خصيصاً لكل فكرة، بجودة استوديو وبأقل تكلفة ممكنة لواجهات الذكاء الاصطناعي.',
-            'Zof Studio was engineered by curating and combining the best motion-design primitives, Remotion skills, safe-zone framing, and smart prompt pipelines. The result is custom-coded video for every idea — studio-grade quality at the lowest possible API cost.'
+            'بُني Zoedit Studio عبر اختيار ودمج أفضل أوليات التصميم الحركي، ومهارات Remotion، وتأطير المناطق الآمنة، وخطوط البرومبت الذكية. النتيجة: فيديوهات مكتوبة بالكود خصيصاً لكل فكرة، بجودة استوديو وبأقل تكلفة ممكنة لواجهات الذكاء الاصطناعي.',
+            'Zoedit Studio was engineered by curating and combining the best motion-design primitives, Remotion skills, safe-zone framing, and smart prompt pipelines. The result is custom-coded video for every idea — studio-grade quality at the lowest possible API cost.'
           )}
         </p>
       </div>
@@ -668,15 +668,15 @@ function ApiGuideContent() {
           'Sign in through opencode and select the free models.'
         ),
         t(
-          'اختر «OpenCode Free Models» داخل Zof Studio.',
-          'Choose “OpenCode Free Models” inside Zof Studio.'
+          'اختر «OpenCode Free Models» داخل Zoedit Studio.',
+          'Choose “OpenCode Free Models” inside Zoedit Studio.'
         ),
       ],
       commands: ['opencode auth login'],
       linkLabel: t('موقع OpenCode', 'OpenCode website'),
       disclaimer: t(
-        'نماذج OpenCode المجانية يقدّمها OpenCode وشركاؤه، وليست مستضافة أو مملوكة لـ Zof Studio. قد تفرض حدوداً على الاستخدام أو تتغير توفرها في أي وقت.',
-        'OpenCode free models are provided by OpenCode and its upstream partners — not hosted or owned by Zof Studio. They may have rate limits or change availability at any time.'
+        'نماذج OpenCode المجانية يقدّمها OpenCode وشركاؤه، وليست مستضافة أو مملوكة لـ Zoedit Studio. قد تفرض حدوداً على الاستخدام أو تتغير توفرها في أي وقت.',
+        'OpenCode free models are provided by OpenCode and its upstream partners — not hosted or owned by Zoedit Studio. They may have rate limits or change availability at any time.'
       ),
     },
     {
@@ -696,8 +696,8 @@ function ApiGuideContent() {
         t('أنشئ مفتاح API يبدأ بـ sk-.', 'Create an API key that starts with sk-.'),
         t('أضف رصيداً صغيراً (التكلفة منخفضة جداً).', 'Top up a small balance (ultra-low cost).'),
         t(
-          'الصق المفتاح في Zof Studio → إعدادات API.',
-          'Paste the key into Zof Studio → API & Keys.'
+          'الصق المفتاح في Zoedit Studio → إعدادات API.',
+          'Paste the key into Zoedit Studio → API & Keys.'
         ),
       ],
       linkLabel: t('مفاتيح DeepSeek', 'DeepSeek API keys'),
@@ -722,12 +722,12 @@ function ApiGuideContent() {
           'Enable these permissions when creating the key: Text to Speech Access, Models Access, User Access, and History Read.'
         ),
         t(
-          'تتيح هذه الصلاحيات لعارض الاستخدام والسجل المدمج في Zof Studio عرض الحصة المتبقية والتوليدات السابقة.',
-          'These permissions let Zof Studio’s built-in usage and history viewer display remaining quota and past generations.'
+          'تتيح هذه الصلاحيات لعارض الاستخدام والسجل المدمج في Zoedit Studio عرض الحصة المتبقية والتوليدات السابقة.',
+          'These permissions let Zoedit Studio’s built-in usage and history viewer display remaining quota and past generations.'
         ),
         t(
-          'الصق المفتاح في Zof Studio → إعدادات API.',
-          'Paste the key into Zof Studio → API & Keys.'
+          'الصق المفتاح في Zoedit Studio → إعدادات API.',
+          'Paste the key into Zoedit Studio → API & Keys.'
         ),
       ],
       linkLabel: t('مفاتيح ElevenLabs', 'ElevenLabs API keys'),
@@ -752,8 +752,8 @@ function ApiGuideContent() {
           'Add credit if you like, or use :free models.'
         ),
         t(
-          'الصق المفتاح في Zof Studio → إعدادات API.',
-          'Paste the key into Zof Studio → API & Keys.'
+          'الصق المفتاح في Zoedit Studio → إعدادات API.',
+          'Paste the key into Zoedit Studio → API & Keys.'
         ),
       ],
       linkLabel: t('مفاتيح OpenRouter', 'OpenRouter keys'),
@@ -771,8 +771,8 @@ function ApiGuideContent() {
         t('افتح صفحة مفاتيح Kie.ai.', 'Open the Kie.ai API key page.'),
         t('أنشئ مفتاح API وانسخه.', 'Create and copy an API key.'),
         t(
-          'الصق المفتاح في Zof Studio → إعدادات API.',
-          'Paste the key into Zof Studio → API & Keys.'
+          'الصق المفتاح في Zoedit Studio → إعدادات API.',
+          'Paste the key into Zoedit Studio → API & Keys.'
         ),
       ],
       linkLabel: t('مفاتيح Kie.ai', 'Kie.ai API key'),
@@ -809,8 +809,8 @@ function ApiGuideContent() {
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-300" />
           <span>
             {t(
-              'تُحفظ جميع المفاتيح محلياً في ~/.zof-studio/settings.json ولا تُرسل إلى خوادم Zof Studio. كل مزود خدمة مستقل بشروطه وأسعاره وتوفره.',
-              'All keys are stored locally in ~/.zof-studio/settings.json and are never sent to Zof Studio servers. Each provider is an independent service with its own terms, pricing, and availability.'
+              'تُحفظ جميع المفاتيح محلياً في ~/.zoedit-studio/settings.json ولا تُرسل إلى خوادم Zoedit Studio. كل مزود خدمة مستقل بشروطه وأسعاره وتوفره.',
+              'All keys are stored locally in ~/.zoedit-studio/settings.json and are never sent to Zoedit Studio servers. Each provider is an independent service with its own terms, pricing, and availability.'
             )}
           </span>
         </p>
@@ -888,11 +888,11 @@ function TermsContent() {
 
   return (
     <div className="space-y-3.5">
-      <InfoCard icon={<Scale className="h-3.5 w-3.5" />} title={t('ترخيص Zof Studio (MIT)', 'Zof Studio license (MIT)')} tone="sky">
+      <InfoCard icon={<Scale className="h-3.5 w-3.5" />} title={t('ترخيص Zoedit Studio (MIT)', 'Zoedit Studio license (MIT)')} tone="sky">
         <p>
           {t(
-            'Zof Studio برنامج مجاني ومفتوح المصدر يُقدّم «كما هو» دون ضمانات. يمكن لأي شخص فحص الكود وتعديله واستضافته ذاتياً، مع الإبقاء على إشعار الترخيص.',
-            'Zof Studio is free and open-source software provided “as is” without warranties. Anyone can inspect, modify, and self-host it while keeping the license notice.'
+            'Zoedit Studio برنامج مجاني ومفتوح المصدر يُقدّم «كما هو» دون ضمانات. يمكن لأي شخص فحص الكود وتعديله واستضافته ذاتياً، مع الإبقاء على إشعار الترخيص.',
+            'Zoedit Studio is free and open-source software provided “as is” without warranties. Anyone can inspect, modify, and self-host it while keeping the license notice.'
           )}
         </p>
         <ModalLink href={`${GITHUB_URL}/blob/main/LICENSE`} icon={<FileText className="h-3.5 w-3.5" />}>
@@ -923,8 +923,8 @@ function TermsContent() {
       >
         <p>
           {t(
-            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai و ElevenLabs خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. لا تملك Zof Studio النماذج المجانية ولا تضمن استمرارها أو جودتها.',
-            'OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zof Studio does not own or guarantee third-party free models.'
+            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai و ElevenLabs خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. لا تملك Zoedit Studio النماذج المجانية ولا تضمن استمرارها أو جودتها.',
+            'OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zoedit Studio does not own or guarantee third-party free models.'
           )}
         </p>
       </InfoCard>
@@ -936,8 +936,8 @@ function TermsContent() {
       >
         <p>
           {t(
-            'تُخزَّن مفاتيح API محلياً فقط في ~/.zof-studio/settings.json ولا تُرسل إلى خوادم Zof Studio. المستخدم مسؤول بالكامل عن استخدامه لواجهات API وعن المحتوى الذي يولّده.',
-            'API keys are stored strictly locally in ~/.zof-studio/settings.json and never sent to Zof Studio servers. Users are fully responsible for their API usage and the content they generate.'
+            'تُخزَّن مفاتيح API محلياً فقط في ~/.zoedit-studio/settings.json ولا تُرسل إلى خوادم Zoedit Studio. المستخدم مسؤول بالكامل عن استخدامه لواجهات API وعن المحتوى الذي يولّده.',
+            'API keys are stored strictly locally in ~/.zoedit-studio/settings.json and never sent to Zoedit Studio servers. Users are fully responsible for their API usage and the content they generate.'
           )}
         </p>
       </InfoCard>

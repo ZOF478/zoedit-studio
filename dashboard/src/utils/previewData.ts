@@ -369,7 +369,7 @@ const buildParentScene = (
         title: label,
         subtitle: value || scene.narration,
         kicker: scene.title,
-        badge: 'ZOF STUDIO',
+        badge: 'ZOEDIT STUDIO',
       },
     ];
   } else if (type === 'stat-number') {
@@ -480,7 +480,7 @@ const buildParentScene = (
         title: scene.title,
         quote: value || scene.narration,
         author: label,
-        source: 'ZOF STUDIO',
+        source: 'ZOEDIT STUDIO',
       },
     ];
   } else if (type === 'bullet-list') {
@@ -586,7 +586,7 @@ const buildParentScene = (
         title: label,
         text: value || scene.narration,
         icon: 'spark',
-        badge: 'ZOF STUDIO',
+        badge: 'ZOEDIT STUDIO',
       },
     ];
   }
@@ -697,12 +697,12 @@ export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoDa
   const secondary = /^#[0-9a-fA-F]{6}$/.test(options.brandKit.secondaryColor)
     ? options.brandKit.secondaryColor
     : '#FBBF24';
-  const firstTitle = options.scenes[0]?.title || 'Zof Studio';
+  const firstTitle = options.scenes[0]?.title || 'Zoedit Studio';
 
   return {
     meta: {
       title: firstTitle.slice(0, 80),
-      topic: options.topic.trim() || 'zof-studio',
+      topic: options.topic.trim() || 'zoedit-studio',
       description: options.scenes
         .map((scene) => scene.title)
         .join(' · ')
@@ -726,7 +726,7 @@ export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoDa
       enabled: options.captionsEnabled && options.voiceoverEnabled,
     },
     brand_kit: {
-      name: 'ZOF',
+      name: 'ZOEDIT',
       primary,
       secondary,
       accent,

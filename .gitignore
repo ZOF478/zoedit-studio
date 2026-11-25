@@ -15,11 +15,21 @@ build/*
 public/audio/*
 !public/audio/.gitkeep
 *.log
-.zof_*
+.zoedit_*
 
-# Never commit user settings or API keys (they live in ~/.zof-studio)
+# Never commit user settings or API keys (they live in ~/.zoedit-studio)
 **/studio-settings.json
-**/.zof-studio/
+**/.zoedit-studio/
+
+# Secrets, local config, and temp caches
+.npmrc
+*.pem
+*.key
+*.p12
+*.tsbuildinfo
+.DS_Store
+**/.cache/
+**/*.tmp
 
 # Media artifacts
 *.mp4

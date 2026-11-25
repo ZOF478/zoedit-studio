@@ -118,7 +118,7 @@ export function ColorSandbox({ brandKit, onChange, disabled = false }: ColorSand
               color: brandKit.bgColor,
             }}
           >
-            ZOF STUDIO
+            ZOEDIT STUDIO
           </span>
           <span
             className="rounded-full px-2.5 py-1 text-[10px] font-bold"

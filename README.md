@@ -1,13 +1,13 @@
-# Zof Studio
+# Zoedit Studio
 
-**Zof Studio — AI-Directed Motion Graphics Studio**
-**Zof Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي**
+**Zoedit Studio — AI-Directed Motion Graphics Studio**
+**Zoedit Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي**
 
-Zof Studio turns an idea or script into an animated, rendered video: AI-written scene code, voiceover, synced captions, and platform-aware framing. It is not a template carousel. Every scene is custom code, so the visual language can change with the story instead of repeating one look.
+Zoedit Studio turns an idea or script into an animated, rendered video: AI-written scene code, voiceover, synced captions, and platform-aware framing. It is not a template carousel. Every scene is custom code, so the visual language can change with the story instead of repeating one look.
 
-Live app: **https://studio.zoedit.com** · Source: **https://github.com/ZOF478/zofstudio**
+Live app: **https://studio.zoedit.com** · Source: **https://github.com/ZOF478/zoedit-studio**
 
-## The Story Behind Zof Studio
+## The Story Behind Zoedit Studio
 
 Built by a freelance video editor ([zoedit.com](https://zoedit.com)) facing two real constraints: working on a low-spec computer where heavy motion tools slow everything down, and keeping up with the speed of the AI era. Instead of waiting to be replaced by generic AI tools, I engineered my own AI-directed motion system — combining the best Remotion primitives, custom skills, and smart framing to produce studio-grade videos at minimal cost. Originally built for my own client work, now shared open-source with creators and editors everywhere.
 
@@ -24,7 +24,7 @@ Explore the live studio at **[studio.zoedit.com](https://studio.zoedit.com)** an
 
 ## Architecture & Cost-Efficiency Philosophy
 
-Zof Studio was engineered by curating and combining the best motion-design primitives, Remotion skill recipes, safe-zone framing, and smart prompt pipelines. The goal is studio-grade, custom-coded video at the lowest possible API cost — without rigid templates.
+Zoedit Studio was engineered by curating and combining the best motion-design primitives, Remotion skill recipes, safe-zone framing, and smart prompt pipelines. The goal is studio-grade, custom-coded video at the lowest possible API cost — without rigid templates.
 
 - **React dashboard** — a fast, bilingual control surface for direction, audio, colors, captions, renders, and usage.
 - **Remotion renderer** — every scene is real React/Remotion code, rendered locally with zero per-frame platform cost.
@@ -36,7 +36,7 @@ Zof Studio was engineered by curating and combining the best motion-design primi
 
 ## Credits
 
-Zof Studio is built with care on:
+Zoedit Studio is built with care on:
 
 - **[React](https://react.dev)** — interactive studio interface.
 - **[Remotion](https://www.remotion.dev)** — programmatic video rendering.
@@ -62,26 +62,26 @@ FFmpeg install examples: `brew install ffmpeg` (macOS), `sudo apt install ffmpeg
 ### Step 1 — Clone & install globally
 
 ```bash
-git clone https://github.com/ZOF478/zofstudio.git zof-studio
-cd zof-studio
+git clone https://github.com/ZOF478/zoedit-studio.git zoedit-studio
+cd zoedit-studio
 npm install -g .
 ```
 
-`npm install -g .` registers the `zofstudio` command in the global PATH on Windows, macOS, and Linux. Its `postinstall` step automatically installs the dashboard dependencies and verifies the global command, so the first launch works immediately. If the global npm prefix is not writable, run `npm run setup`; it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`). For development from a clone, `npm link` links the same command without reinstalling.
+`npm install -g .` registers the `zoedit-studio` command in the global PATH on Windows, macOS, and Linux. Its `postinstall` step automatically installs the dashboard dependencies and verifies the global command, so the first launch works immediately. If the global npm prefix is not writable, run `npm run setup`; it falls back to a user-local launcher under `~/.local/bin` (or `~/bin`). For development from a clone, `npm link` links the same command without reinstalling.
 
-### Step 2 — Launch Zof Studio (choose your setup)
+### Step 2 — Launch Zoedit Studio (choose your setup)
 
 #### Option A: Local computer (Windows / macOS / Linux)
 
 ```bash
-zofstudio
+zoedit-studio
 ```
 
 Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Remotion assets relative to the package installation directory. It binds only to `127.0.0.1`, starts the dashboard at `http://localhost:4789`, and opens your browser automatically once `/api/health` is ready. Closing the terminal cleanly stops the dashboard and all background Remotion processes.
 
 #### Option B: Remote VPS / server (secure SSH tunnel)
 
-`zofstudio` stays bound to `127.0.0.1` by design, so the dashboard is never exposed directly to the internet. Access it through an encrypted SSH tunnel.
+`zoedit-studio` stays bound to `127.0.0.1` by design, so the dashboard is never exposed directly to the internet. Access it through an encrypted SSH tunnel.
 
 1. **From your local computer terminal**, open the tunnel:
 
@@ -89,10 +89,10 @@ Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Rem
    ssh -L 4789:127.0.0.1:4789 -L 3333:127.0.0.1:3333 user@your-server-ip
    ```
 
-2. **Inside that SSH session**, run `zofstudio` (installed once in Step 1):
+2. **Inside that SSH session**, run `zoedit-studio` (installed once in Step 1):
 
    ```bash
-   zofstudio
+   zoedit-studio
    ```
 
 3. **Open `http://localhost:4789` in your local browser.** The CLI prints the exact tunnel command for your server, including the detected IP and both ports.
@@ -107,7 +107,7 @@ Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Rem
 | `--help`, `-h` | — | Print usage, flags, and examples. |
 | `--version`, `-v` | — | Print the installed version. |
 
-The CLI reuses an already-running Zof Studio instance and automatically reclaims stale Zof Studio listeners. Remotion Studio uses the first free port in `3333`–`3353`. The dashboard is served at `/`; open `/studio/` to launch Remotion Studio.
+The CLI reuses an already-running Zoedit Studio instance and automatically reclaims stale Zoedit Studio listeners. Remotion Studio uses the first free port in `3333`–`3353`. The dashboard is served at `/`; open `/studio/` to launch Remotion Studio.
 
 If a port still looks stuck, reclaim it manually:
 
@@ -129,7 +129,7 @@ Get-NetTCPConnection -LocalPort 4789 |
 
 Configure your provider keys in either of two ways:
 
-1. **Dashboard UI (recommended)** — open the **API Settings Drawer** in the dashboard, paste your keys, and click **Save & Sync**. Keys are saved locally in `~/.zof-studio/settings.json`.
+1. **Dashboard UI (recommended)** — open the **API Settings Drawer** in the dashboard, paste your keys, and click **Save & Sync**. Keys are saved locally in `~/.zoedit-studio/settings.json`.
 2. **Environment files** — copy the example files and fill in your keys:
 
 ```bash
@@ -137,7 +137,7 @@ cp .env.example .env
 cp dashboard/.env.example dashboard/.env
 ```
 
-Then replace `your_api_key_here` with your own keys. Real `.env` files are git-ignored. Keys entered in the Dashboard UI are stored locally in `~/.zof-studio/settings.json` and take precedence over `.env` values.
+Then replace `your_api_key_here` with your own keys. Real `.env` files are git-ignored. Keys entered in the Dashboard UI are stored locally in `~/.zoedit-studio/settings.json` and take precedence over `.env` values.
 
 ## Supported AI & Voice Providers (API Setup)
 
@@ -152,46 +152,46 @@ Every provider is optional and independent. Open the dashboard, choose **API & K
 | Kie.ai | OpenAI-compatible chat completions | <https://kie.ai/api-key> |
 | Custom provider | Any OpenAI-compatible endpoint (Groq, Together, Ollama, vLLM) | Your own endpoint |
 
-> **Disclaimer:** **OpenCode Free Models** are provided by **OpenCode and its upstream partners** — they are **not owned or hosted by Zof Studio**. They are subject to third-party availability, rate limits, and may change at any time, without any guarantee from Zof Studio.
+> **Disclaimer:** **OpenCode Free Models** are provided by **OpenCode and its upstream partners** — they are **not owned or hosted by Zoedit Studio**. They are subject to third-party availability, rate limits, and may change at any time, without any guarantee from Zoedit Studio.
 
 ### 1. OpenCode Free Models
 
-OpenCode free models are provided by **OpenCode and its upstream partners** — they are **not hosted or owned by Zof Studio**. They may have rate limits or change availability at any time. No Zof Studio account is required.
+OpenCode free models are provided by **OpenCode and its upstream partners** — they are **not hosted or owned by Zoedit Studio**. They may have rate limits or change availability at any time. No Zoedit Studio account is required.
 
-OpenCode CLI is **already bundled and installed automatically** with the global `npm install -g .` step (or `npm run setup`) — there is no separate manual install. Zof Studio prepends its bundled `node_modules/.bin` to `PATH`, so the `opencode` binary is always resolved automatically. Just sign in to enable the free models:
+OpenCode CLI is **already bundled and installed automatically** with the global `npm install -g .` step (or `npm run setup`) — there is no separate manual install. Zoedit Studio prepends its bundled `node_modules/.bin` to `PATH`, so the `opencode` binary is always resolved automatically. Just sign in to enable the free models:
 
 ```bash
 opencode auth login
 ```
 
-Then select **OpenCode Free Models** in Zof Studio. Website: <https://opencode.ai>.
+Then select **OpenCode Free Models** in Zoedit Studio. Website: <https://opencode.ai>.
 
 ### 2. DeepSeek
 
 1. Sign up at <https://platform.deepseek.com/api_keys>.
 2. Create an API key (`sk-...`).
 3. Top up a small balance — DeepSeek is ultra-low cost.
-4. Paste the key into Zof Studio under **API & Keys**.
+4. Paste the key into Zoedit Studio under **API & Keys**.
 
 ### 3. ElevenLabs
 
 1. Open <https://elevenlabs.io/app/developers/api-keys>.
 2. Generate an API key (`sk_...`).
-3. Grant the **Text to Speech Access**, **Models Access**, **User Access**, and **History Read** permissions. These permissions let Zof Studio's built-in usage and history viewer display your remaining quota and past generations.
-4. Paste the key into Zof Studio under **API & Keys**.
+3. Grant the **Text to Speech Access**, **Models Access**, **User Access**, and **History Read** permissions. These permissions let Zoedit Studio's built-in usage and history viewer display your remaining quota and past generations.
+4. Paste the key into Zoedit Studio under **API & Keys**.
 
 ### 4. OpenRouter
 
 1. Open <https://openrouter.ai/keys>.
 2. Generate a key (`sk-or-v1-...`).
 3. Optionally add credit, or use the `:free` model tiers.
-4. Paste the key into Zof Studio under **API & Keys**.
+4. Paste the key into Zoedit Studio under **API & Keys**.
 
 ### 5. Kie.ai
 
 1. Open <https://kie.ai/api-key>.
 2. Create an API key for OpenAI-compatible chat completions.
-3. Paste the key into Zof Studio under **API & Keys**.
+3. Paste the key into Zoedit Studio under **API & Keys**.
 
 ### 6. Custom Provider
 
@@ -208,9 +208,11 @@ An honest founder note: ElevenLabs was selected after extensive real-world produ
 
 ## Security & Key Privacy
 
-Zof Studio binds to `127.0.0.1` and is local-only by design. The server validates the `Host` header and checks `Origin`/`Referer` on state-changing requests to block DNS rebinding and cross-site request forgery. For remote access, use the SSH tunnel workflow above instead of exposing the port directly.
+Zoedit Studio binds to `127.0.0.1` and is local-only by design. The server validates the `Host` header and checks `Origin`/`Referer` on state-changing requests to block DNS rebinding and cross-site request forgery. For remote access, use the SSH tunnel workflow above instead of exposing the port directly.
 
-API keys are stored strictly locally in `~/.zof-studio/settings.json` and are never sent to Zof Studio servers. Usage and generated content are your responsibility.
+API keys are stored strictly locally in `~/.zoedit-studio/settings.json` with owner-only `0600` permissions, inside a `0700` state directory. They are masked in API responses, never included in client bundles, and redacted from server logs. Usage and generated content are your responsibility.
+
+AI-generated scene code is validated before rendering: imports are restricted to the approved visual/motion/icon/chart/audio libraries, and dangerous Node/system APIs, dynamic imports, network fetch APIs, `process.env`, `eval`, `new Function`, global objects, and raw HTML injection are rejected. File-serving endpoints resolve paths inside their designated directories only.
 
 ## Headless VPS / PM2
 
@@ -218,7 +220,7 @@ Use `--no-open` on servers without a desktop session, then connect through the S
 
 ```bash
 npm install -g pm2
-pm2 start ./bin/zofstudio.mjs --name zof-studio -- --no-open
+pm2 start ./bin/zoedit-studio.mjs --name zoedit-studio -- --no-open
 pm2 save
 pm2 startup
 ```
@@ -239,13 +241,13 @@ The dashboard still binds to `127.0.0.1`; it is not exposed publicly.
 | `GEMINI_API_KEY` | Optional Gemini fallback for script generation. |
 | `APP_URL` | Public URL of the deployed app. |
 
-Keys entered in the dashboard take precedence and are persisted locally in `~/.zof-studio/settings.json`.
+Keys entered in the dashboard take precedence and are persisted locally in `~/.zoedit-studio/settings.json`.
 
 ## Project Layout
 
 ```text
-zof-studio/
-├── bin/zofstudio.mjs       Smart CLI launcher
+zoedit-studio/
+├── bin/zoedit-studio.mjs       Smart CLI launcher
 ├── scripts/                Setup, install, and maintenance scripts
 ├── dashboard/              Express + Vite studio UI and API
 ├── src/                    Remotion composition and generated scenes
@@ -265,9 +267,9 @@ npx tsc --noEmit                 # root TypeScript check
 
 ## License
 
-- **Zof Studio — MIT License.** Zof Studio is free and open-source software provided “as is”. Anyone can inspect, modify, and self-host it. See [LICENSE](./LICENSE).
+- **Zoedit Studio — MIT License.** Zoedit Studio is free and open-source software provided “as is”. Anyone can inspect, modify, and self-host it. See [LICENSE](./LICENSE).
 - **Remotion License Notice.** **Remotion is free for individuals and for companies or teams of up to 3 people.** Organizations with **4 or more people** require a commercial Remotion license. Review <https://www.remotion.dev/license> before shipping commercially.
-- **Third-Party Providers & Models.** OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zof Studio does not own or guarantee third-party free models.
-- **Local Key Privacy & User Responsibility.** API keys are stored strictly locally in `~/.zof-studio/settings.json` and never sent to Zof Studio servers. Users are responsible for their own API usage and generated content.
+- **Third-Party Providers & Models.** OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zoedit Studio does not own or guarantee third-party free models.
+- **Local Key Privacy & User Responsibility.** API keys are stored strictly locally in `~/.zoedit-studio/settings.json` and never sent to Zoedit Studio servers. Users are responsible for their own API usage and generated content.
 
 Built with care by the founder of **[zoedit.com](https://zoedit.com)** · **[studio.zoedit.com](https://studio.zoedit.com)**.

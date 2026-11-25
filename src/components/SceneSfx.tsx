@@ -1,11 +1,13 @@
 import { createContext, useContext } from "react";
 import { Audio, Sequence, staticFile } from "remotion";
-import { MAX_SCENE_SFX_VOLUME } from "../sfx";
+import { MAX_SCENE_SFX_VOLUME, SFX_FILES, type SfxCatalogId } from "../sfx";
 
-export type SceneSfxName = "pop" | "check" | "whoosh" | "sparkle";
+export type SceneSfxName = SfxCatalogId | "pop" | "tick" | "check" | "whoosh" | "sparkle";
 
 export const SCENE_SFX_FILES: Record<SceneSfxName, string> = {
+  ...SFX_FILES,
   pop: "pop-soft.wav",
+  tick: "type-tick.wav",
   check: "click-subtle.wav",
   whoosh: "whoosh-soft.wav",
   sparkle: "pop-soft.wav",

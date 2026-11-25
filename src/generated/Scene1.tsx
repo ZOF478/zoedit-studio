@@ -1,9 +1,20 @@
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import type { CSSProperties } from "react";
+import {
+  AbsoluteFill,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
+import { DepthStage, SpatialCard } from "../components/Depth25D";
 import { SceneSfx } from "../components/SceneSfx";
-import { SmartIcon } from "../components/SmartIcon";
+import { Film, Play, Sparkles } from "lucide-react";
 
 type Props = {
   accentColor: string;
+  secondaryColor: string;
+  surfaceColor: string;
+  surfaceAltColor: string;
   bgColor: string;
   textColor: string;
   mutedColor: string;
@@ -21,253 +32,225 @@ type Props = {
   showCharacter?: boolean;
 };
 
-const SURFACE = "#162033";
-const DOTS = Array.from({ length: 18 }, (_, i) => ({
-  left: (i * 47) % 100,
-  top: (i * 31) % 100,
-  size: 2 + (i % 4),
-}));
-
-const PILLS = [
-  { icon: "clock", label: "Hours of keyframes", value: "OLD WAY" },
-  { icon: "bolt", label: "One prompt", value: "ZOF STUDIO" },
-];
+const FONT = "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif";
+const CLAMP = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+};
+const NODES = [30, 277, 523, 770];
+const NODE_LABELS = ["الفكرة", "المشهد", "الحركة", "النشر"];
 
 export const Scene1 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps, width, durationInFrames } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
+  const k = Math.min(width, height) / 1080;
+  const f = (n: number) => Math.round(n * k);
+  const dir = props.isRtl ? "rtl" : "ltr";
+
   const exit = interpolate(
     frame,
-    [Math.max(0, durationInFrames - 10), Math.max(1, durationInFrames - 1)],
+    [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    CLAMP,
   );
-  const slam = spring({ frame: frame - 20, fps, config: { damping: 12, stiffness: 140 } });
-  const wave = interpolate(frame, [90, 150], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
+  const grow = interpolate(frame, [30, 380], [0, 1], CLAMP);
+  const recA = Math.min(1, Math.max(0, spring({ frame: frame - 250, fps, config: { damping: 200, mass: 0.9, stiffness: 90 } })));
+  const recB = Math.min(1, Math.max(0, spring({ frame: frame - 470, fps, config: { damping: 200, mass: 0.9, stiffness: 90 } })));
+
+  const card = (extra?: CSSProperties): CSSProperties => ({
+    background: props.surfaceColor,
+    border: `1px solid ${props.accentColor}55`,
+    borderRadius: f(32),
+    padding: `${f(28)}px ${f(34)}px`,
+    direction: dir,
+    textAlign: "center",
+    maxWidth: "100%",
+    boxSizing: "border-box",
+    ...extra,
   });
-  const titleSize = Math.min(width * 0.085, 90);
-  const priceSize = Math.min(width * 0.25, 250);
+
+  const chip: CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: `${f(8)}px ${f(16)}px`,
+    borderRadius: 999,
+    background: props.secondaryColor,
+    border: `1px solid ${props.accentColor}55`,
+    color: props.accentColor,
+    fontSize: f(22),
+    fontWeight: 800,
+  };
+
+  const wrap: CSSProperties = {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    padding: `0 ${f(12)}px`,
+    transform: "translate(-50%, -50%)",
+    boxSizing: "border-box",
+  };
 
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: props.bgColor,
-        overflow: "hidden",
-        direction: props.isRtl ? "rtl" : "ltr",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(circle at 50% 42%, ${props.accentColor}26, transparent 58%)`,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: 0.06,
-          backgroundImage: `linear-gradient(${props.textColor} 1px, transparent 1px), linear-gradient(90deg, ${props.textColor} 1px, transparent 1px)`,
-          backgroundSize: "90px 90px",
-        }}
-      />
-      {DOTS.map((dot, i) => (
+    <AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: dir, fontFamily: FONT }}>
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 72% 24%, ${props.accentColor}26 0%, transparent 46%), radial-gradient(circle at 22% 80%, ${props.secondaryColor} 0%, transparent 58%)` }} />
+      <div style={{ position: "absolute", inset: "-12%", background: `radial-gradient(circle at 50% 50%, ${props.accentColor}0F 0%, transparent 62%)`, transform: `translate(${Math.sin(frame * 0.008) * 26}px, ${Math.cos(frame * 0.01) * 20}px)` }} />
+
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.16, direction: "ltr" }}>
+        {Array.from({ length: 12 }).map((_, i) => (
+          <line key={`v${i}`} x1={(i * 100) / 11} y1={0} x2={(i * 100) / 11} y2={100} stroke={props.secondaryColor} strokeWidth={0.15} />
+        ))}
+        {Array.from({ length: 18 }).map((_, i) => (
+          <line key={`h${i}`} x1={0} y1={(i * 100) / 17} x2={100} y2={(i * 100) / 17} stroke={props.secondaryColor} strokeWidth={0.15} />
+        ))}
+      </svg>
+
+      {Array.from({ length: 16 }).map((_, i) => (
         <div
           key={i}
           style={{
             position: "absolute",
-            left: `${dot.left}%`,
-            top: `${dot.top}%`,
-            width: dot.size,
-            height: dot.size,
+            top: `${(i * 37) % 100}%`,
+            left: `${(i * 61) % 100}%`,
+            width: f(3 + (i % 3) * 2),
+            height: f(3 + (i % 3) * 2),
             borderRadius: "50%",
-            backgroundColor: props.accentColor,
-            opacity: 0.2 + 0.16 * Math.sin(frame / 28 + i),
-            transform: `translateY(${Math.sin(frame / 40 + i) * 14}px)`,
+            background: i % 2 === 0 ? props.accentColor : props.textColor,
+            opacity: 0.24,
+            transform: `translateY(${Math.sin(frame * 0.02 + i) * f(18)}px)`,
           }}
         />
       ))}
 
       <div
         style={{
+          position: "absolute",
+          top: "12%",
+          left: "6%",
+          right: "16%",
+          bottom: "28%",
+          display: "flex",
+          flexDirection: "column",
+          gap: f(16),
           opacity: exit,
-          transform: `translateY(${(1 - exit) * 20}px) scale(${0.985 + exit * 0.015})`,
-          height: "100%",
-          width: "100%",
+          transform: `translateY(${(1 - exit) * -20}px) scale(${0.985 + 0.015 * exit})`,
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: "8%",
-            left: 48,
-            right: 48,
-            direction: "ltr",
-            textAlign: "left",
-          }}
-        >
-          <div
-            style={{
-              color: props.accentColor,
-              fontSize: 20,
-              fontWeight: 800,
-              letterSpacing: 6,
-              marginBottom: 18,
-            }}
-          >
-            AI-DIRECTED MOTION STUDIO
-          </div>
-          <div
-            style={{
-              color: props.textColor,
-              fontSize: titleSize,
-              fontWeight: 900,
-              lineHeight: 1.12,
-              letterSpacing: -2,
-              maxWidth: "88%",
-            }}
-          >
-            Create pro motion graphics today
-          </div>
+        <div style={{ display: "flex", alignItems: "center", gap: f(14), direction: dir, minHeight: f(40) }}>
+          <span style={chip}>٠١</span>
+          <span style={{ fontSize: f(24), color: props.textColor, opacity: 0.82, lineHeight: 1.4 }}>تعريف سريع</span>
+          <span style={{ flex: 1, height: 1, background: `${props.textColor}20`, minWidth: f(20) }} />
+          <Film size={f(26)} color={props.accentColor} />
         </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: "32%",
-            left: 0,
-            right: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              width: 520,
-              height: 520,
-              borderRadius: "50%",
-              border: `2px solid ${props.accentColor}`,
-              opacity: (1 - wave) * 0.5,
-              transform: `scale(${0.6 + wave * 1.5})`,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              width: 520,
-              height: 520,
-              borderRadius: "50%",
-              border: `1px solid ${props.accentColor}`,
-              opacity: (1 - wave) * 0.35,
-              transform: `scale(${0.7 + wave * 1.8})`,
-            }}
-          />
-          <div
-            style={{
-              color: props.accentColor,
-              fontSize: 22,
-              fontWeight: 800,
-              letterSpacing: 10,
-              opacity: interpolate(frame, [10, 40], [0, 1], {
-                extrapolateLeft: "clamp",
-                extrapolateRight: "clamp",
-              }),
-            }}
-          >
-            FOR JUST
-          </div>
-          <div
-            style={{
-              color: props.textColor,
-              fontSize: priceSize,
-              fontWeight: 900,
-              lineHeight: 0.95,
-              letterSpacing: -8,
-              textShadow: `0 0 ${44 * slam}px ${props.accentColor}`,
-              transform: `scale(${slam})`,
-            }}
-          >
-            $0.01
-          </div>
-          <div
-            style={{
-              color: props.mutedColor,
-              fontSize: 22,
-              fontWeight: 700,
-              letterSpacing: 4,
-            }}
-          >
-            PER PROFESSIONAL VIDEO
-          </div>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "57%",
-            left: 0,
-            right: 0,
-            display: "flex",
-            gap: 18,
-            justifyContent: "center",
-            padding: "0 24px",
-          }}
-        >
-          {PILLS.map((pill, i) => {
-            const enter = spring({
-              frame: frame - i * 12,
-              fps,
-              config: { damping: 200, stiffness: 120 },
-            });
-            const active = i === 1;
-            return (
-              <div
-                key={pill.label}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "16px 22px",
-                  borderRadius: 999,
-                  backgroundColor: SURFACE,
-                  border: `1px solid ${active ? props.accentColor : props.mutedColor}66`,
-                  opacity: enter,
-                  transform: `translateY(${(1 - enter) * 24}px)`,
-                }}
-              >
-                <SmartIcon
-                  query={pill.icon}
-                  size={26}
-                  color={active ? props.accentColor : props.mutedColor}
-                />
-                <div>
-                  <div
-                    style={{
-                      color: active ? props.accentColor : props.mutedColor,
-                      fontSize: 12,
-                      fontWeight: 800,
-                      letterSpacing: 2,
-                    }}
-                  >
-                    {pill.value}
+        <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
+          <DepthStage style={{ position: "absolute", inset: 0 }}>
+            <div
+              style={{
+                ...wrap,
+                transform: `translate(-50%, -50%) translate(${(props.isRtl ? -1 : 1) * f(90) * recA}px, ${-f(34) * recA}px)`,
+                visibility: frame > 372 ? "hidden" : "visible",
+              }}
+            >
+              <SpatialCard enterFrame={0} recedeFrame={250} tiltX={-7} tiltY={props.isRtl ? 5 : -5} shadowColor={`${props.bgColor}CC`}>
+                <div style={card({ padding: `${f(40)}px ${f(40)}px` })}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: f(20), direction: dir, flexWrap: "wrap" }}>
+                    <span style={{ width: f(78), height: f(78), borderRadius: f(24), background: props.bgColor, border: `1px solid ${props.accentColor}66`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Play size={f(38)} color={props.accentColor} fill={props.accentColor} />
+                    </span>
+                    <div style={{ fontSize: f(94), fontWeight: 900, lineHeight: 1.18, color: props.textColor }}>
+                      فيديو <span style={{ color: props.accentColor }}>حول</span>
+                    </div>
                   </div>
-                  <div style={{ color: props.textColor, fontSize: 17, fontWeight: 700 }}>
-                    {pill.label}
+                  <div style={{ marginTop: f(18), fontSize: f(30), lineHeight: 1.5, color: props.textColor, opacity: 0.88 }}>
+                    كل فكرة تستحق أن تُرى
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              </SpatialCard>
+            </div>
+
+            <div
+              style={{
+                ...wrap,
+                transform: `translate(-50%, -50%) translate(${(props.isRtl ? 1 : -1) * f(80) * recB}px, ${-f(28) * recB}px)`,
+                visibility: frame > 592 ? "hidden" : "visible",
+              }}
+            >
+              <SpatialCard enterFrame={310} recedeFrame={470} tiltX={5} tiltY={props.isRtl ? -4 : 4} shadowColor={`${props.bgColor}CC`}>
+                <div style={card()}>
+                  <div style={{ fontSize: f(24), color: props.accentColor, fontWeight: 800, marginBottom: f(10) }}>ثلاث طبقات</div>
+                  <div style={{ fontSize: f(54), fontWeight: 900, lineHeight: 1.25, color: props.textColor }}>حركة ولون وصوت</div>
+                  <div style={{ display: "flex", gap: f(10), justifyContent: "center", marginTop: f(20), direction: dir, flexWrap: "wrap" }}>
+                    {["حركة", "لون", "صوت"].map((tag, i) => {
+                      const p = Math.min(1, Math.max(0, spring({ frame: frame - (340 + i * 12), fps, config: { damping: 16, mass: 0.7, stiffness: 130 } })));
+                      return (
+                        <span key={tag} style={{ padding: `${f(10)}px ${f(20)}px`, borderRadius: 999, background: props.bgColor, border: `1px solid ${props.accentColor}55`, color: props.textColor, fontSize: f(24), fontWeight: 700, opacity: 0.4 + 0.6 * p, transform: `translateY(${(1 - p) * f(12)}px)` }}>
+                          {tag}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              </SpatialCard>
+            </div>
+
+            <div style={wrap}>
+              <SpatialCard enterFrame={530} tiltX={-4} tiltY={props.isRtl ? 4 : -4} shadowColor={`${props.bgColor}CC`}>
+                <div style={card({ border: `1px solid ${props.accentColor}88` })}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: f(16), direction: dir, flexWrap: "wrap" }}>
+                    <span style={{ width: f(64), height: f(64), borderRadius: f(20), background: props.bgColor, border: `1px solid ${props.accentColor}66`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Sparkles size={f(32)} color={props.accentColor} />
+                    </span>
+                    <div style={{ fontSize: f(56), fontWeight: 900, lineHeight: 1.25, color: props.textColor }}>فيديو يصنع الفرق</div>
+                  </div>
+                  <div style={{ marginTop: f(16), fontSize: f(26), lineHeight: 1.5, color: props.textColor, opacity: 0.85 }}>
+                    استوديو ZoEdit — من الفكرة إلى الشاشة
+                  </div>
+                </div>
+              </SpatialCard>
+            </div>
+          </DepthStage>
+        </div>
+
+        <div style={{ background: props.surfaceAltColor, border: `1px solid ${props.textColor}22`, borderRadius: f(26), padding: `${f(20)}px ${f(24)}px`, direction: dir }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", direction: dir, marginBottom: f(6) }}>
+            <span style={{ fontSize: f(26), fontWeight: 800, color: props.textColor, lineHeight: 1.4 }}>من الفكرة إلى النشر</span>
+            <span style={{ fontSize: f(20), color: props.accentColor, fontWeight: 700 }}>خط زمني</span>
+          </div>
+          <svg viewBox="0 0 800 120" style={{ width: "100%", height: f(122), direction: "ltr", overflow: "visible" }}>
+            <path d="M 30 40 H 770" fill="none" stroke={props.secondaryColor} strokeWidth={8} strokeLinecap="round" />
+            <path
+              d="M 30 40 H 770"
+              fill="none"
+              stroke={props.accentColor}
+              strokeWidth={8}
+              strokeLinecap="round"
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1 - grow}
+              style={{ filter: `drop-shadow(0 0 10px ${props.accentColor}AA)` }}
+            />
+            {NODES.map((x, i) => {
+              const p = Math.min(1, Math.max(0, spring({ frame: frame - (40 + i * 12), fps, config: { damping: 12, mass: 0.6, stiffness: 140 } })));
+              const reached = 30 + 740 * grow >= x;
+              return (
+                <g key={x}>
+                  <circle cx={x} cy={40} r={f(7) + p * f(3)} fill={reached ? props.accentColor : props.surfaceColor} stroke={props.accentColor} strokeWidth={3} />
+                  <text x={x} y={92} textAnchor="middle" direction="rtl" style={{ fontFamily: FONT, fontSize: f(20), fill: props.textColor, opacity: 0.85 }}>
+                    {NODE_LABELS[i]}
+                  </text>
+                </g>
+              );
+            })}
+            <circle cx={30 + 740 * grow} cy={40} r={f(9) + Math.sin(frame * 0.14) * 2} fill={props.accentColor} style={{ filter: `drop-shadow(0 0 12px ${props.accentColor})` }} />
+          </svg>
         </div>
       </div>
 
-      <SceneSfx name="pop" frame={100} volume={0.18} />
+      <SceneSfx name="pop" frame={310} volume={0.18} />
     </AbsoluteFill>
   );
 };

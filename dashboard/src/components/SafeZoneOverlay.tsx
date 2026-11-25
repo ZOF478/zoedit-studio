@@ -41,14 +41,14 @@ export function SafeZoneSwitcher({ mode, onChange, disabled = false }: SafeZoneS
 
   return (
     <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-fuchsia-400/25 bg-[#0B0E14] px-2 py-1 text-[11px] font-semibold text-slate-300">
-      <span className="hidden text-slate-400 sm:inline">{t('إطار المنصة', 'Platform frame')}</span>
+      <span className="hidden text-slate-400 sm:inline">{t('إطار الجهاز', 'Device frame')}</span>
       <span className="relative inline-flex items-center">
         <select
           value={mode}
           disabled={disabled}
           onChange={(event) => onChange(event.target.value as SafeZoneMode)}
           className="cursor-pointer appearance-none rounded-md border border-white/10 bg-[#141926] py-1 pe-6 ps-2 text-[11px] font-semibold text-slate-100 outline-none transition-colors hover:border-fuchsia-400/40 focus:border-fuchsia-400/60 disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label={t('إطار المنصة', 'Platform frame')}
+          aria-label={t('إطار الجهاز', 'Device frame')}
         >
           {SAFE_ZONE_MODES.map((option) => (
             <option key={option.id} value={option.id} className="bg-[#141926] text-slate-100">
@@ -212,16 +212,16 @@ function TikTokHud({ t, isRtl }: { t: Translate; isRtl: boolean }) {
           dir={isRtl ? 'rtl' : 'ltr'}
         >
           <div className="flex items-center gap-1 text-[9px] font-bold text-white">
-            <span>@zof.studio</span>
+            <span>@zoedit.studio</span>
             <span className="font-medium text-white/60">· {t('الآن', 'now')}</span>
           </div>
           <p className="mt-0.5 line-clamp-2 text-[9px] leading-snug text-white/90">
             {t('حوّل أفكارك إلى فيديو يلفت الأنظار', 'Turn your ideas into video that stands out')}{' '}
-            <span className="font-semibold text-white">#zof #video</span>
+            <span className="font-semibold text-white">#zoedit #video</span>
           </p>
           <div className="mt-1 flex items-center gap-1 text-[8px] text-white/80">
             <Music2 className="h-2.5 w-2.5 shrink-0" />
-            <span className="truncate">{t('الصوت الأصلي · Zof Studio', 'Original sound · Zof Studio')}</span>
+            <span className="truncate">{t('الصوت الأصلي · Zoedit Studio', 'Original sound · Zoedit Studio')}</span>
           </div>
           <div className="mt-1.5 h-0.5 rounded-full bg-white/25">
             <div className="h-full w-1/3 rounded-full bg-white/80" />
@@ -259,7 +259,7 @@ function ReelsHud({ t, isRtl }: { t: Translate; isRtl: boolean }) {
           dir={isRtl ? 'rtl' : 'ltr'}
         >
           <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold text-white">@zof.studio</span>
+            <span className="text-[9px] font-bold text-white">@zoedit.studio</span>
             <span className="rounded-md border border-white/50 px-1.5 py-0.5 text-[8px] font-bold text-white/90">
               {t('متابعة', 'Follow')}
             </span>
@@ -270,7 +270,7 @@ function ReelsHud({ t, isRtl }: { t: Translate; isRtl: boolean }) {
           </p>
           <div className="mt-1 flex items-center gap-1 text-[8px] text-white/80">
             <Music2 className="h-2.5 w-2.5 shrink-0" />
-            <span className="truncate">{t('مقطع صوتي أصلي · Zof Studio', 'Original audio · Zof Studio')}</span>
+            <span className="truncate">{t('مقطع صوتي أصلي · Zoedit Studio', 'Original audio · Zoedit Studio')}</span>
           </div>
           <div className="mt-1.5 h-0.5 rounded-full bg-white/25">
             <div className="h-full w-1/3 rounded-full bg-white/80" />
@@ -313,7 +313,7 @@ function ShortsHud({ t, isRtl }: { t: Translate; isRtl: boolean }) {
         >
           <div className="flex items-center gap-2">
             <span className="h-5 w-5 rounded-full bg-gradient-to-br from-fuchsia-400 via-violet-500 to-sky-400" />
-            <span className="text-[9px] font-bold text-white">@zof.studio</span>
+            <span className="text-[9px] font-bold text-white">@zoedit.studio</span>
             <span className="rounded-full bg-white px-2 py-0.5 text-[8px] font-black text-black">
               {t('اشترك', 'Subscribe')}
             </span>
@@ -324,7 +324,7 @@ function ShortsHud({ t, isRtl }: { t: Translate; isRtl: boolean }) {
           </p>
           <div className="mt-1 flex items-center gap-1 text-[8px] text-white/80">
             <Music2 className="h-2.5 w-2.5 shrink-0" />
-            <span className="truncate">{t('موسيقى · Zof Studio', 'Music · Zof Studio')}</span>
+            <span className="truncate">{t('موسيقى · Zoedit Studio', 'Music · Zoedit Studio')}</span>
           </div>
           <div className="mt-1.5 h-0.5 rounded-full bg-white/25">
             <div className="h-full w-1/3 rounded-full bg-[#FF0033]" />

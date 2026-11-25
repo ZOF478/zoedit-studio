@@ -1,5 +1,5 @@
 {
-  "name": "zof-studio",
+  "name": "zoedit-studio",
   "version": "1.0.0",
   "description": "AI-directed, custom-coded motion graphics studio built on React and Remotion.",
   "keywords": [
@@ -16,11 +16,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ZOF478/zofstudio.git"
+    "url": "git+https://github.com/ZOF478/zoedit-studio.git"
   },
   "homepage": "https://studio.zoedit.com",
   "bugs": {
-    "url": "https://github.com/ZOF478/zofstudio/issues"
+    "url": "https://github.com/ZOF478/zoedit-studio/issues"
   },
   "license": "MIT",
   "engines": {
@@ -28,7 +28,7 @@
   },
   "private": false,
   "bin": {
-    "zofstudio": "./bin/zofstudio.mjs"
+    "zoedit-studio": "./bin/zoedit-studio.mjs"
   },
   "dependencies": {
     "@iconify/react": "^6.0.4",
@@ -65,7 +65,7 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
-    "start": "node ./bin/zofstudio.mjs",
+    "start": "node ./bin/zoedit-studio.mjs",
     "postinstall": "node ./scripts/postinstall.mjs",
     "setup": "npm install && npm --prefix dashboard install --legacy-peer-deps && (npm link || node ./bin/link-fallback.mjs)",
     "upgrade": "remotion upgrade",

@@ -15,6 +15,7 @@ import {
   buildStaggeredSfxCues,
   normalizeSfxCues,
 } from '../src/utils/sfxCues';
+import type { SfxCue } from '../src/types';
 import {
   DEFAULT_VIDEO_LANGUAGE,
   getVideoLanguage,
@@ -35,11 +36,21 @@ const REMOTION_ENTRY = path.join(PROJECT_ROOT, 'src', 'index.ts');
 const GENERATED_DIR = path.join(PROJECT_ROOT, 'src', 'generated');
 const GENERATED_REGISTRY_FILE = path.join(GENERATED_DIR, 'index.ts');
 const GENERATED_FILE_PATTERN = /^(?:CustomScene_[A-Za-z0-9_]+|Scene\d+)$/;
-const ZOF_HOME_DIR = path.join(os.homedir(), '.zof-studio');
-const SETTINGS_FILE = path.join(ZOF_HOME_DIR, 'settings.json');
-const CURRENT_PROJECT_FILE = path.join(ZOF_HOME_DIR, 'current-project.json');
-const STUDIO_LOG_FILE = path.join(ZOF_HOME_DIR, 'remotion-studio.log');
-const USAGE_FILE = path.join(ZOF_HOME_DIR, 'usage.json');
+const ZOEDIT_HOME_DIR = path.join(os.homedir(), '.zoedit-studio');
+const LEGACY_HOME_DIR = path.join(os.homedir(), ['.zof', 'studio'].join('-'));
+const SETTINGS_FILE = path.join(ZOEDIT_HOME_DIR, 'settings.json');
+const CURRENT_PROJECT_FILE = path.join(ZOEDIT_HOME_DIR, 'current-project.json');
+const STUDIO_LOG_FILE = path.join(ZOEDIT_HOME_DIR, 'remotion-studio.log');
+const USAGE_FILE = path.join(ZOEDIT_HOME_DIR, 'usage.json');
+
+// Preserve keys and usage for users upgrading from the pre-rebrand state folder.
+try {
+  if (!fs.existsSync(ZOEDIT_HOME_DIR) && fs.existsSync(LEGACY_HOME_DIR)) {
+    fs.cpSync(LEGACY_HOME_DIR, ZOEDIT_HOME_DIR, { recursive: true });
+  }
+} catch {
+  // Migration is best-effort; a fresh state folder is always created later.
+}
 const SCENE_CACHE_DIR = path.join(OUT_DIR, 'scene-cache');
 const SCENE_CACHE_INDEX_FILE = path.join(SCENE_CACHE_DIR, 'index.json');
 const MEDIA_TITLES_FILE = path.join(OUT_DIR, 'media-titles.json');
@@ -190,11 +201,7 @@ interface RenderScenePayload {
   sfxId?: string;
   sfxPrompt?: string;
   sfxAt?: number;
-  sfxCues?: Array<{
-    frameOffset: number;
-    sound: 'pop' | 'tick' | 'whoosh' | 'rise' | 'impact' | 'chime';
-    volume?: number;
-  }>;
+  sfxCues?: SfxCue[];
   layout?: SceneLayout;
   camera?: CameraMove;
   background?: string;
@@ -367,11 +374,7 @@ type ParentScene = {
   audioDuration?: number;
   sfxSrc?: string;
   sfxAt?: number;
-  sfxCues?: Array<{
-    frameOffset: number;
-    sound: 'pop' | 'tick' | 'whoosh' | 'rise' | 'impact' | 'chime';
-    volume?: number;
-  }>;
+  sfxCues?: SfxCue[];
   layout?: SceneLayout;
   camera?: CameraMove;
   background?: string;
@@ -454,26 +457,45 @@ const HOST = process.env.HOST || '127.0.0.1';
 const REMOTION_STUDIO_RENDER_PORT = 9578;
 const REMOTION_STUDIO_UI_PORT = Number(process.env.REMOTION_STUDIO_PORT) || 3333;
 const OPENCODE_RUN_TIMEOUT_MS = 600000;
+const SECRET_ENV_KEYS = [
+  'OPENROUTER_API_KEY',
+  'DEEPSEEK_API_KEY',
+  'KIEAI_API_KEY',
+  'KIE_API_KEY',
+  'ELEVENLABS_API_KEY',
+  'GEMINI_API_KEY',
+  'CUSTOM_PROVIDER_KEY',
+] as const;
 const RENDER_STALL_TIMEOUT_MS = 120_000;
 const RENDER_STALL_CHECK_INTERVAL_MS = 5_000;
 const STRICT_EFFICIENCY_RULE =
   'STRICT EFFICIENCY & NO-LOOP RULE: Write each scene file cleanly in ONE single pass (keep each scene concise, under ~220 lines of clean TypeScript). After writing all scene files and `index.ts`, run at most ONE `npx tsc --noEmit` check. Fix actual TypeScript compiler errors ONLY if any exist, and exit immediately. NEVER run repeated cosmetic micro-edits on font sizes, padding, colors, or coordinates after writing a file.';
 const CRISP_VECTOR_MAP_RULE =
   '- When the prompt requests a map or geographical route, use real geographic data, never hand-guessed borders: import worldData from "world-atlas/countries-110m.json", convert with feature() from "topojson-client", and project with geoMercator()/geoNaturalEarth1() + geoPath() from "d3-geo". Add a subtle coordinate grid, a glowing animated route curve (evolvePath from "@remotion/paths"), and crisp lucide-react pins sized to the target aspect ratio (16:9 or 9:16).';
-const ZOF_LIBRARY_CAPABILITIES = [
+const ZOEDIT_LIBRARY_CAPABILITIES = [
   '## INSTALLED VISUAL LIBRARIES (available for dynamic scene generation)',
   '- `@iconify/react` + `simple-icons` via `<SmartIcon />` from `../components/SmartIcon`: resolves ANY English keyword or brand name into a crisp vector icon or logo. It searches the Iconify API, fetches clean SVG markup, caches it in memory, blocks frames with `delayRender` for at most 4 seconds, and falls back to a styled monogram badge so headless rendering never stalls or shows a broken image.',
   '- `SilhouetteActor` from `../components/SilhouetteActor`: a completely featureless human silhouette (no eyes, mouth, nose, or ears) with `standing`, `praying-qiyam`, `praying-sujood`, `sitting-screen`, and self-animating `walking` poses.',
   '- `lucide-react`: crisp UI, tech, business, and map icons (for example `import { MapPin, Plane, Navigation, ShieldCheck, TrendingUp } from "lucide-react";`). Never hand-code icon `<path>` elements when a lucide icon exists.',
   '- `d3-geo` + `topojson-client` + `world-atlas/countries-110m.json`: accurate real-world geographic country borders, projections (`geoMercator` / `geoNaturalEarth1`), and animated coordinate routes.',
-  '- `@remotion/paths` & `@remotion/shapes`: mathematical SVG path interpolation, charts, and geometric shapes.',
+  '- `@remotion/paths` & `@remotion/shapes`: mathematical SVG path interpolation, chart geometry, `Rect`, `Circle`, `Triangle`, `Star`, `Pie`, and other primitives — always prefer these over hand-coded shape math.',
+  '- `@remotion/transitions`: available transition primitives/timings for composed motion; the composition owns scene-to-scene transitions, so do not recreate a transition shell inside a scene.',
+  '- `@remotion/google-fonts`: load any additional font family if a specific typography direction genuinely needs it; otherwise inherit the shared multilingual stack.',
+  '- `d3-scale`: use real scales/ticks for charts and data axes instead of guessed pixel positions.',
+  '- `colord`: derive tints, shades, mixtures, and contrast-safe color variants instead of writing manual hex math.',
   '- `roughjs`: hand-drawn / whiteboard-style diagrams ONLY when the prompt explicitly asks for that look, and ONLY with the deterministic rendering pattern below.',
   '- `@remotion/noise`: organic subtle motion and natural drift.',
+  '',
+  '## INSTALLED PACKAGE INVENTORY (audit every workspace)',
+  '- Scene/runtime packages to prefer: `remotion`, `react`, `react-dom`, `@remotion/paths`, `@remotion/shapes`, `@remotion/noise`, `@remotion/transitions`, `@remotion/google-fonts`, `@iconify/react`, `simple-icons`, `lucide-react`, `d3-geo`, `d3-scale`, `topojson-client`, `world-atlas`, `roughjs`, `colord`.',
+  '- Dashboard-only packages (never import into Remotion scene files): `@remotion/player`, `motion`, `@google/genai`, `express`, `dotenv`, `vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`.',
+  '- Tooling packages (never import into scene files): `@remotion/cli`, `opencode-ai`, `typescript`, `eslint`, `prettier`, `@types/*`, `tsx`, `tailwindcss`, `autoprefixer`, `esbuild`.',
+  '- ALWAYS prefer importing an installed library over reinventing the capability with raw manual SVG coordinates, hand-built geometry math, or basic CSS fallbacks. Use the library that best fits the job and keep the code lean.',
   '',
   '## STRICT NO-FALLBACK RULE (apply on the first pass)',
   '- NEVER hand-draw crude geometric shapes or stickmen from scratch to represent real objects, religious symbols, clocks, devices, or brands. No guessed circles, rectangles, or `<path>` approximations for a mosque, clock, shield, logo, or human.',
   '- NEVER draw continents, country borders, map coastlines, or recognizable brand/UI icons manually with guessed SVG `<path>` coordinates.',
-  '- If a real library or component is whitelisted for the job (world-atlas + d3-geo for maps, lucide-react for UI icons, SmartIcon for symbols/brands, SilhouetteActor for human action), hand-drawing an approximation instead is a failure. Use the exact patterns below.',
+  '- If an installed library fits the job (world-atlas + d3-geo for maps, lucide-react for UI icons, SmartIcon for symbols/brands, SilhouetteActor for human action, @remotion/shapes for geometry, @remotion/paths for curves, d3-scale for charts, colord for color derivation, @remotion/noise for organic motion), hand-drawing or rebuilding it manually is a failure. Use the installed library.',
   '',
   '### Symbols, concepts & brand logos (SmartIcon)',
   'import { SmartIcon } from "../components/SmartIcon";',
@@ -516,6 +538,57 @@ const ZOF_LIBRARY_CAPABILITIES = [
   'const drawable = useMemo(() => roughGen.path(d, { seed: 42, roughness: 1.4 }), []);',
   'Render the memoized drawable paths and animate drawing progress strictly with SVG strokeDasharray / strokeDashoffset or evolvePath() from @remotion/paths so hand-drawn animations stay silky-smooth at 60fps with zero jitter.',
 ].join('\n');
+const LANGUAGE_NEUTRAL_VISUAL_RULE = [
+  '## LANGUAGE-NEUTRAL VISUAL QUALITY (mandatory for every language)',
+  '- Design richness is NEVER reduced because the selected language is non-English (Arabic, Urdu, Persian, Hebrew, Hindi, Bengali, Thai, Chinese, Japanese, Korean, or any other script).',
+  '- Build the EXACT SAME visual hierarchy, structured cards, icon badges, chart/diagram density, layered parallax, and multi-beat motion you would build for an English prompt.',
+  '- Only the visible on-screen strings are localized. Layout structure, spacing, animation quality, decorative depth, and scene ambition must remain identical across languages.',
+  '- Never degrade RTL or non-Latin output into plain filler slides, tiny single labels, transparent/missing containers, generic system fonts, or fewer motion beats.',
+].join('\n');
+
+const CONTINUOUS_VECTOR_RULE = [
+  '## CONTINUOUS VECTOR & CHART STROKES (mandatory)',
+  '- Draw every chart line, curve, connector, orbit, route, and vector path as ONE continuous path (a single `<path>`, or a documented `<polyline>`) with `fill="none"`.',
+  '- Animate draw-on with `pathLength={1}`, `strokeDasharray={1}`, and `strokeDashoffset={1 - progress}` or `evolvePath()` from "@remotion/paths". Never use small fixed dash arrays such as "6 6" or "4 8", never use pixel-length dash arrays, and never split one series into disconnected subpaths that read as dashes.',
+  '- Keep `strokeLinecap="round"`, `strokeLinejoin="round"`, and a stable `strokeWidth` for the whole draw so the line never thins, breaks, or fragments mid-animation.',
+  '- When a chart has multiple series, draw each series as its own continuous path; never fragment a single series.',
+].join('\n');
+
+const RTL_CHART_PROTECTION_RULE = [
+  '## CHART DIRECTION PROTECTION (mandatory)',
+  '- Charts, graphs, axes, plots, maps, and vector illustrations MUST keep a left-to-right mathematical coordinate system in every language.',
+  '- Wrap each chart/map SVG and its plot container in `direction: "ltr"`, and set explicit `textAnchor` on labels. NEVER set `direction: "rtl"` on the SVG or plot container itself.',
+  '- NEVER mirror a chart with `transform: "scaleX(-1)"`, `flexDirection: "row-reverse"`, negative x-scaling, or swapped x/width values when `props.isRtl` is true. Only mirror text blocks, card text alignment, and navigation icons.',
+  '- Keep x coordinates increasing left-to-right, y increasing downward, Y-axis labels anchored with `textAnchor="end"`, and X-axis labels with `textAnchor="middle"` regardless of language.',
+  '- RTL mode may move the whole chart card or its title to the mirrored side, but the plot, curves, axes, and data direction stay LTR and unmirrored.',
+].join('\n');
+
+const SOLID_SURFACE_RULE = [
+  '## SOLID CARD & CONTAINER CONTRAST (mandatory)',
+  '- Every card, icon badge, chip, callout, chart panel, legend, tooltip, and container MUST use a SOLID or at least 0.88-opacity fill based on the active secondary theme color (`props.surfaceColor` / `props.secondaryColor`).',
+  '- Never render cards with `transparent`, near-transparent rgba(), or background-only gradients that let the stage show through. If a gradient is desired, start from the solid secondary/surface color and keep its final opacity at 0.88 or higher.',
+  '- Pair every surface with a subtle 1-2px border (`props.secondaryColor`, `props.accentColor`, or `props.textColor` at 25-45% opacity) and a soft shadow (for example `0 18px 48px rgba(0,0,0,0.28)` or a tinted glow) so it clearly separates from `props.bgColor`.',
+  '- Keep text and icons inside a card above WCAG contrast thresholds; darken/lighten the surface or switch to `props.textColor` instead of dropping text opacity below 0.8.',
+].join('\n');
+
+const MULTILINGUAL_TYPOGRAPHY_RULE = [
+  '## MULTILINGUAL TYPOGRAPHY & TEXT LAYOUT (mandatory)',
+  '- The composition already loads Cairo (Arabic + Latin) and the correct Noto Sans script font before rendering. Always inherit the shared font stack or explicitly use `\'Cairo\', \'Noto Sans\', \'Noto Sans Arabic\', system-ui, sans-serif`; never set a bare fallback such as `sans-serif` alone.',
+  '- Set text direction explicitly from props: `direction: props.isRtl ? "rtl" : "ltr"` and `textAlign: props.isRtl ? "right" : "left"` (use "center" only for centered hero or kinetic text).',
+  '- Use generous multiline spacing for every script: lineHeight 1.35-1.6 for body/cards and 1.2-1.35 for headlines; never go below 1.15.',
+  '- Allow text to wrap instead of shrinking below 26px, and keep horizontal padding plus `overflow: "visible"`/`maxWidth: "100%"` so Arabic diacritics and tall scripts never clip or overlap.',
+  '- For RTL languages prefer logical properties (`paddingInlineStart`, `paddingInlineEnd`, `marginInlineStart`, `marginInlineEnd`) over left/right.',
+  '- Never add Latin letter-spacing or word-spacing hacks inside Arabic, Indic, or CJK strings; keep `letterSpacing` at 0 for non-Latin body text.',
+].join('\n');
+
+const VISUAL_QUALITY_CONTRACT = [
+  LANGUAGE_NEUTRAL_VISUAL_RULE,
+  CONTINUOUS_VECTOR_RULE,
+  RTL_CHART_PROTECTION_RULE,
+  SOLID_SURFACE_RULE,
+  MULTILINGUAL_TYPOGRAPHY_RULE,
+].join('\n\n');
+
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const sessionKeyStore = new Map<string, SessionKeys>();
@@ -1011,7 +1084,7 @@ const DEFAULT_BRAND_KIT: RenderBrandKit = {
   textColor: '#F8FAFC',
   primaryColor: '#38BDF8',
   secondaryColor: '#FBBF24',
-  watermark: '@ZofStudio',
+  watermark: '@ZoeditStudio',
   watermarkEnabled: true,
   watermarkPosition: 'top-left',
 };
@@ -1057,6 +1130,18 @@ function normalizeUiLanguage(value: unknown, fallback: UiLanguage = 'ar'): UiLan
 
 function uiText(job: Pick<RenderJob, 'uiLanguage'>, ar: string, en: string): string {
   return job.uiLanguage === 'en' ? en : ar;
+}
+
+function requestUiLanguage(req: Request): UiLanguage {
+  const header = req.headers['x-zoedit-ui-lang'];
+  const headerValue = Array.isArray(header) ? header[0] : header;
+  const queryValue = req.query?.lang;
+  const rawQuery = Array.isArray(queryValue) ? queryValue[0] : queryValue;
+  return normalizeUiLanguage(rawQuery ?? headerValue, 'ar');
+}
+
+function requestUiText(req: Request, ar: string, en: string): string {
+  return requestUiLanguage(req) === 'en' ? en : ar;
 }
 
 const CREATIVE_CODE_MODES = ['creative', 'fast'] as const;
@@ -1515,13 +1600,9 @@ function loadStudioSettings(): StudioSettings {
 }
 
 function saveStudioSettings(settings: StudioSettings): void {
-  fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+  ensurePrivateStateDir();
   writeJsonFile(SETTINGS_FILE, settings);
-  try {
-    fs.chmodSync(SETTINGS_FILE, 0o600);
-  } catch {
-    // Permissions are best-effort on non-POSIX filesystems.
-  }
+  restrictPrivateFile(SETTINGS_FILE);
 }
 
 function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
@@ -1609,8 +1690,9 @@ function readProjectState(): ProjectStatePayload | null {
 }
 
 function saveProjectState(project: ProjectStatePayload): void {
-  fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+  ensurePrivateStateDir();
   writeJsonFile(CURRENT_PROJECT_FILE, project);
+  restrictPrivateFile(CURRENT_PROJECT_FILE);
   studioSettings.aiProvider = project.aiProvider;
   studioSettings.aiModel = project.aiModel;
   studioSettings.voiceId = project.voiceId;
@@ -1705,8 +1787,9 @@ const usageStore: UsageStore = loadUsageStore();
 
 function saveUsageStore(): void {
   try {
-    fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+    ensurePrivateStateDir();
     writeJsonFile(USAGE_FILE, usageStore);
+    restrictPrivateFile(USAGE_FILE);
   } catch {
     // Usage accounting is best-effort and must never break a render.
   }
@@ -1824,6 +1907,31 @@ function estimateAiUsd(model: string, inputTokens: number, outputTokens: number)
 }
 
 let studioSettings = loadStudioSettings();
+
+function redactSecretText(value: string): string {
+  let result = value;
+  const secrets = [
+    studioSettings.openrouterKey,
+    studioSettings.deepseekKey,
+    studioSettings.kieaiKey,
+    studioSettings.elevenlabsKey,
+    studioSettings.customProviderKey,
+    ...SECRET_ENV_KEYS.map((key) => process.env[key] || ''),
+    ...Array.from(sessionKeyStore.values()).flatMap((session) => [
+      session.openrouterKey || '',
+      session.deepseekKey || '',
+      session.kieaiKey || '',
+      session.elevenlabsKey || '',
+      session.customProviderKey || '',
+    ]),
+  ]
+    .map((secret) => secret.trim())
+    .filter((secret) => secret.length >= 8);
+  for (const secret of new Set(secrets)) {
+    result = result.split(secret).join('[REDACTED]');
+  }
+  return result;
+}
 
 const OPENCODE_CONFIG_PATHS = [
   path.join(os.homedir(), '.config', 'opencode', 'opencode.json'),
@@ -1979,7 +2087,7 @@ function openCodeProviderModels(opencode: OpenCodeInspection): ProviderModelItem
 }
 
 function getOrCreateSessionId(req: Request): { sessionId: string; isNew: boolean } {
-  const headerToken = req.header('x-zof-session');
+  const headerToken = req.header('x-zoedit-session');
   if (headerToken && /^[a-f0-9]{32,64}$/i.test(headerToken) && sessionKeyStore.has(headerToken)) {
     return { sessionId: headerToken, isNew: false };
   }
@@ -1989,7 +2097,7 @@ function getOrCreateSessionId(req: Request): { sessionId: string; isNew: boolean
 }
 
 function resolveApiKeys(req: Request): ResolvedApiKeys {
-  const headerToken = req.header('x-zof-session');
+  const headerToken = req.header('x-zoedit-session');
   const session = headerToken ? sessionKeyStore.get(headerToken) : undefined;
   const opencode = inspectOpenCode();
   const envOpenRouter = process.env.OPENROUTER_API_KEY?.trim() || '';
@@ -2155,6 +2263,17 @@ const SFX_CATALOG_IDS = new Set([
   'bass-drop',
   'riser-build',
 ]);
+
+const SFX_LIBRARY_IDS = Array.from(SFX_CATALOG_IDS);
+const SFX_LIBRARY_LIST = SFX_LIBRARY_IDS.join(', ');
+const SFX_LIBRARY_RULE = [
+  '## INSTALLED SOUND-EFFECTS LIBRARY (use it fully and contextually)',
+  `- No dedicated npm sound-effect package is currently installed; the complete local SFX library lives in public/sfx: ${SFX_LIBRARY_LIST}.`,
+  '- Inspect the installed SFX assets and choose the best-fitting sound for each concrete visual beat: object/card entrance, text reveal, typing, UI click/toggle, badge/pop, chart or number reveal, data tick, slide, impact, riser, cinematic hit, cash/coin accent, whoosh, and scene/mid-scene transitions.',
+  '- There is NO fixed cue count and NO required hardcoded subset: use as many distinct, well-paced cues as the scene genuinely needs, and choose any installed SFX id that fits the action.',
+  '- Layer natural, well-paced Foley around the action, but keep the mix uncluttered and never overpower narration.',
+  '- Keep only this negative rule: do NOT add unsolicited loud/cheesy victory chimes, achievement bells, or celebratory fanfares at the very end of the video unless the user prompt explicitly asks for one.',
+].join('\n');
 
 const FORBIDDEN_SFX_IDS = new Set(['ding-success', 'notification-chime']);
 
@@ -2579,7 +2698,7 @@ function curateSceneSfx(
 ): RenderScenePayload[] {
   if (scenes.length === 0) return scenes;
   if (options.sfxEnabled === false) {
-    return scenes.map((scene) => ({ ...scene, sfxId: 'none', sfxAt: 0 }));
+    return scenes.map((scene) => ({ ...scene, sfxId: 'none', sfxAt: 0, sfxCues: [] }));
   }
 
   const silentVisualMode = options.voiceoverEnabled === false;
@@ -2622,6 +2741,11 @@ function curateSceneSfx(
   });
 
   const chosen = new Set<number>();
+  for (const entry of evaluations) {
+    if (entry.explicit || (entry.scene.sfxCues && entry.scene.sfxCues.length > 0)) {
+      chosen.add(entry.index);
+    }
+  }
   const pickWithBreathingRoom = (
     candidates: typeof evaluations,
     target: number,
@@ -2653,7 +2777,7 @@ function curateSceneSfx(
       chosen.add(index);
     }
   } else {
-    const maxSfx = Math.max(0, Math.floor(scenes.length * 0.35));
+    const maxSfx = Math.max(1, scenes.length);
     if (!topicNight) {
       const candidates = evaluations
         .filter(
@@ -2678,7 +2802,7 @@ function curateSceneSfx(
   return scenes.map((scene, index) => {
     const entry = evaluations[index];
     if (!chosen.has(index)) {
-      return { ...scene, sfxId: 'none', sfxAt: 0 };
+      return { ...scene, sfxId: 'none', sfxAt: 0, sfxCues: [] };
     }
 
     const previousSound =
@@ -2962,7 +3086,7 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
 }
 
 function buildAiDesign(topic: string, visualStyle: string) {
-  const seed = hashTopic(topic || 'zof-studio');
+  const seed = hashTopic(topic || 'zoedit-studio');
   const hue = seed % 360;
   const dark = visualStyle === 'modern-dark' || visualStyle === 'modern_dark';
   return {
@@ -3078,7 +3202,7 @@ function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
         ? record.sfxPrompt.trim().slice(0, 450)
         : undefined;
     const sfxAtRaw = Number(record.sfxAt);
-    const sfxCues = normalizeSfxCues(record.sfxCues)?.slice(0, 1);
+    const sfxCues = normalizeSfxCues(record.sfxCues);
     const layoutRaw = typeof record.layout === 'string' ? record.layout.toLowerCase() : '';
     const cameraRaw = typeof record.camera === 'string' ? record.camera.toLowerCase() : '';
     const background =
@@ -3252,6 +3376,23 @@ function writeJsonFile(filePath: string, value: unknown): void {
   const tempPath = `${filePath}.${process.pid}.tmp`;
   fs.writeFileSync(tempPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
   fs.renameSync(tempPath, filePath);
+}
+
+function restrictPrivateFile(filePath: string): void {
+  try {
+    fs.chmodSync(filePath, 0o600);
+  } catch {
+    // Permissions are best-effort on non-POSIX filesystems.
+  }
+}
+
+function ensurePrivateStateDir(): void {
+  fs.mkdirSync(ZOEDIT_HOME_DIR, { recursive: true, mode: 0o700 });
+  try {
+    fs.chmodSync(ZOEDIT_HOME_DIR, 0o700);
+  } catch {
+    // Permissions are best-effort on non-POSIX filesystems.
+  }
 }
 
 type MediaFileInfo = {
@@ -3434,11 +3575,11 @@ function deriveVideoTitle(job: RenderJob, prompt: string): string {
     if (title) return title;
   }
   const sceneTitle = job.scenes.find((scene) => scene.title?.trim())?.title?.trim();
-  return sceneTitle ? sceneTitle.slice(0, 80) : 'Zof Studio video';
+  return sceneTitle ? sceneTitle.slice(0, 80) : 'Zoedit Studio video';
 }
 
 function makeOutputName(title: string, jobId: string, createdAt: number): string {
-  const slug = slugifyToAscii(title) || 'zof-studio-video';
+  const slug = slugifyToAscii(title) || 'zoedit-studio-video';
   return `${slug}-${dateStamp(createdAt)}-${jobId.slice(0, 6)}.mp4`;
 }
 
@@ -3501,6 +3642,12 @@ function safeMediaName(raw: unknown): string | null {
   if (!name || name.includes('/') || name.includes('\\') || name.includes('..')) return null;
   if (!/^[a-zA-Z0-9._-]+$/.test(name)) return null;
   return name;
+}
+
+function isPathInside(parentDir: string, candidatePath: string): boolean {
+  const parent = path.resolve(parentDir);
+  const candidate = path.resolve(candidatePath);
+  return candidate === parent || candidate.startsWith(`${parent}${path.sep}`);
 }
 
 function collectReferencedAudio(): Set<string> {
@@ -3603,7 +3750,7 @@ function resolveRemotionCli(): { command: string; args: string[] } {
 
 function openStudioLogFd(): number | null {
   try {
-    fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+    fs.mkdirSync(ZOEDIT_HOME_DIR, { recursive: true });
     // Open synchronously so the descriptor exists before spawn(); a lazily
     // created WriteStream has fd: null at this point and spawn() rejects it.
     return fs.openSync(STUDIO_LOG_FILE, 'a');
@@ -3630,6 +3777,7 @@ function spawnStudioProcess(port: number, kind: StudioProcessKind): ChildProcess
         '--host',
         '127.0.0.1',
         '--no-open',
+        '--dark-mode',
       ],
       {
         cwd: PROJECT_ROOT,
@@ -3751,7 +3899,7 @@ async function launchStudioProcess(
       pids,
       error:
         pids.length > 0
-          ? `المنفذ ${port} مشغول بعملية أخرى (PID: ${pids.join(', ')}). أوقفها أو أعد تشغيل خادم Zof Studio ثم أعد المحاولة.`
+          ? `المنفذ ${port} مشغول بعملية أخرى (PID: ${pids.join(', ')}). أوقفها أو أعد تشغيل خادم Zoedit Studio ثم أعد المحاولة.`
           : `المنفذ ${port} مفتوح لكنه لا يستجيب لـ Remotion Studio. تحقق من العمليات التي تستخدمه ثم أعد المحاولة.`,
     };
   }
@@ -4302,6 +4450,7 @@ function buildCustomSvg(params: {
       <stop offset="100%" stop-color="${accent}" stop-opacity="1"/>
     </linearGradient>
   </defs>
+  <rect x="0" y="0" width="720" height="400" rx="32" fill="#0B1220" fill-opacity="0.92"/>
   <rect x="0" y="0" width="720" height="400" rx="32" fill="url(#bg)"/>
   ${dots}
   <path d="M72 330 H648" stroke="#94A3B8" stroke-opacity="0.28" stroke-width="2"/>
@@ -4309,9 +4458,9 @@ function buildCustomSvg(params: {
   <polyline points="${points}" fill="none" stroke="url(#line)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="543" cy="104" r="42" fill="${accent}" fill-opacity="0.16"/>
   <circle cx="543" cy="104" r="20" fill="${accent}" fill-opacity="0.85"/>
-  <text x="72" y="86" fill="#E2E8F0" font-family="'IBM Plex Sans Arabic', 'Cairo', sans-serif" font-size="26" font-weight="700">${title}</text>
-  <text x="72" y="120" fill="#94A3B8" font-family="'IBM Plex Sans Arabic', sans-serif" font-size="16" font-weight="600" letter-spacing="2">AI CUSTOM VISUAL</text>
-  <text x="72" y="368" fill="#94A3B8" font-family="'IBM Plex Sans Arabic', sans-serif" font-size="15" font-weight="500">Generated from your prompt</text>
+  <text x="72" y="86" fill="#E2E8F0" font-family="'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif" font-size="26" font-weight="700">${title}</text>
+  <text x="72" y="120" fill="#94A3B8" font-family="'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif" font-size="16" font-weight="600" letter-spacing="2">AI CUSTOM VISUAL</text>
+  <text x="72" y="368" fill="#94A3B8" font-family="'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif" font-size="15" font-weight="500">Generated from your prompt</text>
 </svg>`;
 }
 
@@ -4369,7 +4518,7 @@ function buildParentScene(
         title: label,
         subtitle: value || scene.narration,
         kicker: scene.title,
-        badge: 'ZOF STUDIO',
+        badge: 'ZOEDIT STUDIO',
       },
     ];
   } else if (type === 'stat-number') {
@@ -4481,7 +4630,7 @@ function buildParentScene(
         title: scene.title,
         quote: value || scene.narration,
         author: label,
-        source: 'ZOF STUDIO',
+        source: 'ZOEDIT STUDIO',
       },
     ];
   } else if (type === 'bullet-list') {
@@ -4580,7 +4729,7 @@ function buildParentScene(
         title: label,
         text: value || scene.narration,
         icon: 'spark',
-        badge: 'ZOF STUDIO',
+        badge: 'ZOEDIT STUDIO',
       },
     ];
   }
@@ -4599,20 +4748,19 @@ function buildParentScene(
   const sceneSfxSrc = resolveSceneSfxSrc(scene.sfxId, scene.visualType);
   const sceneFrames = sceneDurationInFrames(scene, fps);
   const lastSafeCueFrame = Math.max(1, sceneFrames - Math.round(fps * 0.5));
-  let sfxCues = sfxEnabled && !sceneSfxSrc
-    ? scene.sfxCues && scene.sfxCues.length > 0
+  let sfxCues = sfxEnabled
+    ? scene.sfxCues !== undefined
       ? scene.sfxCues
-      : buildStaggeredSfxCues({
-          fps,
-          durationSec: scene.durationSec,
-          elements,
-          mode: voiceoverEnabled ? 'voiceover' : 'silent',
-          maxCues: 1,
-        })
+      : !sceneSfxSrc
+        ? buildStaggeredSfxCues({
+            fps,
+            durationSec: scene.durationSec,
+            elements,
+            mode: voiceoverEnabled ? 'voiceover' : 'silent',
+          })
+        : []
     : [];
-  sfxCues = sfxCues
-    .filter((cue) => cue.frameOffset < lastSafeCueFrame)
-    .slice(0, 1);
+  sfxCues = sfxCues.filter((cue) => cue.frameOffset < lastSafeCueFrame);
 
   return {
     id: scene.id,
@@ -4672,7 +4820,7 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
   const existing = readParentData();
   const existingKit = existing?.brand_kit;
   const { width, height } = aspectDimensions(job.aspectRatio);
-  const firstTitle = job.scenes[0]?.title || existing?.meta?.title || 'Zof Studio';
+  const firstTitle = job.scenes[0]?.title || existing?.meta?.title || 'Zoedit Studio';
   const accent = safeColor(job.brandKit.accentColor, '#E77B40');
   const background = safeColor(job.brandKit.bgColor, '#0B0F17');
   const primary = safeColor(job.brandKit.primaryColor, accent);
@@ -4682,7 +4830,7 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
   return {
     meta: {
       title: firstTitle.slice(0, 80),
-      topic: topicOverride?.trim() || existing?.meta?.topic || 'zof-studio',
+      topic: topicOverride?.trim() || existing?.meta?.topic || 'zoedit-studio',
       description: job.scenes.map((scene) => scene.title).join(' · ').slice(0, 240),
     },
     width,
@@ -4712,7 +4860,7 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
       enabled: job.captionsEnabled && job.voiceoverEnabled,
     },
     brand_kit: {
-      name: 'ZOF',
+      name: 'ZOEDIT',
       primary,
       secondary,
       accent,
@@ -5970,7 +6118,7 @@ async function requestChatCompletion(
     if (!keys.openrouterKey) return null;
     url = 'https://openrouter.ai/api/v1/chat/completions';
     headers.Authorization = `Bearer ${keys.openrouterKey}`;
-    headers['X-Title'] = 'Zof Studio';
+    headers['X-Title'] = 'Zoedit Studio';
     headers['HTTP-Referer'] = 'http://localhost:4789';
   } else if (attempt.kind === 'deepseek') {
     if (!keys.deepseekKey) return null;
@@ -6105,6 +6253,8 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   '@remotion/transitions',
   'lucide-react',
   'd3-geo',
+  'd3-scale',
+  'colord',
   'topojson-client',
   'roughjs',
   'world-atlas/countries-110m.json',
@@ -6113,7 +6263,7 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
 function isAllowedGeneratedImport(source: string): boolean {
   return (
     GENERATED_ALLOWED_IMPORTS.has(source) ||
-    source.startsWith('@remotion/google-fonts/')
+    /^@remotion\/google-fonts\/[A-Za-z0-9]+$/.test(source)
   );
 }
 
@@ -6153,17 +6303,31 @@ function sanitizeGeneratedTsx(
     { label: 'require()', pattern: /\brequire\s*\(/ },
     { label: 'dynamic import()', pattern: /\bimport\s*\(/ },
     { label: 'eval()', pattern: /\beval\s*\(/ },
+    { label: 'Function()', pattern: /\bFunction\s*\(/ },
     { label: 'new Function', pattern: /\bnew\s+Function\b/ },
     { label: 'fetch()', pattern: /\bfetch\s*\(/ },
     { label: 'XMLHttpRequest', pattern: /\bXMLHttpRequest\b/ },
     { label: 'WebSocket', pattern: /\bWebSocket\b/ },
     { label: 'child_process', pattern: /\bchild_process\b/ },
+    { label: 'vm module', pattern: /\bvm\s*\./ },
     { label: 'process', pattern: /\bprocess\s*\./ },
     { label: 'fs module', pattern: /\bfs\s*\./ },
     { label: 'path module', pattern: /\bpath\s*\./ },
     { label: 'os module', pattern: /\bos\s*\./ },
     { label: 'net module', pattern: /\bnet\s*\./ },
     { label: 'http module', pattern: /\bhttps?\s*\./ },
+    { label: 'import.meta', pattern: /\bimport\s*\.\s*meta\b/ },
+    { label: 'global object', pattern: /\b(?:globalThis|global)\b/ },
+    { label: 'Buffer', pattern: /\bBuffer\b/ },
+    { label: 'EventSource', pattern: /\bEventSource\b/ },
+    { label: 'sendBeacon', pattern: /\bsendBeacon\b/ },
+    { label: 'Worker', pattern: /\bWorker\b/ },
+    { label: 'window global', pattern: /\bwindow\s*[.\[]/ },
+    { label: 'document global', pattern: /\bdocument\s*[.\[]/ },
+    { label: 'navigator global', pattern: /\bnavigator\s*[.\[]/ },
+    { label: 'self global', pattern: /\bself\s*[.\[]/ },
+    { label: 'bracket-access danger', pattern: /\[\s*['"](?:fetch|XMLHttpRequest|WebSocket|EventSource|process|require|fs|child_process|vm|http|https|net|os)['"]\s*\]/ },
+    { label: 'DOM media network', pattern: /\bnew\s+(?:Image|Audio)\b/ },
     { label: 'dangerous HTML', pattern: /\bdangerouslySetInnerHTML\b/ },
   ];
   for (const entry of blockedPatterns) {
@@ -6209,6 +6373,9 @@ function syncGeneratedRegistry(): string[] {
     '',
     'export type GeneratedSceneProps = {',
     '  accentColor: string;',
+    '  secondaryColor: string;',
+    '  surfaceColor: string;',
+    '  surfaceAltColor: string;',
     '  bgColor: string;',
     '  textColor: string;',
     '  mutedColor: string;',
@@ -6296,13 +6463,10 @@ function sanitizeGeneratedSfxFiles(): string[] {
     if (!entry.isFile() || !entry.name.endsWith('.tsx')) continue;
     const file = path.join(GENERATED_DIR, entry.name);
     const source = fs.readFileSync(file, 'utf8');
-    let keptSceneSfx = false;
     const sanitizedLines: string[] = [];
     for (const line of source.split('\n')) {
-      if (/ding-success|notification-chime/i.test(line)) continue;
+      if (/ding-success|notification-chime|achievement-bell|success-fanfare/i.test(line)) continue;
       if (/<SceneSfx\b/.test(line)) {
-        if (keptSceneSfx || /frame=\{0\}/.test(line)) continue;
-        keptSceneSfx = true;
         sanitizedLines.push(
           line
             .replace(/volume=\{[^}]*\}/g, 'volume={0.18}')
@@ -6457,15 +6621,18 @@ async function requestCustomSceneCode(options: {
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".',
+    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".',
     'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
-    'type Props = { accentColor: string; bgColor: string; textColor: string; mutedColor: string; characterBody: string; characterFace: string; characterAccent: string; characterShadow: string; isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[]; data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean; };',
+    'type Props = { accentColor: string; secondaryColor: string; surfaceColor: string; surfaceAltColor: string; bgColor: string; textColor: string; mutedColor: string; characterBody: string; characterFace: string; characterAccent: string; characterShadow: string; isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[]; data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean; };',
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
+    'Use as many subtle <SceneSfx> cues as the concrete visual actions warrant, choosing the best-fitting id from the full installed SFX library. Never add an unsolicited loud victory chime, achievement bell, or celebration fanfare at the very end unless the user prompt explicitly asks for one.',
     'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman only when showCharacter is true; for human actions (praying, prostrating, sitting at a screen, standing, walking) use <SilhouetteActor pose="..." /> instead. For symbols, concepts, clocks, religious symbols, and brand logos always use <SmartIcon query="..." /> (add brand for company logos) — never hand-draw them from guessed shapes.',
-    ZOF_LIBRARY_CAPABILITIES,
-    'Strictly apply accentColor and bgColor. Respect isRtl for text direction and composition.',
+    ZOEDIT_LIBRARY_CAPABILITIES,
+    VISUAL_QUALITY_CONTRACT,
+    SFX_LIBRARY_RULE,
+    'Strictly apply accentColor, secondaryColor, surfaceColor, surfaceAltColor, and bgColor. Respect isRtl for text direction and composition.',
     `Write every visible label in ${languageMeta.name} (${languageMeta.native}), direction ${languageMeta.dir.toUpperCase()}; never leave English placeholders such as TIME or VALUE when the video language is not English.`,
     `Primary aspect ratio: ${aspectRatio}. Optimize density, visual scale, and hierarchy for this ratio first.`,
     'Use useVideoConfig() to stay responsive across every aspect ratio: const { width, height } = useVideoConfig(); const isLandscape = width > height; const isSquare = width === height; const isPortrait = height > width. Never hardcode a single frame size.',
@@ -7179,8 +7346,8 @@ function buildFallbackLayoutMarkup(variantIndex: number): string {
           const itemEnter = spring({ frame: frame - index * 14 - 6, fps, config: { damping: 16, mass: 0.6, stiffness: 120 } });
           const done = progress > (index + 1) / (keywords.length + 1);
           return (
-            <div key={word + index} style={{ display: "flex", alignItems: "center", gap: 18, padding: "20px 24px", borderRadius: 22, background: props.bgColor + "dd", border: "1px solid " + (done ? props.accentColor : props.mutedColor + "33"), opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 28 + "px)" }}>
-              <div style={{ width: 46, height: 46, borderRadius: 14, border: "2px solid " + (done ? props.accentColor : props.mutedColor + "55"), display: "flex", alignItems: "center", justifyContent: "center", background: done ? props.accentColor + "22" : "transparent", color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{done ? "✓" : ""}</div>
+            <div key={word + index} style={{ display: "flex", alignItems: "center", gap: 18, padding: "20px 24px", borderRadius: 22, background: props.surfaceColor, border: "1.5px solid " + (done ? props.accentColor + "aa" : props.secondaryColor + "88"), boxShadow: "0 18px 48px rgba(0,0,0,0.28)", opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 28 + "px)" }}>
+              <div style={{ width: 46, height: 46, borderRadius: 14, border: "2px solid " + (done ? props.accentColor : props.mutedColor + "55"), display: "flex", alignItems: "center", justifyContent: "center", background: done ? props.accentColor + "33" : props.surfaceAltColor, color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{done ? "✓" : ""}</div>
               <div style={{ flex: 1, fontSize: 28, fontWeight: 700, color: props.textColor }}>{word}</div>
               <div style={{ fontSize: 20, fontWeight: 700, color: props.mutedColor }}>{done ? "100%" : "..."}</div>
             </div>
@@ -7200,7 +7367,7 @@ function buildFallbackLayoutMarkup(variantIndex: number): string {
         {keywords.map((word, index) => {
           const value = Math.max(0.08, Math.min(1, progress * ((index + 1) / keywords.length)));
           return (
-            <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 10, padding: "18px 22px", borderRadius: 22, background: props.surfaceColor, border: "1.5px solid " + props.secondaryColor + "88", boxShadow: "0 18px 48px rgba(0,0,0,0.28)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", color: props.textColor, fontSize: 26, fontWeight: 700 }}>
                 <span>{word}</span>
                 <span style={{ color: props.accentColor }}>{Math.round(value * 100)}%</span>
@@ -7222,8 +7389,8 @@ function buildFallbackLayoutMarkup(variantIndex: number): string {
             const itemEnter = spring({ frame: frame - index * 12, fps, config: { damping: 15, mass: 0.6, stiffness: 130 } });
             const pulse = 1 + Math.sin(frame / 12 + index) * 0.04;
             return (
-              <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: props.isRtl ? "flex-end" : "flex-start", padding: "24px 22px", borderRadius: 24, background: props.bgColor + "dd", border: "1px solid " + props.accentColor + "55", opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 24 + "px) scale(" + itemEnter * pulse + ")" }}>
-                <div style={{ width: 52, height: 52, borderRadius: 18, background: props.accentColor + "22", border: "1px solid " + props.accentColor + "66", display: "flex", alignItems: "center", justifyContent: "center", color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{String(index + 1).padStart(2, "0")}</div>
+              <div key={word + index} style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: props.isRtl ? "flex-end" : "flex-start", padding: "24px 22px", borderRadius: 24, background: props.surfaceColor, border: "1.5px solid " + props.secondaryColor + "88", boxShadow: "0 18px 48px rgba(0,0,0,0.28)", opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 24 + "px) scale(" + itemEnter * pulse + ")" }}>
+                <div style={{ width: 52, height: 52, borderRadius: 18, background: props.surfaceAltColor, border: "1.5px solid " + props.accentColor + "66", display: "flex", alignItems: "center", justifyContent: "center", color: props.accentColor, fontSize: 24, fontWeight: 900 }}>{String(index + 1).padStart(2, "0")}</div>
                 <div style={{ fontSize: 26, fontWeight: 800, color: props.textColor }}>{word}</div>
               </div>
             );
@@ -7237,12 +7404,12 @@ function buildFallbackLayoutMarkup(variantIndex: number): string {
       `;
     default:
       return `
-      <div style={{ width: "84%", maxWidth: 900, borderRadius: 32, background: props.bgColor + "ee", border: "1px solid " + props.accentColor + "55", boxShadow: "0 40px 120px " + props.accentColor + "22", opacity: enter, transform: "translateY(" + (1 - enter) * 60 + "px) scale(" + (0.92 + enter * 0.08) + ")", overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid " + props.accentColor + "33", background: props.bgColor + "cc" }}>
+      <div style={{ width: "84%", maxWidth: 900, borderRadius: 32, background: props.surfaceColor, border: "1.5px solid " + props.secondaryColor + "aa", boxShadow: "0 40px 120px rgba(0,0,0,0.35)", opacity: enter, transform: "translateY(" + (1 - enter) * 60 + "px) scale(" + (0.92 + enter * 0.08) + ")", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "18px 24px", borderBottom: "1px solid " + props.accentColor + "44", background: props.surfaceAltColor }}>
           {[0, 1, 2].map((dot) => (
             <div key={"dot-" + dot} style={{ width: 16, height: 16, borderRadius: 999, background: dot === 0 ? props.accentColor : props.mutedColor, opacity: dot === 0 ? 0.9 : 0.4 }} />
           ))}
-          <div style={{ flex: 1, height: 34, borderRadius: 999, background: props.bgColor + "aa", border: "1px solid " + props.accentColor + "33", display: "flex", alignItems: "center", padding: "0 16px", color: props.mutedColor, fontSize: 20, fontWeight: 600 }}>{title}</div>
+          <div style={{ flex: 1, height: 34, borderRadius: 999, background: props.surfaceColor, border: "1px solid " + props.accentColor + "44", display: "flex", alignItems: "center", padding: "0 16px", color: props.textColor, fontSize: 20, fontWeight: 600 }}>{title}</div>
         </div>
         <div style={{ padding: "40px 44px", display: "flex", flexDirection: "column", gap: 20, textAlign: align }}>
           <div style={{ fontSize: 62, fontWeight: 900, lineHeight: 1.1, color: props.textColor }}>{title}</div>
@@ -7251,7 +7418,7 @@ function buildFallbackLayoutMarkup(variantIndex: number): string {
             {keywords.map((word, index) => {
               const itemEnter = spring({ frame: frame - index * 12, fps, config: { damping: 16, mass: 0.6, stiffness: 120 } });
               return (
-                <div key={word + index} style={{ padding: "10px 20px", borderRadius: 999, border: "1px solid " + props.accentColor + "66", background: props.bgColor + "cc", color: props.textColor, fontSize: 26, fontWeight: 700, opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 20 + "px)" }}>{word}</div>
+                <div key={word + index} style={{ padding: "10px 20px", borderRadius: 999, border: "1.5px solid " + props.secondaryColor + "aa", background: props.surfaceAltColor, color: props.textColor, fontSize: 26, fontWeight: 700, boxShadow: "0 12px 32px rgba(0,0,0,0.24)", opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 20 + "px)" }}>{word}</div>
               );
             })}
           </div>
@@ -7275,6 +7442,9 @@ import { SceneSfx } from "../components/SceneSfx";
 
 type Props = {
   accentColor: string;
+  secondaryColor: string;
+  surfaceColor: string;
+  surfaceAltColor: string;
   bgColor: string;
   textColor: string;
   mutedColor: string;
@@ -7298,7 +7468,7 @@ export const ${componentName} = (props: Props) => {
   const progress = interpolate(frame, [0, Math.max(1, props.durationInFrames - 1)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const enter = spring({ frame, fps, config: { damping: 18, mass: 0.7, stiffness: 90 } });
   const beat = Math.sin((frame / Math.max(1, fps)) * 1.8);
-  const title = props.title?.trim() || "Zof Studio";
+  const title = props.title?.trim() || "Zoedit Studio";
   const text = props.text?.trim() || "";
   const keywords = (props.keywords && props.keywords.length > 0 ? props.keywords : [title]).slice(0, 4);
   const align = props.isRtl ? "right" : "left";
@@ -7306,7 +7476,7 @@ export const ${componentName} = (props: Props) => {
   const exit = interpolate(frame, [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
-    <AbsoluteFill style={{ background: props.bgColor, overflow: "hidden", direction: rtl }}>
+    <AbsoluteFill style={{ background: props.bgColor, fontFamily: "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif", overflow: "hidden", direction: rtl }}>
       <SceneSfx name="pop" frame={12} volume={0.18} />
       <SceneSfx name="whoosh" frame={48} volume={0.16} />
       <div style={{ position: "absolute", inset: 0, opacity: exit, transform: "translateY(" + (1 - exit) * -10 + "px)" }}>
@@ -7451,10 +7621,12 @@ function cleanBrollPromptSection(enabled: boolean): string[] {
     return [
       '## CLEAN B-ROLL MODE (ENABLED by the user)',
       '- Fill the frame with the primary visual at 100% width and 100% height (full-bleed) and drive it with a smooth continuous camera pan/zoom. Never box the main visual inside a small card.',
-      '- ZERO TOP HEADER RULE: render NO top <header>, no kicker, no scene title, no title badge, no top banner, and no prompt-echo descriptive text anywhere in the frame.',
+      '- TEXT MINIMIZATION RULE: remove main headlines, titles, kickers, title badges, text-only slides, prompt-echo copy, and decorative/UI-mockup text.',
+      '- PRESERVE only brief essential in-scene information needed to understand the visual: short data labels, chart numbers, axis/ticks, map or route names, legend keys, and diagram annotations. Keep them small, concise, and secondary.',
       '- Do NOT reserve a top 22% headline band in this mode. The visual owns the full canvas edge-to-edge.',
-      '- Render only diegetic labels that belong inside the graphic: city names, map labels, data values, axis labels, and explicitly requested callout cards.',
-      '- Keep Y-axis tick labels offset from the axis line with textAnchor="end" and x={axisX - 14} (plus at least 56px left padding) so values such as 10x / 20x / 30x are never struck through by the axis stroke.',
+      '- Communicate primarily through shapes, icons, charts, maps, camera motion, light, color, and kinetic geometry. Never add filler copy or a title card.',
+      '- Keep preserved chart labels readable and offset from strokes: Y-axis values use textAnchor="end" with x={axisX - 14} and at least 56px left padding.',
+      '- Captions, when the user enables them, are rendered by the composition as an optional overlay. Never draw caption text inside the scene itself.',
       '- Keep every floating card and 2.5D SpatialCard fully outside the plot rectangle, axis lines, gridlines, and data labels with at least a 24px gap.',
       '- This layout applies ONLY because cleanBrollMode is true. Never enable it just because the voiceover is disabled.',
     ];
@@ -7474,6 +7646,17 @@ const VISUAL_ARCHETYPES = [
   'data-first chart or diagram',
   'clean B-Roll visual',
   'timeline or process flow',
+  'spatial 2.5D depth stack',
+];
+
+const CLEAN_BROLL_VISUAL_ARCHETYPES = [
+  'full-bleed abstract motion field',
+  'split-screen visual comparison (no captions)',
+  'continuous camera pan across an unlabeled diagram',
+  'icon-only kinetic beat',
+  'data-shape or chart motion with only essential labels',
+  'cinematic clean B-Roll visual',
+  'shape-only timeline or process flow',
   'spatial 2.5D depth stack',
 ];
 
@@ -7519,8 +7702,14 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           ? `concept (internal semantic anchor — NEVER render it as a header): ${scene.title}`
           : `title: ${scene.title}`,
         `narration: ${scene.narration}`,
-        `keyPhrases: ${(scene.visualKeywords?.length ? scene.visualKeywords : [scene.visualLabel]).join(' | ')}`,
-        `compositionArchetype: ${VISUAL_ARCHETYPES[index % VISUAL_ARCHETYPES.length]} (adapt to the narration — never reuse the previous scene skeleton)`,
+        job.cleanBrollMode
+          ? `keyPhrases (internal semantic anchors only — NEVER render as text): ${(scene.visualKeywords?.length ? scene.visualKeywords : [scene.visualLabel]).join(' | ')}`
+          : `keyPhrases: ${(scene.visualKeywords?.length ? scene.visualKeywords : [scene.visualLabel]).join(' | ')}`,
+        `compositionArchetype: ${
+          job.cleanBrollMode
+            ? CLEAN_BROLL_VISUAL_ARCHETYPES[index % CLEAN_BROLL_VISUAL_ARCHETYPES.length]
+            : VISUAL_ARCHETYPES[index % VISUAL_ARCHETYPES.length]
+        } (adapt to the narration — never reuse the previous scene skeleton)`,
         `durationSeconds: ${scene.durationSec.toFixed(2)}`,
         `contentFrames: ${frames}`,
         `renderedDurationInFrames: ${renderedFrames}`,
@@ -7546,7 +7735,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           '- Render exactly one cohesive, high-impact motion-graphics scene (Scene1.tsx) derived directly from the MASTER PROMPT. Do not split the idea across multiple files.',
           '- Build a complete three-act arc inside the single scene: a bold entrance in the first 20% of props.durationInFrames, a sustained main-action sequence for the middle 55–65%, and a graceful exit ease over the final 10 frames.',
           '- Choreograph at least three distinct visual beats (hook reveal, mechanism/action, payoff) with staggered springs, continuous idle motion, and clear state changes. Never hold a static frame.',
-          '- Use at most one subtle <SceneSfx /> on a single key visual beat (volume 0.15–0.22). Never place a bell, chime, ding, or success sound, never at frame 0, and never at the scene ending; leave at least 0.6s of breathing room.',
+          '- Use as many subtle <SceneSfx /> cues as the scene\'s actions truly warrant; there is NO fixed cue-count cap. Choose the best-fitting sounds from the ENTIRE installed SFX library (`${SFX_LIBRARY_LIST}`) for each visual beat: text-reveal/typing, UI click/toggle, badge or card entrance, chart/number/data reveal, slide, impact, riser, cinematic hit, coin/cash accent, whoosh, and mid-scene transitions. Keep the mix natural and well-paced, never overpower narration, and do NOT add unsolicited loud/cheesy victory chimes, achievement bells, or celebratory fanfares at the very end unless the user prompt explicitly asks for one.',
           '- Make the scene read as a finished short-form visual even with no narration or captions: kinetic key-phrases and animated graphics must carry the full message.',
         ]
       : [
@@ -7554,13 +7743,13 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           `- Plan ${job.scenes.length} distinct visual beats directly from the MASTER PROMPT, distributed evenly across the total duration already listed below.`,
           '- Keep each scene focused on ONE core visual idea with a crisp entrance, a sustained main action, and a gentle exit ease over its final 10 frames. Never overload a single scene with complex multi-step choreography.',
           '- Keep the story flowing scene-to-scene without narration: kinetic key-phrases, diagrams, and visual metaphors must communicate the full idea.',
-          '- Use at most one subtle <SceneSfx /> per scene on a key visual beat (volume 0.15–0.22). Never place a bell, chime, ding, or success sound, never at frame 0, and never at a scene ending; leave at least 0.6s of breathing room.',
+          '- Use as many subtle <SceneSfx /> cues per scene as the visual actions truly warrant; there is NO fixed cue-count cap. Select the most fitting sounds from the ENTIRE installed SFX library (`${SFX_LIBRARY_LIST}`) for text reveals/typing, UI clicks/toggles, badge/card entrances, chart/number/data reveals, slides, impacts, risers, cinematic hits, coin/cash accents, whooshes, and mid-scene transitions. Keep the mix natural and well-paced, never overpower narration, and do NOT add unsolicited loud/cheesy victory chimes, achievement bells, or celebratory fanfares at the very end unless the user prompt explicitly asks for one.',
         ]
     : [];
 
   const allowedImportsRule = depth25DEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts". Do not import any other package.';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.';
   const { width, height } = aspectDimensions(job.aspectRatio);
   const watermarkRule = job.brandKit.watermarkEnabled
     ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
@@ -7579,9 +7768,9 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
         '## CLEAN B-ROLL SAFE LAYOUT (mandatory)',
         '- There is NO top headline/subtitle band. Do NOT reserve or render a top 22% header, kicker, title badge, or banner.',
         '- Fill the frame with the primary visual at 100% width and height and let a smooth camera pan/zoom carry the composition.',
-        '- Keep only diegetic in-graphic labels (city names, data values, axis labels, requested callouts); never echo the prompt or scene title on screen.',
-        `- If captions are enabled, keep the bottom ${captionSafeBottom}% clear (caption offset ${job.captionBottomOffset}%) for the composition-owned caption strip; otherwise keep the bottom safe margin clean.`,
-        '- Never clip or collide: all labels must stay inside the full-bleed visual with generous padding.',
+        '- TEXT MINIMIZATION: no main title, kicker, headline, badge, text-only slide, or decorative copy. Preserve only brief in-scene data labels, chart numbers, axis values, map names, and diagram annotations required to understand the visual.',
+        `- If captions are enabled, keep the bottom ${captionSafeBottom}% clear (caption offset ${job.captionBottomOffset}%) for the composition-owned optional caption strip; otherwise keep the bottom safe margin clean.`,
+        '- Never clip or collide: all visual elements and preserved labels must stay inside the full-bleed composition with generous padding.',
       ]
     : [
         '## SAFE LAYOUT GRID (no overlaps, no clipping)',
@@ -7601,7 +7790,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
       : [];
 
   return [
-    'You are the creative motion-graphics engineer for Zof Studio.',
+    'You are the creative motion-graphics engineer for Zoedit Studio.',
     'Work inside the project root and create a complete bespoke Remotion scene set from the master prompt below.',
     '',
     STRICT_EFFICIENCY_RULE,
@@ -7610,13 +7799,21 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     job.masterPrompt,
     '',
     ...(promptOnlySection.length > 0 ? [...promptOnlySection, ''] : []),
+    VISUAL_QUALITY_CONTRACT,
+    '',
+    SFX_LIBRARY_RULE,
+    '',
     '## CREATIVE STORYTELLING MANDATE (dynamic SVG world, never static cards)',
     '- Every scene must be a rich, bespoke animated world tailored to the narration — never a static card, a lone word, or an idle Stickman.',
     '- When a scene includes the Stickman, make it actively interact with custom scene props: point at holographic screens, hold a glowing lightbulb, climb progress steps, push/pull objects, gesture with spring physics, and react to on-screen data. Use interpolate() and spring() for every limb prop and camera beat.',
     '- React to hook questions with floating animated ؟ / ? question marks around the visual, then resolve them as the narration answers.',
     '- Layer hand-built SVG illustrations, charts, timelines, icons, badges, and ambient particles. Build subtle parallax depth with 2–4 layered transforms moving at different speeds.',
-    '- Smart kinetic key-phrases: display concise, impactful 2–5 word takeaways or punctuation hooks synced to the narration. NEVER show a single isolated word. Animate the phrase as a unit (pop, slide, mask-reveal, or spring scale) and time it to the spoken beat.',
-    '- Use the provided keyPhrases as the semantic anchors; you may refine them to 2–5 words. When Captions are ENABLED, keep key-phrases distinct from the bottom caption strip so they do not duplicate it. When Captions are DISABLED, the kinetic key-phrases become the primary on-screen text.',
+    job.cleanBrollMode
+      ? '- Clean B-Roll removes main headlines, titles, and text-only slides. Do NOT render key-phrases, title cards, or decorative copy, but DO preserve brief in-scene data labels, chart numbers, axis values, map/route names, and essential diagram annotations needed to read the visual. Use keyPhrases as internal semantic anchors for shapes, icons, colors, and motion.'
+      : '- Smart kinetic key-phrases: display concise, impactful 2–5 word takeaways or punctuation hooks synced to the narration. NEVER show a single isolated word. Animate the phrase as a unit (pop, slide, mask-reveal, or spring scale) and time it to the spoken beat.',
+    job.cleanBrollMode
+      ? '- Captions, when enabled, are drawn by the composition as an optional overlay; never draw caption text inside the scene.'
+      : '- Use the provided keyPhrases as the semantic anchors; you may refine them to 2–5 words. When Captions are ENABLED, keep key-phrases distinct from the bottom caption strip so they do not duplicate it. When Captions are DISABLED, the kinetic key-phrases become the primary on-screen text.',
     '- Vary the visual composition aggressively between scenes: motion-graphics data diagram, timeline, comparison, symbolic metaphor, environmental storytelling, or a purposeful character beat. No two consecutive scenes should share the same layout.',
     '',
     '## ANTI-BOILERPLATE VISUAL VARIETY (mandatory)',
@@ -7630,7 +7827,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- Every scene MUST contain at least three distinct motion beats: an entrance beat, an ongoing idle beat, and a visual state-change beat. A single fade-in is not acceptable.',
     '- Staggered spring entrances: every list item, card, badge, node, row, and icon enters with its own spring() whose delay is exactly `index * 12` frames. Never reveal a group as one block.',
     '- Continuous subtle idle motion for the whole scene duration: floating sine drift, pulsing rings/halos, animated SVG path dashoffset or morphing blobs, slow orbit particles, or breathing scale. Motion must never freeze.',
-    '- Visual state changes may optionally use at most one subtle SceneSfx on the key beat (soft pop/click/whoosh only). Never place a bell, chime, ding, or success sound, and never place any SFX at the scene ending.',
+    '- Sync as many subtle SceneSfx cues as the concrete visual events warrant; there is NO fixed cue-count cap. Choose the best-fitting sounds from the entire installed SFX library for text reveals, UI interactions, chart/data reveals, card/object entrances, impacts, risers, and mid-scene transitions. Never add unsolicited generic or loud success dings, achievement bells, or celebration fanfares at the ending unless the user prompt explicitly asks for one.',
     '- Keep choreography readable: each beat should reinforce the narration instead of adding random noise.',
     '',
     '## SCENE TRANSITIONS & GENTLE EXIT EASE (mandatory)',
@@ -7657,19 +7854,19 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
         ]
       : []),
     '',
-    '## SUBTLE MICRO-SFX (strictly limited, optional)',
+    '## SMART EVENT-SYNCED MICRO-SFX',
     'import { SceneSfx } from "../components/SceneSfx";',
     'type SceneSfxProps = {',
-    '  name: "pop" | "check" | "whoosh" | "sparkle";',
+    `  name: string; // any installed SFX id (${SFX_LIBRARY_LIST}) or friendly alias pop | tick | check | whoosh | sparkle`,
     '  frame: number;',
     '  volume?: number;',
     '  sfxEnabled?: boolean;',
     '};',
-    '- Use AT MOST ONE `<SceneSfx />` per scene, only on the single most important visual transition or state change.',
-    '- Keep the volume between `0.15` and `0.22` (never above `0.25`), and leave at least 0.6s of breathing room after the sound.',
-    '- Allowed names: `pop` (soft pop), `check` (subtle click), `whoosh` (soft whoosh), `sparkle` (soft pop). Never use any bell, chime, ding, success, alarm, or notification sound.',
-    '- Never place a SceneSfx at frame 0, inside the final 20% of props.durationInFrames, or at a scene ending / transition boundary. Scenes must end in silence; the composition owns the transition whoosh.',
-    '- If unsure whether a beat truly needs sound, omit it. Silence is always preferred over a bell/chime or stacked SFX.',
+    '- Generate as many subtle cues per scene as the visual actions warrant; there is NO fixed cue-count cap. Inspect the full installed library and choose the most fitting id for every text reveal/typing beat, button/badge/icon entrance, chart/number/data reveal, card/panel entrance, object impact, riser, ambient accent, and mid-scene transition.',
+    '- Mix cues naturally: keep them subordinate to narration, vary their density with the action, and leave the final beat clean unless the prompt explicitly asks for an ending accent.',
+    '- STRICT NEGATIVE RULE: never add loud, generic, or cheesy success dings, achievement bells, celebration fanfares, alarm, or notification sounds at the end of the video or scene unless the user prompt explicitly asks for one.',
+    '- Avoid stacking cues or masking dialogue. The composition owns the scene-to-scene transition whoosh; use mid-scene whooshes only for genuine internal transitions.',
+    '- If a visual beat does not genuinely need sound, omit it; otherwise use the full library creatively and contextually.',
     '',
     '## CHARACTER POLICY — STICKMAN IS SELECTIVE, NOT MANDATORY',
     '- Pure kinetic motion graphics (animated SVG icons, UI mockups, data charts, glowing cards, kinetic typography, geometric transitions) must carry at least 60–70% of all scenes.',
@@ -7692,6 +7889,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '  poses: "standing" | "praying-qiyam" | "praying-sujood" | "sitting-screen" | "walking". Size is the rendered height in pixels; the silhouette animates itself with useCurrentFrame(). It is strictly featureless — never add eyes, mouth, nose, or ears.',
     '',
     '## SPEED CONTRACT — DO NOT INSPECT THE CODEBASE',
+    '- NEVER read, print, copy, or reference `.env` files, `.env.*`, `.zoedit-studio`, settings/auth files, API keys, tokens, or credentials. Never place secrets in generated code or logs.',
     '- Do NOT run `cat`, `sed`, `head`, `tail`, `rg`, `grep`, `ls`, or any file-reading command on src/components/Stickman.tsx, src/components/SilhouetteActor.tsx, src/components/SmartIcon.tsx, src/types.ts, src/theme.ts, src/config.ts, src/data.json, or package.json.',
     '- After writing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run `npm`, build, test, or render commands. The host validates and renders after you finish.',
     '- Go straight to writing the files below with the write tool. No exploration step, no plan file.',
@@ -7715,6 +7913,9 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     'export type GeneratedSceneProps = {',
     '  accentColor: string;',
+    '  secondaryColor: string;',
+    '  surfaceColor: string;',
+    '  surfaceAltColor: string;',
     '  bgColor: string;',
     '  textColor: string;',
     '  mutedColor: string;',
@@ -7804,7 +8005,8 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     `Secondary: ${job.brandKit.secondaryColor}`,
     `Accent: ${job.brandKit.accentColor}`,
     '- Use the exact background hex above for the scene root background, the exact text hex for all body/headline text, the exact primary/secondary/accent hex for cards, pills, badges, charts, glows, and SVG strokes.',
-    '- These hex values come from the active UI palette and MUST flow through as the exact props.bgColor / props.textColor / props.accentColor values. Never hardcode #1D150C, #E77B40, #0B0F17, #FBBF24, or any other fallback color when the active palette differs.',
+    '- Card/container fills MUST come from props.surfaceColor or props.secondaryColor at solid (or >= 0.88) opacity. props.surfaceColor and props.surfaceAltColor are pre-derived from the secondary theme color: use them instead of inventing transparent backgrounds.',
+    '- These hex values come from the active UI palette and MUST flow through as the exact props.bgColor / props.textColor / props.secondaryColor / props.surfaceColor / props.accentColor values. Never hardcode #1D150C, #E77B40, #0B0F17, #FBBF24, or any other fallback color when the active palette differs.',
     '- If you need tints, derive them from the active hex with rgba()/opacity rather than swapping in a different palette.',
     `Voiceover: ${job.voiceoverEnabled ? 'ENABLED (audio is handled by the composition)' : 'DISABLED (silent visual pacing)'}`,
     `Captions: ${job.captionsEnabled && job.voiceoverEnabled ? 'ENABLED (the composition draws captions)' : 'DISABLED (do not draw caption text)'}`,
@@ -7813,7 +8015,8 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     '## PROPS CONTRACT (must match exactly)',
     'type Props = {',
-    '  accentColor: string; bgColor: string; textColor: string; mutedColor: string;',
+    '  accentColor: string; secondaryColor: string; surfaceColor: string; surfaceAltColor: string;',
+    '  bgColor: string; textColor: string; mutedColor: string;',
     '  characterBody: string; characterFace: string; characterAccent: string; characterShadow: string;',
     '  isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[];',
     '  data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean;',
@@ -7826,16 +8029,19 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- Build custom topic metaphors and story-driven props that match the master prompt. Avoid repetitive text cards.',
     '- Every scene — with or without the Stickman — must include at least one custom SVG prop, diagram, animated icon, chart, UI mockup, or kinetic typographic composition, plus layered parallax background depth.',
     CRISP_VECTOR_MAP_RULE,
-    '- Show 2–5 word kinetic key-phrases synced to the narration; never render a lone isolated word as the main visual.',
     ...(job.cleanBrollMode
-      ? ['- Do NOT render any scene title, top header, kicker, or banner. The concept line in the scene list is internal only.']
+      ? ['- Clean B-Roll: no main headlines/titles/text-only slides, but keep brief essential in-scene labels, chart numbers, axis values, and diagram annotations.']
+      : ['- Show 2–5 word kinetic key-phrases synced to the narration; never render a lone isolated word as the main visual.']),
+    ...(job.cleanBrollMode
+      ? ['- Clean B-Roll is ON: remove main headlines, titles, kickers, badges, and text-only slides. Preserve only brief essential in-scene data labels, chart numbers, axis values, map names, legend keys, and diagram annotations. The concept line in the scene list is internal only.']
       : ['- Never show the same title twice on screen. Each scene should have a single clear headline at most.']),
     '- Use the provided brand colors, keep text contrast high, and respect RTL/LTR direction.',
+    '- Language parity: the design complexity, card structure, chart richness, and animation beats are IDENTICAL for every language; only the visible copy changes. This applies in full to clean B-Roll mode and silent prompt-only mode too.',
     '- Animate continuously across the entire durationInFrames using useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never freeze.',
     '- Every scene must be responsive to the aspect ratio using useVideoConfig(); no overflow and no fixed single-frame assumptions.',
     `- Keep critical content out of the bottom ${captionSafeBottom}% safe zone.`,
     '',
-    ZOF_LIBRARY_CAPABILITIES,
+    ZOEDIT_LIBRARY_CAPABILITIES,
     '',
     '## IMPORT RESTRICTIONS',
     allowedImportsRule,
@@ -7859,11 +8065,11 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
   const { width, height } = aspectDimensions(job.aspectRatio);
   const depth25DTweakEnabled = job.enable25D === true;
   const allowedTweakImports = depth25DTweakEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", or "@remotion/google-fonts".';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".';
 
   return [
-    'You are the surgical Remotion scene editor for Zof Studio.',
+    'You are the surgical Remotion scene editor for Zoedit Studio.',
     'Apply a quick visual/motion tweak to the EXISTING generated scene files below. This is not a full regeneration.',
     '',
     STRICT_EFFICIENCY_RULE,
@@ -7874,17 +8080,22 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     '## FILES TO EDIT IN PLACE',
     ...sceneFiles,
     '',
+    VISUAL_QUALITY_CONTRACT,
+    '',
+    SFX_LIBRARY_RULE,
+    '',
     '## HARD RULES',
     '- Edit only the listed src/generated/*.tsx files. Do NOT create, delete, or rename files.',
     '- Do NOT edit src/generated/index.ts or any other project file unless a listed scene file does not exist yet.',
-    '- Preserve each component export name, the Props type, narration text, titles, scene durations, and all audio behavior.',
+    '- Preserve each component export name, narration text, titles, scene durations, and all audio behavior.',
+    '- If you use the secondary/surface tokens, extend that file\'s local Props type with `secondaryColor: string; surfaceColor: string; surfaceAltColor: string;` (the composition always supplies them). Never remove existing props.',
     '- Preserve audioSrc, audioDataUrl, and durationInFrames usage exactly; never add or remove voiceover logic.',
     '- Keep every scene file clean, modular, and concise: target 80–140 lines and reuse small local helpers.',
     '- Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so motion stays continuous for the whole scene.',
     '- Preserve the gentle 10-frame exit ease at the end of props.durationInFrames (opacity plus a tiny translateY/scale); never let the scene freeze before the composition transitions out.',
     '- Never add a scene-to-scene whoosh at frame 0 or a hard cut: the composition owns @remotion/transitions and the transition whoosh.',
     job.cleanBrollMode
-      ? `- Clean B-Roll is ON: render NO top header, kicker, scene title, title badge, or banner, and do not reserve a top 22% headline band. Keep the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% clear when captions are enabled.`
+      ? `- Clean B-Roll is ON: remove main headlines, titles, kickers, badges, and text-only slides, but preserve brief essential in-scene data labels, chart numbers, axis values, map names, legend keys, and diagram annotations. Do not reserve a top 22% headline band. Keep the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% clear when optional composition captions are enabled.`
       : `- Keep critical content out of the bottom ${Math.min(46, Math.max(28, job.captionBottomOffset + 8))}% safe zone (caption offset ${job.captionBottomOffset}%); reserve the top 22% for RTL/LTR headline and subtitle text and respect RTL spacing when the video language is RTL.`,
     ...(job.respectSafeZone === true && job.aspectRatio === '9:16'
       ? [
@@ -7893,14 +8104,14 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
       : []),
     '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
     `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
-    '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. At most one subtle `<SceneSfx name="pop|check|whoosh|sparkle" />` may be preserved per scene at volume 0.15–0.22, never at frame 0 or at the scene ending; remove any bell/chime/ding/success sound.',
+    '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. Preserve or add as many subtle `<SceneSfx name="..." />` cues as the on-screen actions warrant, selecting any fitting id from the full installed SFX library; keep the mix natural and remove any generic success ding, achievement bell, or celebration fanfare at the very end unless the user explicitly requested it.',
     '- Keep the Stickman or SilhouetteActor inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
     '- Never hand-draw symbols, religious icons, clocks, devices, or brand logos. Use `import { SmartIcon } from "../components/SmartIcon";` with any English keyword or brand name plus `brand` for logos. For human action use `import { SilhouetteActor } from "../components/SilhouetteActor";` with poses standing, praying-qiyam, praying-sujood, sitting-screen, or walking; keep it strictly featureless.',
     CRISP_VECTOR_MAP_RULE,
     ...cleanBrollPromptSection(job.cleanBrollMode),
     '- Use the exact active palette hex values from the scene props; never replace them with #1D150C or #E77B40 fallbacks.',
     '',
-    ZOF_LIBRARY_CAPABILITIES,
+    ZOEDIT_LIBRARY_CAPABILITIES,
     '',
     ...(depth25DTweakEnabled
       ? [
@@ -7926,7 +8137,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     `Aspect ratio: ${job.aspectRatio} (${width}x${height})`,
     `FPS: ${job.fps}`,
     `Language: ${languageName} (${languageMeta.native}) — ${languageDirection}`,
-    `Active palette — background ${job.brandKit.bgColor}; text ${job.brandKit.textColor}; primary ${job.brandKit.primaryColor}; secondary ${job.brandKit.secondaryColor}; accent ${job.brandKit.accentColor}. Use these exact hex values and never fall back to #1D150C or #E77B40.`,
+    `Active palette — background ${job.brandKit.bgColor}; text ${job.brandKit.textColor}; primary ${job.brandKit.primaryColor}; secondary ${job.brandKit.secondaryColor}; accent ${job.brandKit.accentColor}. Use these exact hex values and never fall back to #1D150C or #E77B40. Card fills must use props.surfaceColor / props.secondaryColor at solid opacity.`,
     `Voiceover: ${job.voiceoverEnabled ? 'ENABLED (reuse existing audio)' : 'DISABLED (silent visual pacing)'}`,
     `Captions: ${job.captionsEnabled ? 'ENABLED (the composition draws captions)' : 'DISABLED (do not draw caption text)'}`,
     '',
@@ -7946,13 +8157,15 @@ function runOpenCodeExport(
       '--dir',
       PROJECT_ROOT,
       '--title',
-      `Zof Export ${job.id.slice(0, 8)}`,
+      `Zoedit Export ${job.id.slice(0, 8)}`,
       prompt,
     ];
     onLog('info', 'opencode run --auto (headless) starting…');
+    const agentEnv: NodeJS.ProcessEnv = { ...process.env };
+    for (const key of SECRET_ENV_KEYS) delete agentEnv[key];
     const child = spawn('opencode', args, {
       cwd: PROJECT_ROOT,
-      env: { ...process.env },
+      env: agentEnv,
       stdio: ['ignore', 'pipe', 'pipe'],
       detached: process.platform !== 'win32',
     });
@@ -8021,7 +8234,7 @@ async function startServer() {
   process.once('SIGINT', () => shutdownDashboard(130));
   process.once('SIGTERM', () => shutdownDashboard(143));
 
-  const launcherPid = Number(process.env.ZOF_LAUNCHER_PID);
+  const launcherPid = Number(process.env.ZOEDIT_LAUNCHER_PID);
   if (Number.isInteger(launcherPid) && launcherPid > 1) {
     const launcherWatchdog = setInterval(() => {
       if (isPidRunning(launcherPid)) return;
@@ -8032,7 +8245,10 @@ async function startServer() {
   }
 
   rehydrateStudioSettingsFromSources();
-  fs.mkdirSync(ZOF_HOME_DIR, { recursive: true });
+  ensurePrivateStateDir();
+  for (const stateFile of [SETTINGS_FILE, CURRENT_PROJECT_FILE, USAGE_FILE]) {
+    if (fs.existsSync(stateFile)) restrictPrivateFile(stateFile);
+  }
   if (!fs.existsSync(CURRENT_PROJECT_FILE)) {
     const existingData = readParentData();
     if (existingData) {
@@ -8053,12 +8269,29 @@ async function startServer() {
   syncGeneratedRegistry();
 
   const app = express();
+  app.disable('x-powered-by');
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     const host = (req.headers.host || '').trim().toLowerCase();
     if (!ALLOWED_HOSTS.has(host)) {
       res.status(403).type('text/plain').send('Forbidden');
       return;
+    }
+
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader(
+      'Permissions-Policy',
+      'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+    );
+    if (
+      req.path.startsWith('/api/settings') ||
+      req.path.startsWith('/api/live-balances') ||
+      req.path.startsWith('/api/usage') ||
+      req.path.startsWith('/api/project')
+    ) {
+      res.setHeader('Cache-Control', 'no-store');
     }
 
     if (STATE_CHANGING_METHODS.has(req.method)) {
@@ -8081,7 +8314,7 @@ async function startServer() {
     if (origin && ALLOWED_LOCAL_ORIGINS.has(origin)) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-zof-session');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-zoedit-session, x-zoedit-ui-lang');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     }
     if (req.method === 'OPTIONS') {
@@ -8099,10 +8332,10 @@ async function startServer() {
   app.get('/api/health', (_req: Request, res: Response) => {
     res.json({
       ok: true,
-      app: 'zof-studio',
+      app: 'zoedit-studio',
       host: HOST,
       port: PORT,
-      service: 'Zof Studio API',
+      service: 'Zoedit Studio API',
       projectRoot: PROJECT_ROOT,
       dataFile: path.relative(PROJECT_ROOT, DATA_FILE),
       audioDir: path.relative(PROJECT_ROOT, AUDIO_DIR),
@@ -8192,6 +8425,8 @@ async function startServer() {
 
   app.get('/api/live-balances', async (req: Request, res: Response) => {
     const keys = resolveApiKeys(req);
+    const uiLanguage = requestUiLanguage(req);
+    const text = (ar: string, en: string) => (uiLanguage === 'en' ? en : ar);
     const elevenlabs: {
       configured: boolean;
       ok: boolean;
@@ -8225,13 +8460,18 @@ async function startServer() {
             elevenlabs.resetsAt = new Date(resetUnix * 1000).toISOString();
           }
         } else if (resp.status === 401 || resp.status === 403) {
-          elevenlabs.hint =
-            'فعّل صلاحية User: Read في مفتاح ElevenLabs لعرض الرصيد المتبقي.';
+          elevenlabs.hint = text(
+            'فعّل صلاحية User: Read في مفتاح ElevenLabs لعرض الرصيد المتبقي.',
+            'Enable the User: Read scope on your ElevenLabs key to show the remaining quota.',
+          );
         } else {
           elevenlabs.error = `ElevenLabs HTTP ${resp.status}`;
         }
       } catch {
-        elevenlabs.error = 'تعذر الاتصال بـ ElevenLabs الآن.';
+        elevenlabs.error = text(
+          'تعذر الاتصال بـ ElevenLabs الآن.',
+          'Could not connect to ElevenLabs right now.',
+        );
       }
     }
 
@@ -8281,7 +8521,10 @@ async function startServer() {
           llm.error = `OpenRouter HTTP ${resp.status}`;
         }
       } catch {
-        llm.error = 'تعذر الاتصال بـ OpenRouter الآن.';
+        llm.error = text(
+          'تعذر الاتصال بـ OpenRouter الآن.',
+          'Could not connect to OpenRouter right now.',
+        );
       }
     } else if (keys.deepseekKey) {
       llm.provider = 'deepseek';
@@ -8299,14 +8542,19 @@ async function startServer() {
           const info = Array.isArray(payload.balance_infos) ? payload.balance_infos[0] : undefined;
           const total = Number(info?.total_balance);
           llm.ok = true;
-          llm.label = payload.is_available === false ? 'DeepSeek (غير متاح)' : 'DeepSeek';
+          llm.label = payload.is_available === false
+            ? text('DeepSeek (غير متاح)', 'DeepSeek (unavailable)')
+            : 'DeepSeek';
           llm.remainingUsd = Number.isFinite(total) ? total : null;
           llm.currency = typeof info?.currency === 'string' ? info.currency : 'CNY';
         } else {
           llm.error = `DeepSeek HTTP ${resp.status}`;
         }
       } catch {
-        llm.error = 'تعذر الاتصال بـ DeepSeek الآن.';
+        llm.error = text(
+          'تعذر الاتصال بـ DeepSeek الآن.',
+          'Could not connect to DeepSeek right now.',
+        );
       }
     }
 
@@ -8398,7 +8646,11 @@ async function startServer() {
       res.status(400).json({ error: 'اسم ملف الفيديو غير صالح.' });
       return;
     }
-    const filePath = path.join(OUT_DIR, name);
+    const filePath = path.resolve(OUT_DIR, name);
+    if (!isPathInside(OUT_DIR, filePath)) {
+      res.status(400).json({ error: 'مسار ملف الفيديو غير صالح.' });
+      return;
+    }
     if (!fs.existsSync(filePath)) {
       res.status(404).json({ error: 'ملف الفيديو غير موجود.' });
       return;
@@ -8605,7 +8857,7 @@ async function startServer() {
       res.setHeader('cache-control', 'no-store');
       res.end(
         `<!doctype html><meta charset="utf-8"><title>Remotion Studio</title>` +
-          `<body style="font-family:system-ui,sans-serif;background:#0B0E14;color:#E2E8F0;padding:32px">` +
+          `<body style="font-family:system-ui,sans-serif;background:#090d16;color:#E2E8F0;padding:32px">` +
           `<h1 style="font-size:18px">Remotion Studio is not available</h1>` +
           `<p style="color:#94A3B8">${escapeHtml(studio.error || 'Could not start Remotion Studio.')}</p>` +
           `</body>`,
@@ -8613,8 +8865,25 @@ async function startServer() {
       return;
     }
     const hostname = req.hostname || 'localhost';
+    const studioUrl = `http://${hostname}:${studio.port}/`;
     res.setHeader('cache-control', 'no-store');
-    res.redirect(302, `http://${hostname}:${studio.port}/`);
+    res.setHeader('content-type', 'text/html;charset=utf-8');
+    res.end(
+      `<!doctype html><html lang="en" style="background:#090d16;color-scheme:dark"><head><meta charset="utf-8">` +
+        `<meta name="viewport" content="width=device-width,initial-scale=1"><title>Remotion Studio</title>` +
+        `<style>html,body{margin:0;height:100%;background:#090d16;overflow:hidden;font-family:Cairo,system-ui,sans-serif;color:#e2e8f0}` +
+        `#ze-studio-shell{position:fixed;inset:0;background:#090d16}` +
+        `#ze-studio-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#090d16;opacity:0;transition:opacity .28s ease}` +
+        `#ze-studio-loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(circle at 50% 35%,rgba(56,189,248,.12),transparent 40%),#090d16;transition:opacity .28s ease}` +
+        `#ze-studio-loader span{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8}` +
+        `.ze-studio-spinner{width:36px;height:36px;border-radius:999px;border:3px solid rgba(56,189,248,.18);border-top-color:#38bdf8;border-right-color:rgba(231,123,64,.85);box-shadow:0 0 28px -7px rgba(56,189,248,.6);animation:ze-spin .9s linear infinite}` +
+        `body.ready #ze-studio-frame{opacity:1}body.ready #ze-studio-loader{opacity:0;pointer-events:none}` +
+        `@keyframes ze-spin{to{transform:rotate(360deg)}}` +
+        `@media (prefers-reduced-motion: reduce){.ze-studio-spinner{animation-duration:.01ms!important;animation-iteration-count:1!important}}</style></head>` +
+        `<body><div id="ze-studio-shell"><iframe id="ze-studio-frame" src="${escapeHtml(studioUrl)}" title="Remotion Studio" allow="clipboard-read; clipboard-write; fullscreen" onload="document.body.classList.add('ready')"></iframe>` +
+        `<div id="ze-studio-loader"><div class="ze-studio-spinner"></div><span>Loading Remotion Studio...</span></div></div>` +
+        `<script>setTimeout(function(){document.body.classList.add('ready')},8000)</script></body></html>`,
+    );
   };
 
   app.get('/studio', handleOpenStudioPage);
@@ -9038,17 +9307,31 @@ async function startServer() {
     const voiceId = String(req.params.voiceId || '').trim();
 
     if (!/^[a-zA-Z0-9_-]{4,80}$/.test(voiceId)) {
-      res.status(400).json({ error: 'معرّف الصوت غير صالح.' });
+      res.status(400).json({
+        error: requestUiText(req, 'معرّف الصوت غير صالح.', 'Invalid voice ID.'),
+      });
       return;
     }
     if (!elevenlabsKey) {
-      res.status(400).json({ error: 'مفتاح ElevenLabs غير مضاف لجلب الصوت المباشر.' });
+      res.status(400).json({
+        error: requestUiText(
+          req,
+          'مفتاح ElevenLabs غير مضاف لجلب الصوت المباشر.',
+          'ElevenLabs key is not configured for live voice lookup.',
+        ),
+      });
       return;
     }
 
     const voice = await fetchElevenLabsVoiceById(elevenlabsKey, voiceId);
     if (!voice) {
-      res.status(404).json({ error: 'لم يتم العثور على الصوت بهذا المعرّف في ElevenLabs.' });
+      res.status(404).json({
+        error: requestUiText(
+          req,
+          'لم يتم العثور على الصوت بهذا المعرّف في ElevenLabs.',
+          'No ElevenLabs voice was found for this ID.',
+        ),
+      });
       return;
     }
 
@@ -9070,8 +9353,11 @@ async function startServer() {
       speakerBoost?: unknown;
       speed?: unknown;
       voiceoverEnabled?: unknown;
+      uiLanguage?: unknown;
     };
 
+    const ttsText = (ar: string, en: string) =>
+      normalizeUiLanguage(body.uiLanguage ?? requestUiLanguage(req)) === 'en' ? en : ar;
     const text = typeof body.text === 'string' ? body.text.trim().slice(0, 1500) : '';
     const voiceId = typeof body.voiceId === 'string' && /^[a-zA-Z0-9_-]{4,64}$/.test(body.voiceId) ? body.voiceId : 'pNInz6obpgDQGcFmaJgB';
     const modelId = typeof body.modelId === 'string' && body.modelId.trim() ? body.modelId.trim().slice(0, 64) : 'eleven_multilingual_v2';
@@ -9082,7 +9368,9 @@ async function startServer() {
     const speed = Math.min(1.2, Math.max(0.7, Number(body.speed ?? 1)));
 
     if (!text) {
-      res.status(400).json({ error: 'النص الصوتي مطلوب' });
+      res.status(400).json({
+        error: ttsText('النص الصوتي مطلوب', 'Voice text is required.'),
+      });
       return;
     }
 
@@ -9096,8 +9384,10 @@ async function startServer() {
         durationEstimateSec,
         characters: 0,
         usage: { ttsCharacters: 0, ttsCalls: 0, ttsUsd: 0 },
-        notice:
+        notice: ttsText(
           'الوضع الصامت مفعّل — لم يتم استدعاء ElevenLabs ولن يتم استهلاك أي رصيد.',
+          'Silent mode is on — ElevenLabs was not called and no quota was used.',
+        ),
       });
       return;
     }
@@ -9107,7 +9397,10 @@ async function startServer() {
         source: 'browser-tts',
         audioDataUrl: null,
         durationEstimateSec,
-        notice: 'مفتاح ElevenLabs غير مضاف — يتم تشغيل معاينة صوتية محلية.',
+        notice: ttsText(
+          'مفتاح ElevenLabs غير مضاف — يتم تشغيل معاينة صوتية محلية.',
+          'ElevenLabs key is not configured — using a local voice preview.',
+        ),
       });
       return;
     }
@@ -9140,7 +9433,10 @@ async function startServer() {
           source: 'browser-tts',
           audioDataUrl: null,
           durationEstimateSec,
-          notice: `تعذر التوليد عبر ElevenLabs (${ttsResp.status}): ${errText.slice(0, 120)}`,
+          notice: ttsText(
+            `تعذر التوليد عبر ElevenLabs (${ttsResp.status}): ${errText.slice(0, 120)}`,
+            `Could not generate with ElevenLabs (${ttsResp.status}): ${errText.slice(0, 120)}`,
+          ),
         });
         return;
       }
@@ -9174,7 +9470,10 @@ async function startServer() {
         source: 'browser-tts',
         audioDataUrl: null,
         durationEstimateSec,
-        notice: 'انتهت مهلة الاتصال بخدمة ElevenLabs، تم تفعيل المعاينة المحلية.',
+        notice: ttsText(
+          'انتهت مهلة الاتصال بخدمة ElevenLabs، تم تفعيل المعاينة المحلية.',
+          'The ElevenLabs request timed out; using the local preview instead.',
+        ),
       });
     }
   });
@@ -9424,10 +9723,16 @@ async function startServer() {
     res: Response,
     body: VoiceoverScriptBody,
   ): Promise<void> {
+    const scriptUiText = (ar: string, en: string) => requestUiText(req, ar, en);
     const topic =
       typeof body.topic === 'string' ? body.topic.trim().slice(0, 12000) : '';
     if (!topic) {
-      res.status(400).json({ error: 'يرجى إدخال موضوع الفيديو أو الفكرة أولاً.' });
+      res.status(400).json({
+        error: scriptUiText(
+          'يرجى إدخال موضوع الفيديو أو الفكرة أولاً.',
+          'Please enter the video topic or idea first.',
+        ),
+      });
       return;
     }
     const scriptLanguage = normalizeVideoLanguage(
@@ -9531,10 +9836,10 @@ async function startServer() {
       modelUsed: lastModel || requestedModel,
       fallbackUsed: true,
       usage,
-      notice:
-        scriptLanguage === 'ar'
-          ? `تعذر الوصول إلى مزودي الذكاء الاصطناعي لموضوع "${topic.slice(0, 60)}". تم توليد مسودة صوتية محلية؛ تحقق من مفتاح API في الإعدادات للحصول على توليد حي.`
-          : `No AI provider was reachable for "${topic.slice(0, 60)}". Generated a local spoken draft; verify your API key in settings for live output.`,
+      notice: scriptUiText(
+        `تعذر الوصول إلى مزودي الذكاء الاصطناعي لموضوع "${topic.slice(0, 60)}". تم توليد مسودة صوتية محلية؛ تحقق من مفتاح API في الإعدادات للحصول على توليد حي.`,
+        `No AI provider was reachable for "${topic.slice(0, 60)}". Generated a local spoken draft; verify your API key in settings for live output.`,
+      ),
       lastProviderLabel: lastProviderLabel || undefined,
     });
   }
@@ -9675,6 +9980,7 @@ async function startServer() {
           ? 'SUBTITLES ARE HIDDEN: the voiceover remains active, but no bottom caption strip will render. Move the essential message into bold on-screen visualLabel/visualValue text and visual storytelling while keeping narration for the spoken track.'
           : 'Captions are visible as short bottom chunks, so keep narration and visual labels tightly aligned.',
       'Creative direction is mandatory: every scene must feel visually different. Do not repeat the same visualType, pose, layout, or camera move twice in a row.',
+      'Language-neutral visual quality is mandatory: plan the SAME structured cards, icon badges, chart/diagram density, layered motion, and visual hierarchy for every language. Only localize visible strings; never simplify the design because the language is Arabic, Hebrew, Hindi, or another non-Latin script.',
       'Assign each micro-scene a visual composition and a step-by-step animated beat that matches the exact insight being spoken. Use comparison-box for contrasts, generative-scene with flow/cycle motifs for processes and loops, step-timeline for sequences, stat-number for data, warning-card for mistakes, and cta for the action step.',
       visualStyle === 'smart-mix'
         ? 'For AI Smart Mix, set "showCharacter" per scene: true only when an expressive faceless character genuinely helps the emotional beat; false when data, flow, comparison, or pure motion graphics communicate better.'
@@ -9709,8 +10015,9 @@ async function startServer() {
       '- "layout": one of "split", "stacked", "overlay", "centered" — never repeat the same layout in two consecutive scenes',
       '- "camera": one of "slow-zoom-in", "slow-zoom-out", "pan-left", "pan-right", "push-in", "static" — vary the camera motion',
       '- "backgroundPreset": optionally one of "animated-mesh", "kinetic-grid", "floating-orbs", "deep-wave", "particle-field", "editorial-paper", "neon-cyber" — never repeat the same background in consecutive scenes',
-      '- "sfxId": default to "none". Attach at most one subtle SFX to genuinely pivotal visual transitions or chart reveals, never more than 35% of scenes. Use "none" for calm, night, reflective, or emotional beats. Choose only from "whoosh-soft", "whoosh-whip", "pop-soft", "click-subtle", "slide", "type-tick", "toggle-soft", "impact-soft". Never use any bell, chime, ding, success, alarm, or notification sound (for example never "ding-success" or "notification-chime") and never place SFX at a scene ending.',
-      '- "sfxAt": trigger offset in seconds (0.12 to 1.2 only) when sfxId is not "none"; keep it early in the scene with at least 0.6s of breathing room before the end.',
+      `- "sfxId": default to "none". Attach any fitting primary SFX from the full installed library when it matches a real visual action: ${SFX_LIBRARY_LIST}. Never use an unsolicited victory chime or fanfare at the very end unless the user prompt explicitly asks for one.`,
+      '- "sfxCues": optional array of as many event-synced cues as the scene needs (no fixed cap), e.g. [{"frameOffset": 12, "sound": "type-tick"}, {"frameOffset": 34, "sound": "pop-soft"}]. Choose any sound id from the full installed SFX library for text/typing, UI clicks/toggles, charts/data, card entrances, impacts, risers, whooshes, and transitions. Keep the mix natural and avoid an unsolicited fanfare at the ending.',
+      '- "sfxAt": primary trigger offset in seconds (0.12 to 1.2 only) when sfxId is not "none"; keep it early in the scene with at least 0.5s of breathing room before the end.',
       `- "durationSec": number between ${scriptDepth === 'condensed' ? '3.5 and 4.5' : '4 and 5.5'} (the render pipeline will replace it with the measured ElevenLabs MP3 duration)`,
       'Output the JSON array only. It must contain no commentary, no markdown, and no repeated scenes.',
     ].join('\n');
@@ -10072,18 +10379,20 @@ async function startServer() {
         : null;
 
     const systemPrompt = [
-      'You are a surgical Remotion scene editor for Zof Studio.',
+      'You are a surgical Remotion scene editor for Zoedit Studio.',
       'You receive ONLY the targeted scene(s) plus tiny before/after context. Never rewrite the whole video.',
       'Return exactly one JSON array (no markdown fences, no commentary). Each object must represent one targeted scene and must keep the same "id".',
       'Preserve every non-target scene exactly as-is. Never touch narration, title, durationSec, audio files, audioSrc, audioDataUrl, or audioDuration.',
       'Only update surgical visual fields: pose, visualType, visualLabel, visualValue, visualPrompt, visualSvg, layout, camera, background, backgroundPreset, visualKeywords, motif, showCharacter, customCodeBrief, characters, characterLayout, ambientScene, sfxCues, sfxAt.',
       'Keep the overall video duration identical. Do not change durationSec.',
-      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "@iconify/react", "simple-icons", "lucide-react", "d3-geo", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", and "../components/SceneSfx". Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, and company logos, and <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures — never hand-draw them. Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
+      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "@iconify/react", "simple-icons", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", and "../components/SceneSfx". Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, and company logos, and <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures — never hand-draw them. Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
       'The TSX module must export exactly one named component with the same component name as the existing generatedComponent when provided.',
-      'Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so the segment stays animated. Respect RTL Arabic text when language is ar.',
+      'Declare a local Props type that includes at least: accentColor, secondaryColor, surfaceColor, surfaceAltColor, bgColor, textColor, mutedColor, characterBody, characterFace, characterAccent, characterShadow (all string), isRtl (boolean), language (string), optional title/text/keywords/data/showCharacter, and durationInFrames (number). The composition always supplies these.',
+      'Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so the segment stays animated. Set direction from props.isRtl for every language, not only Arabic.',
       `Prioritize the requested aspect ratio (${aspectRatio}) while keeping the TSX responsive: read width/height from useVideoConfig(), derive isLandscape = width > height and isSquare = width === height, and use percentage/flex containers with minHeight 0 so switching to 9:16, 16:9, or 1:1 never clips or overflows.`,
       'For 16:9 use a two-column split with maxHeight 72% and at least 64px/48px safe padding; for 1:1 use compact centered/split spacing; for 9:16 use vertical stacking with at least 80px top and 112px bottom safe zones.',
-      'Reserve the bottom 22% for captions. Keep at most one subtle SFX cue per scene at volume 0.12–0.25, use sfxCues frameOffset values relative to the scene start, never place a bell/chime/ding/success sound, and never place any cue in the final 0.6s of the scene.',
+      'Reserve the bottom 22% for captions. Use as many event-synced SFX cues per scene as the visual actions warrant (no fixed cap), choosing any fitting id from the full installed SFX library with sfxCues frameOffset values relative to the scene start. Sync text/typing to ticks, UI/card entrances to clicks/pops, charts/data to ticks or reveals, and mid-scene transitions to whooshes. Never place an unsolicited victory chime or fanfare at the ending unless the user explicitly requested it.',
+      VISUAL_QUALITY_CONTRACT,
       wcag.promptBlock,
     ].join('\n');
 
@@ -10431,7 +10740,7 @@ async function startServer() {
           headers: {
             Authorization: `Bearer ${openrouterKey}`,
             'Content-Type': 'application/json',
-            'X-Title': 'Zof Studio',
+            'X-Title': 'Zoedit Studio',
           },
           body: JSON.stringify({
             model: openrouterModel,
@@ -10533,14 +10842,24 @@ async function startServer() {
         ? body.tweakInstruction.trim().slice(0, 1200)
         : '';
     const project = tweakInstruction ? readProjectState() : null;
+    const requestLanguage = normalizeUiLanguage(body.uiLanguage);
+    const requestText = (ar: string, en: string) => (requestLanguage === 'en' ? en : ar);
     if (tweakInstruction && (!project || project.scenes.length === 0)) {
       res.status(400).json({
-        error: 'لا توجد مشاهد مولّدة لتعديلها. أنشئ فيديو أولاً ثم استخدم التعديل السريع.',
+        error: requestText(
+          'لا توجد مشاهد مولّدة لتعديلها. أنشئ فيديو أولاً ثم استخدم التعديل السريع.',
+          'There are no generated scenes to edit. Create a video first, then use Quick Tweak.',
+        ),
       });
       return;
     }
     if (!prompt && !tweakInstruction) {
-      res.status(400).json({ error: 'يرجى كتابة برومبت الفيديو الرئيسي أولاً.' });
+      res.status(400).json({
+        error: requestText(
+          'يرجى كتابة برومبت الفيديو الرئيسي أولاً.',
+          'Please write the main video prompt first.',
+        ),
+      });
       return;
     }
     if (tweakInstruction && project) {
@@ -10560,15 +10879,20 @@ async function startServer() {
       );
       if (missing.length > 0) {
         res.status(400).json({
-          error:
+          error: requestText(
             'ملفات المشاهد المولّدة غير موجودة. أعد إنشاء الفيديو أولاً ثم استخدم التعديل السريع.',
+            'The generated scene files are missing. Regenerate the video first, then use Quick Tweak.',
+          ),
         });
         return;
       }
     }
     if (exportLockIsActive()) {
       res.status(409).json({
-        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+        error: requestText(
+          'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+          'An export job is already running. Wait for it to finish before starting again.',
+        ),
       });
       return;
     }
@@ -10745,7 +11069,10 @@ async function startServer() {
 
     if (!acquireExportLock(jobId)) {
       res.status(409).json({
-        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+        error: requestText(
+          'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+          'An export job is already running. Wait for it to finish before starting again.',
+        ),
       });
       return;
     }
@@ -10757,7 +11084,10 @@ async function startServer() {
       releaseExportLock(jobId);
       console.error('[export] failed to reset active composition metadata', error);
       res.status(500).json({
-        error: 'تعذر تحديث بيانات التركيب النشط قبل بدء التصدير. أعد المحاولة.',
+        error: requestText(
+          'تعذر تحديث بيانات التركيب النشط قبل بدء التصدير. أعد المحاولة.',
+          'Could not refresh the active composition before starting the export. Try again.',
+        ),
       });
       return;
     }
@@ -10778,15 +11108,28 @@ async function startServer() {
   });
 
   app.post('/api/export/cancel', (req: Request, res: Response) => {
+    const cancelBody = (req.body || {}) as { jobId?: unknown; uiLanguage?: unknown };
+    const cancelText = (ar: string, en: string) =>
+      normalizeUiLanguage(cancelBody.uiLanguage ?? requestUiLanguage(req)) === 'en' ? en : ar;
     const requestedJobId =
-      typeof (req.body || {}).jobId === 'string' ? String((req.body || {}).jobId) : '';
+      typeof cancelBody.jobId === 'string' ? String(cancelBody.jobId) : '';
     const activeJobId = activeExportLock?.jobId || '';
     if (!activeJobId || (requestedJobId && requestedJobId !== activeJobId)) {
-      res.status(404).json({ error: 'لا توجد عملية تصدير قيد التنفيذ لإيقافها.' });
+      res.status(404).json({
+        error: cancelText(
+          'لا توجد عملية تصدير قيد التنفيذ لإيقافها.',
+          'There is no active export job to cancel.',
+        ),
+      });
       return;
     }
 
-    const jobId = cancelActiveExport('تم إيقاف عملية التصدير بواسطة المستخدم.');
+    const jobId = cancelActiveExport(
+      cancelText(
+        'تم إيقاف عملية التصدير بواسطة المستخدم.',
+        'Export was cancelled by the user.',
+      ),
+    );
     res.json({ ok: true, jobId });
   });
 
@@ -10800,7 +11143,15 @@ async function startServer() {
     res.flushHeaders();
 
     if (!job) {
-      res.write(`event: error\ndata: ${JSON.stringify({ message: 'لم يتم العثور على مهمة تصدير.' })}\n\n`);
+      res.write(
+        `event: error\ndata: ${JSON.stringify({
+          message: requestUiText(
+            req,
+            'لم يتم العثور على مهمة تصدير.',
+            'Export job was not found.',
+          ),
+        })}\n\n`,
+      );
       res.end();
       return;
     }
@@ -10812,13 +11163,17 @@ async function startServer() {
 
     const sendEvent = (eventName: string, payload: Record<string, unknown>) => {
       if (closed) return;
-      res.write(`event: ${eventName}\ndata: ${JSON.stringify(payload)}\n\n`);
+      const safePayload =
+        typeof payload.message === 'string'
+          ? { ...payload, message: redactSecretText(payload.message) }
+          : payload;
+      res.write(`event: ${eventName}\ndata: ${JSON.stringify(safePayload)}\n\n`);
     };
     const sendLog = (
       step: ExportStepId,
       level: 'info' | 'success' | 'warn' | 'error',
       message: string,
-    ) => sendEvent('log', { step, level, message });
+    ) => sendEvent('log', { step, level, message: redactSecretText(message) });
     const sendStep = (
       step: ExportStepId,
       status: 'pending' | 'active' | 'completed' | 'error',
@@ -11109,8 +11464,8 @@ async function startServer() {
             'code',
             'info',
             tr(
-              `تم تنظيف مؤثرات المشاهد لتبقى ناعمة وواحدة فقط دون أي جرس أو نغمة نهاية (${sanitizedSfxFiles.length} ملف).`,
-              `Sanitized scene SFX to stay soft and single per scene with no bells or ending tones (${sanitizedSfxFiles.length} file(s)).`,
+              `تم تنظيف مؤثرات المشاهد لتبقى ناعمة ومتزامنة مع الحركة دون أي جرس أو نغمة نهاية (${sanitizedSfxFiles.length} ملف).`,
+              `Sanitized scene SFX to stay event-synced and subtle with no ending bells or fanfares (${sanitizedSfxFiles.length} file(s)).`,
             ),
           );
         }
@@ -11344,13 +11699,23 @@ async function startServer() {
       uiLanguage?: unknown;
     };
 
+    const requestLanguage = normalizeUiLanguage(body.uiLanguage);
+    const requestText = (ar: string, en: string) => (requestLanguage === 'en' ? en : ar);
     if (!Array.isArray(body.scenes) || body.scenes.length === 0) {
-      res.status(400).json({ error: 'يجب وجود مشهد واحد على الأقل للتصيير.' });
+      res.status(400).json({
+        error: requestText(
+          'يجب وجود مشهد واحد على الأقل للتصيير.',
+          'At least one scene is required to render.',
+        ),
+      });
       return;
     }
     if (exportLockIsActive()) {
       res.status(409).json({
-        error: 'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+        error: requestText(
+          'هناك مهمة تصدير قيد التنفيذ بالفعل. انتظر اكتمالها قبل البدء من جديد.',
+          'An export job is already running. Wait for it to finish before starting again.',
+        ),
       });
       return;
     }
@@ -11477,7 +11842,7 @@ async function startServer() {
     // Each scene duration is then measured from the produced MP3 with ffprobe.
     const prepLog = (level: 'info' | 'success' | 'warn' | 'error', message: string) => {
       const prefix = level === 'error' ? '[render:error]' : '[render]';
-      console.log(`${prefix} ${message}`);
+      console.log(`${prefix} ${redactSecretText(message)}`);
     };
     const generatedAudio = await prepareSceneAudio(job, prepLog);
     job.audioPrepared = true;
@@ -11556,9 +11921,17 @@ async function startServer() {
   });
 
   app.get('/api/render/output/:jobId', (req: Request, res: Response) => {
-    const jobId = String(req.params.jobId || '');
+    const jobId = String(req.params.jobId || '').trim();
+    if (!/^[a-zA-Z0-9-]{8,80}$/.test(jobId)) {
+      res.status(400).json({ error: 'معرّف مهمة التصيير غير صالح.' });
+      return;
+    }
     const job = renderJobs.get(jobId);
-    const outputPath = job?.outputPath || path.join(OUT_DIR, `${jobId}.mp4`);
+    const outputPath = path.resolve(job?.outputPath || path.join(OUT_DIR, `${jobId}.mp4`));
+    if (!isPathInside(OUT_DIR, outputPath)) {
+      res.status(403).json({ error: 'مسار ملف التصيير خارج مجلد الإخراج المسموح.' });
+      return;
+    }
 
     if (!fs.existsSync(outputPath)) {
       res.status(404).json({ error: 'ملف التصيير غير موجود بعد.' });
@@ -11608,7 +11981,11 @@ async function startServer() {
 
     const sendEvent = (eventName: string, payload: Record<string, unknown>) => {
       if (closed) return;
-      res.write(`event: ${eventName}\ndata: ${JSON.stringify(payload)}\n\n`);
+      const safePayload =
+        typeof payload.message === 'string'
+          ? { ...payload, message: redactSecretText(payload.message) }
+          : payload;
+      res.write(`event: ${eventName}\ndata: ${JSON.stringify(safePayload)}\n\n`);
     };
 
     const sendLog = (
@@ -11616,7 +11993,7 @@ async function startServer() {
       level: 'info' | 'success' | 'warn' | 'error',
       message: string,
     ) => {
-      sendEvent('log', { step, level, message });
+      sendEvent('log', { step, level, message: redactSecretText(message) });
     };
     const tr = (ar: string, en: string) => uiText(job, ar, en);
 
@@ -11886,7 +12263,7 @@ async function startServer() {
   }
 
   dashboardHttpServer = app.listen(PORT, HOST, () => {
-    console.log(`Zof Studio server listening on http://${HOST}:${PORT}`);
+    console.log(`Zoedit Studio server listening on http://${HOST}:${PORT}`);
     console.log(`Remotion project: ${PROJECT_ROOT}`);
   });
 }
