@@ -256,6 +256,16 @@ zoedit-studio/
 └── build/                  Remotion bundle output (git-ignored)
 ```
 
+## Changelog
+
+### v1.2.0
+
+- **Zero-scroll desktop NLE layout** — compact toolbar, draggable split panels, unified responsive preview stage, pinned tools tabs, and a resizable scene/audio timeline.
+- **Full local workspace persistence** — duration, aspect ratio, FPS, languages, voiceover/captions, SFX, display modes, palette, watermark, and AI provider/model now survive hard reloads with legacy-storage migration.
+- **Full-library context-aware SFX** — all 18 local SFX assets are wired to scene code and cue generation with no fixed cue-count cap, plus a live `Test Volume` preview that matches the selected gain.
+- **Dark Remotion Studio loading** — dark Chromium/Studio mode, a dark launcher shell, and a sleek loading overlay in the Live Preview while Studio initializes.
+- **Security hardening** — owner-only key/state permissions, secret redaction in logs, stricter generated-scene sandboxing, path-confinement checks, security headers, and preserved loopback/Origin/Host protections.
+
 ## Development Checks
 
 ```bash
