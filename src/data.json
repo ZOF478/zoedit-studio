@@ -1,47 +1,15 @@
 {
   "meta": {
-    "title": "This whole video",
-    "topic": "Create a high-energy, 30-second vertical (9:16) product promo video for **ZoEdit Studio**—with a bold meta hook revealing that this entire video was generated inside ZoEdit Studio itself from a single prompt.\n\nVisual direction & pacing across 5 tight scenes (30s total):\n- **Scene 1 (0–5s | The Meta Hook):** Dark sleek tech background with glowing cyan/electric-blue accents. Kinetic bold typography slams in: \"This entire video was made with ONE prompt.\" Reveal the attached **Logo zoedit studio** with a crisp spring scale-in and subtle 2.5D glow.\n- **Scene 2 (5–11s | The Problem):** Fast, punchy visual contrast showing heavy video editors lagging vs. clean code-driven speed. Big readable text: \"Heavy editors slow you down. Prompts don't.\"\n- **Scene 3 (11–19s | Product Showcase):** Smoothly bring in the attached **Dashboard** screenshot inside a sleek, floating 2.5D tilted dark-UI showcase card with subtle zoom-in highlights. Callout badges animate around it: \"Remotion + AI Agents\", \"Free & Offline TTS\", \"Auto-Synced Captions\".\n- **Scene 4 (19–25s | Zero Cost & Open Source):** Clean animated metric cards and badges popping in with crisp spring physics: \"100% Open-Source (MIT)\", \"Local-First Privacy\", \"$0.00 Render Cost\".\n- **Scene 5 (25–30s | Outro & CTA):** Bring back the **Logo zoedit studio** centered with an energetic pulse, paired with bold CTA text: \"Build motion graphics at prompt speed\" and \"github.com/ZOF478/zoedit-studio\" + \"studio.zoedit.com\".\n\nStyle rules: High-contrast dark slate and electric blue/cyan palette, large mobile-safe typography (zero text overlapping the 2.5D dashboard screenshot), smooth spring transitions, and dynamic UI sound effects on every transition.",
-    "description": "This whole video · One prompt inside ZoEdit Studio · No heavy timeline just type and AI · Everything runs local with zero render cost · So skip the slow editors · Build motion graphics at prompt speed find"
+    "title": "La Villa Savoye à Poissy n est",
+    "topic": "Crée une vidéo éducative en motion graphics de 60 secondes (environ 140 mots) en français sur l'analyse architecturale des plans de la Villa Savoye de Le Corbusier (1928-1931).\n\nStructure du script et des scènes :\n1. Introduction (0-10s) : Présentation de la Villa Savoye à Poissy comme manifeste de l'architecture moderne et de la « promenade architecturale ».\n2. Le Rez-de-chaussée (10-22s) : Analyse du plan courbe vitré dicté par le rayon de braquage des voitures, la grille régulière de pilotis en béton armé, le hall d'entrée, la rampe centrale et l'escalier en colimaçon.\n3. Le Premier étage / Piano Nobile (22-38s) : Plan libre dégagé des murs porteurs, organisation en L autour du jardin suspendu, fenêtres en bandeau offrant une lumière continue et une vue panoramique.\n4. Le Toit-terrasse (38-50s) : Le solarium aux formes sculpturales courbes qui couronne la promenade architecturale et dialogue avec le paysage.\n5. Conclusion (50-60s) : Synthèse des 5 points de l'architecture moderne visibles dans ces plans (pilotis, toit-jardin, plan libre, fenêtre-bandeau, façade libre).\n\nStyle visuel : Schémas architecturaux minimalistes, grilles géométriques précises, animations vectorielles des trois niveaux en vue de dessus (plans 2D) avec mise en surbrillance des axes de circulation (rampe et escalier), typographie technique épurée, sans personnages humains.",
+    "description": "La Villa Savoye à Poissy n est · Au rez de chaussée le plan courbe · On y trouve un hall une rampe · À l étage le plan libre s · Les fenêtres en bandeau apportent une lumière · Le toit terrasse avec son solarium aux · Ces plans révèlent les"
   },
-  "width": 1080,
-  "height": 1920,
+  "width": 1920,
+  "height": 1080,
   "fps": 60,
-  "durationInFrames": 1801,
+  "durationInFrames": 3349,
   "style": "stickman",
-  "script_language": "en",
-  "user_assets": [
-    {
-      "id": "be285670-7eeb-4008-9a96-fdbe807d3a31",
-      "filename": "be285670-7eeb-4008-9a96-fdbe807d3a31.png",
-      "role": "logo",
-      "note": "Logo zoedit studio",
-      "originalName": "logo png (1).png",
-      "mimeType": "image/png",
-      "size": 1284822,
-      "width": 2048,
-      "height": 2048,
-      "aspectRatio": 1,
-      "createdAt": 1795720557197,
-      "src": "user-assets/be285670-7eeb-4008-9a96-fdbe807d3a31.png",
-      "url": "/user-assets/be285670-7eeb-4008-9a96-fdbe807d3a31.png"
-    },
-    {
-      "id": "126d67c4-2c2d-44a1-ab7e-0ea378785850",
-      "filename": "126d67c4-2c2d-44a1-ab7e-0ea378785850.png",
-      "role": "screenshot",
-      "note": "Dashboard",
-      "originalName": "Screenshot 2026-11-26 191637.png",
-      "mimeType": "image/png",
-      "size": 201786,
-      "width": 1920,
-      "height": 950,
-      "aspectRatio": 2.0211,
-      "createdAt": 1795720609528,
-      "src": "user-assets/126d67c4-2c2d-44a1-ab7e-0ea378785850.png",
-      "url": "/user-assets/126d67c4-2c2d-44a1-ab7e-0ea378785850.png"
-    }
-  ],
+  "script_language": "fr",
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
@@ -60,14 +28,14 @@
   },
   "brand_kit": {
     "name": "ZOEDIT",
-    "primary": "#00A6F4",
-    "secondary": "#072233",
-    "accent": "#00A6F4",
+    "primary": "#F59E0B",
+    "secondary": "#E77B40",
+    "accent": "#FBBF24",
     "success": "#16A34A",
     "danger": "#DC2626",
-    "background": "#0E121A",
-    "text": "#F8FAFC",
-    "muted": "rgba(248, 250, 252, 0.72)",
+    "background": "#141416",
+    "text": "#FAFAFA",
+    "muted": "rgba(250, 250, 250, 0.72)",
     "watermark": "@ZofStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
@@ -78,37 +46,112 @@
   },
   "scenes": [
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-1",
-      "kicker": "This whole video",
-      "title": "This whole video",
-      "subtitle": "This whole video",
-      "caption": "This whole video?",
-      "duration": 2.1333333333333333,
-      "durationInFrames": 128,
-      "audioSrc": "audio/scene-1795723370480-9012fb28.mp3",
-      "audioDuration": 1.872,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-1",
+      "kicker": "La Villa Savoye à Poissy n est",
+      "title": "La Villa Savoye à Poissy n est",
+      "subtitle": "La Villa Savoye à Poissy n est",
+      "caption": "La Villa Savoye, à Poissy, n’est pas une maison : c’est un manifeste de l’architecture moderne signé Le Corbusier.",
+      "duration": 7.533333333333333,
+      "durationInFrames": 452,
+      "audioSrc": "audio/scene-1795730136738-9d525db4.mp3",
+      "audioDuration": 7.272,
       "wordTimings": [
         {
-          "word": "This",
-          "start": 0.1,
-          "end": 0.3375
+          "word": "La",
+          "start": 0.15,
+          "end": 0.325
         },
         {
-          "word": "whole",
-          "start": 0.35,
-          "end": 0.5625
+          "word": "Villa",
+          "start": 0.325,
+          "end": 0.575
         },
         {
-          "word": "video",
-          "start": 0.575,
-          "end": 0.975
+          "word": "Savoye",
+          "start": 0.625,
+          "end": 1.1125
+        },
+        {
+          "word": "à",
+          "start": 1.325,
+          "end": 1.4
+        },
+        {
+          "word": "Poissy",
+          "start": 1.4625,
+          "end": 1.9
+        },
+        {
+          "word": "n’est",
+          "start": 2.125,
+          "end": 2.2625
+        },
+        {
+          "word": "pas",
+          "start": 2.325,
+          "end": 2.4125
+        },
+        {
+          "word": "une",
+          "start": 2.4375,
+          "end": 2.575
+        },
+        {
+          "word": "maison",
+          "start": 2.575,
+          "end": 2.975
+        },
+        {
+          "word": "c’est",
+          "start": 3.225,
+          "end": 3.375
+        },
+        {
+          "word": "un",
+          "start": 3.425,
+          "end": 3.525
+        },
+        {
+          "word": "manifeste",
+          "start": 3.5375,
+          "end": 4.0625
+        },
+        {
+          "word": "de",
+          "start": 4.15,
+          "end": 4.2125
+        },
+        {
+          "word": "l’architecture",
+          "start": 4.225,
+          "end": 4.8875
+        },
+        {
+          "word": "moderne",
+          "start": 4.9,
+          "end": 5.325
+        },
+        {
+          "word": "signé",
+          "start": 5.3875,
+          "end": 5.7125
+        },
+        {
+          "word": "Le",
+          "start": 5.725,
+          "end": 5.8
+        },
+        {
+          "word": "Corbusier",
+          "start": 5.8375,
+          "end": 6.35
         }
       ],
       "sfxSrc": "sfx/whoosh-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(135deg, rgba(0, 166, 244, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
       "character": {
         "pose": "explaining",
@@ -121,475 +164,850 @@
         {
           "type": "custom_tsx",
           "component": "Scene1",
-          "title": "This whole video",
-          "text": "This whole video",
+          "title": "La Villa Savoye à Poissy n est",
+          "text": "La Villa Savoye à Poissy",
           "keywords": [
-            "This whole video"
+            "La Villa Savoye à Poissy"
           ],
           "data": {
-            "narration": "This whole video?",
+            "narration": "La Villa Savoye, à Poissy, n’est pas une maison : c’est un manifeste de l’architecture moderne signé Le Corbusier.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-2",
-      "kicker": "One prompt inside ZoEdit Studio",
-      "title": "One prompt inside ZoEdit Studio",
-      "subtitle": "One prompt inside ZoEdit Studio",
-      "caption": "One prompt inside ZoEdit Studio.",
-      "duration": 2.75,
-      "durationInFrames": 165,
-      "audioSrc": "audio/scene-1795723372706-fd3be665.mp3",
-      "audioDuration": 2.496,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-2",
+      "kicker": "Au rez de chaussée le plan courbe",
+      "title": "Au rez de chaussée le plan courbe",
+      "subtitle": "Au rez de chaussée le plan courbe",
+      "caption": "Au rez-de-chaussée, le plan courbe vitré épouse le rayon de braquage des voitures, tandis qu’une grille régulière de pilotis en béton armé libère l’espace.",
+      "duration": 8.95,
+      "durationInFrames": 537,
+      "audioSrc": "audio/scene-1795730139903-e67af498.mp3",
+      "audioDuration": 8.688,
       "wordTimings": [
         {
-          "word": "One",
+          "word": "Au",
           "start": 0.1,
-          "end": 0.4
+          "end": 0.1875
         },
         {
-          "word": "prompt",
-          "start": 0.4125,
-          "end": 0.75
+          "word": "rez-de-chaussée",
+          "start": 0.1875,
+          "end": 0.8
         },
         {
-          "word": "inside",
-          "start": 0.7625,
-          "end": 1.1875
+          "word": "le",
+          "start": 1.0375,
+          "end": 1.1625
         },
         {
-          "word": "ZoEdit",
-          "start": 1.2,
-          "end": 1.5875
+          "word": "plan",
+          "start": 1.225,
+          "end": 1.375
         },
         {
-          "word": "Studio",
-          "start": 1.6,
-          "end": 2.1125
+          "word": "courbe",
+          "start": 1.4375,
+          "end": 1.6375
+        },
+        {
+          "word": "vitré",
+          "start": 1.675,
+          "end": 2.075
+        },
+        {
+          "word": "épouse",
+          "start": 2.1,
+          "end": 2.4625
+        },
+        {
+          "word": "le",
+          "start": 2.4625,
+          "end": 2.5625
+        },
+        {
+          "word": "rayon",
+          "start": 2.5625,
+          "end": 2.85
+        },
+        {
+          "word": "de",
+          "start": 2.9,
+          "end": 2.95
+        },
+        {
+          "word": "braquage",
+          "start": 2.9875,
+          "end": 3.35
+        },
+        {
+          "word": "des",
+          "start": 3.4,
+          "end": 3.475
+        },
+        {
+          "word": "voitures",
+          "start": 3.475,
+          "end": 3.975
+        },
+        {
+          "word": "tandis",
+          "start": 4.35,
+          "end": 4.6
+        },
+        {
+          "word": "qu’une",
+          "start": 4.65,
+          "end": 4.8
+        },
+        {
+          "word": "grille",
+          "start": 4.8375,
+          "end": 5.075
+        },
+        {
+          "word": "régulière",
+          "start": 5.0875,
+          "end": 5.575
+        },
+        {
+          "word": "de",
+          "start": 5.625,
+          "end": 5.675
+        },
+        {
+          "word": "pilotis",
+          "start": 5.7375,
+          "end": 6.175
+        },
+        {
+          "word": "en",
+          "start": 6.225,
+          "end": 6.3125
+        },
+        {
+          "word": "béton",
+          "start": 6.375,
+          "end": 6.6625
+        },
+        {
+          "word": "armé",
+          "start": 6.7,
+          "end": 6.9875
+        },
+        {
+          "word": "libère",
+          "start": 7,
+          "end": 7.275
+        },
+        {
+          "word": "l’espace",
+          "start": 7.2875,
+          "end": 7.8125
         }
       ],
       "sfxSrc": "sfx/pop-soft.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-left",
-      "background": "linear-gradient(215deg, rgba(0, 166, 244, 0.16) 0%, transparent 62%)",
+      "background": "linear-gradient(215deg, rgba(251, 191, 36, 0.16) 0%, transparent 62%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene2",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene2",
-          "title": "One prompt inside ZoEdit Studio",
-          "text": "One prompt inside ZoEdit Studio",
+          "title": "Au rez de chaussée le plan courbe",
+          "text": "Au rez de chaussée le",
           "keywords": [
-            "One prompt inside ZoEdit Studio"
+            "Au rez de chaussée le"
           ],
           "data": {
-            "narration": "One prompt inside ZoEdit Studio.",
+            "narration": "Au rez-de-chaussée, le plan courbe vitré épouse le rayon de braquage des voitures, tandis qu’une grille régulière de pilotis en béton armé libère l’espace.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-3",
-      "kicker": "No heavy timeline just type and AI",
-      "title": "No heavy timeline just type and AI",
-      "subtitle": "No heavy timeline just type and AI",
-      "caption": "No heavy timeline—just type, and AI agents build the motion for you, with free offline voiceover and auto-synced captions.",
-      "duration": 8.15,
-      "durationInFrames": 489,
-      "audioSrc": "audio/scene-1795723375948-ce92ad2f.mp3",
-      "audioDuration": 7.896,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-3",
+      "kicker": "On y trouve un hall une rampe",
+      "title": "On y trouve un hall une rampe",
+      "subtitle": "On y trouve un hall une rampe",
+      "caption": "On y trouve un hall, une rampe centrale et un escalier en colimaçon qui orchestrent la promenade architecturale.",
+      "duration": 6.716666666666667,
+      "durationInFrames": 403,
+      "audioSrc": "audio/scene-1795730142679-a50e2d54.mp3",
+      "audioDuration": 6.456,
       "wordTimings": [
         {
-          "word": "No",
+          "word": "On",
           "start": 0.1,
-          "end": 0.3375
+          "end": 0.1875
         },
         {
-          "word": "heavy",
+          "word": "y",
+          "start": 0.2,
+          "end": 0.3125
+        },
+        {
+          "word": "trouve",
           "start": 0.35,
-          "end": 0.5625
+          "end": 0.575
         },
         {
-          "word": "timeline",
+          "word": "un",
           "start": 0.575,
-          "end": 1.125
+          "end": 0.725
         },
         {
-          "word": "just",
-          "start": 1.4375,
-          "end": 1.65
+          "word": "hall",
+          "start": 0.725,
+          "end": 0.95
         },
         {
-          "word": "type",
-          "start": 1.6625,
-          "end": 1.9625
+          "word": "une",
+          "start": 1.275,
+          "end": 1.4
         },
         {
-          "word": "and",
-          "start": 2.3125,
-          "end": 2.4125
+          "word": "rampe",
+          "start": 1.4125,
+          "end": 1.6125
         },
         {
-          "word": "AI",
-          "start": 2.425,
-          "end": 2.7875
+          "word": "centrale",
+          "start": 1.6375,
+          "end": 2.125
         },
         {
-          "word": "agents",
-          "start": 2.8,
-          "end": 3.225
+          "word": "et",
+          "start": 2.1875,
+          "end": 2.2875
         },
         {
-          "word": "build",
-          "start": 3.2375,
-          "end": 3.475
+          "word": "un",
+          "start": 2.2875,
+          "end": 2.375
         },
         {
-          "word": "the",
-          "start": 3.4875,
-          "end": 3.5375
+          "word": "escalier",
+          "start": 2.3875,
+          "end": 2.9
         },
         {
-          "word": "motion",
-          "start": 3.55,
-          "end": 3.8875
+          "word": "en",
+          "start": 2.9125,
+          "end": 3
         },
         {
-          "word": "for",
-          "start": 3.9,
-          "end": 4.1125
+          "word": "colimaçon",
+          "start": 3.05,
+          "end": 3.575
         },
         {
-          "word": "you",
-          "start": 4.125,
+          "word": "qui",
+          "start": 3.625,
+          "end": 3.7125
+        },
+        {
+          "word": "orchestrent",
+          "start": 3.7125,
+          "end": 4.15
+        },
+        {
+          "word": "la",
+          "start": 4.1875,
           "end": 4.275
         },
         {
-          "word": "with",
-          "start": 4.55,
-          "end": 4.7
+          "word": "promenade",
+          "start": 4.325,
+          "end": 4.6625
         },
         {
-          "word": "free",
-          "start": 4.7125,
-          "end": 5.0625
-        },
-        {
-          "word": "offline",
-          "start": 5.075,
-          "end": 5.575
-        },
-        {
-          "word": "voiceover",
-          "start": 5.5875,
-          "end": 6.25
-        },
-        {
-          "word": "and",
-          "start": 6.275,
-          "end": 6.3875
-        },
-        {
-          "word": "auto-synced",
-          "start": 6.4,
-          "end": 6.8875
-        },
-        {
-          "word": "captions",
-          "start": 6.9,
-          "end": 7.5125
+          "word": "architecturale",
+          "start": 4.7375,
+          "end": 5.4875
         }
       ],
       "sfxSrc": "sfx/click-subtle.wav",
       "sfxAt": 0.15,
       "layout": "stacked",
       "camera": "push-in",
-      "background": "radial-gradient(circle at 82% 18%, rgba(0, 166, 244, 0.24) 0%, transparent 46%)",
+      "background": "radial-gradient(circle at 82% 18%, rgba(251, 191, 36, 0.24) 0%, transparent 46%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene3",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene3",
-          "title": "No heavy timeline just type and AI",
-          "text": "No heavy timeline just type",
+          "title": "On y trouve un hall une rampe",
+          "text": "On y trouve un hall",
           "keywords": [
-            "No heavy timeline just type"
+            "On y trouve un hall"
           ],
           "data": {
-            "narration": "No heavy timeline—just type, and AI agents build the motion for you, with free offline voiceover and auto-synced captions.",
+            "narration": "On y trouve un hall, une rampe centrale et un escalier en colimaçon qui orchestrent la promenade architecturale.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-4",
-      "kicker": "Everything runs local with zero render cost",
-      "title": "Everything runs local with zero render cost",
-      "subtitle": "Everything runs local with zero render cost",
-      "caption": "Everything runs local, with zero render cost—one hundred percent open-source, MIT licensed, built for speed and privacy.",
-      "duration": 8.45,
-      "durationInFrames": 507,
-      "audioSrc": "audio/scene-1795723380332-d26a9f2f.mp3",
-      "audioDuration": 8.184,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-4",
+      "kicker": "À l étage le plan libre s",
+      "title": "À l étage le plan libre s",
+      "subtitle": "À l étage le plan libre s",
+      "caption": "À l’étage, le plan libre s’affranchit des murs porteurs et s’organise en L autour du jardin suspendu.",
+      "duration": 6.466666666666667,
+      "durationInFrames": 388,
+      "audioSrc": "audio/scene-1795730144644-eba121d1.mp3",
+      "audioDuration": 6.216,
       "wordTimings": [
         {
-          "word": "Everything",
-          "start": 0.1,
-          "end": 0.6375
+          "word": "À",
+          "start": 0.1125,
+          "end": 0.1875
         },
         {
-          "word": "runs",
-          "start": 0.65,
-          "end": 0.875
+          "word": "l’étage",
+          "start": 0.2,
+          "end": 0.7
         },
         {
-          "word": "local",
-          "start": 0.8875,
-          "end": 1.2625
+          "word": "le",
+          "start": 0.95,
+          "end": 1.075
         },
         {
-          "word": "with",
-          "start": 1.5375,
-          "end": 1.675
+          "word": "plan",
+          "start": 1.1375,
+          "end": 1.3
         },
         {
-          "word": "zero",
-          "start": 1.6875,
-          "end": 2.0375
+          "word": "libre",
+          "start": 1.325,
+          "end": 1.5875
         },
         {
-          "word": "render",
-          "start": 2.05,
-          "end": 2.3375
+          "word": "s’affranchit",
+          "start": 1.625,
+          "end": 2.1375
         },
         {
-          "word": "cost",
-          "start": 2.35,
-          "end": 2.75
+          "word": "des",
+          "start": 2.1875,
+          "end": 2.2625
         },
         {
-          "word": "one",
+          "word": "murs",
+          "start": 2.275,
+          "end": 2.4625
+        },
+        {
+          "word": "porteurs",
+          "start": 2.525,
+          "end": 3.0125
+        },
+        {
+          "word": "et",
           "start": 3.0625,
-          "end": 3.2
+          "end": 3.125
         },
         {
-          "word": "hundred",
-          "start": 3.2125,
-          "end": 3.5125
+          "word": "s’organise",
+          "start": 3.1875,
+          "end": 3.7
         },
         {
-          "word": "percent",
-          "start": 3.525,
-          "end": 3.9125
+          "word": "en",
+          "start": 3.75,
+          "end": 3.8625
         },
         {
-          "word": "open-source",
-          "start": 3.9375,
-          "end": 4.6
+          "word": "L",
+          "start": 3.8625,
+          "end": 3.9875
         },
         {
-          "word": "MIT",
-          "start": 4.9125,
+          "word": "autour",
+          "start": 3.9875,
+          "end": 4.2875
+        },
+        {
+          "word": "du",
+          "start": 4.325,
+          "end": 4.4
+        },
+        {
+          "word": "jardin",
+          "start": 4.4,
+          "end": 4.7375
+        },
+        {
+          "word": "suspendu",
+          "start": 4.7625,
           "end": 5.375
-        },
-        {
-          "word": "licensed",
-          "start": 5.3875,
-          "end": 5.9875
-        },
-        {
-          "word": "built",
-          "start": 6.3125,
-          "end": 6.5375
-        },
-        {
-          "word": "for",
-          "start": 6.55,
-          "end": 6.6875
-        },
-        {
-          "word": "speed",
-          "start": 6.7,
-          "end": 7.0875
-        },
-        {
-          "word": "and",
-          "start": 7.1,
-          "end": 7.2125
-        },
-        {
-          "word": "privacy",
-          "start": 7.225,
-          "end": 7.8
         }
       ],
       "sfxSrc": "sfx/type-tick.wav",
       "sfxAt": 0.15,
       "layout": "overlay",
       "camera": "slow-zoom-out",
-      "background": "linear-gradient(160deg, transparent 20%, rgba(0, 166, 244, 0.18) 100%)",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(251, 191, 36, 0.18) 100%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene4",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene4",
-          "title": "Everything runs local with zero render cost",
-          "text": "Everything runs local with zero",
+          "title": "À l étage le plan libre s",
+          "text": "À l étage le plan",
           "keywords": [
-            "Everything runs local with zero"
+            "À l étage le plan"
           ],
           "data": {
-            "narration": "Everything runs local, with zero render cost—one hundred percent open-source, MIT licensed, built for speed and privacy.",
+            "narration": "À l’étage, le plan libre s’affranchit des murs porteurs et s’organise en L autour du jardin suspendu.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-5",
-      "kicker": "So skip the slow editors",
-      "title": "So skip the slow editors",
-      "subtitle": "So skip the slow editors",
-      "caption": "So skip the slow editors.",
-      "duration": 2.2,
-      "durationInFrames": 132,
-      "audioSrc": "audio/scene-1795723381696-555a39c7.mp3",
-      "audioDuration": 1.944,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-5",
+      "kicker": "Les fenêtres en bandeau apportent une lumière",
+      "title": "Les fenêtres en bandeau apportent une lumière",
+      "subtitle": "Les fenêtres en bandeau apportent une lumière",
+      "caption": "Les fenêtres en bandeau apportent une lumière continue et une vue panoramique.",
+      "duration": 4.716666666666667,
+      "durationInFrames": 283,
+      "audioSrc": "audio/scene-1795730146714-2674a9b2.mp3",
+      "audioDuration": 4.464,
       "wordTimings": [
         {
-          "word": "So",
-          "start": 0.1,
-          "end": 0.3625
+          "word": "Les",
+          "start": 0.15,
+          "end": 0.2875
         },
         {
-          "word": "skip",
-          "start": 0.375,
+          "word": "fenêtres",
+          "start": 0.2875,
           "end": 0.6875
         },
         {
-          "word": "the",
-          "start": 0.7,
+          "word": "en",
+          "start": 0.6875,
           "end": 0.7625
         },
         {
-          "word": "slow",
-          "start": 0.775,
-          "end": 1.0875
+          "word": "bandeau",
+          "start": 0.8125,
+          "end": 1.15
         },
         {
-          "word": "editors",
-          "start": 1.1,
-          "end": 1.5625
+          "word": "apportent",
+          "start": 1.2,
+          "end": 1.55
+        },
+        {
+          "word": "une",
+          "start": 1.5875,
+          "end": 1.6625
+        },
+        {
+          "word": "lumière",
+          "start": 1.7,
+          "end": 2.0125
+        },
+        {
+          "word": "continue",
+          "start": 2.075,
+          "end": 2.575
+        },
+        {
+          "word": "et",
+          "start": 2.625,
+          "end": 2.7375
+        },
+        {
+          "word": "une",
+          "start": 2.7375,
+          "end": 2.8375
+        },
+        {
+          "word": "vue",
+          "start": 2.8375,
+          "end": 2.95
+        },
+        {
+          "word": "panoramique",
+          "start": 3,
+          "end": 3.525
         }
       ],
       "sfxSrc": "sfx/slide.wav",
       "sfxAt": 0.15,
       "layout": "split",
       "camera": "pan-right",
-      "background": "linear-gradient(135deg, rgba(0, 166, 244, 0.22) 0%, transparent 58%)",
+      "background": "linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, transparent 58%)",
       "backgroundPreset": "ai-free",
       "generatedComponent": "Scene5",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene5",
-          "title": "So skip the slow editors",
-          "text": "So skip the slow editors",
+          "title": "Les fenêtres en bandeau apportent une lumière",
+          "text": "Les fenêtres en bandeau apportent",
           "keywords": [
-            "So skip the slow editors"
+            "Les fenêtres en bandeau apportent"
           ],
           "data": {
-            "narration": "So skip the slow editors.",
+            "narration": "Les fenêtres en bandeau apportent une lumière continue et une vue panoramique.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-6",
-      "kicker": "Build motion graphics at prompt speed find",
-      "title": "Build motion graphics at prompt speed find",
-      "subtitle": "Build motion graphics at prompt speed find",
-      "caption": "Build motion graphics at prompt speed—find it on GitHub or studio.zoedit.com.",
-      "duration": 6.066666666666666,
-      "durationInFrames": 364,
-      "audioSrc": "audio/scene-1795723384356-fea39d0b.mp3",
-      "audioDuration": 5.808,
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-6",
+      "kicker": "Le toit terrasse avec son solarium aux",
+      "title": "Le toit terrasse avec son solarium aux",
+      "subtitle": "Le toit terrasse avec son solarium aux",
+      "caption": "Le toit-terrasse, avec son solarium aux formes courbes, couronne cette promenade et dialogue avec l’horizon.",
+      "duration": 6.85,
+      "durationInFrames": 411,
+      "audioSrc": "audio/scene-1795730148817-a2463f86.mp3",
+      "audioDuration": 6.6,
       "wordTimings": [
         {
-          "word": "Build",
-          "start": 0.1,
-          "end": 0.425
+          "word": "Le",
+          "start": 0.15,
+          "end": 0.275
         },
         {
-          "word": "motion",
-          "start": 0.4375,
-          "end": 0.775
+          "word": "toit-terrasse",
+          "start": 0.3375,
+          "end": 0.9875
         },
         {
-          "word": "graphics",
-          "start": 0.7875,
-          "end": 1.275
+          "word": "avec",
+          "start": 1.15,
+          "end": 1.375
         },
         {
-          "word": "at",
-          "start": 1.2875,
-          "end": 1.3875
-        },
-        {
-          "word": "prompt",
+          "word": "son",
           "start": 1.4,
-          "end": 1.7625
+          "end": 1.525
         },
         {
-          "word": "speed",
-          "start": 1.775,
-          "end": 2.15
+          "word": "solarium",
+          "start": 1.575,
+          "end": 2.075
         },
         {
-          "word": "find",
-          "start": 2.625,
-          "end": 2.875
+          "word": "aux",
+          "start": 2.1,
+          "end": 2.1875
         },
         {
-          "word": "it",
-          "start": 2.8875,
-          "end": 2.975
+          "word": "formes",
+          "start": 2.2,
+          "end": 2.4875
         },
         {
-          "word": "on",
-          "start": 2.9875,
-          "end": 3.1375
+          "word": "courbes",
+          "start": 2.5625,
+          "end": 2.85
         },
         {
-          "word": "GitHub",
-          "start": 3.15,
-          "end": 3.55
+          "word": "couronne",
+          "start": 3.2875,
+          "end": 3.5875
         },
         {
-          "word": "or",
-          "start": 3.6875,
-          "end": 3.775
+          "word": "cette",
+          "start": 3.6375,
+          "end": 3.7875
         },
         {
-          "word": "studio.zoedit.com",
-          "start": 3.7875,
-          "end": 5.4375
+          "word": "promenade",
+          "start": 3.8625,
+          "end": 4.3
+        },
+        {
+          "word": "et",
+          "start": 4.3875,
+          "end": 4.475
+        },
+        {
+          "word": "dialogue",
+          "start": 4.5125,
+          "end": 4.9375
+        },
+        {
+          "word": "avec",
+          "start": 5.025,
+          "end": 5.2625
+        },
+        {
+          "word": "l’horizon",
+          "start": 5.275,
+          "end": 5.65
         }
       ],
       "sfxSrc": "sfx/impact-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
       "camera": "slow-zoom-in",
-      "background": "linear-gradient(215deg, rgba(0, 166, 244, 0.16) 0%, transparent 62%)",
+      "background": "linear-gradient(215deg, rgba(251, 191, 36, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene6",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene6",
+          "title": "Le toit terrasse avec son solarium aux",
+          "text": "Le toit terrasse avec son",
+          "keywords": [
+            "Le toit terrasse avec son"
+          ],
+          "data": {
+            "narration": "Le toit-terrasse, avec son solarium aux formes courbes, couronne cette promenade et dialogue avec l’horizon.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-7",
+      "kicker": "Ces plans révèlent les cinq points de",
+      "title": "Ces plans révèlent les cinq points de",
+      "subtitle": "Ces plans révèlent les cinq points de",
+      "caption": "Ces plans révèlent les cinq points de l’architecture moderne : pilotis, toit-jardin, plan libre, fenêtre-bandeau et façade libre.",
+      "duration": 8.45,
+      "durationInFrames": 507,
+      "audioSrc": "audio/scene-1795730151599-64f93201.mp3",
+      "audioDuration": 8.184,
+      "wordTimings": [
+        {
+          "word": "Ces",
+          "start": 0.1125,
+          "end": 0.3125
+        },
+        {
+          "word": "plans",
+          "start": 0.375,
+          "end": 0.55
+        },
+        {
+          "word": "révèlent",
+          "start": 0.55,
+          "end": 0.925
+        },
+        {
+          "word": "les",
+          "start": 0.925,
+          "end": 1.0125
+        },
+        {
+          "word": "cinq",
+          "start": 1.1,
+          "end": 1.275
+        },
+        {
+          "word": "points",
+          "start": 1.375,
+          "end": 1.5125
+        },
+        {
+          "word": "de",
+          "start": 1.55,
+          "end": 1.6125
+        },
+        {
+          "word": "l’architecture",
+          "start": 1.625,
+          "end": 2.25
+        },
+        {
+          "word": "moderne",
+          "start": 2.2625,
+          "end": 2.725
+        },
+        {
+          "word": "pilotis",
+          "start": 3.0875,
+          "end": 3.6125
+        },
+        {
+          "word": "toit-jardin",
+          "start": 3.8625,
+          "end": 4.45
+        },
+        {
+          "word": "plan",
+          "start": 4.775,
+          "end": 4.9375
+        },
+        {
+          "word": "libre",
+          "start": 4.9625,
+          "end": 5.3
+        },
+        {
+          "word": "fenêtre-bandeau",
+          "start": 5.5625,
+          "end": 6.4125
+        },
+        {
+          "word": "et",
+          "start": 6.4625,
+          "end": 6.55
+        },
+        {
+          "word": "façade",
+          "start": 6.5625,
+          "end": 6.9125
+        },
+        {
+          "word": "libre",
+          "start": 6.9625,
+          "end": 7.2625
+        }
+      ],
+      "sfxSrc": "sfx/whoosh-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-left",
+      "background": "radial-gradient(circle at 82% 18%, rgba(251, 191, 36, 0.24) 0%, transparent 46%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene7",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene7",
+          "title": "Ces plans révèlent les cinq points de",
+          "text": "Ces plans révèlent les cinq",
+          "keywords": [
+            "Ces plans révèlent les cinq"
+          ],
+          "data": {
+            "narration": "Ces plans révèlent les cinq points de l’architecture moderne : pilotis, toit-jardin, plan libre, fenêtre-bandeau et façade libre.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-1412c912-3fae-415f-9e1d-3a79316137cd-8",
+      "kicker": "La Villa Savoye se lit comme une",
+      "title": "La Villa Savoye se lit comme une",
+      "subtitle": "La Villa Savoye se lit comme une",
+      "caption": "La Villa Savoye se lit comme une leçon d’espace, où chaque niveau guide le regard et le pas.",
+      "duration": 5.866666666666666,
+      "durationInFrames": 352,
+      "audioSrc": "audio/scene-1795730153934-d45d8c3b.mp3",
+      "audioDuration": 5.616,
+      "wordTimings": [
+        {
+          "word": "La",
+          "start": 0.15,
+          "end": 0.3125
+        },
+        {
+          "word": "Villa",
+          "start": 0.3125,
+          "end": 0.5625
+        },
+        {
+          "word": "Savoye",
+          "start": 0.6125,
+          "end": 1.025
+        },
+        {
+          "word": "se",
+          "start": 1.0875,
+          "end": 1.2
+        },
+        {
+          "word": "lit",
+          "start": 1.2125,
+          "end": 1.2875
+        },
+        {
+          "word": "comme",
+          "start": 1.35,
+          "end": 1.525
+        },
+        {
+          "word": "une",
+          "start": 1.525,
+          "end": 1.6125
+        },
+        {
+          "word": "leçon",
+          "start": 1.65,
+          "end": 1.9
+        },
+        {
+          "word": "d’espace",
+          "start": 1.95,
+          "end": 2.4875
+        },
+        {
+          "word": "où",
+          "start": 2.8,
+          "end": 2.8625
+        },
+        {
+          "word": "chaque",
+          "start": 2.9,
+          "end": 3.125
+        },
+        {
+          "word": "niveau",
+          "start": 3.175,
+          "end": 3.45
+        },
+        {
+          "word": "guide",
+          "start": 3.5125,
+          "end": 3.675
+        },
+        {
+          "word": "le",
+          "start": 3.6875,
+          "end": 3.7875
+        },
+        {
+          "word": "regard",
+          "start": 3.8,
+          "end": 4.275
+        },
+        {
+          "word": "et",
+          "start": 4.325,
+          "end": 4.4
+        },
+        {
+          "word": "le",
+          "start": 4.4125,
+          "end": 4.5
+        },
+        {
+          "word": "pas",
+          "start": 4.575,
+          "end": 4.7
+        }
+      ],
+      "sfxSrc": "sfx/pop-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "stacked",
+      "camera": "push-in",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(251, 191, 36, 0.18) 100%)",
       "backgroundPreset": "ai-free",
       "character": {
         "pose": "pointing",
@@ -597,18 +1015,18 @@
         "accessory": "tie",
         "enabled": true
       },
-      "generatedComponent": "Scene6",
+      "generatedComponent": "Scene8",
       "elements": [
         {
           "type": "custom_tsx",
-          "component": "Scene6",
-          "title": "Build motion graphics at prompt speed find",
-          "text": "Build motion graphics at prompt",
+          "component": "Scene8",
+          "title": "La Villa Savoye se lit comme une",
+          "text": "La Villa Savoye se lit",
           "keywords": [
-            "Build motion graphics at prompt"
+            "La Villa Savoye se lit"
           ],
           "data": {
-            "narration": "Build motion graphics at prompt speed—find it on GitHub or studio.zoedit.com.",
+            "narration": "La Villa Savoye se lit comme une leçon d’espace, où chaque niveau guide le regard et le pas.",
             "visualType": "custom-tsx"
           }
         }

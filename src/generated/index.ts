@@ -5,6 +5,8 @@ import { Scene3 } from "./Scene3";
 import { Scene4 } from "./Scene4";
 import { Scene5 } from "./Scene5";
 import { Scene6 } from "./Scene6";
+import { Scene7 } from "./Scene7";
+import { Scene8 } from "./Scene8";
 
 export type GeneratedSceneProps = {
   accentColor: string;
@@ -35,4 +37,6 @@ export const GENERATED_SCENES: Record<string, ComponentType<GeneratedSceneProps>
   Scene4,
   Scene5,
   Scene6,
+  Scene7,
+  Scene8,
 };

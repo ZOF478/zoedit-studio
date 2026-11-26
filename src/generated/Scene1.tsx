@@ -1,232 +1,278 @@
-import {
-  AbsoluteFill,
-  Img,
-  interpolate,
-  spring,
-  staticFile,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { SceneSfx } from "../components/SceneSfx";
-import { SmartIcon } from "../components/SmartIcon";
+import type { GeneratedSceneProps } from "./index";
 
-type Props = {
-  accentColor: string;
-  secondaryColor: string;
-  surfaceColor: string;
-  surfaceAltColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
-};
+type Props = GeneratedSceneProps;
 
 const FONT = "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif";
 
-const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
-  x: (i * 61 + 9) % 100,
-  y: (i * 37 + 14) % 100,
-  size: 2 + (i % 3),
-  speed: 0.3 + (i % 5) * 0.1,
-}));
+const OUTER =
+  "M 120 60 L 400 60 C 460 60 480 100 480 160 L 480 380 C 480 440 440 470 380 470 L 140 470 C 80 470 50 440 50 380 L 50 150 C 50 90 70 60 120 60 Z";
+const RAMP =
+  "M 150 420 C 150 350 205 330 260 305 C 315 280 315 220 260 200 L 175 172";
 
 export const Scene1 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps, width, height } = useVideoConfig();
-  const u = Math.min(width, height) / 1080;
+  const { fps, width } = useVideoConfig();
+
   const exit = interpolate(
     frame,
     [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
-
-  const lines = [
-    { text: "This entire video", size: 88 * u, accent: false },
-    { text: "was made with", size: 76 * u, accent: false },
-    { text: "ONE prompt.", size: 132 * u, accent: true },
-  ];
-
-  const logoIn = spring({ frame: frame - 38, fps, config: { damping: 11, stiffness: 110, mass: 0.8 } });
-  const pulse = 1 + Math.sin(frame / 11) * 0.022;
-  const glow = 0.42 + Math.sin(frame / 9) * 0.14;
-  const gridY = interpolate(frame, [0, props.durationInFrames], [0, 44]);
+  const head = spring({ frame: frame - 3, fps, config: { damping: 200, mass: 0.8 } });
+  const sub = spring({ frame: frame - 22, fps, config: { damping: 200, mass: 0.9 } });
+  const pill = spring({ frame: frame - 46, fps, config: { damping: 200 } });
+  const planP = interpolate(frame, [8, 92], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.cubic),
+  });
+  const rampP = interpolate(frame, [54, 118], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.out(Easing.cubic),
+  });
+  const drift = Math.sin(frame / 36) * 7;
+  const glow = 0.5 + Math.sin(frame / 24) * 0.18;
+  const headFont = Math.min(150, width * 0.078);
 
   return (
     <AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: "ltr" }}>
-      <AbsoluteFill
-        style={{
-          inset: "-10% 0",
-          backgroundImage: `linear-gradient(${props.accentColor}14 1px, transparent 1px), linear-gradient(90deg, ${props.accentColor}14 1px, transparent 1px)`,
-          backgroundSize: "56px 56px",
-          transform: `translateY(${gridY}px)`,
-        }}
-      />
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 1920 1080"
+        style={{ position: "absolute", inset: 0, direction: "ltr" }}
+      >
+        <defs>
+          <radialGradient id="s1glow" cx="72%" cy="46%" r="46%">
+            <stop offset="0%" stopColor={props.accentColor} stopOpacity={glow} />
+            <stop offset="100%" stopColor={props.accentColor} stopOpacity={0} />
+          </radialGradient>
+          <linearGradient id="s1beam" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor={props.accentColor} stopOpacity={0} />
+            <stop offset="50%" stopColor={props.accentColor} stopOpacity={0.5} />
+            <stop offset="100%" stopColor={props.accentColor} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <rect x={0} y={0} width={1920} height={1080} fill="url(#s1glow)" />
+        {Array.from({ length: 25 }).map((_, i) => (
+          <line
+            key={`v${i}`}
+            x1={i * 80}
+            y1={0}
+            x2={i * 80}
+            y2={1080}
+            stroke={props.secondaryColor}
+            strokeWidth={1}
+            opacity={0.07}
+          />
+        ))}
+        {Array.from({ length: 15 }).map((_, i) => (
+          <line
+            key={`h${i}`}
+            x1={0}
+            y1={i * 80}
+            x2={1920}
+            y2={i * 80}
+            stroke={props.secondaryColor}
+            strokeWidth={1}
+            opacity={0.07}
+          />
+        ))}
+        <line x1={0} y1={560} x2={1920} y2={560} stroke="url(#s1beam)" strokeWidth={2} opacity={0.6} />
+      </svg>
+
       <div
         style={{
           position: "absolute",
-          width: 780,
-          height: 780,
-          left: "50%",
-          top: "34%",
-          transform: "translate(-50%, -50%)",
-          background: `radial-gradient(circle, ${props.accentColor}2e 0%, transparent 66%)`,
+          inset: 0,
+          opacity: exit,
+          transform: `translateY(${(1 - exit) * 18}px)`,
         }}
-      />
-      {PARTICLES.map((p, i) => (
+      >
         <div
-          key={i}
           style={{
             position: "absolute",
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: p.size,
-            height: p.size,
-            borderRadius: "50%",
-            background: props.accentColor,
-            opacity: 0.35,
-            transform: `translateY(${Math.sin(frame / 20 + i) * 16 - frame * p.speed}px)`,
+            left: "5%",
+            top: "12%",
+            width: "58%",
+            fontFamily: FONT,
+            direction: "ltr",
+            textAlign: "left",
           }}
-        />
-      ))}
-
-      <div style={{ position: "absolute", inset: 0, opacity: exit, transform: `translateY(${(1 - exit) * -18}px)` }}>
-        <div style={{ position: "absolute", top: "6.5%", left: 0, right: 0, display: "flex", justifyContent: "center" }}>
+        >
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 12,
-              padding: "12px 22px",
-              borderRadius: 999,
-              background: props.surfaceColor,
-              border: `1px solid ${props.accentColor}66`,
-              boxShadow: "0 14px 40px rgba(0,0,0,0.35)",
-              fontFamily: FONT,
-              color: props.textColor,
-              fontSize: 24 * u,
-              fontWeight: 700,
-              letterSpacing: 2,
+              gap: 14,
+              opacity: head,
+              transform: `translateX(${(1 - head) * -40}px)`,
             }}
           >
-            <SmartIcon query="sparkles" size={26 * u} color={props.accentColor} />
-            MADE IN ZOEDIT STUDIO
+            <div style={{ width: 46, height: 2, backgroundColor: props.accentColor }} />
+            <div
+              style={{
+                color: props.accentColor,
+                fontSize: Math.min(20, width * 0.011),
+                letterSpacing: 5,
+                fontWeight: 700,
+                textTransform: "uppercase",
+              }}
+            >
+              Poissy · 1928 — 1931
+            </div>
           </div>
-        </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: "18%",
-            left: "7%",
-            right: "7%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: 2 * u,
-          }}
-        >
-          {lines.map((line, i) => {
-            const s = spring({ frame: frame - i * 12, fps, config: { damping: 13, stiffness: 160, mass: 0.6 } });
-            return (
-              <div
-                key={line.text}
-                style={{
-                  fontFamily: FONT,
-                  fontSize: line.size,
-                  lineHeight: 1.18,
-                  fontWeight: 900,
-                  letterSpacing: -2,
-                  color: line.accent ? props.accentColor : props.textColor,
-                  opacity: s,
-                  transform: `translateY(${(1 - s) * 46}px) scale(${1.08 - s * 0.08})`,
-                  textShadow: line.accent ? `0 0 36px ${props.accentColor}66` : "none",
-                  direction: "ltr",
-                  textAlign: "left",
-                  maxWidth: "100%",
-                }}
-              >
-                {line.text}
+          <div style={{ overflow: "hidden", marginTop: 14, paddingBottom: 6 }}>
+            <div
+              style={{
+                transform: `translateY(${(1 - head) * 118}%)`,
+                fontSize: headFont,
+                lineHeight: 0.98,
+                fontWeight: 800,
+                letterSpacing: -2,
+                color: props.textColor,
+              }}
+            >
+              VILLA
+            </div>
+          </div>
+          <div style={{ overflow: "hidden", paddingBottom: 10, marginTop: -6 }}>
+            <div
+              style={{
+                transform: `translateY(${(1 - head) * 118}%)`,
+                fontSize: headFont,
+                lineHeight: 0.98,
+                fontWeight: 800,
+                letterSpacing: -2,
+                color: props.accentColor,
+              }}
+            >
+              SAVOYE
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: 10,
+              opacity: sub,
+              transform: `translateY(${(1 - sub) * 20}px)`,
+              fontSize: Math.min(40, width * 0.021),
+              lineHeight: 1.35,
+              color: props.mutedColor,
+              maxWidth: "92%",
+            }}
+          >
+            Un manifeste de l’architecture moderne signé Le Corbusier.
+          </div>
+
+          <div
+            style={{
+              marginTop: 26,
+              opacity: pill,
+              transform: `translateY(${(1 - pill) * 16}px) scale(${0.94 + pill * 0.06})`,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "13px 24px",
+              borderRadius: 999,
+              backgroundColor: props.surfaceColor,
+              border: `1px solid ${props.secondaryColor}66`,
+              boxShadow: "0 18px 48px rgba(0,0,0,0.35)",
+            }}
+          >
+            <div style={{ width: 9, height: 9, borderRadius: 999, backgroundColor: props.accentColor }} />
+            <span style={{ fontSize: 22, fontWeight: 700, color: props.textColor, letterSpacing: 1 }}>
+              La promenade architecturale
+            </span>
+          </div>
+
+          <div style={{ marginTop: 30, display: "flex", gap: 40, opacity: pill }}>
+            {[
+              ["3", "niveaux"],
+              ["5", "points modernes"],
+              ["1", "parcours"],
+            ].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: props.textColor, lineHeight: 1 }}>{n}</div>
+                <div
+                  style={{
+                    fontSize: 16,
+                    color: props.mutedColor,
+                    marginTop: 6,
+                    textTransform: "uppercase",
+                    letterSpacing: 2,
+                  }}
+                >
+                  {l}
+                </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         <div
           style={{
             position: "absolute",
-            top: "49%",
-            left: 0,
-            right: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10 * u,
+            right: "4%",
+            top: "20%",
+            width: "28%",
+            maxWidth: 540,
+            transform: `translateY(${drift}px)`,
           }}
         >
-          <div style={{ position: "relative", width: 300 * u, height: 300 * u, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div
-              style={{
-                position: "absolute",
-                inset: -70 * u,
-                borderRadius: "50%",
-                background: `radial-gradient(circle, ${props.accentColor}55 0%, transparent 66%)`,
-                opacity: glow,
-              }}
+          <div style={{ position: "absolute", inset: -18, borderRadius: 28, border: `1px solid ${props.secondaryColor}33` }} />
+          <svg width="100%" viewBox="0 0 540 540" style={{ display: "block", direction: "ltr" }}>
+            <path
+              d={OUTER}
+              fill={props.surfaceColor}
+              fillOpacity={0.94}
+              stroke={props.accentColor}
+              strokeWidth={2.5}
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1 - planP}
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-            <div
-              style={{
-                position: "absolute",
-                inset: 16 * u,
-                borderRadius: "50%",
-                border: `2px solid ${props.accentColor}55`,
-                transform: `scale(${pulse})`,
-              }}
+            <path
+              d={RAMP}
+              fill="none"
+              stroke={props.accentColor}
+              strokeWidth={3}
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1 - rampP}
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-            <div
-              style={{
-                position: "absolute",
-                inset: 48 * u,
-                borderRadius: "50%",
-                border: `1px solid ${props.textColor}22`,
-                transform: `scale(${2 - pulse})`,
-              }}
-            />
-            <Img
-              src={staticFile("user-assets/be285670-7eeb-4008-9a96-fdbe807d3a31.png")}
-              style={{
-                width: "82%",
-                height: "82%",
-                objectFit: "contain",
-                opacity: logoIn,
-                transform: `scale(${logoIn * pulse}) rotate(${(1 - logoIn) * -14}deg)`,
-                filter: `drop-shadow(0 0 34px ${props.accentColor}77)`,
-              }}
-            />
-          </div>
-          <div style={{ fontFamily: FONT, fontSize: 22 * u, fontWeight: 700, letterSpacing: 5, color: props.mutedColor }}>
-            ZOEDIT STUDIO
-          </div>
+            <g opacity={rampP}>
+              <circle cx={150} cy={420} r={7} fill={props.accentColor} />
+              <line x1={150} y1={420} x2={88} y2={470} stroke={props.secondaryColor} strokeWidth={1.5} />
+              <text x={80} y={492} fill={props.textColor} fontFamily={FONT} fontSize={17} fontWeight={700} textAnchor="end">
+                RAMPE
+              </text>
+              <circle cx={400} cy={150} r={7} fill={props.accentColor} />
+              <line x1={400} y1={150} x2={466} y2={104} stroke={props.secondaryColor} strokeWidth={1.5} />
+              <text x={472} y={96} fill={props.textColor} fontFamily={FONT} fontSize={17} fontWeight={700}>
+                VERRE
+              </text>
+            </g>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <circle key={i} cx={92 + i * 8} cy={112 + i * 52} r={3.5} fill={props.accentColor} opacity={0.7} />
+            ))}
+          </svg>
         </div>
       </div>
 
-      <SceneSfx name="impact-soft" frame={1} volume={0.18} />
-      <SceneSfx name="type-tick" frame={10} volume={0.18} />
-      <SceneSfx name="impact-soft" frame={13} volume={0.18} />
-      <SceneSfx name="impact-soft" frame={25} volume={0.18} />
-      <SceneSfx name="pop-sharp" frame={38} volume={0.18} />
-      <SceneSfx name="whoosh-soft" frame={82} volume={0.18} />
+      <SceneSfx name="whoosh-soft" frame={4} volume={0.18} />
+      <SceneSfx name="type-tick" frame={24} volume={0.18} />
+      <SceneSfx name="click-subtle" frame={58} volume={0.18} />
+      <SceneSfx name="pop-soft" frame={96} volume={0.18} />
     </AbsoluteFill>
   );
 };

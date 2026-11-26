@@ -1,6 +1,6 @@
 # Zoedit Studio
 
-**AI-Directed Motion Graphics Studio — v1.3.0**
+**AI-Directed Motion Graphics Studio — v1.3.2**
 
 **Zoedit Studio — استوديو الموشن جرافيك بمساعدة الذكاء الاصطناعي**
 
@@ -9,11 +9,24 @@ Zoedit Studio turns an idea, script, logo, or screenshot into a rendered short-f
 - Live app: **https://studio.zoedit.com**
 - Source: **https://github.com/ZOF478/zoedit-studio**
 - Contact: **studio@zoedit.com**
-- Current version: **1.3.0** (`zoedit-studio --version`)
+- Current version: **1.3.2** (`zoedit-studio --version`)
 
 ## The Story Behind Zoedit Studio
 
 Built by a freelance video editor ([zoedit.com](https://zoedit.com)) facing two real constraints: working on a low-spec computer where heavy motion tools slow everything down, and keeping up with the speed of the AI era. Instead of waiting to be replaced by generic AI tools, I engineered my own AI-directed motion system — combining the best Remotion primitives, custom skills, and smart framing to produce studio-grade videos at minimal cost. Originally built for my own client work, now shared open-source with creators and editors everywhere.
+
+## What's New in v1.3.2
+
+- **Self-Healing Scene Generation** — a 1-attempt automatic LLM self-heal retry now repairs sanitizer and TypeScript validation errors before falling back to built-in templates.
+- **Hardened Offline & Remotion Sanitizer Rules** — strict offline enforcement blocks external URLs/media, and all generation and tweak prompts now require valid `interpolate()` ranges.
+- **Cumulative Fallback Alerts & Timeline Badges** — a non-blocking warning banner and amber timeline badges mark fallback scenes so a single clip never forces the whole render to be canceled.
+- **Direct Clip-to-Quick-Prompt Binding** — clicking a timeline clip or fallback badge targets `Scene{N}` in **Quick prompt tweak**, re-rendering only that scene while reusing cached segments and TTS audio.
+- **Two-Step Cancel Export Confirmation** — an inline confirmation step (`Are you sure?` with a 4-second auto-reset) prevents accidental cancellation of long renders.
+
+## What's New in v1.3.1
+
+- **Restored rich scene generation** — rebuilt the custom Remotion scene pipeline with stronger creative direction, richer scene variety, and reliable asset injection.
+- **Smoother voiceover setup** — added the empty-script confirmation modal and topic-driven prompt generator for faster project starts.
 
 ## What's New in v1.3.0
 
@@ -31,6 +44,8 @@ Built by a freelance video editor ([zoedit.com](https://zoedit.com)) facing two 
 | **v1.0.0** | Prompt-to-Remotion foundation | Basic prompt-to-scene generation, ElevenLabs-only voiceover, simple scrollable dashboard, single visual workflow. |
 | **v1.2.0** | Desktop NLE + reliability | Zero-scroll workspace, resizable panes, full local persistence, full-library SFX, dark Remotion Studio loading, and first security-hardening pass. |
 | **v1.3.0** | Multi-provider audio + user visuals | Edge TTS and offline Piper TTS join ElevenLabs; secure image/logo uploads; cinematic asset motion; cleaner guide, metadata, and version alignment. |
+| **v1.3.1** | Rich generation restoration | Restored rich scene generation, asset injection, voiceover confirmation modal, and topic prompt generator. |
+| **v1.3.2** | Reliability & safety | Self-healing scene retries, strict offline sanitizer, cumulative fallback alerts, targeted quick tweaks, and two-step cancel confirmation. |
 
 ## Highlights
 
@@ -131,7 +146,7 @@ Run it from any folder. The CLI resolves the project, `.env`, dashboard, and Rem
 | `--no-open` | off | Do not open a browser. Useful for VPS, containers, and headless machines. |
 | `--open` | off | Force-open the browser even when an SSH session is detected. |
 | `--help`, `-h` | — | Print usage, flags, and examples. |
-| `--version`, `-v` | — | Print the installed version (currently `1.3.0`). |
+| `--version`, `-v` | — | Print the installed version (currently `1.3.2`). |
 
 The CLI reuses an already-running Zoedit Studio instance and automatically reclaims stale Zoedit Studio listeners. Remotion Studio uses the first free port in `3333`–`3353`. The dashboard is served at `/`; open `/studio/` to launch Remotion Studio.
 
@@ -388,6 +403,20 @@ zoedit-studio/
 
 ## Release History
 
+### v1.3.2 — Reliability, safety, and targeted recovery
+
+- Added one automatic LLM self-heal retry for sanitizer and TypeScript validation failures before falling back to built-in scene templates.
+- Enforced strict offline and Remotion sanitizer rules, including blocked external URLs/media and validated `interpolate()` ranges across generation and tweak prompts.
+- Added cumulative fallback warnings, clickable scene references, and amber timeline badges so a single fallback clip does not cancel the render.
+- Bound timeline clip selection to **Quick prompt tweak** targeting so only `Scene{N}.tsx` re-renders while reusing cached segments and TTS audio.
+- Added the inline two-step **Cancel export** confirmation with a 4-second auto-reset.
+- Bumped the root package, dashboard package, metadata, and UI badge to `1.3.2`.
+
+### v1.3.1 — Rich scene generation restoration
+
+- Restored rich custom scene generation, asset injection, and stronger creative direction.
+- Added the smart voiceover confirmation modal and topic-driven prompt generator.
+
 ### v1.3.0 — Multi-provider audio and secure user visuals
 
 - Added Edge TTS (free, zero-key, 100+ languages/accents) and Piper TTS (offline CPU, on-demand ONNX models) alongside ElevenLabs.
@@ -424,7 +453,7 @@ npx tsc --noEmit                 # root TypeScript check
 Verify the CLI version:
 
 ```bash
-zoedit-studio --version          # prints 1.3.0
+zoedit-studio --version          # prints 1.3.2
 ```
 
 ## License

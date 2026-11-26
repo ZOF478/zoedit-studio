@@ -1,246 +1,224 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { scaleLinear } from "d3-scale";
 import { SceneSfx } from "../components/SceneSfx";
+import type { GeneratedSceneProps } from "./index";
 
-type Props = {
-  accentColor: string;
-  secondaryColor: string;
-  surfaceColor: string;
-  surfaceAltColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
-};
+type Props = GeneratedSceneProps;
 
 const FONT = "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif";
-const HEAVY_PATH = "M 120 500 L 280 433 L 440 328 L 600 213 L 760 118 L 950 70";
-const PROMPT_PATH = "M 120 500 L 260 486 L 420 481 L 950 481";
 
 export const Scene5 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps, width, height } = useVideoConfig();
-  const u = Math.min(width, height) / 1080;
+  const { fps } = useVideoConfig();
+
   const exit = interpolate(
     frame,
     [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
+  const head = spring({ frame: frame - 2, fps, config: { damping: 200 } });
+  const panelIn = spring({ frame: frame - 8, fps, config: { damping: 200, mass: 0.9 } });
+  const draw = interpolate(frame, [30, 150], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const vueDraw = interpolate(frame, [60, 180], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const bandP = spring({ frame: frame - 120, fps, config: { damping: 200 } });
+  const axisP = spring({ frame: frame - 18, fps, config: { damping: 200 } });
 
-  const h1 = spring({ frame, fps, config: { damping: 14, stiffness: 130, mass: 0.7 } });
-  const h2 = spring({ frame: frame - 6, fps, config: { damping: 14, stiffness: 130, mass: 0.7 } });
-  const p1 = interpolate(frame, [0, 45], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const p2 = interpolate(frame, [16, 70], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const pulse = 1 + Math.sin(frame / 9) * 0.15;
-  const scanX = interpolate(frame, [60, props.durationInFrames], [120, 950], {
+  const xScale = scaleLinear().domain([0, 100]).range([110, 1120]);
+  const yScale = scaleLinear().domain([0, 100]).range([320, 70]);
+  const lum = (x: number) => 34 + 60 * (1 - Math.exp(-x / 24)) + 3.5 * Math.sin(x / 6);
+  const vue = (x: number) => 22 + 0.7 * x;
+  const pathFor = (fn: (x: number) => number) =>
+    Array.from({ length: 61 }, (_, i) => {
+      const x = (i / 60) * 100;
+      return `${i === 0 ? "M" : "L"} ${xScale(x).toFixed(2)} ${yScale(fn(x)).toFixed(2)}`;
+    }).join(" ");
+  const lumPath = pathFor(lum);
+  const vuePath = pathFor(vue);
+  const mp = interpolate(frame, [40, props.durationInFrames - 26], [8, 92], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const chartW = Math.min(width * 0.92, 980 * u);
-  const legend = [
-    { label: "Traditional editor", color: props.mutedColor },
-    { label: "ZoEdit prompt", color: props.accentColor },
-  ];
+  const markerY = yScale(lum(mp));
 
   return (
     <AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: "ltr" }}>
+      <svg width="100%" height="100%" viewBox="0 0 1920 1080" style={{ position: "absolute", inset: 0 }}>
+        <defs>
+          <linearGradient id="s5bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={props.secondaryColor} stopOpacity={0.2} />
+            <stop offset="100%" stopColor={props.secondaryColor} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <rect x={0} y={0} width={1920} height={1080} fill="url(#s5bg)" />
+        {Array.from({ length: 14 }).map((_, i) => (
+          <line key={i} x1={i * 150} y1={0} x2={i * 150} y2={1080} stroke={props.secondaryColor} strokeWidth={1} opacity={0.05} />
+        ))}
+      </svg>
+
+      <div style={{ position: "absolute", left: "5%", top: "8%", width: "62%", fontFamily: FONT }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            opacity: head,
+            transform: `translateY(${(1 - head) * 16}px)`,
+            color: props.accentColor,
+            fontSize: 18,
+            fontWeight: 700,
+            letterSpacing: 4,
+            textTransform: "uppercase",
+          }}
+        >
+          <div style={{ width: 30, height: 2, backgroundColor: props.accentColor }} />
+          Fenêtre-bandeau
+        </div>
+        <div
+          style={{
+            marginTop: 10,
+            fontSize: 52,
+            fontWeight: 800,
+            lineHeight: 1.12,
+            color: props.textColor,
+            opacity: head,
+            transform: `translateY(${(1 - head) * 24}px)`,
+          }}
+        >
+          La lumière devient continue
+        </div>
+        <div style={{ marginTop: 8, fontSize: 23, color: props.mutedColor, opacity: head }}>
+          Une vue panoramique sur tout le paysage.
+        </div>
+      </div>
+
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          background: `radial-gradient(circle at 50% 22%, ${props.accentColor}20 0%, transparent 46%), radial-gradient(circle at 50% 70%, ${props.secondaryColor}88 0%, transparent 50%)`,
+          left: "6%",
+          top: "26%",
+          width: "88%",
+          height: "44%",
+          borderRadius: 24,
+          padding: 24,
+          boxSizing: "border-box",
+          backgroundColor: props.surfaceColor,
+          border: `1px solid ${props.secondaryColor}66`,
+          boxShadow: "0 18px 48px rgba(0,0,0,0.35)",
+          display: "flex",
+          flexDirection: "column",
+          fontFamily: FONT,
+          direction: "ltr",
+          textAlign: "left",
+          opacity: exit * panelIn,
+          transform: `translateY(${(1 - panelIn) * 28}px)`,
         }}
-      />
-      <AbsoluteFill
-        style={{
-          inset: "-10% 0",
-          backgroundImage: `linear-gradient(${props.accentColor}0d 1px, transparent 1px), linear-gradient(90deg, ${props.accentColor}0d 1px, transparent 1px)`,
-          backgroundSize: "62px 62px",
-          transform: `translateY(${interpolate(frame, [0, props.durationInFrames], [0, 26])}px)`,
-        }}
-      />
-
-      <div style={{ position: "absolute", inset: 0, opacity: exit, transform: `translateY(${(1 - exit) * 14}px)` }}>
-        <div style={{ position: "absolute", top: "6%", left: "6%", right: "6%" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 9 * u,
-              fontFamily: FONT,
-              fontSize: 18 * u,
-              fontWeight: 800,
-              letterSpacing: 3,
-              color: props.accentColor,
-              marginBottom: 8 * u,
-            }}
-          >
-            THE SPEED GAP
-          </div>
-          <div
-            style={{
-              fontFamily: FONT,
-              fontSize: 72 * u,
-              fontWeight: 900,
-              lineHeight: 1.12,
-              letterSpacing: -1.5,
-              color: props.textColor,
-              opacity: h1,
-              transform: `translateY(${(1 - h1) * 24}px)`,
-            }}
-          >
-            So skip the
-          </div>
-          <div
-            style={{
-              fontFamily: FONT,
-              fontSize: 78 * u,
-              fontWeight: 900,
-              lineHeight: 1.12,
-              letterSpacing: -1.5,
-              color: props.accentColor,
-              opacity: h2,
-              transform: `translateY(${(1 - h2) * 24}px)`,
-            }}
-          >
-            slow editors.
-          </div>
-        </div>
-
-        <div style={{ position: "absolute", top: "22%", left: "6%", right: "6%", display: "flex", gap: 14 * u }}>
-          {legend.map((item, i) => {
-            const s = spring({ frame: frame - (2 + i * 12), fps, config: { damping: 15, stiffness: 150, mass: 0.6 } });
-            return (
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: props.textColor }}>Lumière naturelle le long de la façade</div>
+          <div style={{ display: "flex", gap: 10 }}>
+            {[
+              { label: "Lumière (%)", color: props.accentColor },
+              { label: "Vue dégagée", color: props.secondaryColor },
+            ].map((l) => (
               <div
-                key={item.label}
+                key={l.label}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 10 * u,
-                  padding: `${8 * u}px ${14 * u}px`,
+                  gap: 8,
+                  padding: "7px 12px",
                   borderRadius: 999,
-                  background: props.surfaceColor,
-                  border: `1px solid ${item.color}55`,
-                  opacity: s,
-                  transform: `translateY(${(1 - s) * 12}px)`,
-                  fontFamily: FONT,
-                  fontSize: 18 * u,
-                  fontWeight: 700,
-                  color: props.textColor,
+                  backgroundColor: props.surfaceAltColor,
+                  border: `1px solid ${props.secondaryColor}55`,
                 }}
               >
-                <div style={{ width: 14 * u, height: 14 * u, borderRadius: "50%", background: item.color, boxShadow: `0 0 10px ${item.color}` }} />
-                {item.label}
+                <div style={{ width: 8, height: 8, borderRadius: 999, backgroundColor: l.color }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: props.textColor }}>{l.label}</span>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: "26.5%",
-            left: "50%",
-            width: chartW,
-            transform: "translateX(-50%)",
-            direction: "ltr",
-          }}
-        >
-          <svg viewBox="0 0 1000 620" style={{ width: "100%", height: "auto", direction: "ltr", overflow: "visible" }}>
-            <rect
-              x={0}
-              y={0}
-              width={1000}
-              height={620}
-              rx={28}
-              fill={props.surfaceColor}
-              stroke={`${props.accentColor}52`}
-              strokeWidth={2}
-            />
-
-            {[0, 15, 30, 45].map((v) => {
-              const y = 500 - (v / 45) * 430;
-              return (
+        <div style={{ flex: 1, minHeight: 0, marginTop: 8 }}>
+          <svg width="100%" height="100%" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid meet" style={{ direction: "ltr" }}>
+            <g opacity={axisP}>
+              {[0, 25, 50, 75, 100].map((v) => (
                 <g key={v}>
-                  <line x1={120} y1={y} x2={950} y2={y} stroke={`${props.textColor}14`} strokeWidth={1.5} />
-                  <text x={106} y={y + 8} textAnchor="end" fill={props.mutedColor} fontFamily={FONT} fontSize={22} fontWeight={600}>
-                    {v}m
+                  <line x1={110} y1={yScale(v)} x2={1120} y2={yScale(v)} stroke={props.secondaryColor} strokeWidth={1} opacity={0.14} />
+                  <text x={96} y={yScale(v) + 5} textAnchor="end" fill={props.mutedColor} fontFamily={FONT} fontSize={15}>
+                    {v}
                   </text>
                 </g>
-              );
-            })}
-
-            {[120, 535, 950].map((x, i) => (
-              <text key={x} x={x} y={540} textAnchor="middle" fill={props.mutedColor} fontFamily={FONT} fontSize={22} fontWeight={600}>
-                {i === 0 ? "0%" : i === 1 ? "50%" : "100%"}
+              ))}
+              {[0, 20, 40, 60, 80, 100].map((v) => (
+                <text key={v} x={xScale(v)} y={348} textAnchor="middle" fill={props.mutedColor} fontFamily={FONT} fontSize={15}>
+                  {v}
+                </text>
+              ))}
+              <line x1={110} y1={320} x2={1120} y2={320} stroke={props.secondaryColor} strokeWidth={2} opacity={0.6} />
+              <line x1={110} y1={70} x2={110} y2={320} stroke={props.secondaryColor} strokeWidth={2} opacity={0.6} />
+              <text x={615} y={386} textAnchor="middle" fill={props.mutedColor} fontFamily={FONT} fontSize={14} letterSpacing={2}>
+                LONGUEUR DE LA FAÇADE (m)
               </text>
-            ))}
+              <text transform="rotate(-90 30 200)" x={30} y={200} textAnchor="middle" fill={props.mutedColor} fontFamily={FONT} fontSize={14} letterSpacing={2}>
+                LUMIÈRE (%)
+              </text>
+            </g>
 
-            <line x1={120} y1={70} x2={120} y2={500} stroke={`${props.textColor}55`} strokeWidth={2} />
-            <line x1={120} y1={500} x2={950} y2={500} stroke={`${props.textColor}55`} strokeWidth={2} />
-            <text x={120} y={44} textAnchor="start" fill={props.mutedColor} fontFamily={FONT} fontSize={20} fontWeight={700} letterSpacing={2}>
-              MINUTES
+            <rect
+              x={xScale(25)}
+              y={70}
+              width={xScale(80) - xScale(25)}
+              height={250}
+              fill={props.accentColor}
+              opacity={0.08 * bandP}
+            />
+            <text x={(xScale(25) + xScale(80)) / 2} y={58} textAnchor="middle" fill={props.accentColor} fontFamily={FONT} fontSize={14} fontWeight={700} letterSpacing={1.5} opacity={bandP}>
+              LUMIÈRE CONTINUE
             </text>
-            <text x={535} y={590} textAnchor="middle" fill={props.mutedColor} fontFamily={FONT} fontSize={20} fontWeight={700} letterSpacing={2}>
-              PROMPT TO FIRST CUT
-            </text>
-
-            <line x1={scanX} y1={70} x2={scanX} y2={500} stroke={`${props.accentColor}22`} strokeWidth={2} />
 
             <path
-              d={HEAVY_PATH}
+              d={vuePath}
               fill="none"
-              stroke={props.mutedColor}
-              strokeWidth={6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              stroke={props.secondaryColor}
+              strokeWidth={3}
               pathLength={1}
               strokeDasharray={1}
-              strokeDashoffset={1 - p1}
+              strokeDashoffset={1 - vueDraw}
+              strokeLinecap="round"
+              strokeLinejoin="round"
               opacity={0.9}
             />
             <path
-              d={PROMPT_PATH}
+              d={lumPath}
               fill="none"
               stroke={props.accentColor}
-              strokeWidth={8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth={4}
               pathLength={1}
               strokeDasharray={1}
-              strokeDashoffset={1 - p2}
-              style={{ filter: `drop-shadow(0 0 10px ${props.accentColor}88)` }}
+              strokeDashoffset={1 - draw}
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
 
-            <circle cx={950} cy={70} r={7 * p1 * pulse} fill={props.mutedColor} opacity={p1} />
-            <circle cx={950} cy={481} r={8 * p2 * pulse} fill={props.accentColor} opacity={p2} />
-
-            <text x={930} y={48} textAnchor="end" fill={props.textColor} fontFamily={FONT} fontSize={26} fontWeight={800}>
-              45 min
-            </text>
-            <text x={930} y={445} textAnchor="end" fill={props.textColor} fontFamily={FONT} fontSize={26} fontWeight={800}>
-              2 min
-            </text>
+            <line x1={xScale(mp)} y1={markerY} x2={xScale(mp)} y2={320} stroke={props.accentColor} strokeWidth={1.5} opacity={0.5} />
+            <circle cx={xScale(mp)} cy={markerY} r={16 + Math.sin(frame / 7) * 3} fill={props.accentColor} opacity={0.18} />
+            <circle cx={xScale(mp)} cy={markerY} r={6} fill={props.accentColor} />
+            <g>
+              <rect x={xScale(mp) - 38} y={markerY - 46} width={76} height={28} rx={8} fill={props.surfaceAltColor} stroke={`${props.accentColor}99`} strokeWidth={1.2} />
+              <text x={xScale(mp)} y={markerY - 27} textAnchor="middle" fill={props.textColor} fontFamily={FONT} fontSize={14} fontWeight={800}>
+                {Math.round(lum(mp))} %
+              </text>
+            </g>
           </svg>
         </div>
       </div>
 
-      <SceneSfx name="riser-build" frame={2} volume={0.18} />
-      <SceneSfx name="whoosh-fast" frame={18} volume={0.18} />
-      <SceneSfx name="alert-warning" frame={28} volume={0.18} />
-      <SceneSfx name="pop-sharp" frame={54} volume={0.18} />
-      <SceneSfx name="click-subtle" frame={72} volume={0.18} />
+      <SceneSfx name="whoosh-soft" frame={6} volume={0.18} />
+      <SceneSfx name="type-tick" frame={20} volume={0.18} />
+      <SceneSfx name="click-subtle" frame={62} volume={0.18} />
+      <SceneSfx name="pop-soft" frame={124} volume={0.18} />
     </AbsoluteFill>
   );
 };

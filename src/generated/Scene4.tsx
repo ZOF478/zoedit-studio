@@ -1,212 +1,290 @@
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { SceneSfx } from "../components/SceneSfx";
 import { SmartIcon } from "../components/SmartIcon";
+import type { GeneratedSceneProps } from "./index";
 
-type Props = {
-  accentColor: string;
-  secondaryColor: string;
-  surfaceColor: string;
-  surfaceAltColor: string;
-  bgColor: string;
-  textColor: string;
-  mutedColor: string;
-  characterBody: string;
-  characterFace: string;
-  characterAccent: string;
-  characterShadow: string;
-  isRtl: boolean;
-  language: string;
-  title?: string;
-  text?: string;
-  keywords?: string[];
-  data?: Record<string, unknown>;
-  durationInFrames: number;
-  showCharacter?: boolean;
-};
+type Props = GeneratedSceneProps;
 
 const FONT = "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif";
+const L_PLAN = "M 60 40 L 460 40 L 460 280 L 280 280 L 280 480 L 60 480 Z";
+
+const BEATS = [
+  { icon: "wall", label: "Murs porteurs", sub: "structure libérée" },
+  { icon: "layout", label: "Plan libre", sub: "espaces fluides" },
+  { icon: "tree", label: "Jardin suspendu", sub: "patio planté" },
+];
 
 export const Scene4 = (props: Props) => {
   const frame = useCurrentFrame();
-  const { fps, width, height } = useVideoConfig();
-  const u = Math.min(width, height) / 1080;
+  const { fps, width } = useVideoConfig();
+
   const exit = interpolate(
     frame,
     [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)],
     [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
-
-  const h = spring({ frame: frame - 2, fps, config: { damping: 14, stiffness: 120, mass: 0.7 } });
-  const ring1 = interpolate(frame, [0, 70], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const ring2 = interpolate(frame, [15, 95], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const cx = width / 2;
-  const cy = height * 0.5;
-  const r1 = Math.min(width, height) * 0.3;
-  const r2 = Math.min(width, height) * 0.37;
-  const ringPath = (r: number) =>
-    `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`;
-
-  const cards = [
-    { icon: "mdi:code-braces", title: "100% Open-Source", detail: "MIT licensed - fork it, own it.", tag: "MIT" },
-    { icon: "mdi:shield-lock", title: "Local-First Privacy", detail: "Your media never leaves your machine.", tag: "OFFLINE" },
-    { icon: "mdi:cash-multiple", title: "$0.00 Render Cost", detail: "No subscriptions. No credit meter.", tag: "FREE" },
-  ];
+  const head = spring({ frame: frame - 2, fps, config: { damping: 200 } });
+  const planIn = spring({ frame: frame - 10, fps, config: { damping: 200, mass: 0.9 } });
+  const planP = interpolate(frame, [18, 118], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const wallFade = interpolate(frame, [86, 150], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const gardenP = spring({ frame: frame - 104, fps, config: { damping: 14, mass: 0.7 } });
+  const breathe = 1 + Math.sin(frame / 44) * 0.012;
+  const glow = 0.35 + Math.sin(frame / 18) * 0.18;
 
   return (
     <AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: "ltr" }}>
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(circle at 50% 48%, ${props.secondaryColor}AA 0%, transparent 54%), radial-gradient(circle at 50% 10%, ${props.accentColor}1f 0%, transparent 42%)`,
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          inset: "-10% 0",
-          backgroundImage: `linear-gradient(${props.accentColor}0d 1px, transparent 1px), linear-gradient(90deg, ${props.accentColor}0d 1px, transparent 1px)`,
-          backgroundSize: "68px 68px",
-          transform: `translateY(${interpolate(frame, [0, props.durationInFrames], [0, 34])}px)`,
-        }}
-      />
-
-      <svg viewBox={`0 0 ${width} ${height}`} style={{ position: "absolute", inset: 0, direction: "ltr" }}>
-        <path
-          d={ringPath(r1)}
-          fill="none"
-          stroke={`${props.accentColor}2e`}
-          strokeWidth={2}
-          pathLength={1}
-          strokeDasharray={1}
-          strokeDashoffset={1 - ring1}
-        />
-        <path
-          d={ringPath(r2)}
-          fill="none"
-          stroke={`${props.textColor}18`}
-          strokeWidth={2}
-          pathLength={1}
-          strokeDasharray={1}
-          strokeDashoffset={1 - ring2}
-        />
-        <g transform={`rotate(${frame * 0.6} ${cx} ${cy})`}>
-          <circle cx={cx + r2} cy={cy} r={7 * u} fill={props.accentColor} opacity={0.85} />
-        </g>
-        <g transform={`rotate(${-frame * 0.9} ${cx} ${cy})`}>
-          <circle cx={cx + r1} cy={cy} r={4 * u} fill={props.textColor} opacity={0.6} />
-        </g>
-        <g transform={`rotate(${frame * 0.35 + 120} ${cx} ${cy})`}>
-          <circle cx={cx + r1} cy={cy} r={3 * u} fill={props.accentColor} opacity={0.5} />
-        </g>
+      <svg width="100%" height="100%" viewBox="0 0 1920 1080" style={{ position: "absolute", inset: 0 }}>
+        <defs>
+          <radialGradient id="s4glow" cx="62%" cy="48%" r="42%">
+            <stop offset="0%" stopColor={props.accentColor} stopOpacity={0.18} />
+            <stop offset="100%" stopColor={props.accentColor} stopOpacity={0} />
+          </radialGradient>
+        </defs>
+        <rect x={0} y={0} width={1920} height={1080} fill="url(#s4glow)" />
+        {Array.from({ length: 9 }).map((_, i) => (
+          <line key={i} x1={0} y1={200 + i * 70} x2={1920} y2={200 + i * 70} stroke={props.secondaryColor} strokeWidth={1} opacity={0.05} />
+        ))}
       </svg>
 
       <div
         style={{
           position: "absolute",
-          top: "5%",
-          left: "5.5%",
-          right: "5.5%",
-          bottom: "29%",
-          display: "flex",
-          flexDirection: "column",
-          opacity: exit,
-          transform: `translateY(${(1 - exit) * 16}px)`,
+          right: "1%",
+          top: "20%",
+          fontFamily: FONT,
+          fontSize: Math.min(470, width * 0.24),
+          fontWeight: 800,
+          lineHeight: 1,
+          color: props.accentColor,
+          opacity: 0.05,
+          transform: `translateY(${Math.sin(frame / 50) * 8}px)`,
         }}
       >
-        <div style={{ opacity: h, transform: `translateY(${(1 - h) * 20}px)` }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10 * u,
-              marginBottom: 10 * u,
-              fontFamily: FONT,
-              fontSize: 18 * u,
-              fontWeight: 800,
-              letterSpacing: 3,
-              color: props.accentColor,
-            }}
-          >
-            <SmartIcon query="mdi:shield-check" size={20 * u} color={props.accentColor} />
-            ZERO COST. FULL CONTROL.
-          </div>
-          <div style={{ fontFamily: FONT, fontSize: 56 * u, fontWeight: 900, lineHeight: 1.15, letterSpacing: -1, color: props.textColor }}>
-            Everything runs local
-          </div>
-          <div style={{ fontFamily: FONT, fontSize: 56 * u, fontWeight: 900, lineHeight: 1.15, letterSpacing: -1, color: props.accentColor }}>
-            with zero render cost.
-          </div>
-        </div>
+        L
+      </div>
 
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 16 * u }}>
-          {cards.map((c, i) => {
-            const s = spring({ frame: frame - (10 + i * 12), fps, config: { damping: 13, stiffness: 140, mass: 0.7 } });
-            return (
-              <div
-                key={c.title}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 18 * u,
-                  padding: `${20 * u}px ${22 * u}px`,
-                  borderRadius: 24 * u,
-                  background: props.surfaceColor,
-                  border: `1px solid ${props.accentColor}55`,
-                  boxShadow: "0 18px 48px rgba(0,0,0,0.35)",
-                  opacity: s,
-                  transform: `translateY(${(1 - s) * 36 + Math.sin(frame / 24 + i * 1.7) * 4}px) scale(${0.95 + s * 0.05})`,
-                }}
-              >
-                <div
-                  style={{
-                    width: 78 * u,
-                    height: 78 * u,
-                    borderRadius: 20 * u,
-                    background: props.surfaceAltColor,
-                    border: `1px solid ${props.accentColor}44`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    boxShadow: `0 0 24px ${props.accentColor}22`,
-                  }}
-                >
-                  <SmartIcon query={c.icon} size={38 * u} color={props.accentColor} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: FONT, fontSize: 30 * u, fontWeight: 800, color: props.textColor, lineHeight: 1.25 }}>
-                    {c.title}
-                  </div>
-                  <div style={{ fontFamily: FONT, fontSize: 18 * u, color: props.mutedColor, lineHeight: 1.45 }}>{c.detail}</div>
-                </div>
-                <div
-                  style={{
-                    padding: `${7 * u}px ${13 * u}px`,
-                    borderRadius: 999,
-                    background: `${props.accentColor}1f`,
-                    border: `1px solid ${props.accentColor}66`,
-                    fontFamily: FONT,
-                    fontSize: 16 * u,
-                    fontWeight: 800,
-                    color: props.textColor,
-                    letterSpacing: 1,
-                  }}
-                >
-                  {c.tag}
-                </div>
-              </div>
-            );
-          })}
+      <div style={{ position: "absolute", left: "5%", top: "8%", width: "56%", fontFamily: FONT }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            opacity: head,
+            transform: `translateY(${(1 - head) * 16}px)`,
+            color: props.accentColor,
+            fontSize: 18,
+            fontWeight: 700,
+            letterSpacing: 4,
+            textTransform: "uppercase",
+          }}
+        >
+          <div style={{ width: 30, height: 2, backgroundColor: props.accentColor }} />
+          Premier étage · Piano nobile
+        </div>
+        <div
+          style={{
+            marginTop: 10,
+            fontSize: 54,
+            fontWeight: 800,
+            lineHeight: 1.12,
+            color: props.textColor,
+            opacity: head,
+            transform: `translateY(${(1 - head) * 24}px)`,
+          }}
+        >
+          Le plan libre en L
+        </div>
+        <div style={{ marginTop: 8, fontSize: 24, color: props.mutedColor, opacity: head }}>
+          Dégagé des murs porteurs, organisé autour du jardin suspendu.
         </div>
       </div>
 
-      <SceneSfx name="pop-soft" frame={10} volume={0.18} />
-      <SceneSfx name="pop-soft" frame={22} volume={0.18} />
-      <SceneSfx name="toggle-soft" frame={30} volume={0.18} />
-      <SceneSfx name="cash-register" frame={36} volume={0.18} />
-      <SceneSfx name="type-tick" frame={52} volume={0.18} />
-      <SceneSfx name="click-subtle" frame={70} volume={0.18} />
+      <div
+        style={{
+          position: "absolute",
+          left: "5%",
+          top: "29%",
+          width: "27%",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          fontFamily: FONT,
+          opacity: exit,
+        }}
+      >
+        {BEATS.map((b, i) => {
+          const s = spring({ frame: frame - (24 + i * 12), fps, config: { damping: 16, mass: 0.7 } });
+          return (
+            <div
+              key={b.label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                padding: 18,
+                borderRadius: 18,
+                backgroundColor: props.surfaceColor,
+                border: `1px solid ${props.secondaryColor}66`,
+                boxShadow: "0 18px 48px rgba(0,0,0,0.32)",
+                transform: `translateX(${(1 - s) * -36}px)`,
+                opacity: s,
+              }}
+            >
+              <div
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: 14,
+                  backgroundColor: props.surfaceAltColor,
+                  border: `1px solid ${props.accentColor}55`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <SmartIcon query={b.icon} size={28} color={props.accentColor} />
+              </div>
+              <div>
+                <div style={{ fontSize: 21, fontWeight: 800, color: props.textColor }}>{b.label}</div>
+                <div style={{ fontSize: 14, color: props.mutedColor, marginTop: 3, letterSpacing: 1 }}>
+                  {b.sub}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: "38%",
+          top: "25%",
+          width: "34%",
+          maxWidth: 500,
+          aspectRatio: "1 / 1",
+          opacity: exit * planIn,
+          transform: `translateY(${(1 - planIn) * 30}px) scale(${breathe})`,
+        }}
+      >
+        <svg width="100%" height="100%" viewBox="0 0 520 520" style={{ direction: "ltr" }}>
+          <path d={L_PLAN} fill={props.surfaceColor} fillOpacity={0.95 * planP} />
+          <path
+            d={L_PLAN}
+            fill="none"
+            stroke={props.accentColor}
+            strokeWidth={3}
+            pathLength={1}
+            strokeDasharray={1}
+            strokeDashoffset={1 - planP}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <g opacity={wallFade}>
+            {["M 200 48 L 200 272", "M 68 200 L 272 200", "M 360 288 L 452 288", "M 160 288 L 160 472"].map((d) => (
+              <path key={d} d={d} fill="none" stroke={props.secondaryColor} strokeWidth={12} strokeLinecap="round" opacity={0.75} />
+            ))}
+          </g>
+          <g transform={`translate(380 380) scale(${0.6 + gardenP * 0.4}) translate(-380 -380)`} opacity={gardenP}>
+            <rect x={296} y={296} width={168} height={168} rx={14} fill={props.surfaceAltColor} stroke={props.accentColor} strokeWidth={2.5} />
+            <rect x={316} y={316} width={128} height={128} rx={8} fill="none" stroke={props.accentColor} strokeWidth={1} opacity={0.4} />
+          </g>
+          {[
+            [80, 60],
+            [440, 60],
+            [80, 460],
+            [260, 460],
+            [440, 280],
+          ].map(([cx, cy], i) => (
+            <circle key={i} cx={cx} cy={cy} r={7} fill={props.accentColor} opacity={0.8} />
+          ))}
+          <path d="M 120 440 L 220 440" fill="none" stroke={props.accentColor} strokeWidth={2} opacity={0.5} />
+        </svg>
+
+        <div
+          style={{
+            position: "absolute",
+            left: "73%",
+            top: "73%",
+            width: 62,
+            height: 62,
+            marginLeft: -31,
+            marginTop: -31,
+            borderRadius: 16,
+            backgroundColor: props.surfaceAltColor,
+            border: `1px solid ${props.accentColor}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: gardenP,
+            transform: `scale(${0.7 + gardenP * 0.3})`,
+            boxShadow: `0 0 30px ${props.accentColor}55`,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: -10,
+              borderRadius: 20,
+              border: `1px solid ${props.accentColor}`,
+              opacity: glow,
+            }}
+          />
+          <SmartIcon query="tree" size={34} color={props.accentColor} />
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            left: "73%",
+            top: "89%",
+            transform: "translateX(-50%)",
+            fontFamily: FONT,
+            fontSize: 12,
+            letterSpacing: 1.5,
+            fontWeight: 700,
+            color: props.mutedColor,
+            whiteSpace: "nowrap",
+          }}
+        >
+          JARDIN SUSPENDU
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: "16%",
+            top: "30%",
+            fontFamily: FONT,
+            fontSize: 12,
+            letterSpacing: 2,
+            fontWeight: 700,
+            color: props.mutedColor,
+          }}
+        >
+          SÉJOUR
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: "20%",
+            top: "82%",
+            fontFamily: FONT,
+            fontSize: 12,
+            letterSpacing: 2,
+            fontWeight: 700,
+            color: props.mutedColor,
+          }}
+        >
+          CHAMBRES
+        </div>
+      </div>
+
+      <SceneSfx name="whoosh-soft" frame={6} volume={0.18} />
+      <SceneSfx name="pop-soft" frame={26} volume={0.18} />
+      <SceneSfx name="type-tick" frame={90} volume={0.18} />
+      <SceneSfx name="pop-bubble" frame={108} volume={0.18} />
     </AbsoluteFill>
   );
 };

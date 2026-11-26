@@ -68,6 +68,7 @@ export function RenderMonitorPanel({
   const [showLogs, setShowLogs] = useState(false);
   const [copied, setCopied] = useState(false);
   const [clock, setClock] = useState(() => Date.now());
+  const [cancelConfirm, setCancelConfirm] = useState(false);
 
   useEffect(() => {
     if (!isRendering) return;
@@ -75,6 +76,25 @@ export function RenderMonitorPanel({
     const timer = window.setInterval(() => setClock(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, [isRendering]);
+
+  useEffect(() => {
+    setCancelConfirm(false);
+  }, [isRendering]);
+
+  useEffect(() => {
+    if (isCancelling) setCancelConfirm(false);
+  }, [isCancelling]);
+
+  useEffect(() => {
+    if (!cancelConfirm) return;
+    const timer = window.setTimeout(() => setCancelConfirm(false), 4000);
+    return () => window.clearTimeout(timer);
+  }, [cancelConfirm]);
+
+  const handleConfirmCancel = () => {
+    setCancelConfirm(false);
+    onCancelRender?.();
+  };
 
   const buildLogText = () =>
     logs
@@ -205,19 +225,46 @@ export function RenderMonitorPanel({
             <div className="flex items-center gap-2">
               <span className="font-mono tabular-nums text-sky-300">{overallProgress}%</span>
               {isRendering && onCancelRender ? (
-                <button
-                  type="button"
-                  onClick={onCancelRender}
-                  disabled={isCancelling}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/50 bg-red-500/20 px-3 py-1.5 text-[11px] font-bold text-red-100 hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                >
-                  {isCancelling ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Square className="h-3.5 w-3.5 fill-current" />
-                  )}
-                  {t('إيقاف العملية', 'Cancel export')}
-                </button>
+                cancelConfirm ? (
+                  <div
+                    role="alertdialog"
+                    aria-live="assertive"
+                    className="flex flex-wrap items-center justify-end gap-1.5 rounded-lg border border-amber-400/45 bg-amber-500/12 px-2 py-1"
+                  >
+                    <span className="text-[10px] font-bold text-amber-100">
+                      {t('هل أنت متأكد؟', 'Are you sure?')}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleConfirmCancel}
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-red-500/60 bg-red-500/25 px-2 py-1 text-[10px] font-bold text-red-100 transition-colors hover:bg-red-500/40"
+                    >
+                      <Square className="h-2.5 w-2.5 fill-current" />
+                      {t('نعم، إلغاء', 'Yes, cancel')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCancelConfirm(false)}
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-slate-500/40 bg-slate-600/30 px-2 py-1 text-[10px] font-bold text-slate-200 transition-colors hover:bg-slate-500/40"
+                    >
+                      {t('استمرار', 'Keep')}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setCancelConfirm(true)}
+                    disabled={isCancelling}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/50 bg-red-500/20 px-3 py-1.5 text-[11px] font-bold text-red-100 hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {isCancelling ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Square className="h-3.5 w-3.5 fill-current" />
+                    )}
+                    {t('إيقاف العملية', 'Cancel export')}
+                  </button>
+                )
               ) : null}
             </div>
           </div>

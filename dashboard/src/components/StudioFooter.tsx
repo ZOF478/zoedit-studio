@@ -621,26 +621,30 @@ function AboutContent() {
 
       <InfoCard
         icon={<Sparkles className="h-3.5 w-3.5" />}
-        title={t('ما الجديد في v1.3.0؟', 'What is new in v1.3.0?')}
+        title={t('ما الجديد في v1.3.2؟', 'What is new in v1.3.2?')}
         tone="amber"
       >
         <BulletList
           items={[
             t(
-              'محرّك صوت موحّد: Edge TTS مجاني بدون مفتاح، Piper TTS يعمل دون إنترنت، وElevenLabs BYOK مع فلاتر لغة ولكنة وجنس ومعاينة حية.',
-              'Unified voice engine: key-free Edge TTS, offline Piper TTS, and ElevenLabs BYOK with language, accent, gender filters and live preview.'
+              'توليد مشاهد ذاتي الإصلاح: محاولة إصلاح تلقائية واحدة عبر LLM لأخطاء التعقيم أو TypeScript قبل التحويل إلى القوالب الافتراضية.',
+              'Self-healing scene generation: one automatic LLM retry for sanitizer or TypeScript errors before falling back to built-in templates.'
             ),
             t(
-              'رفع صور ولوغو آمن: PNG/JPG/WEBP/SVG منظّف، تصنيف Logo أو Screenshot، وحركة سينمائية داخل مشاهد Remotion مع الحفاظ عليها في Clean B-Roll.',
-              'Secure image/logo uploads: sanitized PNG/JPG/WEBP/SVG, Logo or Screenshot roles, and cinematic Remotion motion that survives Clean B-Roll.'
+              'قواعد تعقيم صارمة للعمل دون اتصال وRemotion: حظر الروابط والوسائط الخارجية والتحقق من نطاقات interpolate() الصحيحة في كل برومبتات التوليد والتعديل.',
+              'Hardened offline and Remotion sanitizer rules: external URLs/media are blocked and valid interpolate() ranges are enforced in every generation and tweak prompt.'
             ),
             t(
-              'مساحة عمل NLE بلا تمرير: ألواح قابلة للتحجيم، معاينة حية وLive Sandbox، شريط أدوات متكيف، وحفظ كامل محلياً بعد إعادة التحميل.',
-              'Zero-scroll NLE workspace: resizable panes, Live Preview and Live Sandbox, adaptive toolbars, and full local persistence across reloads.'
+              'تنبيهات تراكمية للقوالب الاحتياطية وشارات كهرمانية على الخط الزمني حتى لا يوقف مشهد واحد التصدير بأكمله.',
+              'Cumulative fallback alerts and amber timeline badges so a single fallback scene never forces the whole render to be canceled.'
             ),
             t(
-              'مكتبة SFX كاملة واختبار مستوى الصوت، مع تصليب أمني وتقييد 127.0.0.1 وأذونات 0700/0600 وفحص MIME/SVG وحماية من اجتياز المسارات.',
-              'Full SFX library and volume tester, plus security hardening: 127.0.0.1 binding, 0700/0600 permissions, MIME/SVG validation, and path-traversal guards.'
+              'ربط مباشر بين اختيار المقطع وتعديل البرومبت السريع لاستهداف Scene{N} وإعادة تصدير المشهد فقط مع إعادة استخدام الصوت والكاش.',
+              'Direct clip-to-quick-prompt binding: selecting a clip or fallback badge targets Scene{N}, re-rendering only that scene while reusing cached segments and TTS audio.'
+            ),
+            t(
+              'تأكيد إلغاء التصدير على خطوتين داخل الواجهة مع إعادة ضبط تلقائية بعد 4 ثوانٍ لمنع الإلغاء العارض.',
+              'Two-step inline cancel-export confirmation with a 4-second auto-reset to prevent accidental cancellation of long renders.'
             ),
           ]}
         />

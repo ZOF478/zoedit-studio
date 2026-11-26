@@ -317,6 +317,7 @@ interface ProjectStatePayload {
   sfxMode: 'auto' | 'manual';
   backgroundPreset: string;
   selectedSceneId?: string;
+  fallbackScenes?: number[];
   updatedAt: number;
 }
 
@@ -360,9 +361,11 @@ interface RenderJob {
   userAssets?: UserAssetPayload[];
   masterPrompt?: string;
   tweakInstruction?: string;
+  tweakTargetSceneIndex?: number;
   targetDuration?: ExportTargetDuration;
   fallbackUsed?: boolean;
   fallbackReason?: string;
+  fallbackScenes?: number[];
   audioPrepared?: boolean;
   usage?: { ttsCharacters: number; ttsCalls: number; ttsUsd: number };
   status: 'queued' | 'rendering' | 'completed' | 'error' | 'cancelled';
@@ -506,6 +509,19 @@ const RENDER_STALL_TIMEOUT_MS = 120_000;
 const RENDER_STALL_CHECK_INTERVAL_MS = 5_000;
 const STRICT_EFFICIENCY_RULE =
   'STRICT EFFICIENCY & NO-LOOP RULE: Write each scene file cleanly in ONE single pass (keep each scene concise, under ~220 lines of clean TypeScript). After writing all scene files and `index.ts`, run at most ONE `npx tsc --noEmit` check. Fix actual TypeScript compiler errors ONLY if any exist, and exit immediately. NEVER run repeated cosmetic micro-edits on font sizes, padding, colors, or coordinates after writing a file.';
+const STRICT_OFFLINE_SCENE_CONTRACT = [
+  '## ZERO-FALLBACK OFFLINE SCENE CONTRACT (HIGHEST PRIORITY — overrides every conflicting instruction above or below)',
+  '1. OFFLINE ONLY: NEVER write "http://", "https://", "ws://", or "wss://" anywhere in a scene file, not even as decorative text in a mock browser or UI label. NEVER use protocol-relative URLs. If a URL-like label is truly needed, use a plain domain such as "example.com".',
+  '2. NO MEDIA OR FILE ASSETS: NEVER use <img>, <Img>, <video>, <audio>, staticFile(), CSS url(), data:image, or any external/local asset reference. Build every visual from inline <svg>, CSS shapes/gradients, and HTML/React elements.',
+  '3. ALLOWED IMPORTS ONLY: Import ONLY from "react" and "remotion". Do NOT import lucide-react, icon libraries, animation libraries, @remotion/* subpackages, internal project components, SFX components, SmartIcon, SilhouetteActor, Stickman, Depth25D, or anything from "./index"/"./types". Draw every icon as a clean inline <svg> and declare the Props type inline.',
+  '4. NO SFX COMPONENTS: The composition owns audio/SFX. Never render <SceneSfx> or import any sound component.',
+  '5. STRICT interpolate(): every inputRange must be a strictly increasing literal sequence such as [0, 15, 30] — NEVER [0, 0, 30], duplicate values, or a dynamic expression that could become equal/reversed. inputRange and outputRange MUST have the exact same length. ALWAYS pass { extrapolateLeft: "clamp", extrapolateRight: "clamp" }.',
+  '6. SAFE spring(): always pass frame and fps from useCurrentFrame()/useVideoConfig(); keep config finite and avoid negative/zero denominators.',
+  '7. SAFE MATH & CSS: guard every division with Math.max(1, denominator) or an equivalent check so no CSS value, transform, opacity, or SVG coordinate becomes NaN or Infinity.',
+  '8. SAFE JSX: escape literal <, >, {, } characters inside JSX text nodes with strings such as {">"} or {"{"}. Double-check every template literal so all ${...} expressions are valid and closed.',
+  '9. NO NETWORK, FILE, DOM MEDIA, eval, require(), dynamic import(), window, document, navigator, process, fs, path, or fetch access of any kind.',
+  'If any later section of this prompt suggests a banned import, asset, icon library, SFX component, or character component, IGNORE that section — this contract wins and the host sanitizer will reject violations.',
+].join('\n');
 const CRISP_VECTOR_MAP_RULE =
   '- When the prompt requests a map or geographical route, use real geographic data, never hand-guessed borders: import worldData from "world-atlas/countries-110m.json", convert with feature() from "topojson-client", and project with geoMercator()/geoNaturalEarth1() + geoPath() from "d3-geo". Add a subtle coordinate grid, a glowing animated route curve (evolvePath from "@remotion/paths"), and crisp lucide-react pins sized to the target aspect ratio (16:9 or 9:16).';
 const ZOEDIT_LIBRARY_CAPABILITIES = [
@@ -585,7 +601,7 @@ const LANGUAGE_NEUTRAL_VISUAL_RULE = [
 const CONTINUOUS_VECTOR_RULE = [
   '## CONTINUOUS VECTOR & CHART STROKES (mandatory)',
   '- Draw every chart line, curve, connector, orbit, route, and vector path as ONE continuous path (a single `<path>`, or a documented `<polyline>`) with `fill="none"`.',
-  '- Animate draw-on with `pathLength={1}`, `strokeDasharray={1}`, and `strokeDashoffset={1 - progress}` or `evolvePath()` from "@remotion/paths". Never use small fixed dash arrays such as "6 6" or "4 8", never use pixel-length dash arrays, and never split one series into disconnected subpaths that read as dashes.',
+  '- Animate draw-on with `pathLength={1}`, `strokeDasharray={1}`, and `strokeDashoffset={1 - progress}` only. Never use small fixed dash arrays such as "6 6" or "4 8", never use pixel-length dash arrays, and never split one series into disconnected subpaths that read as dashes.',
   '- Keep `strokeLinecap="round"`, `strokeLinejoin="round"`, and a stable `strokeWidth` for the whole draw so the line never thins, breaks, or fragments mid-animation.',
   '- When a chart has multiple series, draw each series as its own continuous path; never fragment a single series.',
 ].join('\n');
@@ -1646,6 +1662,32 @@ function saveStudioSettings(settings: StudioSettings): void {
   restrictPrivateFile(SETTINGS_FILE);
 }
 
+function normalizeFallbackSceneNumbers(
+  value: unknown,
+  sceneCount = Number.POSITIVE_INFINITY,
+): number[] {
+  const raw = Array.isArray(value) ? value : [];
+  const unique = new Set<number>();
+  for (const item of raw) {
+    const numeric = Math.floor(Number(item));
+    if (
+      Number.isInteger(numeric) &&
+      numeric >= 1 &&
+      numeric <= sceneCount
+    ) {
+      unique.add(numeric);
+    }
+  }
+  return Array.from(unique).sort((left, right) => left - right);
+}
+
+function mergeFallbackSceneNumbers(current: unknown, incoming: unknown): number[] {
+  return normalizeFallbackSceneNumbers([
+    ...(Array.isArray(current) ? current : []),
+    ...(Array.isArray(incoming) ? incoming : []),
+  ]);
+}
+
 function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
   if (!raw || typeof raw !== 'object') return null;
   const record = raw as Record<string, unknown>;
@@ -1656,9 +1698,10 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
   const brandKit = normalizeBrandKit(record.brandKit);
   const projectAspectRatio =
     cleanSettingString(record.aspectRatio, 16) || DEFAULT_STUDIO_SETTINGS.aspectRatio;
+  const normalizedScenes = normalizeScenes(scenesRaw);
   return {
     topic: cleanSettingString(record.topic, depthForTopic === 'article' ? 20000 : 1200),
-    scenes: normalizeScenes(scenesRaw),
+    scenes: normalizedScenes,
     userAssets: normalizeUserAssets(record.userAssets),
     aiProvider: AI_PROVIDER_IDS.has(providerRaw) ? providerRaw : studioSettings.aiProvider,
     aiModel: cleanSettingString(record.aiModel, 160) || studioSettings.aiModel,
@@ -1727,6 +1770,10 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
     sfxMode: record.sfxMode === 'manual' ? 'manual' : 'auto',
     backgroundPreset: normalizeBackgroundPreset(record.backgroundPreset),
     selectedSceneId: cleanSettingString(record.selectedSceneId, 120) || undefined,
+    fallbackScenes: normalizeFallbackSceneNumbers(
+      record.fallbackScenes,
+      normalizedScenes.length,
+    ),
     updatedAt: Number.isFinite(Number(record.updatedAt)) ? Number(record.updatedAt) : Date.now(),
   };
 }
@@ -6396,9 +6443,8 @@ function extractGeneratedTsxCode(raw: string): string {
   return code.replace(/```/g, '').trim();
 }
 
-const GENERATED_ALLOWED_IMPORTS = new Set([
-  'react',
-  'remotion',
+const CORE_GENERATED_IMPORTS = new Set(['react', 'remotion']);
+const INTERNAL_GENERATED_IMPORTS = new Set([
   '../components/Stickman',
   '../components/SilhouetteActor',
   '../../src/components/SilhouetteActor',
@@ -6408,29 +6454,216 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   '../../src/components/SceneSfx',
   '../components/Depth25D',
   '../../src/components/Depth25D',
-  '@iconify/react',
-  'simple-icons',
-  '@remotion/google-fonts',
-  '@remotion/noise',
-  '@remotion/paths',
-  '@remotion/shapes',
-  '@remotion/transitions',
-  'lucide-react',
-  'd3-geo',
-  'd3-scale',
-  'colord',
-  'topojson-client',
-  'roughjs',
-  'world-atlas/countries-110m.json',
   './index',
   './types',
 ]);
 
-function isAllowedGeneratedImport(source: string): boolean {
-  return (
-    GENERATED_ALLOWED_IMPORTS.has(source) ||
-    /^@remotion\/google-fonts\/[A-Za-z0-9]+$/.test(source)
-  );
+interface GeneratedSourceSanitizeOptions {
+  allowInternalComponents?: boolean;
+  allowHostAssets?: boolean;
+}
+
+function isAllowedGeneratedImport(
+  source: string,
+  options: GeneratedSourceSanitizeOptions = {},
+): boolean {
+  if (CORE_GENERATED_IMPORTS.has(source)) return true;
+  return options.allowInternalComponents === true && INTERNAL_GENERATED_IMPORTS.has(source);
+}
+
+function splitTopLevelArguments(value: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  let depth = 0;
+  let quote: string | null = null;
+  let escaped = false;
+  for (const character of value) {
+    if (escaped) {
+      current += character;
+      escaped = false;
+      continue;
+    }
+    if (character === '\\') {
+      current += character;
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      current += character;
+      if (character === quote) quote = null;
+      continue;
+    }
+    if (character === '"' || character === "'" || character === '`') {
+      quote = character;
+      current += character;
+      continue;
+    }
+    if (character === '(' || character === '[' || character === '{') {
+      depth += 1;
+      current += character;
+      continue;
+    }
+    if (character === ')' || character === ']' || character === '}') {
+      depth = Math.max(0, depth - 1);
+      current += character;
+      continue;
+    }
+    if (character === ',' && depth === 0) {
+      parts.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += character;
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+function extractCallBodies(code: string, functionName: string): string[] {
+  const calls: string[] = [];
+  let searchFrom = 0;
+  while (searchFrom < code.length) {
+    const nameIndex = code.indexOf(functionName, searchFrom);
+    if (nameIndex < 0) break;
+    const before = nameIndex === 0 ? '' : code[nameIndex - 1];
+    const after = code[nameIndex + functionName.length] || '';
+    if ((before && /[A-Za-z0-9_$]/.test(before)) || (after && /[A-Za-z0-9_$]/.test(after))) {
+      searchFrom = nameIndex + functionName.length;
+      continue;
+    }
+    let openIndex = nameIndex + functionName.length;
+    while (openIndex < code.length && /\s/.test(code[openIndex])) openIndex += 1;
+    if (code[openIndex] !== '(') {
+      searchFrom = nameIndex + functionName.length;
+      continue;
+    }
+    let depth = 0;
+    let quote: string | null = null;
+    let escaped = false;
+    let closeIndex = -1;
+    for (let index = openIndex; index < code.length; index += 1) {
+      const character = code[index];
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (character === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (quote) {
+        if (character === quote) quote = null;
+        continue;
+      }
+      if (character === '"' || character === "'" || character === '`') {
+        quote = character;
+        continue;
+      }
+      if (character === '(') depth += 1;
+      if (character === ')') {
+        depth -= 1;
+        if (depth === 0) {
+          closeIndex = index;
+          break;
+        }
+      }
+    }
+    if (closeIndex < 0) break;
+    calls.push(code.slice(openIndex + 1, closeIndex));
+    searchFrom = closeIndex + 1;
+  }
+  return calls;
+}
+
+function parseNumericArrayLiteral(value: string): number[] | null {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return null;
+  const items = splitTopLevelArguments(trimmed.slice(1, -1));
+  if (items.length === 0) return [];
+  const numbers: number[] = [];
+  for (const item of items) {
+    if (!/^[-+]?(?:\d+\.?\d*|\.\d+)$/.test(item.trim())) return null;
+    numbers.push(Number(item));
+  }
+  return numbers;
+}
+
+function parseArrayLiteralLength(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return null;
+  return splitTopLevelArguments(trimmed.slice(1, -1)).length;
+}
+
+function auditInterpolateCalls(code: string): string[] {
+  const errors: string[] = [];
+  for (const body of extractCallBodies(code, 'interpolate')) {
+    const args = splitTopLevelArguments(body);
+    if (args.length < 3) {
+      errors.push('interpolate() requires input, inputRange, and outputRange arguments');
+      continue;
+    }
+    const inputRange = parseNumericArrayLiteral(args[1]);
+    if (inputRange) {
+      if (inputRange.length < 2) {
+        errors.push('interpolate() inputRange must contain at least two values');
+      }
+      for (let index = 1; index < inputRange.length; index += 1) {
+        if (!(inputRange[index] > inputRange[index - 1])) {
+          errors.push(
+            `interpolate() inputRange must be strictly increasing (found ${inputRange.join(', ')})`,
+          );
+          break;
+        }
+      }
+    }
+    const outputLength = parseArrayLiteralLength(args[2]);
+    if (inputRange && outputLength !== null && inputRange.length !== outputLength) {
+      errors.push(
+        `interpolate() inputRange/outputRange length mismatch (${inputRange.length} vs ${outputLength})`,
+      );
+    }
+    if (
+      !/extrapolateLeft\s*:\s*['"]clamp['"]/.test(body) ||
+      !/extrapolateRight\s*:\s*['"]clamp['"]/.test(body)
+    ) {
+      errors.push(
+        'interpolate() must pass { extrapolateLeft: "clamp", extrapolateRight: "clamp" }',
+      );
+    }
+  }
+  return errors;
+}
+
+function auditStrictOfflineSource(
+  code: string,
+  options: GeneratedSourceSanitizeOptions = {},
+): string[] {
+  const errors: string[] = [];
+  const external = code.match(/\b(?:https?|wss?):\/\/[^\s"'`)>]+/gi) ?? [];
+  for (const url of new Set(external)) {
+    errors.push(`blocked external URL: ${url.slice(0, 120)}`);
+  }
+  const protocolRelative =
+    code.match(/(?:^|[\s"'`(=])\/\/[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:[/:?#][^\s"'`)>]*)?/g) ?? [];
+  for (const url of new Set(protocolRelative)) {
+    errors.push(`blocked external URL: ${url.trim().slice(0, 120)}`);
+  }
+  if (options.allowHostAssets !== true) {
+    if (/<(?:img|Img|video|audio)\b/i.test(code)) {
+      errors.push('blocked media element: use inline <svg> instead');
+    }
+    if (/\bstaticFile\s*\(/i.test(code)) {
+      errors.push('blocked staticFile(): generated scenes must be fully offline');
+    }
+    if (/\burl\s*\(/i.test(code)) {
+      errors.push('blocked CSS url(): generated scenes must be fully offline');
+    }
+    if (/\bdata:image\//i.test(code)) {
+      errors.push('blocked inline data:image asset');
+    }
+  }
+  errors.push(...auditInterpolateCalls(code));
+  return errors;
 }
 
 function auditGeneratedAssetReferences(code: string): string[] {
@@ -6463,6 +6696,7 @@ function auditGeneratedAssetReferences(code: string): string[] {
 function sanitizeGeneratedTsx(
   rawCode: string,
   componentName: string,
+  options: GeneratedSourceSanitizeOptions = {},
 ): { ok: boolean; code: string; errors: string[] } {
   const code = extractGeneratedTsxCode(rawCode);
   const errors: string[] = [];
@@ -6483,7 +6717,7 @@ function sanitizeGeneratedTsx(
     }
   }
   for (const source of importSources) {
-    if (!isAllowedGeneratedImport(source)) {
+    if (!isAllowedGeneratedImport(source, options)) {
       errors.push(`blocked import source: ${source}`);
     }
   }
@@ -6529,6 +6763,7 @@ function sanitizeGeneratedTsx(
     }
   }
   errors.push(...auditGeneratedAssetReferences(withoutComments));
+  errors.push(...auditStrictOfflineSource(withoutComments, options));
 
   if (!isValidGeneratedComponentName(componentName)) {
     errors.push('invalid component name');
@@ -6602,11 +6837,12 @@ function syncGeneratedRegistry(): string[] {
 function writeGeneratedComponentFile(
   componentName: string,
   source: string,
+  options: GeneratedSourceSanitizeOptions = {},
 ): { ok: boolean; errors: string[]; file?: string } {
   if (!isValidGeneratedComponentName(componentName)) {
     return { ok: false, errors: ['invalid component name'] };
   }
-  const sanitized = sanitizeGeneratedTsx(source, componentName);
+  const sanitized = sanitizeGeneratedTsx(source, componentName, options);
   if (!sanitized.ok) {
     return { ok: false, errors: sanitized.errors };
   }
@@ -6725,9 +6961,47 @@ function restoreGeneratedSceneFiles(snapshot: Map<string, string | null>): void 
   syncGeneratedRegistry();
 }
 
-function validateTweakSceneSources(job: RenderJob): string[] {
+function restoreGeneratedSceneFilesExcept(
+  snapshot: Map<string, string | null>,
+  keepComponentNames: Set<string>,
+): void {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  const keepFiles = new Set(
+    Array.from(keepComponentNames, (name) => `${name.replace(/\.tsx$/, '')}.tsx`),
+  );
+  for (const [name, source] of snapshot) {
+    if (keepFiles.has(name)) continue;
+    const file = path.join(GENERATED_DIR, name);
+    try {
+      if (source === null) {
+        if (fs.existsSync(file)) fs.unlinkSync(file);
+      } else {
+        fs.writeFileSync(file, source, 'utf8');
+      }
+    } catch {
+      // Best effort restore.
+    }
+  }
+  try {
+    for (const entry of fs.readdirSync(GENERATED_DIR, { withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.tsx')) continue;
+      if (snapshot.has(entry.name) || keepFiles.has(entry.name)) continue;
+      fs.unlinkSync(path.join(GENERATED_DIR, entry.name));
+    }
+  } catch {
+    // Best effort cleanup of files created outside the targeted scene.
+  }
+  syncGeneratedRegistry();
+}
+
+function validateTweakSceneSources(job: RenderJob, onlyIndex?: number): string[] {
   const errors: string[] = [];
-  for (let index = 0; index < job.scenes.length; index += 1) {
+  const indexes =
+    onlyIndex !== undefined && Number.isInteger(onlyIndex) && onlyIndex >= 0
+      ? [onlyIndex]
+      : job.scenes.map((_scene, index) => index);
+  for (const index of indexes) {
+    if (index < 0 || index >= job.scenes.length) continue;
     const scene = job.scenes[index];
     const name =
       scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
@@ -6816,20 +7090,19 @@ async function requestCustomSceneCode(options: {
 }): Promise<string | null> {
   const { scene, componentName, scriptLanguage, aspectRatio, attempts, keys } =
     options;
-  const userAssetLines = buildUserAssetPromptLines(options.userAssets || []);
   const languageMeta = getVideoLanguage(scriptLanguage);
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".',
-    'Prefer declaring the Props type inline in the scene file. If you reuse the shared scene props type, use `import type { GeneratedSceneProps } from "./index";` (never a value import, never "./index.ts").',
-    'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
+    STRICT_OFFLINE_SCENE_CONTRACT,
+    'If a Previous attempt and Compiler errors are supplied, fix ONLY the exact reported error(s) in that existing code, preserve all unrelated working parts, and return the complete corrected TSX module. Never switch to a banned import, asset, or offline-rule violation.',
+    'Only import from "react" and "remotion". Declare the Props type inline; never import a shared type or internal component.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
     'type Props = { accentColor: string; secondaryColor: string; surfaceColor: string; surfaceAltColor: string; bgColor: string; textColor: string; mutedColor: string; characterBody: string; characterFace: string; characterAccent: string; characterShadow: string; isRtl: boolean; language: string; title?: string; text?: string; keywords?: string[]; data?: Record<string, unknown>; durationInFrames: number; showCharacter?: boolean; };',
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
-    'Use as many subtle <SceneSfx> cues as the concrete visual actions warrant, choosing the best-fitting id from the full installed SFX library. Never add an unsolicited loud victory chime, achievement bell, or celebration fanfare at the very end unless the user prompt explicitly asks for one.',
-    'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman only when showCharacter is true; for human actions (praying, prostrating, sitting at a screen, standing, walking) use <SilhouetteActor pose="..." /> instead. For symbols, concepts, clocks, religious symbols, and brand logos always use <SmartIcon query="..." /> (add brand for company logos) — never hand-draw them from guessed shapes.',
+    'The composition owns the voiceover and SFX. Never render or import any SFX component.',
+    'Draw every icon, symbol, device, clock, map, and human figure as a clean inline <svg>. Never import an icon, animation, map, or character library.',
     ...(options.masterPrompt
       ? [
           '',
@@ -6843,10 +7116,7 @@ async function requestCustomSceneCode(options: {
       ? `Art-direction amplifier for this scene: ${options.artDirection}. Follow the master prompt first, then use this direction to keep the scene visually distinct from the other scenes.`
       : 'Make this scene visually distinct from the other scenes; never reuse a generic card skeleton.',
     'Do NOT default to progress-bar, checklist, or KPI-card filler. A progress bar is allowed only when it represents a genuinely quantitative value in the master prompt; otherwise build a topic-specific metaphor, diagram, data sculpture, or product stage.',
-    ...(userAssetLines.length > 0 ? userAssetLines : []),
-    ZOEDIT_LIBRARY_CAPABILITIES,
     VISUAL_QUALITY_CONTRACT,
-    SFX_LIBRARY_RULE,
     'Strictly apply accentColor, secondaryColor, surfaceColor, surfaceAltColor, and bgColor. Respect isRtl for text direction and composition.',
     `Write every visible label in ${languageMeta.name} (${languageMeta.native}), direction ${languageMeta.dir.toUpperCase()}; never leave English placeholders such as TIME or VALUE when the video language is not English.`,
     `Primary aspect ratio: ${aspectRatio}. Optimize density, visual scale, and hierarchy for this ratio first.`,
@@ -6931,6 +7201,7 @@ async function generateAndValidateCustomScene(options: {
   const localWritten = writeGeneratedComponentFile(
     options.componentName,
     localSource,
+    { allowInternalComponents: true },
   );
   if (localWritten.ok) {
     const check = await runRootTypeScriptCheck();
@@ -7545,6 +7816,10 @@ function syncExportProject(job: RenderJob): void {
       sfxMode: job.sfxMode,
       backgroundPreset: job.backgroundPreset,
       selectedSceneId: job.scenes[0]?.id,
+      fallbackScenes: normalizeFallbackSceneNumbers(
+        job.fallbackScenes,
+        job.scenes.length,
+      ),
       updatedAt: Date.now(),
     });
     if (project) saveProjectState(project);
@@ -7861,6 +8136,23 @@ function expectedGeneratedNamesForJob(job: RenderJob): string[] {
   );
 }
 
+function fallbackSceneNumbersForNames(job: RenderJob, names: string[]): number[] {
+  const expected = expectedGeneratedNamesForJob(job);
+  const numbers = new Set<number>();
+  for (const name of names) {
+    const byName = expected.indexOf(name);
+    if (byName >= 0) {
+      numbers.add(byName + 1);
+      continue;
+    }
+    const match = name.match(/^Scene(\d+)$/);
+    if (!match) continue;
+    const numeric = Number(match[1]);
+    if (numeric >= 1 && numeric <= job.scenes.length) numbers.add(numeric);
+  }
+  return normalizeFallbackSceneNumbers(Array.from(numbers), job.scenes.length);
+}
+
 function generatedSceneVariantIndexes(job: RenderJob): Map<string, number> {
   const variants = new Map<string, number>();
   job.scenes.forEach((scene, index) => {
@@ -7885,17 +8177,126 @@ function generatedErrorComponentNames(errors: string): Set<string> {
   return names;
 }
 
-function repairFailingGeneratedScenes(
+async function selfHealGeneratedScene(options: {
+  job: RenderJob;
+  index: number;
+  name: string;
+  source: string;
+  error: string;
+  attempts: ChatAttempt[];
+  keys: ResolvedApiKeys;
+  onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void;
+}): Promise<{ ok: boolean; errors: string[]; source?: string }> {
+  const scene = options.job.scenes[options.index];
+  if (!scene || options.attempts.length === 0 || !options.source.trim()) {
+    return { ok: false, errors: [`${options.name}: self-heal retry could not start`] };
+  }
+  options.onLog(
+    'warn',
+    `Self-heal retry for ${options.name} using the exact validation error: ${options.error.slice(0, 500)}`,
+  );
+  const healed = await requestCustomSceneCode({
+    scene,
+    componentName: options.name,
+    scriptLanguage: options.job.scriptLanguage,
+    aspectRatio: options.job.aspectRatio,
+    attempts: options.attempts,
+    keys: options.keys,
+    userAssets: options.job.userAssets,
+    masterPrompt: options.job.masterPrompt,
+    artDirection: sceneArtDirection(options.index),
+    sceneIndex: options.index,
+    sceneCount: options.job.scenes.length,
+    previousCode: options.source,
+    compilerErrors: options.error,
+  });
+  if (!healed) {
+    return {
+      ok: false,
+      errors: [`${options.name}: self-heal retry produced no corrected code`],
+    };
+  }
+  const written = writeGeneratedComponentFile(options.name, healed);
+  if (!written.ok) {
+    options.onLog(
+      'warn',
+      `Self-heal retry for ${options.name} still failed sanitization: ${written.errors.slice(0, 3).join(' | ')}`,
+    );
+    return {
+      ok: false,
+      errors: written.errors.map((error) => `${options.name}: ${error}`),
+    };
+  }
+  const check = await runRootTypeScriptCheck();
+  const escapedName = options.name.replace(/[$]/g, '\\$');
+  const targetErrorPattern = new RegExp(
+    `src[\\\\/]generated[\\\\/]${escapedName}\\.tsx`,
+  );
+  const remainingErrors = generatedTypeScriptErrors(check.output)
+    .split(/\r?\n/)
+    .filter((line) => targetErrorPattern.test(line))
+    .join('\n');
+  if (remainingErrors) {
+    options.onLog(
+      'warn',
+      `Self-heal retry for ${options.name} still failed TypeScript: ${remainingErrors.slice(0, 500)}`,
+    );
+    return { ok: false, errors: [`${options.name}: ${remainingErrors}`] };
+  }
+  options.onLog('success', `Self-healed ${options.name} after one targeted retry.`);
+  return { ok: true, errors: [], source: healed };
+}
+
+async function repairFailingGeneratedScenes(
   job: RenderJob,
   errors: string,
-): string[] {
+  options: {
+    attempts: ChatAttempt[];
+    keys: ResolvedApiKeys;
+    onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void;
+  },
+): Promise<{ changedNames: string[]; healedNames: string[]; fallbackNames: string[] }> {
   const failing = generatedErrorComponentNames(errors);
-  if (failing.size === 0) return [];
+  const healedNames: string[] = [];
+  const fallbackNames: string[] = [];
+  if (failing.size === 0) {
+    return { changedNames: [], healedNames, fallbackNames };
+  }
   const variants = generatedSceneVariantIndexes(job);
-  const repaired: string[] = [];
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
   for (const name of failing) {
     if (!isValidGeneratedComponentName(name)) continue;
+    const index = variants.get(name) ?? 0;
+    const source = readGeneratedSceneSource(name);
+    if (source) {
+      const escapedName = name.replace(/[$]/g, '\\$');
+      const targetErrorPattern = new RegExp(
+        `src[\\\\/]generated[\\\\/]${escapedName}\\.tsx`,
+      );
+      const exactErrors =
+        errors
+          .split(/\r?\n/)
+          .filter((line) => targetErrorPattern.test(line))
+          .join('\n') || errors;
+      const healed = await selfHealGeneratedScene({
+        job,
+        index,
+        name,
+        source,
+        error: exactErrors,
+        attempts: options.attempts,
+        keys: options.keys,
+        onLog: options.onLog,
+      });
+      if (healed.ok) {
+        healedNames.push(name);
+        continue;
+      }
+      options.onLog(
+        'warn',
+        `Self-heal retry failed for ${name}; falling back to its distinct built-in template.`,
+      );
+    }
     const variant = variants.get(name) ?? 0;
     console.log(
       `[export] replacing only failing generated scene ${name} with its distinct fallback layout.`,
@@ -7905,10 +8306,11 @@ function repairFailingGeneratedScenes(
       buildFallbackSceneSource(name, variant),
       'utf8',
     );
-    repaired.push(name);
+    fallbackNames.push(name);
   }
-  if (repaired.length > 0) syncGeneratedRegistry();
-  return repaired;
+  const changedNames = [...healedNames, ...fallbackNames];
+  if (changedNames.length > 0) syncGeneratedRegistry();
+  return { changedNames, healedNames, fallbackNames };
 }
 
 function attachGeneratedComponents(job: RenderJob, preserveExisting = false): void {
@@ -8014,6 +8416,7 @@ function ensureUserAssetsRendered(job: RenderJob): {
     const written = writeGeneratedComponentFile(
       name,
       buildAssetShowcaseSceneSource(name, placement.assets, placement.index),
+      { allowInternalComponents: true, allowHostAssets: true },
     );
     if (written.ok) {
       const scene = job.scenes[placement.index];
@@ -8078,7 +8481,33 @@ async function finalizeGeneratedSceneSet(
     const scene = job.scenes[item.index];
     if (!scene) continue;
     let generated = false;
-    if (options.attempts.length > 0) {
+    const brokenSource = readGeneratedSceneSource(item.name);
+    if (brokenSource && options.attempts.length > 0) {
+      const healed = await selfHealGeneratedScene({
+        job,
+        index: item.index,
+        name: item.name,
+        source: brokenSource,
+        error: item.reason,
+        attempts: options.attempts,
+        keys: options.keys,
+        onLog: options.onLog,
+      });
+      if (healed.ok) {
+        aiScenes.push(item.name);
+        generated = true;
+        options.onLog(
+          'success',
+          `Self-healed ${item.name} with one targeted retry after: ${item.reason}.`,
+        );
+      } else {
+        errors.push(...healed.errors);
+        options.onLog(
+          'warn',
+          `Self-heal retry failed for ${item.name}; falling back to its built-in template.`,
+        );
+      }
+    } else if (!brokenSource && options.attempts.length > 0) {
       const result = await generateAndValidateCustomScene({
         scene,
         componentName: item.name,
@@ -8110,7 +8539,9 @@ async function finalizeGeneratedSceneSet(
 
     if (!generated) {
       const localSource = buildFallbackSceneSource(item.name, item.index);
-      const written = writeGeneratedComponentFile(item.name, localSource);
+      const written = writeGeneratedComponentFile(item.name, localSource, {
+        allowInternalComponents: true,
+      });
       if (written.ok) {
         templateScenes.push(item.name);
       } else {
@@ -8212,7 +8643,6 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
   const languageMeta = getVideoLanguage(job.scriptLanguage);
   const languageName = languageMeta.name;
   const languageDirection = languageMeta.dir.toUpperCase();
-  const userAssetLines = buildUserAssetPromptLines(job.userAssets || []);
   const characterMomentIndices = new Set<number>();
   if (job.scenes.length > 0) {
     characterMomentIndices.add(0);
@@ -8246,14 +8676,13 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
         `renderedDurationInFrames: ${renderedFrames}`,
         `character: ${
           characterMomentIndices.has(index)
-            ? 'Stickman allowed ONLY if a human gesture clearly strengthens the hook or CTA'
-            : 'NONE — pure kinetic motion graphics only, do not render the Stickman'
+            ? 'inline SVG figure allowed ONLY if a human gesture clearly strengthens the hook or CTA'
+            : 'NONE — pure kinetic motion graphics only, do not render a character'
         }`,
       ].join(' | ');
     })
     .join('\n');
 
-  const depth25DEnabled = job.enable25D === true;
   const promptOnlyShortForm =
     !job.voiceoverEnabled &&
     job.targetDuration !== undefined &&
@@ -8266,7 +8695,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           '- Render exactly one cohesive, high-impact motion-graphics scene (Scene1.tsx) derived directly from the MASTER PROMPT. Do not split the idea across multiple files.',
           '- Build a complete three-act arc inside the single scene: a bold entrance in the first 20% of props.durationInFrames, a sustained main-action sequence for the middle 55–65%, and a graceful exit ease over the final 10 frames.',
           '- Choreograph at least three distinct visual beats (hook reveal, mechanism/action, payoff) with staggered springs, continuous idle motion, and clear state changes. Never hold a static frame.',
-          '- Use as many subtle <SceneSfx /> cues as the scene\'s actions truly warrant; there is NO fixed cue-count cap. Choose the best-fitting sounds from the ENTIRE installed SFX library (`${SFX_LIBRARY_LIST}`) for each visual beat: text-reveal/typing, UI click/toggle, badge or card entrance, chart/number/data reveal, slide, impact, riser, cinematic hit, coin/cash accent, whoosh, and mid-scene transitions. Keep the mix natural and well-paced, never overpower narration, and do NOT add unsolicited loud/cheesy victory chimes, achievement bells, or celebratory fanfares at the very end unless the user prompt explicitly asks for one.',
+          '- The composition owns all audio and SFX. Never import or render an SFX component; focus on silent visual pacing and inline SVG motion beats.',
           '- Make the scene read as a finished short-form visual even with no narration or captions: kinetic key-phrases and animated graphics must carry the full message.',
         ]
       : [
@@ -8274,13 +8703,12 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
           `- Plan ${job.scenes.length} distinct visual beats directly from the MASTER PROMPT, distributed evenly across the total duration already listed below.`,
           '- Keep each scene focused on ONE core visual idea with a crisp entrance, a sustained main action, and a gentle exit ease over its final 10 frames. Never overload a single scene with complex multi-step choreography.',
           '- Keep the story flowing scene-to-scene without narration: kinetic key-phrases, diagrams, and visual metaphors must communicate the full idea.',
-          '- Use as many subtle <SceneSfx /> cues per scene as the visual actions truly warrant; there is NO fixed cue-count cap. Select the most fitting sounds from the ENTIRE installed SFX library (`${SFX_LIBRARY_LIST}`) for text reveals/typing, UI clicks/toggles, badge/card entrances, chart/number/data reveals, slides, impacts, risers, cinematic hits, coin/cash accents, whooshes, and mid-scene transitions. Keep the mix natural and well-paced, never overpower narration, and do NOT add unsolicited loud/cheesy victory chimes, achievement bells, or celebratory fanfares at the very end unless the user prompt explicitly asks for one.',
+          '- The composition owns all audio and SFX. Never import or render an SFX component; keep each beat visually self-sufficient with inline SVG motion.',
         ]
     : [];
 
-  const allowedImportsRule = depth25DEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.';
+  const allowedImportsRule =
+    '- Only import from "react" and "remotion". Do not import any other package, internal component, icon library, or animation library. Declare the Props type inline instead of importing "./index" or "./types".';
   const { width, height } = aspectDimensions(job.aspectRatio);
   const watermarkRule = job.brandKit.watermarkEnabled
     ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
@@ -8307,7 +8735,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
         '## SAFE LAYOUT GRID (no overlaps, no clipping)',
         `- TOP 22%: reserve exclusively for the headline/subtitle. ${languageDirection === 'RTL' ? 'RTL' : 'LTR'} text MUST use direction: "${languageDirection.toLowerCase()}", textAlign: "${languageDirection === 'RTL' ? 'right' : 'left'}", lineHeight: 1.4, and padding: "0 48px".`,
         '- MIDDLE 50%: the main visual stage, centered with maxWidth: "85%" and enough internal padding for labels.',
-        `- BOTTOM ${captionSafeBottom}%: keep completely clear for captions (offset ${job.captionBottomOffset}%) and the safe margin. Never place headlines, key visuals, or the Stickman there.`,
+        `- BOTTOM ${captionSafeBottom}%: keep completely clear for captions (offset ${job.captionBottomOffset}%) and the safe margin. Never place headlines, key visuals, or a character there.`,
         '- Never let any element clip off-screen or collide with the headline, subtitle, or caption safe zones. Decorative layers may bleed only when intentionally masked and never over text.',
       ];
   const respectSafeZoneSection =
@@ -8326,18 +8754,17 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     STRICT_EFFICIENCY_RULE,
     '',
+    STRICT_OFFLINE_SCENE_CONTRACT,
+    '',
     '## MASTER PROMPT (single source of truth)',
     job.masterPrompt,
     '',
-    ...(userAssetLines.length > 0 ? [...userAssetLines, ''] : []),
     ...(promptOnlySection.length > 0 ? [...promptOnlySection, ''] : []),
     VISUAL_QUALITY_CONTRACT,
     '',
-    SFX_LIBRARY_RULE,
-    '',
     '## CREATIVE STORYTELLING MANDATE (dynamic SVG world, never static cards)',
-    '- Every scene must be a rich, bespoke animated world tailored to the narration — never a static card, a lone word, or an idle Stickman.',
-    '- When a scene includes the Stickman, make it actively interact with custom scene props: point at holographic screens, hold a glowing lightbulb, climb progress steps, push/pull objects, gesture with spring physics, and react to on-screen data. Use interpolate() and spring() for every limb prop and camera beat.',
+    '- Every scene must be a rich, bespoke animated world tailored to the narration — never a static card, a lone word, or an idle placeholder.',
+    '- When a scene includes an inline SVG character, make it actively interact with custom scene props: point at holographic screens, hold a glowing lightbulb, climb progress steps, push/pull objects, gesture with spring physics, and react to on-screen data. Use interpolate() and spring() for every limb prop and camera beat.',
     '- React to hook questions with floating animated ؟ / ? question marks around the visual, then resolve them as the narration answers.',
     '- Layer hand-built SVG illustrations, charts, timelines, icons, badges, and ambient particles. Build subtle parallax depth with 2–4 layered transforms moving at different speeds.',
     job.cleanBrollMode
@@ -8367,58 +8794,14 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     `- The composition adds ${TRANSITION_DURATION_IN_FRAMES} transition frames to every scene sequence so audio and captions stay frame-accurate. Always read props.durationInFrames for timing; the contentFrames value in the scene list is only the audio-length estimate.`,
     '- End every scene with a gentle 10-frame exit ease over the final 10 frames of props.durationInFrames: interpolate(frame, [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) and apply it to the content layer opacity plus a tiny translateY/scale. Elements must never freeze abruptly.',
     '- Keep the idle motion alive until that exit ease begins; do not stop animation early or shorten the scene to compensate for the transition overlap.',
-    '- Keep the entrance at frame 0. Do not render `<SceneSfx name="whoosh" frame={0} />` for scene transitions — the composition owns that whoosh.',
+    '- The composition owns all transitions, whooshes, audio, and captions. Never import or render an SFX, audio, transition, or character component.',
     '',
-    ...(depth25DEnabled
-      ? [
-          '## 2.5D SPATIAL DEPTH MODE (ENABLED)',
-          '- Import exactly: import { DepthStage, SpatialCard } from "../components/Depth25D";',
-          '- Wrap the scene visual stage in <DepthStage> so every card shares perspective: 1200px and transformStyle: "preserve-3d".',
-          '- NEVER stack two text-bearing cards at the same (x, y) at the same time. Only ONE focal text card may occupy the center at any beat. Separate any simultaneous text cards clearly on the vertical/grid axis with a generous gap (at least 32px) and distinct grid cells.',
-          '- Background depth layers must be subtle, non-text decorative parallax planes (glows, grids, silhouettes, ambient shapes) at low opacity. Never hide readable copy behind a foreground card.',
-          '- Build a time-staggered Z-space stack of 2–5 <SpatialCard> layers: each new text card enters with enterFrame and springs toward translateZ(0) only AFTER the previous text card receives a recedeFrame and has cleared the center. Stagger entrances/exits so the focal card is unambiguous.',
-          '- When a text card recedes, move it fully away from the focal center as well as backward in Z-space (translateZ(-150px), scale(0.84), opacity <= 0.45, blur(2px), dynamic drop shadow) so its text is no longer legible or overlapping the active card.',
-          '- Size every card from its content: use auto height / max-content or a bounded maxHeight. NEVER stretch a card into a tall empty box down toward the caption zone; keep padding balanced and cards compact around their actual copy.',
-          '- Use tiltX/tiltY for a subtle physical card tilt. Keep the active card sharp and readable, and let receded cards become dim depth layers.',
-          '- Mirror x offsets and text alignment for props.isRtl when language is ar, and use the exact active palette hex values for card surfaces, borders, glows, and shadows.',
-          '- Every scene must visibly progress cards forward and backward through Z-space over time; do not use DepthStage/SpatialCard as a flat fade substitute.',
-          `- Never place cards over the top 22% headline/subtitle or inside the bottom ${captionSafeBottom}% caption safe zone.`,
-        ]
-      : []),
-    '',
-    '## SMART EVENT-SYNCED MICRO-SFX',
-    'import { SceneSfx } from "../components/SceneSfx";',
-    'type SceneSfxProps = {',
-    `  name: string; // any installed SFX id (${SFX_LIBRARY_LIST}) or friendly alias pop | tick | check | whoosh | sparkle`,
-    '  frame: number;',
-    '  volume?: number;',
-    '  sfxEnabled?: boolean;',
-    '};',
-    '- Generate as many subtle cues per scene as the visual actions warrant; there is NO fixed cue-count cap. Inspect the full installed library and choose the most fitting id for every text reveal/typing beat, button/badge/icon entrance, chart/number/data reveal, card/panel entrance, object impact, riser, ambient accent, and mid-scene transition.',
-    '- Mix cues naturally: keep them subordinate to narration, vary their density with the action, and leave the final beat clean unless the prompt explicitly asks for an ending accent.',
-    '- STRICT NEGATIVE RULE: never add loud, generic, or cheesy success dings, achievement bells, celebration fanfares, alarm, or notification sounds at the end of the video or scene unless the user prompt explicitly asks for one.',
-    '- Avoid stacking cues or masking dialogue. The composition owns the scene-to-scene transition whoosh; use mid-scene whooshes only for genuine internal transitions.',
-    '- If a visual beat does not genuinely need sound, omit it; otherwise use the full library creatively and contextually.',
-    '',
-    '## CHARACTER POLICY — STICKMAN IS SELECTIVE, NOT MANDATORY',
-    '- Pure kinetic motion graphics (animated SVG icons, UI mockups, data charts, glowing cards, kinetic typography, geometric transitions) must carry at least 60–70% of all scenes.',
-    '- Include the clean, minimally expressive Stickman ONLY when the master prompt explicitly requests it OR in 1–2 narrative moments (such as the opening hook or the closing CTA) where a human gesture adds clear value.',
-    '- Follow the per-scene "character" line in the scene list. When it says NONE, build the scene entirely from kinetic motion graphics with no Stickman figure, no silhouette, and no stand-in human shape.',
-    '- Never add the Stickman as decoration or default filler, and never force it into data, chart, comparison, or process scenes.',
-    '',
-    '## ICONS, BRAND LOGOS & HUMAN SILHOUETTES (mandatory)',
-    '- NEVER draw crude stickmen or hand-coded geometric circles/rectangles to represent real objects, religious symbols, electronics, or brand logos. Do not approximate a mosque, clock, phone, shield, or brand mark with guessed circles/rectangles/paths.',
-    '- Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, electronics, and company logos:',
-    '  import { SmartIcon } from "../components/SmartIcon";',
-    '  <SmartIcon query="mosque" size={64} color={props.accentColor} />',
-    '  <SmartIcon query="hourglass" size={48} color={props.accentColor} />',
-    '  <SmartIcon query="shield check" size={48} color={props.accentColor} />',
-    '  <SmartIcon query="youtube" brand size={56} color={props.textColor} />',
-    '  Pass ANY English keyword or brand name to `query` (mosque, facebook, hourglass, sword, brain, tiktok). Set `brand` for company logos. An exact Iconify ID like `query="mdi:mosque"` or `query="logos:facebook"` also works. SmartIcon searches Iconify, caches the SVG, and falls back to a clean monogram badge so headless rendering never stalls.',
-    '- Use <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures (praying, prostrating, sitting at a screen, standing, walking):',
-    '  import { SilhouetteActor } from "../components/SilhouetteActor";',
-    '  <SilhouetteActor pose="praying-qiyam" color={props.characterBody} size={340} />',
-    '  poses: "standing" | "praying-qiyam" | "praying-sujood" | "sitting-screen" | "walking". Size is the rendered height in pixels; the silhouette animates itself with useCurrentFrame(). It is strictly featureless — never add eyes, mouth, nose, or ears.',
+    '## INLINE SVG ICONS, OBJECTS & CHARACTERS (mandatory)',
+    '- Draw every icon, symbol, device, clock, map, chart, arrow, and human figure as clean inline <svg> geometry inside the scene file.',
+    '- No icon libraries, SmartIcon, SilhouetteActor, Stickman, SceneSfx, Depth25D, @remotion/* subpackages, or any internal component import is allowed.',
+    '- Build depth with CSS transforms (translateZ/scale/opacity/blur) on plain divs instead of 2.5D helper components.',
+    '- Keep human figures minimal, featureless silhouettes drawn with simple inline SVG paths/circles; never add realistic eyes, mouth, nose, or ears.',
+    '- A reference-like object must be drawn as a crisp, deliberate inline SVG shape, not a crude guessed placeholder. Favor clean geometric diagrams and symbolic illustrations over recognisable trademark logos.',
     '',
     '## SPEED CONTRACT — DO NOT INSPECT THE CODEBASE',
     '- NEVER read, print, copy, or reference `.env` files, `.env.*`, `.zoedit-studio`, settings/auth files, API keys, tokens, or credentials. Never place secrets in generated code or logs.',
@@ -8472,19 +8855,9 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '  // ...every scene you wrote...',
     '};',
     '',
-    '## EXACT STICKMAN COMPONENT INTERFACE (do not read the file)',
-    'import { Stickman } from "../components/Stickman";',
-    'type StickmanProps = {',
-    '  pose?: "idle" | "walking" | "explaining" | "thinking" | "shocked" | "happy" | "sad" | "pointing" | "celebrating" | "idea" | "facepalm";',
-    '  color: string;',
-    '  faceColor: string;',
-    '  accent: string;',
-    '  shadow: string;',
-    '  accessory?: "none" | "tie" | "badge";',
-    '  delay?: number;',
-    '};',
-    'Usage: <Stickman pose="explaining" color={props.characterBody} faceColor={props.characterFace} accent={props.characterAccent} shadow={props.characterShadow} delay={0} />.',
-    'Stickman already animates its own entrance and uses useVideoConfig internally. Place it in a relatively positioned wrapper with an explicit size such as 340x460 and pass no other props.',
+    '## INLINE CHARACTER POLICY',
+    '- If a human figure strengthens the beat, draw a simple featureless inline SVG silhouette (head circle plus rounded body/limb paths) directly in the scene.',
+    '- Never import a character component. Animate the inline figure with spring() and interpolate() inside the scene.',
     '',
     '## ABSOLUTEFILL LAYOUT RULES (mandatory)',
     '- The scene root MUST be `<AbsoluteFill style={{ backgroundColor: props.bgColor, overflow: "hidden", direction: props.isRtl ? "rtl" : "ltr" }}>`.',
@@ -8501,14 +8874,14 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     ...cleanBrollPromptSection(job.cleanBrollMode),
     '',
     '## STRICT NON-OVERLAP BOUNDING ZONES (mandatory)',
-    '- The Stickman must live in a dedicated column/corner, never in the center of the content grid. Pin it with an explicit wrapper such as `left: 60` or `right: 60` (use the RTL side for Arabic if it reads better) and a fixed width/height, for example `{ position: "absolute", left: 60, bottom: "30%", width: 260, height: 380 }` or `{ position: "absolute", right: 60, bottom: "30%", width: 260, height: 380 }`.',
-    '- The Stickman wrapper must NEVER overlap any text pill, badge, card, row, chart label, headline, subtitle, or caption. Reserve the column by shrinking the text/card area (for example `maxWidth: "62%"` plus `marginLeft`/`marginRight`) so the two bounding boxes are disjoint.',
-    `- Keep all pills, badges, and cards inside the middle 50% stage and within \`maxWidth: "85%"\`. They must not touch the Stickman column, the top 22% headline, or the bottom ${captionSafeBottom}% caption zone.`,
+    '- Any inline SVG character or illustration must live in a dedicated column/corner, never in the center of the content grid. Pin it with an explicit wrapper such as `left: 60` or `right: 60` and a fixed width/height.',
+    '- The character/illustration wrapper must NEVER overlap any text pill, badge, card, row, chart label, headline, subtitle, or caption. Reserve the column by shrinking the text/card area so the two bounding boxes are disjoint.',
+    `- Keep all pills, badges, and cards inside the middle 50% stage and within \`maxWidth: "85%"\`. They must not touch the character column, the top 22% headline, or the bottom ${captionSafeBottom}% caption zone.`,
     '- Prefer separate layout regions (flex columns / absolute corners) over stacking text directly on top of illustrations. If a decorative SVG passes behind text, keep its opacity low and never position interactive content over the character.',
     '',
     '## CHART & CARD GEOMETRY (mandatory spacing)',
     '- Offset every Y-axis tick label away from the axis line: use textAnchor="end" and x={axisX - 14}, and reserve at least 56px of left padding so values like 10x / 20x / 30x are never struck through by the axis stroke.',
-    '- Keep all floating cards and 2.5D SpatialCard surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap). Never let a card overlap a chart line, tick, or label.',
+    '- Keep all floating cards fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap). Never let a card overlap a chart line, tick, or label.',
     '- Keep axis titles outside the plot area, and never draw data labels on top of gridlines or strokes.',
     '',
     '## DIRECTION & ROTATION ALIGNMENT (mandatory geometry)',
@@ -8557,18 +8930,12 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '',
     '## HARD DESIGN RULES',
     '- Use free-form React/Remotion JSX and animated inline <svg> scenes and props. Do not use fixed card templates.',
-    '- Stickman faces: keep the head smooth and clean, with NO detailed anatomical face (no nose, mouth, or ears). By default, express emotion through descriptive poses, head tilt, limb motion, interactive SVG props, and visual cues. ONLY when the scene emotion specifically requires it, add minimal contextual symbolic cues such as falling teardrops for sadness, sharp angled brow lines for anger, or sparkles for joy. Never draw complex or realistic faces.',
-    '- Default to neutral/male minimalist stickman figures. NEVER depict a female character unless the script strictly requires it; if strictly required, keep the silhouette completely featureless and modest.',
+    '- Inline SVG characters: keep the head smooth and clean, with NO detailed anatomical face (no nose, mouth, or ears). Express emotion through descriptive poses, head tilt, limb motion, inline SVG props, and visual cues. Never draw complex or realistic faces.',
+    '- Keep any human figure minimalist and featureless; express identity through context and motion, not anatomical detail.',
     '- Build custom topic metaphors and story-driven props that match the master prompt. Avoid repetitive text cards.',
     '- DO NOT use progress-bar, checklist, or generic KPI-card layouts as a fallback scene. A progress bar is allowed only when it represents a genuinely quantitative value from the master prompt. Every scene needs a topic-specific metaphor, diagram, data sculpture, product stage, or editorial composition.',
-    ...(job.userAssets && job.userAssets.length > 0
-      ? [
-          '- Uploaded assets are mandatory on screen: logos get a hero intro/outro reveal and screenshots get a dedicated glassmorphic 2.5D browser/device showcase. Never omit, crop, tint, or replace them with icons or progress cards.',
-        ]
-      : []),
     `- Scene art-direction amplifier: ${sceneArtDirection(0)}, ${sceneArtDirection(1)}, ${sceneArtDirection(2)} — rotate deliberately so no two consecutive scenes share a skeleton.`,
-    '- Every scene — with or without the Stickman — must include at least one custom SVG prop, diagram, animated icon, chart, UI mockup, or kinetic typographic composition, plus layered parallax background depth.',
-    CRISP_VECTOR_MAP_RULE,
+    '- Every scene — with or without an inline character — must include at least one custom SVG prop, diagram, animated icon, chart, UI mockup, or kinetic typographic composition, plus layered parallax background depth.',
     ...(job.cleanBrollMode
       ? ['- Clean B-Roll: no main headlines/titles/text-only slides, but keep brief essential in-scene labels, chart numbers, axis values, and diagram annotations.']
       : ['- Show 2–5 word kinetic key-phrases synced to the narration; never render a lone isolated word as the main visual.']),
@@ -8580,8 +8947,6 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- Animate continuously across the entire durationInFrames using useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never freeze.',
     '- Every scene must be responsive to the aspect ratio using useVideoConfig(); no overflow and no fixed single-frame assumptions.',
     `- Keep critical content out of the bottom ${captionSafeBottom}% safe zone.`,
-    '',
-    ZOEDIT_LIBRARY_CAPABILITIES,
     '',
     '## IMPORT RESTRICTIONS',
     allowedImportsRule,
@@ -8595,19 +8960,39 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
   const languageMeta = getVideoLanguage(job.scriptLanguage);
   const languageName = languageMeta.name;
   const languageDirection = languageMeta.dir.toUpperCase();
-  const userAssetLines = buildUserAssetPromptLines(job.userAssets || []);
-  const sceneFiles = job.scenes.map((scene, index) => {
+  const expectedNames = expectedGeneratedNamesForJob(job);
+  const targetSceneIndex =
+    typeof job.tweakTargetSceneIndex === 'number' &&
+    Number.isInteger(job.tweakTargetSceneIndex) &&
+    job.tweakTargetSceneIndex >= 0 &&
+    job.tweakTargetSceneIndex < job.scenes.length
+      ? job.tweakTargetSceneIndex
+      : null;
+  const targetScene = targetSceneIndex === null ? null : job.scenes[targetSceneIndex];
+  const targetSceneName = targetSceneIndex === null ? null : expectedNames[targetSceneIndex];
+  const sceneFiles = (targetScene && targetSceneName
+    ? [targetScene]
+    : job.scenes
+  ).map((scene, offset) => {
+    const sourceIndex =
+      targetScene && targetSceneName ? (targetSceneIndex as number) : offset;
     const name =
-      scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
+      expectedNames[sourceIndex] ||
+      (scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
         ? scene.generatedComponent
-        : `Scene${index + 1}`;
+        : `Scene${sourceIndex + 1}`);
     return `- src/generated/${name}.tsx — ${job.cleanBrollMode ? 'concept (internal, never render as header)' : 'title'}: ${scene.title}`;
   });
+  const targetedRules =
+    targetScene && targetSceneName
+      ? [
+          `- TARGETED TWEAK: edit ONLY src/generated/${targetSceneName}.tsx (Scene ${targetSceneIndex! + 1}). Do not edit, rewrite, create, delete, or rename any other scene file.`,
+          '- Reuse the existing voiceover, scene timings, narration, and every other cached segment exactly as they are.',
+        ]
+      : [];
   const { width, height } = aspectDimensions(job.aspectRatio);
-  const depth25DTweakEnabled = job.enable25D === true;
-  const allowedTweakImports = depth25DTweakEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".';
+  const allowedTweakImports =
+    '- Only import from "react" and "remotion". Declare the Props type inline; never import a shared type, SFX component, character component, or icon library.';
 
   return [
     'You are the surgical Remotion scene editor for Zoedit Studio.',
@@ -8615,16 +9000,17 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     '',
     STRICT_EFFICIENCY_RULE,
     '',
+    STRICT_OFFLINE_SCENE_CONTRACT,
+    '',
     '## REQUESTED TWEAK',
     instruction,
     '',
-    ...(userAssetLines.length > 0 ? [...userAssetLines, ''] : []),
+    ...targetedRules,
+    '',
     '## FILES TO EDIT IN PLACE',
     ...sceneFiles,
     '',
     VISUAL_QUALITY_CONTRACT,
-    '',
-    SFX_LIBRARY_RULE,
     '',
     '## HARD RULES',
     '- Edit only the listed src/generated/*.tsx files. Do NOT create, delete, or rename files.',
@@ -8644,33 +9030,24 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
           '- Respect Safe Zone is ON: keep ALL typography, cards, charts, and captions inside top >= 12%, bottom <= 78%, right <= 84%, left >= 6%. Never place content under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar; backgrounds may stay full-bleed.',
         ]
       : []),
-    '- Preserve every user-provided logo/screenshot `<Img src={staticFile("user-assets/...")} />` reference and its cinematic motion treatment. Never replace uploaded assets with SmartIcon, remove them in Clean B-Roll, or point them at external URLs.',
     '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
     `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
-    '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. Preserve or add as many subtle `<SceneSfx name="..." />` cues as the on-screen actions warrant, selecting any fitting id from the full installed SFX library; keep the mix natural and remove any generic success ding, achievement bell, or celebration fanfare at the very end unless the user explicitly requested it.',
-    '- Keep the Stickman or SilhouetteActor inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
-    '- Never hand-draw symbols, religious icons, clocks, devices, or brand logos. Use `import { SmartIcon } from "../components/SmartIcon";` with any English keyword or brand name plus `brand` for logos. For human action use `import { SilhouetteActor } from "../components/SilhouetteActor";` with poses standing, praying-qiyam, praying-sujood, sitting-screen, or walking; keep it strictly featureless.',
-    CRISP_VECTOR_MAP_RULE,
+    '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. The composition owns all SFX; never import or render an SFX component.',
+    '- Keep any inline SVG character inside a dedicated column/corner pinned with `left: 60` or `right: 60`; never let it overlap a text pill, badge, card, or caption.',
+    '- Draw every symbol, icon, clock, device, map, and human figure as clean inline <svg> geometry. Never import SmartIcon, SilhouetteActor, Stickman, or any icon/character library.',
     ...cleanBrollPromptSection(job.cleanBrollMode),
     '- Use the exact active palette hex values from the scene props; never replace them with #1D150C or #E77B40 fallbacks.',
+    '- Build depth with CSS transforms (translateZ/scale/opacity/blur) on plain divs instead of 2.5D helper components.',
     '',
-    ZOEDIT_LIBRARY_CAPABILITIES,
-    '',
-    ...(depth25DTweakEnabled
-      ? [
-          '- Preserve 2.5D spatial depth: keep importing { DepthStage, SpatialCard } from "../components/Depth25D" and keep the multi-plane Z-space card enter/recede choreography intact unless the tweak explicitly changes it.',
-          '- Preserve the 2.5D non-overlap safeguards: never stack two text-bearing cards at the same (x, y) simultaneously, keep only one focal text card centered per beat, leave a generous >=32px gap between simultaneous cards, keep background depth layers non-text and subtle, and size cards to their content instead of stretching tall empty boxes.',
-        ]
-      : []),
     allowedTweakImports,
-    '- Prefer declaring the Props type inline. If you reuse the shared type, use `import type { GeneratedSceneProps } from "./index";` (never a value import and never "./index.ts").',
+    '- Declare the Props type inline. Never import a shared type from "./index" or "./types".',
     '- Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), or dynamic import().',
     '- After editing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run npm, build, test, or render commands. The host validates and renders after you finish.',
     '- Read only the listed scene files you must edit, then write them back immediately. No exploration step, no plan file.',
     '',
     '## CHART & CARD GEOMETRY (mandatory spacing)',
     '- Offset every Y-axis tick label away from the axis line: textAnchor="end" with x={axisX - 14} and at least 56px left padding, so 10x / 20x / 30x are never struck through by the axis stroke.',
-    '- Keep all floating cards and 2.5D SpatialCard surfaces fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap).',
+    '- Keep all floating cards fully outside the plot rectangle, axis lines, gridlines, and data labels (minimum 24px gap).',
     '',
     '## VIDEO LANGUAGE & ON-SCREEN COPY (mandatory)',
     `- Selected video language: ${languageName} (${languageMeta.native}); text direction: ${languageDirection}.`,
@@ -9448,6 +9825,11 @@ async function startServer() {
   const handleGeneratedSceneStatus = (_req: Request, res: Response) => {
     const project = readProjectState();
     const projectScenes = project?.scenes || [];
+    const fallbackScenes = normalizeFallbackSceneNumbers(
+      project?.fallbackScenes,
+      projectScenes.length,
+    );
+    const fallbackSet = new Set(fallbackScenes);
     const generatedScenes = projectScenes
       .map((scene, index) => {
         const component =
@@ -9462,6 +9844,7 @@ async function startServer() {
           durationSec: scene.durationSec,
           hasAudio: Boolean(scene.audioSrc || scene.audioDataUrl),
           exists: fs.existsSync(path.join(GENERATED_DIR, `${component}.tsx`)),
+          fallback: fallbackSet.has(index + 1),
         };
       })
       .filter((scene) => scene.exists);
@@ -9472,6 +9855,7 @@ async function startServer() {
       count: generatedScenes.length,
       totalScenes: projectScenes.length,
       scenes: generatedScenes,
+      fallbackScenes,
       updatedAt: project?.updatedAt ?? null,
     });
   };
@@ -11464,7 +11848,7 @@ async function startServer() {
       'Preserve every non-target scene exactly as-is. Never touch narration, title, durationSec, audio files, audioSrc, audioDataUrl, or audioDuration.',
       'Only update surgical visual fields: pose, visualType, visualLabel, visualValue, visualPrompt, visualSvg, layout, camera, background, backgroundPreset, visualKeywords, motif, showCharacter, customCodeBrief, characters, characterLayout, ambientScene, sfxCues, sfxAt.',
       'Keep the overall video duration identical. Do not change durationSec.',
-      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Only import from "react", "remotion", packages starting with "@remotion/", "@iconify/react", "simple-icons", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", and "../components/SceneSfx". Use <SmartIcon query="..." brand={...} color="..." size={...} /> for ALL objects, symbols, icons, and company logos, and <SilhouetteActor pose="..." color="..." size={...} /> for ALL human figures — never hand-draw them. Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
+      'For Custom TSX updates, include a complete self-contained TSX module in "tsxCode". Import ONLY from "react" and "remotion". Declare the Props type inline. Do NOT import icon libraries, animation libraries, @remotion/* subpackages, internal components, SmartIcon, SilhouetteActor, Stickman, Depth25D, SceneSfx, "./index", or "./types". Draw every icon, symbol, device, map, chart, and human figure as clean inline <svg>. Never use <img>, <Img>, <video>, <audio>, staticFile(), CSS url(), data:image, external URLs, fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or dangerouslySetInnerHTML.',
       'The TSX module must export exactly one named component with the same component name as the existing generatedComponent when provided.',
       'Declare a local Props type that includes at least: accentColor, secondaryColor, surfaceColor, surfaceAltColor, bgColor, textColor, mutedColor, characterBody, characterFace, characterAccent, characterShadow (all string), isRtl (boolean), language (string), optional title/text/keywords/data/showCharacter, and durationInFrames (number). The composition always supplies these.',
       'Use useCurrentFrame(), useVideoConfig(), spring(), and interpolate() so the segment stays animated. Set direction from props.isRtl for every language, not only Arabic.',
@@ -11909,6 +12293,8 @@ async function startServer() {
       cleanBrollMode?: unknown;
       respectSafeZone?: unknown;
       tweakInstruction?: unknown;
+      targetSceneId?: unknown;
+      targetSceneIndex?: unknown;
       voiceoverScript?: unknown;
       userAssets?: unknown;
       uiLanguage?: unknown;
@@ -12073,6 +12459,28 @@ async function startServer() {
               : undefined,
           });
 
+    let tweakTargetSceneIndex: number | undefined;
+    if (tweakInstruction) {
+      const requestedTargetSceneId =
+        typeof body.targetSceneId === 'string' ? body.targetSceneId.trim() : '';
+      if (requestedTargetSceneId) {
+        const byId = scenes.findIndex((scene) => scene.id === requestedTargetSceneId);
+        if (byId >= 0) tweakTargetSceneIndex = byId;
+      }
+      const requestedTargetSceneIndex = Math.floor(Number(body.targetSceneIndex));
+      if (
+        tweakTargetSceneIndex === undefined &&
+        Number.isInteger(requestedTargetSceneIndex) &&
+        requestedTargetSceneIndex >= 1 &&
+        requestedTargetSceneIndex <= scenes.length
+      ) {
+        tweakTargetSceneIndex = requestedTargetSceneIndex - 1;
+      }
+    }
+    const initialFallbackScenes = tweakInstruction
+      ? normalizeFallbackSceneNumbers(project?.fallbackScenes, scenes.length)
+      : [];
+
     if (!tweakInstruction && !voiceoverEnabled) {
       applyPromptOnlyPacing(scenes, targetDuration, fps);
     }
@@ -12151,7 +12559,9 @@ async function startServer() {
       uiLanguage: normalizeUiLanguage(body.uiLanguage),
       masterPrompt: prompt || project?.topic || '',
       tweakInstruction: tweakInstruction || undefined,
+      tweakTargetSceneIndex,
       targetDuration,
+      fallbackScenes: initialFallbackScenes,
       status: 'queued',
     };
 
@@ -12294,8 +12704,13 @@ async function startServer() {
         title: job.title || null,
         outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
         fileSizeBytes: job.outputSize ?? null,
-        fallbackUsed: job.fallbackUsed === true,
+        fallbackUsed:
+          job.fallbackUsed === true || (job.fallbackScenes?.length ?? 0) > 0,
         fallbackReason: job.fallbackReason || null,
+        fallbackScenes: normalizeFallbackSceneNumbers(
+          job.fallbackScenes,
+          job.scenes.length,
+        ),
       });
     };
 
@@ -12576,7 +12991,20 @@ async function startServer() {
         }
 
         if (job.tweakInstruction) {
-          const sourceErrors = validateTweakSceneSources(job);
+          if (job.tweakTargetSceneIndex !== undefined && generatedSnapshot) {
+            const targetName =
+              expectedGeneratedNamesForJob(job)[job.tweakTargetSceneIndex];
+            if (targetName) {
+              restoreGeneratedSceneFilesExcept(
+                generatedSnapshot,
+                new Set([targetName]),
+              );
+            }
+          }
+          const sourceErrors = validateTweakSceneSources(
+            job,
+            job.tweakTargetSceneIndex,
+          );
           if (sourceErrors.length > 0) {
             restoreGeneratedSceneFiles(generatedSnapshot!);
             throw new Error(
@@ -12597,6 +13025,32 @@ async function startServer() {
             );
           }
           attachGeneratedComponents(job, true);
+          if (job.tweakTargetSceneIndex !== undefined) {
+            const targetSceneNumber = job.tweakTargetSceneIndex + 1;
+            const previousFallbacks = normalizeFallbackSceneNumbers(
+              job.fallbackScenes,
+              job.scenes.length,
+            );
+            if (previousFallbacks.includes(targetSceneNumber)) {
+              job.fallbackScenes = previousFallbacks.filter(
+                (sceneNumber) => sceneNumber !== targetSceneNumber,
+              );
+              sendEvent('fallback', {
+                used: job.fallbackScenes.length > 0,
+                reason: job.fallbackScenes.length > 0 ? job.fallbackReason || null : null,
+                sceneNumbers: job.fallbackScenes,
+                clearedScene: targetSceneNumber,
+              });
+              sendLog(
+                'code',
+                'success',
+                tr(
+                  `تم اجتياز التحقق للمشهد ${targetSceneNumber} — أُزيل تنبيه القالب الاحتياطي من الخط الزمني.`,
+                  `Scene ${targetSceneNumber} passed validation cleanly — its fallback warning was removed from the timeline.`,
+                ),
+              );
+            }
+          }
         } else {
           const fallbackAttempts = buildChatAttempts(
             studioSettings.aiProvider,
@@ -12627,10 +13081,20 @@ async function startServer() {
                 'تعذر توليد مشاهد مخصصة، فتم استخدام القوالب الافتراضية.',
                 'Bespoke scene generation failed, so the built-in templates were used.',
               );
+            const newFallbackScenes = fallbackSceneNumbersForNames(
+              job,
+              finalizeResult.templateScenes,
+            );
+            job.fallbackScenes = mergeFallbackSceneNumbers(
+              job.fallbackScenes,
+              newFallbackScenes,
+            );
             sendEvent('fallback', {
               used: true,
               reason: job.fallbackReason,
               templateScenes: finalizeResult.templateScenes,
+              sceneNumbers: job.fallbackScenes,
+              newSceneNumbers: newFallbackScenes,
             });
             sendLog(
               'code',
@@ -12685,18 +13149,24 @@ async function startServer() {
                 `Generated scenes failed TypeScript — repairing only the affected scenes. ${validation.errors}`,
               ),
             );
-            let repairedNames = repairFailingGeneratedScenes(
+            const repairResult = await repairFailingGeneratedScenes(
               job,
               validation.errors,
+              {
+                attempts: fallbackAttempts,
+                keys: exportKeys,
+                onLog: (level, message) => sendLog('code', level, message),
+              },
             );
+            let changedNames = repairResult.changedNames;
             if (
-              repairedNames.length === 0 &&
+              changedNames.length === 0 &&
               /src[\\/]generated[\\/]index\.ts/.test(validation.errors)
             ) {
               syncGeneratedRegistry();
-              repairedNames = ['index.ts'];
+              changedNames = ['index.ts'];
             }
-            if (repairedNames.length > 0) {
+            if (changedNames.length > 0) {
               validation = await validateGeneratedScenes();
             }
             if (!validation.ok) {
@@ -12710,26 +13180,51 @@ async function startServer() {
                 ),
               );
             }
-            const repairedSceneNames = repairedNames.filter((name) => name !== 'index.ts');
-            if (repairedSceneNames.length > 0) {
+            const healedSceneNames = repairResult.healedNames.filter(
+              (name) => name !== 'index.ts',
+            );
+            if (healedSceneNames.length > 0) {
+              sendLog(
+                'code',
+                'success',
+                tr(
+                  `تم إصلاح المشاهد ${healedSceneNames.join(', ')} تلقائياً بعد محاولة إصلاح واحدة موجهة.`,
+                  `Self-healed scenes ${healedSceneNames.join(', ')} with one targeted retry.`,
+                ),
+              );
+            }
+            const fallbackSceneNames = repairResult.fallbackNames.filter(
+              (name) => name !== 'index.ts',
+            );
+            if (fallbackSceneNames.length > 0) {
               job.fallbackUsed = true;
               job.fallbackReason =
                 job.fallbackReason ||
                 tr(
-                  `تم إصلاح المشاهد المتأثرة (${repairedSceneNames.join(', ')}) بقوالب بديلة لأنها لم تجتز التحقق.`,
-                  `Repaired the affected scenes (${repairedSceneNames.join(', ')}) with fallback templates because they failed validation.`,
+                  `تم إصلاح المشاهد المتأثرة (${fallbackSceneNames.join(', ')}) بقوالب بديلة بعد فشل محاولة الإصلاح التلقائي.`,
+                  `Repaired the affected scenes (${fallbackSceneNames.join(', ')}) with fallback templates after the self-heal retry also failed.`,
                 );
+              const newFallbackScenes = fallbackSceneNumbersForNames(
+                job,
+                fallbackSceneNames,
+              );
+              job.fallbackScenes = mergeFallbackSceneNumbers(
+                job.fallbackScenes,
+                newFallbackScenes,
+              );
               sendEvent('fallback', {
                 used: true,
                 reason: job.fallbackReason,
-                templateScenes: repairedSceneNames,
+                templateScenes: fallbackSceneNames,
+                sceneNumbers: job.fallbackScenes,
+                newSceneNumbers: newFallbackScenes,
               });
               sendLog(
                 'code',
                 'warn',
                 tr(
-                  `تنبيه: تم إصلاح المشاهد ${repairedSceneNames.join(', ')} بقوالب بديلة — ${validation.errors}`,
-                  `Warning: repaired scenes ${repairedSceneNames.join(', ')} with fallback templates — ${validation.errors}`,
+                  `تنبيه: تم إصلاح المشاهد ${fallbackSceneNames.join(', ')} بقوالب بديلة — ${validation.errors}`,
+                  `Warning: repaired scenes ${fallbackSceneNames.join(', ')} with fallback templates — ${validation.errors}`,
                 ),
               );
             }
@@ -12761,10 +13256,12 @@ async function startServer() {
             }
             sendLog(
               'code',
-              'warn',
+              healedSceneNames.length > 0 && fallbackSceneNames.length === 0
+                ? 'success'
+                : 'warn',
               tr(
-                `تم إصلاح المشاهد المتأثرة فقط (${repairedNames.join(', ')}) بتخطيطات بديلة متنوعة.`,
-                `Repaired only the affected scenes (${repairedNames.join(', ')}) with varied fallback layouts.`,
+                `تمت معالجة المشاهد المتأثرة فقط (${changedNames.join(', ')}): إصلاح تلقائي ${healedSceneNames.length} وقالب احتياطي ${fallbackSceneNames.length}.`,
+                `Handled only the affected scenes (${changedNames.join(', ')}): ${healedSceneNames.length} self-healed, ${fallbackSceneNames.length} fallback.`,
               ),
             );
           }

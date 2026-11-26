@@ -75,6 +75,30 @@ type GeneratedSceneSummary = {
 type InspectorTabId = 'render' | 'usage';
 type MobilePaneId = 'tools' | 'player' | 'inspector';
 
+function normalizeFallbackScenes(values: unknown): number[] {
+  const raw = Array.isArray(values) ? values : [];
+  const unique = new Set<number>();
+  for (const item of raw) {
+    const numeric = Math.floor(Number(item));
+    if (Number.isInteger(numeric) && numeric >= 1) unique.add(numeric);
+  }
+  return Array.from(unique).sort((left, right) => left - right);
+}
+
+function mergeFallbackScenes(current: unknown, incoming: unknown): number[] {
+  return normalizeFallbackScenes([
+    ...(Array.isArray(current) ? current : []),
+    ...(Array.isArray(incoming) ? incoming : []),
+  ]);
+}
+
+function parseFallbackSceneNumber(name: string): number | null {
+  const match = name.match(/^Scene\s*0*(\d+)$/i);
+  if (!match) return null;
+  const numeric = Number(match[1]);
+  return Number.isInteger(numeric) && numeric >= 1 ? numeric : null;
+}
+
 const PROMPT_STORAGE_KEY = 'zoedit-studio-master-prompt-v1';
 const SCRIPT_STORAGE_KEY = 'zoedit-studio-voiceover-script-v1';
 const VIDEO_IDEA_STORAGE_KEY = 'zoedit-studio-video-idea-v1';
@@ -720,6 +744,8 @@ export default function App() {
   const [promptNotice, setPromptNotice] = useState<string | null>(null);
   const [pendingVoiceoverPrompt, setPendingVoiceoverPrompt] = useState<{
     tweakInstruction?: string;
+    targetSceneId?: string | null;
+    targetSceneIndex?: number | null;
   } | null>(null);
   const [voiceoverDialogBusy, setVoiceoverDialogBusy] = useState(false);
   const [voiceoverDialogError, setVoiceoverDialogError] = useState<string | null>(null);
@@ -799,6 +825,9 @@ export default function App() {
   const [generatedSceneCount, setGeneratedSceneCount] = useState(0);
   const [generatedScenes, setGeneratedScenes] = useState<GeneratedSceneSummary[]>([]);
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+  const [fallbackScenes, setFallbackScenes] = useState<number[]>([]);
+  const [quickTweakTargetSceneId, setQuickTweakTargetSceneId] = useState<string | null>(null);
+  const quickTweakTargetResetRef = useRef(false);
   const [timelineLogsOpen, setTimelineLogsOpen] = useState(false);
   const [workspaceLayout, setWorkspaceLayout] = useState<WorkspaceLayout>(readWorkspaceLayout);
   const [resizingPanel, setResizingPanel] = useState<'left' | 'right' | 'timeline' | null>(null);
@@ -949,6 +978,7 @@ export default function App() {
       const data = (await res.json()) as {
         count?: number;
         hasGenerated?: boolean;
+        fallbackScenes?: unknown;
         scenes?: Array<{
           id?: string;
           title?: string;
@@ -957,6 +987,7 @@ export default function App() {
           durationSec?: number;
           hasAudio?: boolean;
           exists?: boolean;
+          fallback?: boolean;
         }>;
       };
       const scenes: GeneratedSceneSummary[] = (data.scenes ?? [])
@@ -972,9 +1003,15 @@ export default function App() {
         }));
       setGeneratedScenes(scenes);
       setGeneratedSceneCount(data.hasGenerated ? data.count || scenes.length : scenes.length);
+      setFallbackScenes(normalizeFallbackScenes(data.fallbackScenes));
       setSelectedSceneId((prev) =>
         prev && scenes.some((scene) => scene.id === prev) ? prev : scenes[0]?.id ?? null
       );
+      setQuickTweakTargetSceneId((prev) => {
+        if (prev && scenes.some((scene) => scene.id === prev)) return prev;
+        if (quickTweakTargetResetRef.current) return null;
+        return scenes[0]?.id ?? null;
+      });
     } catch {
       // Generated scene status is optional.
     }
@@ -1588,11 +1625,22 @@ export default function App() {
 
   const runExport = async (options?: {
     tweakInstruction?: string;
+    targetSceneId?: string | null;
+    targetSceneIndex?: number | null;
     voiceoverScriptOverride?: string;
     forceSilent?: boolean;
   }) => {
     if (isRendering || !masterPrompt.trim()) return;
     const tweakInstruction = options?.tweakInstruction?.trim() || '';
+    const targetSceneId =
+      tweakInstruction && options?.targetSceneId ? options.targetSceneId : null;
+    const targetSceneIndex =
+      tweakInstruction &&
+      typeof options?.targetSceneIndex === 'number' &&
+      Number.isInteger(options.targetSceneIndex) &&
+      options.targetSceneIndex >= 1
+        ? options.targetSceneIndex
+        : null;
     const effectiveVoiceoverEnabled = options?.forceSilent
       ? false
       : voiceConfig.enabled;
@@ -1617,6 +1665,10 @@ export default function App() {
     setSteps(createExportSteps(fps, t));
     setExportedVideoUrl(null);
     setExportFallback(null);
+    if (!tweakInstruction) {
+      setFallbackScenes([]);
+      quickTweakTargetResetRef.current = false;
+    }
     if (tweakInstruction) {
       setQuickTweakBusy(true);
       setQuickTweakNotice(
@@ -1654,7 +1706,13 @@ export default function App() {
         },
         body: JSON.stringify({
           prompt: masterPrompt,
-          ...(tweakInstruction ? { tweakInstruction } : {}),
+          ...(tweakInstruction
+            ? {
+                tweakInstruction,
+                ...(targetSceneId ? { targetSceneId } : {}),
+                ...(targetSceneIndex ? { targetSceneIndex } : {}),
+              }
+            : {}),
           targetDuration,
           aspectRatio,
           fps,
@@ -1744,7 +1802,24 @@ export default function App() {
         const payload = JSON.parse((ev as MessageEvent).data) as {
           used?: boolean;
           reason?: string;
+          sceneNumbers?: unknown;
+          newSceneNumbers?: unknown;
+          templateScenes?: unknown;
+          clearedScene?: unknown;
         };
+        if (Array.isArray(payload.sceneNumbers)) {
+          setFallbackScenes(normalizeFallbackScenes(payload.sceneNumbers));
+        } else if (Array.isArray(payload.newSceneNumbers)) {
+          setFallbackScenes((prev) =>
+            mergeFallbackScenes(prev, payload.newSceneNumbers)
+          );
+        } else if (Array.isArray(payload.templateScenes)) {
+          const parsed = payload.templateScenes
+            .filter((name): name is string => typeof name === 'string')
+            .map(parseFallbackSceneNumber)
+            .filter((value): value is number => value !== null);
+          setFallbackScenes((prev) => mergeFallbackScenes(prev, parsed));
+        }
         if (payload.used && payload.reason) {
           setExportFallback({ reason: payload.reason });
         }
@@ -1776,7 +1851,21 @@ export default function App() {
           fileSizeBytes?: number;
           fallbackUsed?: boolean;
           fallbackReason?: string | null;
+          fallbackScenes?: unknown;
         };
+
+        if (Array.isArray(payload.fallbackScenes)) {
+          const nextFallbacks = normalizeFallbackScenes(payload.fallbackScenes);
+          setFallbackScenes(
+            targetSceneIndex !== null
+              ? nextFallbacks.filter((sceneNumber) => sceneNumber !== targetSceneIndex)
+              : nextFallbacks
+          );
+        } else if (targetSceneIndex !== null) {
+          setFallbackScenes((prev) =>
+            prev.filter((sceneNumber) => sceneNumber !== targetSceneIndex)
+          );
+        }
 
         if (payload.fallbackUsed) {
           setExportFallback({
@@ -1961,7 +2050,11 @@ export default function App() {
     }
   };
 
-  const handleStartExport = async (options?: { tweakInstruction?: string }) => {
+  const handleStartExport = async (options?: {
+    tweakInstruction?: string;
+    targetSceneId?: string | null;
+    targetSceneIndex?: number | null;
+  }) => {
     if (isRendering || !masterPrompt.trim()) return;
     const needsVoiceover =
       voiceConfig.enabled &&
@@ -1985,12 +2078,20 @@ export default function App() {
         return;
       }
       setVoiceoverDialogError(result.error);
-      setPendingVoiceoverPrompt({ tweakInstruction: options?.tweakInstruction });
+      setPendingVoiceoverPrompt({
+        tweakInstruction: options?.tweakInstruction,
+        targetSceneId: options?.targetSceneId ?? null,
+        targetSceneIndex: options?.targetSceneIndex ?? null,
+      });
       return;
     }
 
     setVoiceoverDialogError(null);
-    setPendingVoiceoverPrompt({ tweakInstruction: options?.tweakInstruction });
+    setPendingVoiceoverPrompt({
+      tweakInstruction: options?.tweakInstruction,
+      targetSceneId: options?.targetSceneId ?? null,
+      targetSceneIndex: options?.targetSceneIndex ?? null,
+    });
   };
 
   const handleVoiceoverDialogAutoGenerate = async (remember: boolean) => {
@@ -2014,6 +2115,8 @@ export default function App() {
     setPendingVoiceoverPrompt(null);
     await runExport({
       tweakInstruction: pending.tweakInstruction,
+      targetSceneId: pending.targetSceneId,
+      targetSceneIndex: pending.targetSceneIndex,
       voiceoverScriptOverride: result.script,
     });
   };
@@ -2026,6 +2129,8 @@ export default function App() {
     setVoiceoverDialogError(null);
     await runExport({
       tweakInstruction: pending.tweakInstruction,
+      targetSceneId: pending.targetSceneId,
+      targetSceneIndex: pending.targetSceneIndex,
       forceSilent: true,
     });
   };
@@ -2102,7 +2207,9 @@ export default function App() {
   };
 
   const handleSelectTimelineScene = (scene: TimelineScene) => {
+    quickTweakTargetResetRef.current = false;
     setSelectedSceneId(scene.id);
+    setQuickTweakTargetSceneId(scene.id);
     if (!exportedVideoUrl) return;
     const target = document.getElementById('studio-main-video') as HTMLVideoElement | null;
     if (!target) return;
@@ -2117,6 +2224,23 @@ export default function App() {
     } catch {
       // Seeking is a best-effort preview enhancement.
     }
+  };
+
+  const handleSelectSceneNumber = (sceneNumber: number) => {
+    const scene = generatedScenes.find((item) => item.index === sceneNumber);
+    if (!scene) return;
+    handleSelectTimelineScene({
+      id: scene.id,
+      title: scene.title,
+      index: scene.index,
+      durationSec: scene.durationSec,
+      hasAudio: scene.hasAudio,
+    });
+  };
+
+  const handleResetQuickTweakTarget = () => {
+    quickTweakTargetResetRef.current = true;
+    setQuickTweakTargetSceneId(null);
   };
 
   const handleDownloadVideo = () => {
@@ -2149,6 +2273,9 @@ export default function App() {
     durationSec: scene.durationSec,
     hasAudio: scene.hasAudio,
   }));
+
+  const quickTweakTargetScene =
+    generatedScenes.find((scene) => scene.id === quickTweakTargetSceneId) ?? null;
 
   const workspaceStyle = {
     '--left-pane': `${workspaceLayout.leftWidth}px`,
@@ -2436,9 +2563,25 @@ export default function App() {
                 onSubmit={() => {
                   const instruction = quickTweakInstruction.trim();
                   if (!instruction || isRendering || generatedSceneCount === 0) return;
-                  void handleStartExport({ tweakInstruction: instruction });
+                  void handleStartExport({
+                    tweakInstruction: instruction,
+                    targetSceneId: quickTweakTargetScene?.id ?? null,
+                    targetSceneIndex: quickTweakTargetScene?.index ?? null,
+                  });
                 }}
                 sceneCount={generatedSceneCount}
+                fallbackScenes={fallbackScenes}
+                targetScene={
+                  quickTweakTargetScene
+                    ? {
+                        id: quickTweakTargetScene.id,
+                        index: quickTweakTargetScene.index,
+                        title: quickTweakTargetScene.title,
+                      }
+                    : null
+                }
+                onSelectFallbackScene={handleSelectSceneNumber}
+                onResetTarget={handleResetQuickTweakTarget}
                 disabled={isRendering || generatedSceneCount === 0}
                 busy={quickTweakBusy}
                 notice={quickTweakNotice}
@@ -2550,6 +2693,7 @@ export default function App() {
           scenes={timelineScenes}
           selectedSceneId={selectedSceneId}
           onSelectScene={handleSelectTimelineScene}
+          fallbackScenes={fallbackScenes}
           voiceoverEnabled={voiceConfig.enabled}
           captionsEnabled={captionsEnabled && voiceConfig.enabled}
           logs={logs}

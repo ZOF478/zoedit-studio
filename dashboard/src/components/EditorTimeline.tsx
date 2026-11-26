@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, ChevronDown, ChevronUp, Copy, Film, Mic, Terminal, Volume2 } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Copy, Film, Mic, Terminal, TriangleAlert, Volume2 } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { RenderLogEntry } from '../types/studio';
 
@@ -15,6 +15,7 @@ interface EditorTimelineProps {
   scenes: TimelineScene[];
   selectedSceneId: string | null;
   onSelectScene: (scene: TimelineScene) => void;
+  fallbackScenes?: number[];
   voiceoverEnabled: boolean;
   captionsEnabled: boolean;
   logs: RenderLogEntry[];
@@ -32,6 +33,7 @@ export function EditorTimeline({
   scenes,
   selectedSceneId,
   onSelectScene,
+  fallbackScenes = [],
   voiceoverEnabled,
   captionsEnabled,
   logs,
@@ -41,6 +43,7 @@ export function EditorTimeline({
 }: EditorTimelineProps) {
   const { t } = useI18n();
   const [logsCopied, setLogsCopied] = useState(false);
+  const fallbackSet = new Set(fallbackScenes);
   const total = scenes.reduce((sum, scene) => sum + Math.max(0.1, scene.durationSec), 0);
 
   const handleCopyLogs = async () => {
@@ -185,6 +188,7 @@ export function EditorTimeline({
           ) : (
             scenes.map((scene) => {
               const active = selectedScene?.id === scene.id;
+              const isFallback = fallbackSet.has(scene.index);
               const basis = Math.max(8, (Math.max(0.1, scene.durationSec) / safeTotal) * 100);
               return (
                 <button
@@ -192,12 +196,18 @@ export function EditorTimeline({
                   type="button"
                   onClick={() => onSelectScene(scene)}
                   aria-pressed={active}
-                  title={`${scene.index}. ${scene.title} · ${formatSeconds(scene.durationSec)}`}
+                  title={`${scene.index}. ${scene.title} · ${formatSeconds(scene.durationSec)}${
+                    isFallback
+                      ? t(' · تنبيه: قالب احتياطي', ' · Warning: fallback template')
+                      : ''
+                  }`}
                   style={{ flexBasis: `${basis}%` }}
                   className={`group relative flex h-full min-w-[64px] flex-col justify-between overflow-hidden rounded-lg border px-1.5 py-1 text-start transition-colors cursor-pointer ${
                     active
                       ? 'border-sky-400/70 bg-sky-500/20 shadow-[0_0_22px_-10px_rgba(56,189,248,0.9)]'
-                      : 'border-white/10 bg-[#101620] hover:border-sky-400/40 hover:bg-[#152033]'
+                      : isFallback
+                        ? 'border-amber-400/40 bg-[#1A1710] hover:border-amber-300/60 hover:bg-[#221C12]'
+                        : 'border-white/10 bg-[#101620] hover:border-sky-400/40 hover:bg-[#152033]'
                   }`}
                 >
                   <span className="flex min-w-0 items-center gap-1">
@@ -212,7 +222,15 @@ export function EditorTimeline({
                     </span>
                     {scene.hasAudio ? <Mic className="h-2.5 w-2.5 shrink-0 text-emerald-300" /> : null}
                   </span>
-                  <span className={`absolute inset-x-0 bottom-0 h-0.5 ${active ? 'bg-sky-400' : 'bg-sky-500/30 group-hover:bg-sky-400/60'}`} />
+                  {isFallback ? (
+                    <span
+                      className="absolute end-1 top-1 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-amber-200/70 bg-amber-400 text-amber-950 shadow-[0_0_10px_-1px_rgba(251,191,36,0.9)]"
+                      aria-hidden="true"
+                    >
+                      <TriangleAlert className="h-2.5 w-2.5" strokeWidth={3} />
+                    </span>
+                  ) : null}
+                  <span className={`absolute inset-x-0 bottom-0 h-0.5 ${active ? 'bg-sky-400' : isFallback ? 'bg-amber-400/70 group-hover:bg-amber-300' : 'bg-sky-500/30 group-hover:bg-sky-400/60'}`} />
                 </button>
               );
             })
