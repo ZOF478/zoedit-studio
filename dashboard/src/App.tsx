@@ -13,6 +13,7 @@ import { StudioInfoModal, type StudioInfoModalId } from './components/StudioFoot
 import { StudioSidePanel } from './components/StudioSidePanel';
 import { TopHeader } from './components/TopHeader';
 import { UsageCostPanel } from './components/UsageCostPanel';
+import { VoiceoverConfirmDialog } from './components/VoiceoverConfirmDialog';
 import { useStudioUsage } from './hooks/useStudioUsage';
 import { useI18n } from './i18n';
 import { getVideoLanguage, normalizeVideoLanguage } from './types/languages';
@@ -26,6 +27,7 @@ import type {
   CaptionAnimationStyle,
   CaptionColors,
   ElevenLabsVoice,
+  EmptyVoiceoverBehavior,
   ExportTargetDuration,
   FpsOption,
   RenderLogEntry,
@@ -75,6 +77,8 @@ type MobilePaneId = 'tools' | 'player' | 'inspector';
 
 const PROMPT_STORAGE_KEY = 'zoedit-studio-master-prompt-v1';
 const SCRIPT_STORAGE_KEY = 'zoedit-studio-voiceover-script-v1';
+const VIDEO_IDEA_STORAGE_KEY = 'zoedit-studio-video-idea-v1';
+const VOICEOVER_EMPTY_PREF_STORAGE_KEY = 'zoedit-studio-voiceover-empty-pref-v1';
 const PALETTE_STORAGE_KEY = 'zoedit-studio-active-palette-v1';
 const SFX_STORAGE_KEY = 'zoedit-studio-sfx-v1';
 const DEPTH_25D_STORAGE_KEY = 'zoedit-studio-depth-25d-v1';
@@ -601,6 +605,29 @@ const DEFAULT_PROMPT_AR =
 const DEFAULT_PROMPT_EN =
   'How to create short educational videos with AI and double engagement';
 
+const EMPTY_VOICEOVER_BEHAVIORS: EmptyVoiceoverBehavior[] = ['ask', 'auto', 'silent'];
+
+function readStoredVideoIdea(): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    return window.localStorage.getItem(VIDEO_IDEA_STORAGE_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+function readStoredEmptyVoiceoverBehavior(): EmptyVoiceoverBehavior {
+  if (typeof window === 'undefined') return 'ask';
+  try {
+    const stored = window.localStorage.getItem(VOICEOVER_EMPTY_PREF_STORAGE_KEY);
+    return EMPTY_VOICEOVER_BEHAVIORS.includes(stored as EmptyVoiceoverBehavior)
+      ? (stored as EmptyVoiceoverBehavior)
+      : 'ask';
+  } catch {
+    return 'ask';
+  }
+}
+
 function nowTimeLabel(): string {
   return new Date().toLocaleTimeString('en-GB', { hour12: false });
 }
@@ -682,9 +709,23 @@ export default function App() {
     if (typeof window === 'undefined') return '';
     return window.localStorage.getItem(SCRIPT_STORAGE_KEY) || '';
   });
+  const [videoIdea, setVideoIdea] = useState<string>(readStoredVideoIdea);
+  const [emptyScriptPreference, setEmptyScriptPreference] =
+    useState<EmptyVoiceoverBehavior>(readStoredEmptyVoiceoverBehavior);
   const [isGeneratingScript, setIsGeneratingScript] = useState(false);
   const [scriptError, setScriptError] = useState<string | null>(null);
   const [scriptNotice, setScriptNotice] = useState<string | null>(null);
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
+  const [promptError, setPromptError] = useState<string | null>(null);
+  const [promptNotice, setPromptNotice] = useState<string | null>(null);
+  const [pendingVoiceoverPrompt, setPendingVoiceoverPrompt] = useState<{
+    tweakInstruction?: string;
+  } | null>(null);
+  const [voiceoverDialogBusy, setVoiceoverDialogBusy] = useState(false);
+  const [voiceoverDialogError, setVoiceoverDialogError] = useState<string | null>(null);
+  const [exportFallback, setExportFallback] = useState<{
+    reason: string;
+  } | null>(null);
   const [targetDuration, setTargetDuration] = useState<ExportTargetDuration>(
     initialWorkspaceSettings?.targetDuration ?? '60'
   );
@@ -1082,6 +1123,25 @@ export default function App() {
   }, [voiceoverScript]);
 
   useEffect(() => {
+    try {
+      window.localStorage.setItem(VIDEO_IDEA_STORAGE_KEY, videoIdea);
+    } catch {
+      // localStorage can be unavailable in private mode.
+    }
+  }, [videoIdea]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        VOICEOVER_EMPTY_PREF_STORAGE_KEY,
+        emptyScriptPreference,
+      );
+    } catch {
+      // localStorage can be unavailable in private mode.
+    }
+  }, [emptyScriptPreference]);
+
+  useEffect(() => {
     persistPalette(brandKit);
   }, [brandKit]);
 
@@ -1309,14 +1369,21 @@ export default function App() {
     ? activeStep?.label || t('جاري التصدير...', 'Exporting...')
     : null;
 
-  const handleGenerateVoiceoverScript = async (options?: { rephrase?: boolean }) => {
-    if (isGeneratingScript || isRendering) return;
-    const topic = masterPrompt.trim();
-    if (!topic) {
-      setScriptError(t('اكتب فكرة الفيديو أولاً.', 'Write your video topic first.'));
-      return;
+  const generateVoiceoverScript = async (
+    topicInput: string,
+    options?: { rephrase?: boolean; previousScript?: string }
+  ): Promise<{ script: string | null; error: string | null }> => {
+    if (isGeneratingScript || isRendering) {
+      return { script: null, error: null };
     }
-    const rephrase = Boolean(options?.rephrase) && Boolean(voiceoverScript.trim());
+    const topic = topicInput.trim();
+    if (!topic) {
+      const message = t('اكتب فكرة الفيديو أولاً.', 'Write your video topic first.');
+      setScriptError(message);
+      return { script: null, error: message };
+    }
+    const previousScript = options?.previousScript ?? voiceoverScript;
+    const rephrase = Boolean(options?.rephrase) && Boolean(previousScript.trim());
     setIsGeneratingScript(true);
     setScriptError(null);
     setScriptNotice(null);
@@ -1335,7 +1402,7 @@ export default function App() {
           scriptLanguage,
           targetDuration,
           rephrase,
-          ...(rephrase ? { previousScript: voiceoverScript } : {}),
+          ...(rephrase ? { previousScript } : {}),
         }),
       });
       const payload = (await res.json().catch(() => null)) as
@@ -1372,14 +1439,109 @@ export default function App() {
       if (payload.notice) {
         setScriptNotice(`${payload.notice}`);
       }
+      return { script: payload.script, error: null };
     } catch (error) {
-      setScriptError(
+      const message =
         error instanceof Error
           ? error.message
-          : t('تعذر توليد السكربت الصوتي.', 'Could not generate the voiceover script.')
-      );
+          : t('تعذر توليد السكربت الصوتي.', 'Could not generate the voiceover script.');
+      setScriptError(message);
+      return { script: null, error: message };
     } finally {
       setIsGeneratingScript(false);
+    }
+  };
+
+  const handleGenerateVoiceoverScript = async (options?: { rephrase?: boolean }) => {
+    await generateVoiceoverScript(masterPrompt, options);
+  };
+
+  const handleGenerateMasterPrompt = async (mode: 'prompt' | 'both') => {
+    if (isGeneratingPrompt || isGeneratingScript || isRendering) return;
+    const idea = videoIdea.trim();
+    if (!idea) {
+      setPromptError(
+        t(
+          'اكتب فكرة أو موضوع الفيديو أولاً، أو اكتب مباشرة في البرومبت الرئيسي.',
+          'Write your video idea first, or type directly into the Master Prompt.'
+        )
+      );
+      return;
+    }
+    setIsGeneratingPrompt(true);
+    setPromptError(null);
+    setPromptNotice(null);
+    try {
+      const res = await fetch(`${apiBaseUrl}/prompt/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(sessionToken ? { 'x-zoedit-session': sessionToken } : {}),
+          'x-zoedit-ui-lang': lang,
+        },
+        body: JSON.stringify({
+          idea,
+          provider: selectedAiProvider,
+          modelId: selectedAiModel,
+          targetDuration,
+          aspectRatio,
+          scriptLanguage,
+          uiLanguage: lang,
+          userAssets: userAssets.map((asset) => ({
+            id: asset.id,
+            filename: asset.filename,
+            role: asset.role,
+            note: asset.note,
+          })),
+        }),
+      });
+      const payload = (await res.json().catch(() => null)) as
+        | {
+            prompt?: string;
+            providerUsed?: string;
+            source?: string;
+            notice?: string;
+            error?: string;
+          }
+        | null;
+      if (!res.ok || !payload?.prompt) {
+        throw new Error(
+          payload?.error ||
+            t(
+              'تعذر توليد البرومبت الرئيسي.',
+              'Could not generate the master prompt.'
+            )
+        );
+      }
+      setMasterPrompt(payload.prompt);
+      let notice = t(
+        `تم توليد البرومبت الرئيسي عبر ${payload.providerUsed || payload.source || 'AI'}. راجعه ثم ابدأ التصدير.`,
+        `Master prompt generated via ${payload.providerUsed || payload.source || 'AI'}. Review it, then export.`
+      );
+      if (payload.notice) notice = payload.notice;
+      if (mode === 'both') {
+        const scriptResult = await generateVoiceoverScript(payload.prompt);
+        if (scriptResult.error) {
+          setPromptError(scriptResult.error);
+        } else if (scriptResult.script) {
+          notice = t(
+            'تم توليد البرومبت الرئيسي والسكربت الصوتي معاً. راجعهما ثم ابدأ التصدير.',
+            'Master prompt and voiceover script were generated together. Review both, then export.'
+          );
+        }
+      }
+      setPromptNotice(notice);
+    } catch (error) {
+      setPromptError(
+        error instanceof Error
+          ? error.message
+          : t(
+              'تعذر توليد البرومبت الرئيسي.',
+              'Could not generate the master prompt.'
+            )
+      );
+    } finally {
+      setIsGeneratingPrompt(false);
     }
   };
 
@@ -1424,9 +1586,19 @@ export default function App() {
     }
   };
 
-  const handleStartExport = async (options?: { tweakInstruction?: string }) => {
+  const runExport = async (options?: {
+    tweakInstruction?: string;
+    voiceoverScriptOverride?: string;
+    forceSilent?: boolean;
+  }) => {
     if (isRendering || !masterPrompt.trim()) return;
     const tweakInstruction = options?.tweakInstruction?.trim() || '';
+    const effectiveVoiceoverEnabled = options?.forceSilent
+      ? false
+      : voiceConfig.enabled;
+    const effectiveVoiceoverScript = options?.forceSilent
+      ? ''
+      : (options?.voiceoverScriptOverride ?? voiceoverScript).trim();
 
     primeCompletionAudio();
     if (getNotificationPermission() === 'default') {
@@ -1444,6 +1616,7 @@ export default function App() {
     setLogs([]);
     setSteps(createExportSteps(fps, t));
     setExportedVideoUrl(null);
+    setExportFallback(null);
     if (tweakInstruction) {
       setQuickTweakBusy(true);
       setQuickTweakNotice(
@@ -1493,7 +1666,7 @@ export default function App() {
             secondary: brandKit.secondaryColor,
             accent: brandKit.accentColor,
           },
-          voiceoverEnabled: voiceConfig.enabled,
+          voiceoverEnabled: effectiveVoiceoverEnabled,
           cleanBrollMode,
           voiceProvider: voiceConfig.provider,
           voiceId: voiceConfig.voiceId,
@@ -1507,13 +1680,15 @@ export default function App() {
           sfxVolume: sfx.volume,
           scriptLanguage,
           language: scriptLanguage,
-          captionsEnabled: captionsEnabled && voiceConfig.enabled,
+          captionsEnabled: captionsEnabled && effectiveVoiceoverEnabled,
           captionStyle,
           captionColors,
           captionBottomOffset,
           enable25D,
           respectSafeZone,
-          voiceoverScript: voiceConfig.enabled ? voiceoverScript.trim() : undefined,
+          voiceoverScript: effectiveVoiceoverEnabled
+            ? effectiveVoiceoverScript || undefined
+            : undefined,
           userAssets: userAssets.map((asset) => ({
             id: asset.id,
             filename: asset.filename,
@@ -1565,6 +1740,16 @@ export default function App() {
         appendLog(payload.step, payload.level, payload.message);
       });
 
+      es.addEventListener('fallback', (ev) => {
+        const payload = JSON.parse((ev as MessageEvent).data) as {
+          used?: boolean;
+          reason?: string;
+        };
+        if (payload.used && payload.reason) {
+          setExportFallback({ reason: payload.reason });
+        }
+      });
+
       es.addEventListener('time', (ev) => {
         const payload = JSON.parse((ev as MessageEvent).data) as {
           remainingSec?: number;
@@ -1589,7 +1774,20 @@ export default function App() {
           outputName?: string | null;
           title?: string | null;
           fileSizeBytes?: number;
+          fallbackUsed?: boolean;
+          fallbackReason?: string | null;
         };
+
+        if (payload.fallbackUsed) {
+          setExportFallback({
+            reason:
+              payload.fallbackReason ||
+              t(
+                'تم استخدام القوالب الافتراضية بدلاً من المشاهد المخصصة.',
+                'The built-in templates were used instead of bespoke scenes.'
+              ),
+          });
+        }
 
         setSteps((prev) =>
           prev.map((step) => ({ ...step, status: 'completed' as StepStatus }))
@@ -1761,6 +1959,81 @@ export default function App() {
         );
       }
     }
+  };
+
+  const handleStartExport = async (options?: { tweakInstruction?: string }) => {
+    if (isRendering || !masterPrompt.trim()) return;
+    const needsVoiceover =
+      voiceConfig.enabled &&
+      !voiceoverScript.trim() &&
+      !options?.tweakInstruction?.trim();
+
+    if (!needsVoiceover) {
+      await runExport(options);
+      return;
+    }
+
+    if (emptyScriptPreference === 'silent') {
+      await runExport({ ...options, forceSilent: true });
+      return;
+    }
+
+    if (emptyScriptPreference === 'auto') {
+      const result = await generateVoiceoverScript(masterPrompt);
+      if (result.script) {
+        await runExport({ ...options, voiceoverScriptOverride: result.script });
+        return;
+      }
+      setVoiceoverDialogError(result.error);
+      setPendingVoiceoverPrompt({ tweakInstruction: options?.tweakInstruction });
+      return;
+    }
+
+    setVoiceoverDialogError(null);
+    setPendingVoiceoverPrompt({ tweakInstruction: options?.tweakInstruction });
+  };
+
+  const handleVoiceoverDialogAutoGenerate = async (remember: boolean) => {
+    const pending = pendingVoiceoverPrompt;
+    if (!pending) return;
+    if (remember) setEmptyScriptPreference('auto');
+    setVoiceoverDialogBusy(true);
+    setVoiceoverDialogError(null);
+    const result = await generateVoiceoverScript(masterPrompt);
+    setVoiceoverDialogBusy(false);
+    if (!result.script) {
+      setVoiceoverDialogError(
+        result.error ||
+          t(
+            'تعذر توليد السكربت الصوتي. حاول مرة أخرى أو تابع بدون صوت.',
+            'Could not generate the voiceover script. Try again or continue silent.'
+          )
+      );
+      return;
+    }
+    setPendingVoiceoverPrompt(null);
+    await runExport({
+      tweakInstruction: pending.tweakInstruction,
+      voiceoverScriptOverride: result.script,
+    });
+  };
+
+  const handleVoiceoverDialogContinueSilent = async (remember: boolean) => {
+    const pending = pendingVoiceoverPrompt;
+    if (!pending) return;
+    if (remember) setEmptyScriptPreference('silent');
+    setPendingVoiceoverPrompt(null);
+    setVoiceoverDialogError(null);
+    await runExport({
+      tweakInstruction: pending.tweakInstruction,
+      forceSilent: true,
+    });
+  };
+
+  const handleVoiceoverDialogClose = () => {
+    if (voiceoverDialogBusy) return;
+    setPendingVoiceoverPrompt(null);
+    setVoiceoverDialogError(null);
   };
 
   const handleCancelExport = async () => {
@@ -1992,6 +2265,39 @@ export default function App() {
         })}
       </div>
 
+      {exportFallback ? (
+        <div className="shrink-0 border-b border-amber-400/30 bg-amber-500/12 px-3 py-2">
+          <div className="flex items-start gap-2">
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-bold text-amber-100">
+                {t(
+                  'تنبيه: تم استخدام القوالب الافتراضية',
+                  'Warning: built-in fallback templates were used'
+                )}
+              </p>
+              <p className="mt-0.5 text-[10px] leading-relaxed text-amber-100/80">
+                {exportFallback.reason}
+              </p>
+              <p className="mt-0.5 text-[10px] leading-relaxed text-amber-100/60">
+                {t(
+                  'التفاصيل الكاملة موجودة في سجل العمليات التفصيلي.',
+                  'Full details are available in the detailed operation log.'
+                )}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setExportFallback(null)}
+              aria-label={t('إغلاق التنبيه', 'Dismiss warning')}
+              className="rounded-md p-1 text-amber-200/70 transition-colors hover:text-amber-50 cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       <main
         ref={workspaceRef}
         style={workspaceStyle}
@@ -2048,6 +2354,17 @@ export default function App() {
                 isGeneratingScript={isGeneratingScript}
                 scriptError={scriptError}
                 scriptNotice={scriptNotice}
+                videoIdea={videoIdea}
+                onChangeVideoIdea={setVideoIdea}
+                onGenerateMasterPrompt={(mode) => {
+                  void handleGenerateMasterPrompt(mode);
+                }}
+                isGeneratingPrompt={isGeneratingPrompt}
+                promptError={promptError}
+                promptNotice={promptNotice}
+                targetDuration={targetDuration}
+                emptyScriptPreference={emptyScriptPreference}
+                onChangeEmptyScriptPreference={setEmptyScriptPreference}
                 apiBaseUrl={apiBaseUrl}
                 sessionToken={sessionToken}
                 historyKey={historyKey}
@@ -2282,6 +2599,19 @@ export default function App() {
       />
 
       <StudioInfoModal modal={footerModal} onClose={() => setFooterModal(null)} />
+
+      <VoiceoverConfirmDialog
+        open={pendingVoiceoverPrompt !== null}
+        busy={voiceoverDialogBusy}
+        error={voiceoverDialogError}
+        onAutoGenerate={(remember) => {
+          void handleVoiceoverDialogAutoGenerate(remember);
+        }}
+        onContinueSilent={(remember) => {
+          void handleVoiceoverDialogContinueSilent(remember);
+        }}
+        onClose={handleVoiceoverDialogClose}
+      />
 
       {toast ? (
         <div className="pointer-events-none fixed bottom-5 left-1/2 z-50 w-[min(92vw,420px)] -translate-x-1/2">

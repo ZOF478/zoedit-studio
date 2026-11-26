@@ -1,8 +1,12 @@
 import {
   BrainCircuit,
   FileText,
+  Lightbulb,
+  ListChecks,
   Loader2,
+  Mic,
   RefreshCw,
+  Sparkles,
   WandSparkles,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
@@ -12,6 +16,13 @@ import { UserAssetComposer } from './UserAssetComposer';
 interface DirectorScriptPanelProps {
   masterPrompt: string;
   onChangeMasterPrompt: (value: string) => void;
+  videoIdea: string;
+  onChangeVideoIdea: (value: string) => void;
+  onGenerateMasterPrompt: (mode: 'prompt' | 'both') => void;
+  isGeneratingPrompt?: boolean;
+  promptError?: string | null;
+  promptNotice?: string | null;
+  targetDuration: string;
   userAssets: UserAsset[];
   onChangeUserAssets: (assets: UserAsset[]) => void;
   apiBaseUrl: string;
@@ -29,6 +40,13 @@ interface DirectorScriptPanelProps {
 export function DirectorScriptPanel({
   masterPrompt,
   onChangeMasterPrompt,
+  videoIdea,
+  onChangeVideoIdea,
+  onGenerateMasterPrompt,
+  isGeneratingPrompt = false,
+  promptError = null,
+  promptNotice = null,
+  targetDuration,
   userAssets,
   onChangeUserAssets,
   apiBaseUrl,
@@ -48,6 +66,8 @@ export function DirectorScriptPanel({
     ? Math.round((scriptWordCount / 2.5) * 10) / 10
     : 0;
   const generateDisabled = disabled || isGeneratingScript || !masterPrompt.trim();
+  const ideaPromptDisabled =
+    disabled || isGeneratingPrompt || isGeneratingScript || !videoIdea.trim();
 
   return (
     <section className="min-w-0 w-full max-w-full overflow-x-hidden rounded-2xl border border-white/10 bg-[#0E121A] p-3.5 shadow-[0_18px_60px_-50px_rgba(56,189,248,0.7)]">
@@ -66,6 +86,85 @@ export function DirectorScriptPanel({
             )}
           </p>
         </div>
+      </div>
+
+      <div className="mb-3 rounded-xl border border-amber-400/20 bg-amber-500/[0.06] p-2.5">
+        <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-200">
+            <Lightbulb className="h-3.5 w-3.5" />
+            {t(
+              'فكرة / موضوع الفيديو (اختياري)',
+              'Topic / video idea (optional)'
+            )}
+          </span>
+          <span className="rounded border border-white/10 bg-[#0B0E14] px-1.5 py-0.5 font-mono text-[9px] text-slate-400">
+            {targetDuration === 'auto'
+              ? t('مدة تلقائية', 'Auto duration')
+              : `${targetDuration}s`}
+          </span>
+        </div>
+        <textarea
+          value={videoIdea}
+          onChange={(event) => onChangeVideoIdea(event.target.value)}
+          disabled={disabled}
+          rows={3}
+          dir={isRtl ? 'rtl' : 'ltr'}
+          placeholder={t(
+            'مثال: فيديو ترويجي عمودي مدته 30 ثانية يعرّف تطبيقي ويكشف أنه صُنع داخل الأداة نفسها.',
+            'Example: a 30-second vertical promo video introducing my app and revealing it was made inside the tool.'
+          )}
+          className="block w-full min-h-[74px] resize-y rounded-lg border border-white/10 bg-[#0B0E14] px-3 py-2 text-[12px] leading-relaxed text-slate-100 placeholder:text-slate-500 focus:border-amber-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+        />
+        <div className="mt-1.5 flex items-start gap-1.5 text-[10px] leading-relaxed text-slate-400">
+          <ListChecks className="mt-0.5 h-3 w-3 shrink-0 text-amber-300/80" />
+          <span>
+            {t(
+              'للحصول على أفضل نتيجة اذكر: المدة، المقاس/المنصة، الخطاف الأول، والجمهور المستهدف.',
+              'For best results include: duration, format/platform, the opening hook, and the target audience.'
+            )}
+          </span>
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => onGenerateMasterPrompt('prompt')}
+            disabled={ideaPromptDisabled}
+            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-amber-400/40 bg-amber-500/15 px-2 py-1 text-[10px] font-bold text-amber-100 transition-colors hover:border-amber-300/60 hover:bg-amber-500/25 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+          >
+            {isGeneratingPrompt ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Sparkles className="h-3 w-3" />
+            )}
+            {t('توليد البرومبت الرئيسي', 'Generate Master Prompt')}
+          </button>
+          <button
+            type="button"
+            onClick={() => onGenerateMasterPrompt('both')}
+            disabled={ideaPromptDisabled}
+            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-violet-400/40 bg-violet-500/15 px-2 py-1 text-[10px] font-bold text-violet-100 transition-colors hover:border-violet-300/60 hover:bg-violet-500/25 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+          >
+            {isGeneratingPrompt ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Mic className="h-3 w-3" />
+            )}
+            {t(
+              'توليد البرومبت + السكربت معاً',
+              'Generate Master Prompt + Voiceover'
+            )}
+          </button>
+        </div>
+        {promptError ? (
+          <p className="mt-1.5 rounded-lg border border-red-400/30 bg-red-500/10 px-2 py-1 text-[10px] leading-relaxed text-red-200">
+            {promptError}
+          </p>
+        ) : null}
+        {promptNotice ? (
+          <p className="mt-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-2 py-1 text-[10px] leading-relaxed text-emerald-200">
+            {promptNotice}
+          </p>
+        ) : null}
       </div>
 
       <textarea

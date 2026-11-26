@@ -2,6 +2,9 @@ import type { ComponentType } from "react";
 import { Scene1 } from "./Scene1";
 import { Scene2 } from "./Scene2";
 import { Scene3 } from "./Scene3";
+import { Scene4 } from "./Scene4";
+import { Scene5 } from "./Scene5";
+import { Scene6 } from "./Scene6";
 
 export type GeneratedSceneProps = {
   accentColor: string;
@@ -25,11 +28,11 @@ export type GeneratedSceneProps = {
   showCharacter?: boolean;
 };
 
-export const GENERATED_SCENES: Record<
-  string,
-  ComponentType<GeneratedSceneProps>
-> = {
-  "Scene1": Scene1,
-  "Scene2": Scene2,
-  "Scene3": Scene3,
+export const GENERATED_SCENES: Record<string, ComponentType<GeneratedSceneProps>> = {
+  Scene1,
+  Scene2,
+  Scene3,
+  Scene4,
+  Scene5,
+  Scene6,
 };

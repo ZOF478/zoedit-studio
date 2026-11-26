@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   Clock,
+  Copy,
   Download,
   Film,
   Info,
@@ -64,6 +66,7 @@ export function RenderMonitorPanel({
 }: RenderMonitorPanelProps) {
   const { t } = useI18n();
   const [showLogs, setShowLogs] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [clock, setClock] = useState(() => Date.now());
 
   useEffect(() => {
@@ -72,6 +75,41 @@ export function RenderMonitorPanel({
     const timer = window.setInterval(() => setClock(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, [isRendering]);
+
+  const buildLogText = () =>
+    logs
+      .map(
+        (entry) =>
+          `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`,
+      )
+      .join('\n');
+
+  const handleCopyLogs = async () => {
+    const text = buildLogText();
+    if (!text) return;
+    let success = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      success = true;
+    } catch {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch {
+        success = false;
+      }
+    }
+    if (!success) return;
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  };
 
   const elapsedSec =
     isRendering && renderStartedAt ? Math.max(0, (clock - renderStartedAt) / 1000) : 0;
@@ -286,16 +324,31 @@ export function RenderMonitorPanel({
                   : t('آخر تحديث', 'Latest update')}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowLogs((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-sky-400/40 hover:text-slate-100 transition-colors cursor-pointer"
-            >
-              {showLogs ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-              {showLogs
-                ? t('إخفاء السجل التفصيلي', 'Hide detailed logs')
-                : t('إظهار السجل التفصيلي', 'Show detailed logs')}
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => void handleCopyLogs()}
+                disabled={logs.length === 0}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 transition-colors hover:border-sky-400/40 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+              >
+                {copied ? (
+                  <Check className="h-3.5 w-3.5 text-emerald-300" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
+                {copied ? t('تم النسخ', 'Copied') : t('نسخ السجل', 'Copy logs')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLogs((prev) => !prev)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-sky-400/40 hover:text-slate-100 transition-colors cursor-pointer"
+              >
+                {showLogs ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                {showLogs
+                  ? t('إخفاء السجل التفصيلي', 'Hide detailed logs')
+                  : t('إظهار السجل التفصيلي', 'Show detailed logs')}
+              </button>
+            </div>
           </div>
 
           {showLogs ? (

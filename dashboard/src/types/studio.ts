@@ -127,6 +127,8 @@ export type ScriptLanguage = string;
 
 export type VoiceProviderId = 'edge' | 'piper' | 'elevenlabs';
 
+export type EmptyVoiceoverBehavior = 'ask' | 'auto' | 'silent';
+
 export type VoiceGenderFilter = 'all' | 'male' | 'female' | 'neutral';
 
 export interface VoiceWordTiming {

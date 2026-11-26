@@ -361,6 +361,8 @@ interface RenderJob {
   masterPrompt?: string;
   tweakInstruction?: string;
   targetDuration?: ExportTargetDuration;
+  fallbackUsed?: boolean;
+  fallbackReason?: string;
   audioPrepared?: boolean;
   usage?: { ttsCharacters: number; ttsCalls: number; ttsUsd: number };
   status: 'queued' | 'rendering' | 'completed' | 'error' | 'cancelled';
@@ -6420,6 +6422,8 @@ const GENERATED_ALLOWED_IMPORTS = new Set([
   'topojson-client',
   'roughjs',
   'world-atlas/countries-110m.json',
+  './index',
+  './types',
 ]);
 
 function isAllowedGeneratedImport(source: string): boolean {
@@ -6805,6 +6809,10 @@ async function requestCustomSceneCode(options: {
   previousCode?: string;
   compilerErrors?: string;
   userAssets?: UserAssetPayload[];
+  masterPrompt?: string;
+  artDirection?: string;
+  sceneIndex?: number;
+  sceneCount?: number;
 }): Promise<string | null> {
   const { scene, componentName, scriptLanguage, aspectRatio, attempts, keys } =
     options;
@@ -6813,7 +6821,8 @@ async function requestCustomSceneCode(options: {
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
     'Return ONLY the complete TSX module. No markdown fences, no commentary.',
-    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".',
+    'Only import from: "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".',
+    'Prefer declaring the Props type inline in the scene file. If you reuse the shared scene props type, use `import type { GeneratedSceneProps } from "./index";` (never a value import, never "./index.ts").',
     'Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), dynamic import(), or any network/file access.',
     'The file must export exactly one named component: ' + componentName + '.',
     'Use this exact Props shape:',
@@ -6821,6 +6830,19 @@ async function requestCustomSceneCode(options: {
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
     'Use as many subtle <SceneSfx> cues as the concrete visual actions warrant, choosing the best-fitting id from the full installed SFX library. Never add an unsolicited loud victory chime, achievement bell, or celebration fanfare at the very end unless the user prompt explicitly asks for one.',
     'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman only when showCharacter is true; for human actions (praying, prostrating, sitting at a screen, standing, walking) use <SilhouetteActor pose="..." /> instead. For symbols, concepts, clocks, religious symbols, and brand logos always use <SmartIcon query="..." /> (add brand for company logos) — never hand-draw them from guessed shapes.',
+    ...(options.masterPrompt
+      ? [
+          '',
+          '## MASTER PROMPT (the single source of creative truth)',
+          options.masterPrompt,
+          '',
+        ]
+      : []),
+    `## SCENE ROLE IN THE SET${options.sceneCount ? ` (${(options.sceneIndex ?? 0) + 1} of ${options.sceneCount})` : ''}`,
+    options.artDirection
+      ? `Art-direction amplifier for this scene: ${options.artDirection}. Follow the master prompt first, then use this direction to keep the scene visually distinct from the other scenes.`
+      : 'Make this scene visually distinct from the other scenes; never reuse a generic card skeleton.',
+    'Do NOT default to progress-bar, checklist, or KPI-card filler. A progress bar is allowed only when it represents a genuinely quantitative value in the master prompt; otherwise build a topic-specific metaphor, diagram, data sculpture, or product stage.',
     ...(userAssetLines.length > 0 ? userAssetLines : []),
     ZOEDIT_LIBRARY_CAPABILITIES,
     VISUAL_QUALITY_CONTRACT,
@@ -6875,6 +6897,10 @@ async function generateAndValidateCustomScene(options: {
   keys: ResolvedApiKeys;
   wcagPrompt?: string;
   userAssets?: UserAssetPayload[];
+  masterPrompt?: string;
+  artDirection?: string;
+  sceneIndex?: number;
+  sceneCount?: number;
 }): Promise<{ ok: boolean; source: 'ai' | 'library-template' | 'none'; errors: string[] }> {
   let previousCode = '';
   let compilerErrors = '';
@@ -7638,6 +7664,7 @@ function buildFallbackSceneSource(
 import { Stickman } from "../components/Stickman";
 import { SceneSfx } from "../components/SceneSfx";
 
+// ZOEDIT_FALLBACK_LAYOUT
 type Props = {
   accentColor: string;
   secondaryColor: string;
@@ -7695,6 +7722,137 @@ ${layout}
 `;
 }
 
+function buildAssetShowcaseSceneSource(
+  componentName: string,
+  assets: UserAssetPayload[],
+  variantIndex = 0,
+): string {
+  const selected = assets.slice(0, 6);
+  const assetLines = selected
+    .map(
+      (asset) =>
+        `  { src: "user-assets/${asset.filename}", role: "${asset.role}", note: ${JSON.stringify(
+          asset.note || asset.originalName || '',
+        )} },`,
+    )
+    .join('\n');
+  const tilt = 6 + (Math.abs(Math.floor(variantIndex)) % 3) * 3;
+  return `import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { SceneSfx } from "../components/SceneSfx";
+
+// ZOEDIT_ASSET_SHOWCASE
+type Props = {
+  accentColor: string;
+  secondaryColor: string;
+  surfaceColor: string;
+  surfaceAltColor: string;
+  bgColor: string;
+  textColor: string;
+  mutedColor: string;
+  characterBody: string;
+  characterFace: string;
+  characterAccent: string;
+  characterShadow: string;
+  isRtl: boolean;
+  language: string;
+  title?: string;
+  text?: string;
+  keywords?: string[];
+  data?: Record<string, unknown>;
+  durationInFrames: number;
+  showCharacter?: boolean;
+};
+
+type ShowcaseAsset = {
+  src: string;
+  role: "logo" | "screenshot";
+  note: string;
+};
+
+const ASSETS: ShowcaseAsset[] = [
+${assetLines}
+];
+
+export const ${componentName} = (props: Props) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const progress = interpolate(frame, [0, Math.max(1, props.durationInFrames - 1)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const enter = spring({ frame, fps, config: { damping: 17, mass: 0.65, stiffness: 95 } });
+  const exit = interpolate(frame, [Math.max(0, props.durationInFrames - 10), Math.max(1, props.durationInFrames - 1)], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const title = props.title?.trim() || "Zoedit Studio";
+  const keywords = (props.keywords && props.keywords.length > 0 ? props.keywords : [title]).slice(0, 4);
+  const align = props.isRtl ? "right" : "left";
+  const rtl = props.isRtl ? "rtl" : "ltr";
+  const logos = ASSETS.filter((asset) => asset.role === "logo");
+  const screenshots = ASSETS.filter((asset) => asset.role === "screenshot");
+  const drift = Math.sin((frame / Math.max(1, fps)) * 1.6);
+  const tilt = ${tilt};
+
+  return (
+    <AbsoluteFill style={{ background: props.bgColor, fontFamily: "'Cairo', 'Noto Sans', 'Noto Sans Arabic', system-ui, sans-serif", overflow: "hidden", direction: rtl }}>
+      <SceneSfx name="pop" frame={10} volume={0.18} />
+      <SceneSfx name="whoosh" frame={Math.round(props.durationInFrames * 0.45)} volume={0.14} />
+      <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 18%, " + props.accentColor + "38 0%, transparent 60%)" }} />
+      <div style={{ position: "absolute", top: "12%", left: "50%", width: 620 + drift * 24, height: 620 + drift * 24, marginLeft: -(620 + drift * 24) / 2, borderRadius: "50%", border: "2px solid " + props.accentColor + "22" }} />
+      <div style={{ position: "absolute", inset: 0, opacity: exit, transform: "translateY(" + (1 - exit) * -12 + "px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 26, padding: "7% 8% 12%" }}>
+        <div style={{ width: "100%", maxWidth: 980, textAlign: align, opacity: enter, transform: "translateY(" + (1 - enter) * 36 + "px)" }}>
+          <div style={{ fontSize: 60, fontWeight: 900, lineHeight: 1.08, color: props.textColor }}>{title}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: props.isRtl ? "flex-end" : "flex-start", marginTop: 16 }}>
+            {keywords.map((word, index) => {
+              const itemEnter = spring({ frame: frame - index * 10 - 4, fps, config: { damping: 16, mass: 0.6, stiffness: 120 } });
+              return (
+                <div key={word + index} style={{ padding: "9px 18px", borderRadius: 999, border: "1.5px solid " + props.secondaryColor + "aa", background: props.surfaceAltColor, color: props.textColor, fontSize: 24, fontWeight: 700, opacity: itemEnter, transform: "translateY(" + (1 - itemEnter) * 18 + "px)" }}>{word}</div>
+              );
+            })}
+          </div>
+        </div>
+
+        {logos.length > 0 ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 34, flexWrap: "wrap", width: "100%" }}>
+            {logos.map((asset, index) => {
+              const logoEnter = spring({ frame: frame - 8 - index * 12, fps, config: { damping: 14, mass: 0.7, stiffness: 110 } });
+              const pulse = 1 + Math.sin(frame / 14 + index) * 0.025;
+              return (
+                <div key={asset.src} style={{ position: "relative", width: 300, height: 300, display: "flex", alignItems: "center", justifyContent: "center", opacity: logoEnter, transform: "scale(" + logoEnter * pulse + ") rotate(" + drift * 1.2 + "deg)" }}>
+                  <div style={{ position: "absolute", inset: 22, borderRadius: "50%", background: "radial-gradient(circle, " + props.accentColor + "55 0%, transparent 68%)", filter: "blur(6px)" }} />
+                  <div style={{ position: "absolute", inset: 34, borderRadius: "50%", border: "1.5px solid " + props.secondaryColor + "66" }} />
+                  <Img src={staticFile(asset.src)} style={{ position: "relative", maxWidth: "72%", maxHeight: "72%", objectFit: "contain", filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.42))" }} />
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
+        {screenshots.length > 0 ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 26, flexWrap: "wrap", width: "100%", perspective: 1400 }}>
+            {screenshots.map((asset, index) => {
+              const shotEnter = spring({ frame: frame - 14 - index * 12, fps, config: { damping: 15, mass: 0.7, stiffness: 100 } });
+              const kenBurns = 1 + progress * 0.045;
+              return (
+                <div key={asset.src} style={{ width: "100%", maxWidth: screenshots.length > 1 ? 520 : 900, opacity: shotEnter, transform: "rotateX(" + (tilt - 2) + "deg) rotateY(" + (props.isRtl ? tilt : -tilt) + "deg) translateY(" + (1 - shotEnter) * 40 + "px) scale(" + (0.92 + shotEnter * 0.08) + ")", transformStyle: "preserve-3d" }}>
+                  <div style={{ borderRadius: 26, overflow: "hidden", background: props.surfaceColor, border: "1.5px solid " + props.secondaryColor + "aa", boxShadow: "0 42px 110px rgba(0,0,0,0.55), 0 0 0 1px " + props.accentColor + "22 inset" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", background: props.surfaceAltColor, borderBottom: "1px solid " + props.accentColor + "33" }}>
+                      {[0, 1, 2].map((dot) => (
+                        <div key={"dot-" + dot} style={{ width: 12, height: 12, borderRadius: 999, background: dot === 0 ? props.accentColor : props.mutedColor, opacity: dot === 0 ? 0.9 : 0.45 }} />
+                      ))}
+                      <div style={{ flex: 1, height: 24, borderRadius: 999, background: props.surfaceColor, border: "1px solid " + props.secondaryColor + "44" }} />
+                    </div>
+                    <div style={{ padding: 12, background: props.bgColor }}>
+                      <Img src={staticFile(asset.src)} style={{ width: "100%", maxHeight: 620, objectFit: "contain", borderRadius: 16, transform: "scale(" + kenBurns + ")" }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+`;
+}
+
 function expectedGeneratedNamesForJob(job: RenderJob): string[] {
   return job.scenes.map((scene, index) =>
     scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
@@ -7725,49 +7883,6 @@ function generatedErrorComponentNames(errors: string): Set<string> {
     if (match && match[1] !== 'index') names.add(match[1]);
   }
   return names;
-}
-
-function repairGeneratedSceneFiles(job: RenderJob): void {
-  const expected = Array.from(new Set(expectedGeneratedNamesForJob(job)));
-  const variants = generatedSceneVariantIndexes(job);
-  let repaired = false;
-  for (const name of expected) {
-    const file = path.join(GENERATED_DIR, `${name}.tsx`);
-    const variant = variants.get(name) ?? 0;
-    if (!fs.existsSync(file)) {
-      fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
-      repaired = true;
-      console.log(
-        `[export] generated scene ${name} was missing; wrote its distinct fallback layout.`,
-      );
-      continue;
-    }
-    try {
-      const source = fs.readFileSync(file, 'utf8');
-      const sanitized = sanitizeGeneratedTsx(source, name);
-      if (!sanitized.ok) {
-        console.log(
-          `[export] generated scene ${name} failed validation: ${sanitized.errors.join(' | ')}`,
-        );
-        fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
-        repaired = true;
-      } else if (sanitized.code !== source.trim()) {
-        fs.writeFileSync(file, `${sanitized.code}\n`, 'utf8');
-        repaired = true;
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.log(
-        `[export] generated scene ${name} could not be read: ${message}`,
-      );
-      fs.writeFileSync(file, buildFallbackSceneSource(name, variant), 'utf8');
-      repaired = true;
-    }
-  }
-  syncGeneratedRegistry();
-  if (repaired) {
-    console.log('[export] repaired generated scene files with safe fallbacks.');
-  }
 }
 
 function repairFailingGeneratedScenes(
@@ -7814,6 +7929,207 @@ function attachGeneratedComponents(job: RenderJob, preserveExisting = false): vo
   });
 }
 
+function readGeneratedSceneSource(componentName: string): string | null {
+  try {
+    return fs.readFileSync(path.join(GENERATED_DIR, `${componentName}.tsx`), 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+function planAssetShowcasePlacements(
+  sceneCount: number,
+  assets: UserAssetPayload[],
+): Array<{ index: number; assets: UserAssetPayload[] }> {
+  if (assets.length === 0 || sceneCount <= 0) return [];
+  const placements = new Map<number, UserAssetPayload[]>();
+  const used = new Set<number>();
+  const add = (index: number, items: UserAssetPayload[]) => {
+    if (items.length === 0) return;
+    const existing = placements.get(index) || [];
+    placements.set(index, [...existing, ...items]);
+    used.add(index);
+  };
+  const logos = assets.filter((asset) => asset.role === 'logo');
+  const screenshots = assets.filter((asset) => asset.role === 'screenshot');
+
+  if (logos.length > 0) {
+    add(0, [logos[0]]);
+    if (logos.length > 1) {
+      const outro = sceneCount > 1 ? sceneCount - 1 : 0;
+      add(outro, logos.slice(1));
+    }
+  }
+
+  if (screenshots.length > 0) {
+    const middle = Math.floor(sceneCount / 2);
+    const candidates: number[] = [];
+    for (let offset = 0; offset < sceneCount; offset += 1) {
+      for (const candidate of [middle + offset, middle - offset, offset]) {
+        if (candidate >= 0 && candidate < sceneCount && !candidates.includes(candidate)) {
+          candidates.push(candidate);
+        }
+      }
+    }
+    const freeCandidates = candidates.filter((index) => !used.has(index));
+    for (const shot of screenshots) {
+      const nextIndex = freeCandidates.shift();
+      if (nextIndex !== undefined) {
+        add(nextIndex, [shot]);
+      } else if (placements.size > 0) {
+        const firstIndex = Array.from(placements.keys())[0];
+        add(firstIndex, [shot]);
+      } else {
+        add(0, [shot]);
+      }
+    }
+  }
+
+  return Array.from(placements.entries()).map(([index, items]) => ({ index, assets: items }));
+}
+
+function ensureUserAssetsRendered(job: RenderJob): {
+  injected: UserAssetPayload[];
+  stillMissing: UserAssetPayload[];
+} {
+  const assets = job.userAssets || [];
+  if (assets.length === 0) return { injected: [], stillMissing: [] };
+  const names = expectedGeneratedNamesForJob(job);
+  const allSources = names
+    .map((name) => readGeneratedSceneSource(name))
+    .filter((source): source is string => Boolean(source))
+    .join('\n');
+  const missing = assets.filter((asset) => !allSources.includes(asset.filename));
+  if (missing.length === 0) return { injected: [], stillMissing: [] };
+
+  const injected: UserAssetPayload[] = [];
+  const failed: UserAssetPayload[] = [];
+  const placements = planAssetShowcasePlacements(job.scenes.length, missing);
+  for (const placement of placements) {
+    const name = names[placement.index] || names[0];
+    if (!name) {
+      failed.push(...placement.assets);
+      continue;
+    }
+    const written = writeGeneratedComponentFile(
+      name,
+      buildAssetShowcaseSceneSource(name, placement.assets, placement.index),
+    );
+    if (written.ok) {
+      const scene = job.scenes[placement.index];
+      if (scene) {
+        scene.generatedComponent = name;
+        scene.visualType = 'custom-tsx';
+      }
+      injected.push(...placement.assets);
+    } else {
+      failed.push(...placement.assets);
+    }
+  }
+  return { injected, stillMissing: failed };
+}
+
+async function finalizeGeneratedSceneSet(
+  job: RenderJob,
+  options: {
+    attempts: ChatAttempt[];
+    keys: ResolvedApiKeys;
+    onLog: (level: 'info' | 'success' | 'warn' | 'error', message: string) => void;
+    initialFailure?: string;
+  },
+): Promise<{ fallbackUsed: boolean; fallbackReason?: string; aiScenes: string[]; templateScenes: string[] }> {
+  const expected = Array.from(new Set(expectedGeneratedNamesForJob(job)));
+  const broken: Array<{ index: number; name: string; reason: string }> = [];
+  for (let index = 0; index < expected.length; index += 1) {
+    const name = expected[index];
+    const source = readGeneratedSceneSource(name);
+    if (!source) {
+      broken.push({ index, name, reason: 'scene file was not written' });
+      continue;
+    }
+    const sanitized = sanitizeGeneratedTsx(source, name);
+    if (!sanitized.ok) {
+      broken.push({ index, name, reason: sanitized.errors.slice(0, 3).join(' | ') });
+      continue;
+    }
+    if (sanitized.code !== source.trim()) {
+      try {
+        fs.writeFileSync(path.join(GENERATED_DIR, `${name}.tsx`), `${sanitized.code}\n`, 'utf8');
+      } catch {
+        // Non-fatal: the existing file still passes validation.
+      }
+    }
+  }
+
+  if (broken.length === 0) {
+    return { fallbackUsed: false, aiScenes: [], templateScenes: [] };
+  }
+
+  const aiScenes: string[] = [];
+  const templateScenes: string[] = [];
+  const errors: string[] = [];
+  if (options.initialFailure) errors.push(options.initialFailure);
+  errors.push(...broken.map((item) => `${item.name}: ${item.reason}`));
+  if (options.attempts.length === 0) {
+    errors.push('No AI provider was configured for the scene-generation fallback.');
+  }
+
+  for (const item of broken) {
+    const scene = job.scenes[item.index];
+    if (!scene) continue;
+    let generated = false;
+    if (options.attempts.length > 0) {
+      const result = await generateAndValidateCustomScene({
+        scene,
+        componentName: item.name,
+        scriptLanguage: job.scriptLanguage,
+        aspectRatio: job.aspectRatio,
+        attempts: options.attempts,
+        keys: options.keys,
+        userAssets: job.userAssets,
+        masterPrompt: job.masterPrompt,
+        artDirection: sceneArtDirection(item.index),
+        sceneIndex: item.index,
+        sceneCount: job.scenes.length,
+      });
+      if (result.ok && result.source === 'ai') {
+        aiScenes.push(item.name);
+        generated = true;
+        options.onLog(
+          'info',
+          `Recovered ${item.name} with a live AI scene after: ${item.reason}.`,
+        );
+      } else if (result.ok && result.source === 'library-template') {
+        templateScenes.push(item.name);
+        generated = true;
+        errors.push(`${item.name}: ${result.errors.join(' | ') || 'AI fallback used a built-in template'}`);
+      } else if (result.errors.length > 0) {
+        errors.push(`${item.name}: ${result.errors.slice(0, 2).join(' | ')}`);
+      }
+    }
+
+    if (!generated) {
+      const localSource = buildFallbackSceneSource(item.name, item.index);
+      const written = writeGeneratedComponentFile(item.name, localSource);
+      if (written.ok) {
+        templateScenes.push(item.name);
+      } else {
+        errors.push(`${item.name}: ${written.errors.join(' | ')}`);
+      }
+    }
+  }
+
+  syncGeneratedRegistry();
+  const fallbackUsed = templateScenes.length > 0;
+  const uniqueErrors = Array.from(new Set(errors.filter(Boolean)));
+  const reason = fallbackUsed
+    ? `Scene generation fell back to built-in templates for ${templateScenes.join(', ')}${
+        uniqueErrors.length > 0 ? ` — ${uniqueErrors.slice(0, 3).join(' | ')}` : '.'
+      }`
+    : undefined;
+  return { fallbackUsed, fallbackReason: reason, aiScenes, templateScenes };
+}
+
 function cleanBrollPromptSection(enabled: boolean): string[] {
   if (enabled) {
     return [
@@ -7847,6 +8163,21 @@ const VISUAL_ARCHETYPES = [
   'timeline or process flow',
   'spatial 2.5D depth stack',
 ];
+
+const SCENE_ART_DIRECTIONS = [
+  'editorial kinetic type: oversized masked headlines, clipped paper layers, bold asymmetric composition, restrained grain and light leaks',
+  'spatial product stage: floating glass panels on a deep gradient, 2.5D perspective, precise rim light, slow orbital camera drift',
+  'data-as-object: charts and metrics built as physical glowing sculptures, continuous vector strokes, measured tick labels, no flat dashboard filler',
+  'cinematic collage: layered cut-out shapes, duotone imagery blocks, kinetic ribbon transitions, confident negative space',
+  'neo-brutalist motion: heavy type, hard shadows, high-contrast blocks, snappy spring choreography, deliberate grid breaks',
+  'atmospheric storytelling: environmental depth, drifting particles, volumetric glow, subtle parallax planes, one strong focal object',
+  'isometric process map: real spatial axes, animated connectors, sequential node reveals, crisp geometric icons',
+  'editorial data essay: large pull-quote typography paired with a precise chart, fine rules, muted surfaces, one vivid accent',
+];
+
+function sceneArtDirection(index: number): string {
+  return SCENE_ART_DIRECTIONS[index % SCENE_ART_DIRECTIONS.length];
+}
 
 const CLEAN_BROLL_VISUAL_ARCHETYPES = [
   'full-bleed abstract motion field',
@@ -7948,8 +8279,8 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     : [];
 
   const allowedImportsRule = depth25DEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts". Do not import any other package.';
   const { width, height } = aspectDimensions(job.aspectRatio);
   const watermarkRule = job.brandKit.watermarkEnabled
     ? `Global watermark is ENABLED ("${job.brandKit.watermark}") and is drawn by the composition. Do not draw a second watermark.`
@@ -8100,6 +8431,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- src/generated/index.ts',
     '',
     'Each Scene file must export exactly one named component matching its file name (Scene1, Scene2, ...).',
+    'Prefer declaring the Props type inline in each scene. If you reuse the shared type, use `import type { GeneratedSceneProps } from "./index";` — use a type-only import and never `./index.ts`.',
     '',
     '## CONCISE CODE CONTRACT',
     '- Keep each scene component clean, modular, and concise: target 80–140 lines per scene file.',
@@ -8228,6 +8560,13 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '- Stickman faces: keep the head smooth and clean, with NO detailed anatomical face (no nose, mouth, or ears). By default, express emotion through descriptive poses, head tilt, limb motion, interactive SVG props, and visual cues. ONLY when the scene emotion specifically requires it, add minimal contextual symbolic cues such as falling teardrops for sadness, sharp angled brow lines for anger, or sparkles for joy. Never draw complex or realistic faces.',
     '- Default to neutral/male minimalist stickman figures. NEVER depict a female character unless the script strictly requires it; if strictly required, keep the silhouette completely featureless and modest.',
     '- Build custom topic metaphors and story-driven props that match the master prompt. Avoid repetitive text cards.',
+    '- DO NOT use progress-bar, checklist, or generic KPI-card layouts as a fallback scene. A progress bar is allowed only when it represents a genuinely quantitative value from the master prompt. Every scene needs a topic-specific metaphor, diagram, data sculpture, product stage, or editorial composition.',
+    ...(job.userAssets && job.userAssets.length > 0
+      ? [
+          '- Uploaded assets are mandatory on screen: logos get a hero intro/outro reveal and screenshots get a dedicated glassmorphic 2.5D browser/device showcase. Never omit, crop, tint, or replace them with icons or progress cards.',
+        ]
+      : []),
+    `- Scene art-direction amplifier: ${sceneArtDirection(0)}, ${sceneArtDirection(1)}, ${sceneArtDirection(2)} — rotate deliberately so no two consecutive scenes share a skeleton.`,
     '- Every scene — with or without the Stickman — must include at least one custom SVG prop, diagram, animated icon, chart, UI mockup, or kinetic typographic composition, plus layered parallax background depth.',
     CRISP_VECTOR_MAP_RULE,
     ...(job.cleanBrollMode
@@ -8267,8 +8606,8 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
   const { width, height } = aspectDimensions(job.aspectRatio);
   const depth25DTweakEnabled = job.enable25D === true;
   const allowedTweakImports = depth25DTweakEnabled
-    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".'
-    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".';
+    ? '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "../components/Depth25D", "../../src/components/Depth25D", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".'
+    : '- Only import from "react", "remotion", "../components/Stickman", "../components/SilhouetteActor", "../components/SmartIcon", "../components/SceneSfx", "./index", "./types", "@iconify/react", "simple-icons", "@remotion/noise", "@remotion/paths", "@remotion/shapes", "@remotion/transitions", "lucide-react", "d3-geo", "d3-scale", "topojson-client", "world-atlas/countries-110m.json", "roughjs", "colord", or "@remotion/google-fonts".';
 
   return [
     'You are the surgical Remotion scene editor for Zoedit Studio.',
@@ -8324,6 +8663,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
         ]
       : []),
     allowedTweakImports,
+    '- Prefer declaring the Props type inline. If you reuse the shared type, use `import type { GeneratedSceneProps } from "./index";` (never a value import and never "./index.ts").',
     '- Never use fs, path, child_process, os, net, http, https, process, eval, new Function, fetch, XMLHttpRequest, WebSocket, require(), or dynamic import().',
     '- After editing the files, run at most ONE `npx tsc --noEmit` check and fix actual compiler errors only. Do not run npm, build, test, or render commands. The host validates and renders after you finish.',
     '- Read only the listed scene files you must edit, then write them back immediately. No exploration step, no plan file.',
@@ -10813,6 +11153,175 @@ async function startServer() {
     });
   };
 
+  const normalizeMasterPromptText = (raw: string): string =>
+    raw
+      .replace(/```[A-Za-z0-9_-]*\s*/g, '')
+      .replace(/```/g, '')
+      .replace(/^\s*(?:master\s*prompt|البرومبت الرئيسي)\s*[:：-]\s*/i, '')
+      .trim()
+      .slice(0, 16000);
+
+  const buildLocalMasterPrompt = (
+    idea: string,
+    durationLabel: string,
+    aspectRatio: string,
+    languageName: string,
+  ): string =>
+    [
+      `Create a ${durationLabel}-second ${aspectRatio} short-form motion-graphics video about the following idea: ${idea}`,
+      '',
+      'Audience: people who care about the idea and need a fast, concrete payoff.',
+      'Hook: open with a bold, specific tension or surprising claim in the first 2 seconds — no generic introduction.',
+      'Narrative: move from tension to a concrete mechanism or demonstration, then land a clear takeaway.',
+      'Scene plan: 5–7 distinct beats with one idea each; vary full-bleed kinetic type, a diagram/data beat, a comparison, a product/UI moment, and a closing call-to-action.',
+      'Visual direction: rich custom motion graphics, layered parallax depth, topic-specific SVG diagrams, precise charts, and smooth spring choreography. Avoid generic cards, progress bars, and repeated skeletons.',
+      `On-screen copy language: ${languageName}. Keep all labels in that language and respect the correct text direction.`,
+      'Pacing: energetic, readable, and continuous — every scene needs an entrance, an idle beat, and a state change.',
+      'Asset handling: if uploaded logos are present, reveal them in the intro or outro; if screenshots are present, show them in a dedicated 2.5D UI showcase. Never omit an uploaded asset.',
+    ].join('\n');
+
+  const handleGenerateMasterPrompt = async (req: Request, res: Response) => {
+    const body = (req.body || {}) as {
+      idea?: unknown;
+      provider?: unknown;
+      modelId?: unknown;
+      targetDuration?: unknown;
+      aspectRatio?: unknown;
+      scriptLanguage?: unknown;
+      language?: unknown;
+      userAssets?: unknown;
+    };
+    const uiLanguage = requestUiLanguage(req);
+    const requestText = (ar: string, en: string) => (uiLanguage === 'en' ? en : ar);
+    const idea =
+      typeof body.idea === 'string' ? body.idea.trim().slice(0, 4000) : '';
+    if (!idea) {
+      res.status(400).json({
+        error: requestText(
+          'اكتب فكرة الفيديو أولاً قبل توليد البرومبت الرئيسي.',
+          'Write your video idea first before generating the master prompt.',
+        ),
+      });
+      return;
+    }
+
+    const scriptLanguage = normalizeVideoLanguage(
+      body.scriptLanguage ?? body.language,
+      studioSettings.scriptLanguage,
+    );
+    const languageName = videoLanguageName(scriptLanguage);
+    const targetDuration = normalizeTargetDuration(body.targetDuration);
+    const durationLabel =
+      targetDuration === 'auto' ? '30–60' : String(targetDuration);
+    const aspectRatio =
+      body.aspectRatio === '16:9' || body.aspectRatio === '1:1' || body.aspectRatio === '9:16'
+        ? body.aspectRatio
+        : studioSettings.aspectRatio;
+    const requestedUserAssets = normalizeUserAssets(body.userAssets);
+    const userAssetLines = buildUserAssetPromptLines(requestedUserAssets);
+    const providerCandidate =
+      typeof body.provider === 'string' ? body.provider : studioSettings.aiProvider;
+    const requestedProvider = AI_PROVIDER_IDS.has(providerCandidate as AiProviderId)
+      ? (providerCandidate as AiProviderId)
+      : studioSettings.aiProvider;
+    const requestedModel =
+      (typeof body.modelId === 'string' && body.modelId.trim()
+        ? body.modelId.trim()
+        : studioSettings.aiModel) || DEFAULT_FREE_MODEL;
+
+    const systemPrompt = [
+      'You are a senior creative director and prompt engineer for an AI motion-graphics video studio.',
+      'Turn the user idea into ONE complete MASTER PROMPT that another AI scene generator can execute directly.',
+      'Return ONLY the master prompt text. No markdown fences, no commentary, no bullet-less vague summary.',
+      'The master prompt MUST specify:',
+      `- Objective and core message, the target audience, and the exact ${durationLabel}-second duration.`,
+      `- Format: ${aspectRatio} short-form video with a strong 2-second hook, clear narrative arc, and a concrete takeaway.`,
+      `- Delivery pacing: ${studioSettings.scriptPacing}; match the scene count and cut rhythm to that pace.`,
+      `- A scene-by-scene beat sheet with approximate seconds, one distinct visual idea per scene, and no repeated layout skeleton.`,
+      `- Visual direction: topic-specific metaphors, diagrams, data visualization, kinetic typography, layered parallax, continuous motion, and deliberate color usage.`,
+      '- Hard prohibition on generic progress-bar/checklist/KPI-card filler unless the idea is genuinely about measurement.',
+      `- On-screen copy language: ${languageName}; respect its text direction and never leave English placeholders when the video language is not English.`,
+      '- Asset handling: uploaded logos get an intro/outro hero reveal; uploaded screenshots get a dedicated glassmorphic 2.5D UI showcase. Never omit an uploaded asset.',
+      'Write the prompt in English for maximum model reliability, but clearly state the on-screen copy language.',
+      ...(userAssetLines.length > 0 ? ['', ...userAssetLines] : []),
+    ].join('\n');
+
+    const userPrompt = [
+      `User idea: ${idea}`,
+      `Target duration: ${durationLabel} seconds`,
+      `Aspect ratio: ${aspectRatio}`,
+      `On-screen language: ${languageName}`,
+      requestedUserAssets.length > 0
+        ? `Uploaded assets: ${requestedUserAssets
+            .map((asset) => `${asset.role} (${asset.originalName || asset.filename})`)
+            .join('; ')}`
+        : 'No uploaded assets.',
+      'Return the final master prompt only.',
+    ].join('\n');
+
+    const keys = resolveApiKeys(req);
+    const attempts = buildChatAttempts(requestedProvider, requestedModel, keys);
+    const usage = { aiInputTokens: 0, aiOutputTokens: 0, aiCalls: 0, aiUsd: 0, aiModel: '' };
+
+    for (const attempt of attempts) {
+      const result = await requestChatCompletion(attempt, systemPrompt, userPrompt, keys);
+      if (!result) continue;
+      usage.aiInputTokens += result.usage.inputTokens;
+      usage.aiOutputTokens += result.usage.outputTokens;
+      usage.aiCalls += result.usage.calls;
+      usage.aiUsd += result.usage.usd;
+      usage.aiModel = result.usage.model;
+      const prompt = normalizeMasterPromptText(result.content);
+      if (prompt.length < 40) continue;
+      const usingFallback =
+        requestedProvider !== 'opencode-free' && attempt.kind !== requestedProvider;
+      if (usage.aiCalls > 0) {
+        recordUsage({
+          aiInputTokens: usage.aiInputTokens,
+          aiOutputTokens: usage.aiOutputTokens,
+          aiCalls: usage.aiCalls,
+          aiUsd: Number(usage.aiUsd.toFixed(6)),
+          aiModel: usage.aiModel,
+        });
+      }
+      res.json({
+        prompt,
+        source: attempt.kind,
+        providerUsed: attempt.providerLabel,
+        requestedProvider,
+        modelUsed: attempt.model,
+        fallbackUsed: usingFallback,
+        usage: {
+          ...usage,
+          aiUsd: Number(usage.aiUsd.toFixed(6)),
+        },
+        notice: usingFallback
+          ? requestText(
+              `تم استخدام ${attempt.providerLabel} بعد تعذر المزود المحدد.`,
+              `Used ${attempt.providerLabel} after the selected provider was unavailable.`,
+            )
+          : undefined,
+      });
+      return;
+    }
+
+    const prompt = buildLocalMasterPrompt(idea, durationLabel, aspectRatio, languageName);
+    res.json({
+      prompt,
+      source: 'template',
+      providerUsed: 'Local master-prompt template',
+      requestedProvider,
+      modelUsed: requestedModel,
+      fallbackUsed: true,
+      usage,
+      notice: requestText(
+        'تعذر الوصول إلى مزودي الذكاء الاصطناعي. تم إنشاء برومبت محلي منظم يمكنك تعديله؛ أضف مفتاح API في الإعدادات للحصول على إخراج حي.',
+        'No AI provider was reachable. Generated a structured local prompt you can edit; add or verify an API key in settings for live output.',
+      ),
+    });
+  };
+
+  app.post('/api/prompt/generate', handleGenerateMasterPrompt);
   app.post('/api/script/generate', handleGenerateScript);
   app.post('/api/generate-script', handleGenerateScript);
 
@@ -11785,6 +12294,8 @@ async function startServer() {
         title: job.title || null,
         outputUrl: job.status === 'completed' ? `/api/render/output/${job.id}` : null,
         fileSizeBytes: job.outputSize ?? null,
+        fallbackUsed: job.fallbackUsed === true,
+        fallbackReason: job.fallbackReason || null,
       });
     };
 
@@ -11846,6 +12357,7 @@ async function startServer() {
 
     const runPipeline = async () => {
       try {
+        const exportKeys = resolveApiKeys(req);
         throwIfExportCancelled(job.id);
         // Step 1 — Audio & exact timing.
         sendStep('audio', 'active', 5);
@@ -12020,6 +12532,7 @@ async function startServer() {
           );
           sendStep('code', 'active', codeProgress);
         }, 1500);
+        let openCodeFailure = '';
         try {
           await runOpenCodeExport(job, openCodePrompt, (level, message) =>
             sendLog('code', level, message),
@@ -12034,8 +12547,17 @@ async function startServer() {
             error instanceof Error
               ? error.message
               : tr('فشل تشغيل opencode.', 'opencode failed to run.');
+          openCodeFailure = message;
           sendLog('code', 'error', message);
-          throw error;
+          if (job.tweakInstruction) throw error;
+          sendLog(
+            'code',
+            'warn',
+            tr(
+              'تعذر تشغيل opencode — سيتم بناء المشاهد عبر مولّد المشاهد الاحتياطي، وسيظهر تنبيه واضح إن استخدمنا القوالب الافتراضية.',
+              'opencode could not run — switching to the scene-generation fallback. A clear warning will appear if built-in templates are used.',
+            ),
+          );
         } finally {
           clearInterval(codeProgressTimer);
         }
@@ -12076,7 +12598,80 @@ async function startServer() {
           }
           attachGeneratedComponents(job, true);
         } else {
-          repairGeneratedSceneFiles(job);
+          const fallbackAttempts = buildChatAttempts(
+            studioSettings.aiProvider,
+            studioSettings.aiModel,
+            exportKeys,
+          );
+          const finalizeResult = await finalizeGeneratedSceneSet(job, {
+            attempts: fallbackAttempts,
+            keys: exportKeys,
+            onLog: (level, message) => sendLog('code', level, message),
+            initialFailure: openCodeFailure || undefined,
+          });
+          if (finalizeResult.aiScenes.length > 0) {
+            sendLog(
+              'code',
+              'success',
+              tr(
+                `تم إنقاذ ${finalizeResult.aiScenes.length} مشهداً عبر مولّد الذكاء الاصطناعي الاحتياطي (${finalizeResult.aiScenes.join(', ')}).`,
+                `Recovered ${finalizeResult.aiScenes.length} scene(s) with the AI scene-generation fallback (${finalizeResult.aiScenes.join(', ')}).`,
+              ),
+            );
+          }
+          if (finalizeResult.fallbackUsed) {
+            job.fallbackUsed = true;
+            job.fallbackReason =
+              finalizeResult.fallbackReason ||
+              tr(
+                'تعذر توليد مشاهد مخصصة، فتم استخدام القوالب الافتراضية.',
+                'Bespoke scene generation failed, so the built-in templates were used.',
+              );
+            sendEvent('fallback', {
+              used: true,
+              reason: job.fallbackReason,
+              templateScenes: finalizeResult.templateScenes,
+            });
+            sendLog(
+              'code',
+              'warn',
+              tr(
+                `تنبيه: تم التحويل إلى القوالب الافتراضية — ${job.fallbackReason}`,
+                `Warning: fell back to built-in templates — ${job.fallbackReason}`,
+              ),
+            );
+          }
+
+          const assetResult = ensureUserAssetsRendered(job);
+          if (assetResult.injected.length > 0) {
+            sendLog(
+              'code',
+              'success',
+              tr(
+                `تم ضمان ظهور كل أصول المستخدم في المشاهد: ${assetResult.injected
+                  .map((asset) => asset.originalName || asset.filename)
+                  .join(', ')}.`,
+                `Guaranteed every uploaded asset is rendered on screen: ${assetResult.injected
+                  .map((asset) => asset.originalName || asset.filename)
+                  .join(', ')}.`,
+              ),
+            );
+          }
+          if (assetResult.stillMissing.length > 0) {
+            sendLog(
+              'code',
+              'warn',
+              tr(
+                `تعذر إدراج بعض الأصول المرفوعة: ${assetResult.stillMissing
+                  .map((asset) => asset.originalName || asset.filename)
+                  .join(', ')}.`,
+                `Could not place some uploaded assets: ${assetResult.stillMissing
+                  .map((asset) => asset.originalName || asset.filename)
+                  .join(', ')}.`,
+              ),
+            );
+          }
+
           let validation = await validateGeneratedScenes();
           if (!validation.ok) {
             console.log(
@@ -12087,7 +12682,7 @@ async function startServer() {
               'warn',
               tr(
                 `مشاهد opencode لم تجتز TypeScript — سيتم إصلاح المشاهد المتأثرة فقط. ${validation.errors}`,
-                `opencode scenes failed TypeScript — repairing only the affected scenes. ${validation.errors}`,
+                `Generated scenes failed TypeScript — repairing only the affected scenes. ${validation.errors}`,
               ),
             );
             let repairedNames = repairFailingGeneratedScenes(
@@ -12114,6 +12709,55 @@ async function startServer() {
                   `Could not validate the generated Remotion scenes after repairing only the affected scenes: ${validation.errors}`,
                 ),
               );
+            }
+            const repairedSceneNames = repairedNames.filter((name) => name !== 'index.ts');
+            if (repairedSceneNames.length > 0) {
+              job.fallbackUsed = true;
+              job.fallbackReason =
+                job.fallbackReason ||
+                tr(
+                  `تم إصلاح المشاهد المتأثرة (${repairedSceneNames.join(', ')}) بقوالب بديلة لأنها لم تجتز التحقق.`,
+                  `Repaired the affected scenes (${repairedSceneNames.join(', ')}) with fallback templates because they failed validation.`,
+                );
+              sendEvent('fallback', {
+                used: true,
+                reason: job.fallbackReason,
+                templateScenes: repairedSceneNames,
+              });
+              sendLog(
+                'code',
+                'warn',
+                tr(
+                  `تنبيه: تم إصلاح المشاهد ${repairedSceneNames.join(', ')} بقوالب بديلة — ${validation.errors}`,
+                  `Warning: repaired scenes ${repairedSceneNames.join(', ')} with fallback templates — ${validation.errors}`,
+                ),
+              );
+            }
+            const repairedAssets = ensureUserAssetsRendered(job);
+            if (repairedAssets.injected.length > 0) {
+              sendLog(
+                'code',
+                'success',
+                tr(
+                  `أعيد إدراج أصول المستخدم بعد الإصلاح: ${repairedAssets.injected
+                    .map((asset) => asset.originalName || asset.filename)
+                    .join(', ')}.`,
+                  `Reinserted uploaded assets after repair: ${repairedAssets.injected
+                    .map((asset) => asset.originalName || asset.filename)
+                    .join(', ')}.`,
+                ),
+              );
+            }
+            if (repairedAssets.injected.length > 0) {
+              const postAssetValidation = await validateGeneratedScenes();
+              if (!postAssetValidation.ok) {
+                throw new Error(
+                  tr(
+                    `تعذر التحقق من مشاهد أصول المستخدم بعد الإصلاح: ${postAssetValidation.errors}`,
+                    `Could not validate the user-asset scenes after repair: ${postAssetValidation.errors}`,
+                  ),
+                );
+              }
             }
             sendLog(
               'code',

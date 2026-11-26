@@ -29,6 +29,7 @@ import type {
   CaptionColors,
   ElevenLabsModel,
   ElevenLabsVoice,
+  EmptyVoiceoverBehavior,
   ScriptLanguage,
   SfxConfig,
   TtsVoice,
@@ -59,6 +60,8 @@ interface AudioPanelProps {
   onChangeCaptionColors: (next: CaptionColors) => void;
   captionBottomOffset: number;
   onChangeCaptionBottomOffset: (value: number) => void;
+  emptyScriptPreference: EmptyVoiceoverBehavior;
+  onChangeEmptyScriptPreference: (value: EmptyVoiceoverBehavior) => void;
   disabled?: boolean;
 }
 
@@ -228,6 +231,8 @@ export function AudioPanel({
   onChangeCaptionColors,
   captionBottomOffset,
   onChangeCaptionBottomOffset,
+  emptyScriptPreference,
+  onChangeEmptyScriptPreference,
   disabled = false,
 }: AudioPanelProps) {
   const { t, lang } = useI18n();
@@ -593,6 +598,42 @@ export function AudioPanel({
               ? t('التعليق الصوتي: مفعّل', 'Voiceover: ON')
               : t('التعليق الصوتي: مغلق', 'Voiceover: OFF')}
           </button>
+
+          <label
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-[#0B0E14] px-2 py-1 text-[10px] font-semibold text-slate-300"
+            title={t(
+              'ما يحدث عند التصدير إذا كان السكربت الصوتي فارغاً',
+              'What happens on export when the voiceover script is empty'
+            )}
+          >
+            <span className="text-slate-500">
+              {t('سكربت فارغ:', 'Empty script:')}
+            </span>
+            <select
+              value={emptyScriptPreference}
+              disabled={disabled}
+              aria-label={t(
+                'سلوك السكربت الصوتي الفارغ',
+                'Empty voiceover script behavior'
+              )}
+              onChange={(event) =>
+                onChangeEmptyScriptPreference(
+                  event.target.value as EmptyVoiceoverBehavior
+                )
+              }
+              className="cursor-pointer rounded bg-transparent text-[10px] font-bold text-sky-200 outline-none disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <option value="ask" className="bg-[#0E121A] text-slate-100">
+                {t('اسألني', 'Ask me')}
+              </option>
+              <option value="auto" className="bg-[#0E121A] text-slate-100">
+                {t('ولّد تلقائياً', 'Auto-generate')}
+              </option>
+              <option value="silent" className="bg-[#0E121A] text-slate-100">
+                {t('تابع صامتاً', 'Continue silent')}
+              </option>
+            </select>
+          </label>
 
           <button
             type="button"

@@ -10,6 +10,7 @@ import type {
   CaptionAnimationStyle,
   CaptionColors,
   ElevenLabsVoice,
+  EmptyVoiceoverBehavior,
   ScriptLanguage,
   SfxConfig,
   TtsVoice,
@@ -60,6 +61,15 @@ interface StudioSidePanelProps {
   isGeneratingScript?: boolean;
   scriptError?: string | null;
   scriptNotice?: string | null;
+  videoIdea: string;
+  onChangeVideoIdea: (value: string) => void;
+  onGenerateMasterPrompt: (mode: 'prompt' | 'both') => void;
+  isGeneratingPrompt?: boolean;
+  promptError?: string | null;
+  promptNotice?: string | null;
+  targetDuration: string;
+  emptyScriptPreference: EmptyVoiceoverBehavior;
+  onChangeEmptyScriptPreference: (value: EmptyVoiceoverBehavior) => void;
   apiBaseUrl: string;
   sessionToken: string;
   historyKey: number;
@@ -103,6 +113,15 @@ export function StudioSidePanel({
   isGeneratingScript = false,
   scriptError = null,
   scriptNotice = null,
+  videoIdea,
+  onChangeVideoIdea,
+  onGenerateMasterPrompt,
+  isGeneratingPrompt = false,
+  promptError = null,
+  promptNotice = null,
+  targetDuration,
+  emptyScriptPreference,
+  onChangeEmptyScriptPreference,
   apiBaseUrl,
   sessionToken,
   historyKey,
@@ -167,6 +186,13 @@ export function StudioSidePanel({
           <DirectorScriptPanel
             masterPrompt={masterPrompt}
             onChangeMasterPrompt={onChangeMasterPrompt}
+            videoIdea={videoIdea}
+            onChangeVideoIdea={onChangeVideoIdea}
+            onGenerateMasterPrompt={onGenerateMasterPrompt}
+            isGeneratingPrompt={isGeneratingPrompt}
+            promptError={promptError}
+            promptNotice={promptNotice}
+            targetDuration={targetDuration}
             userAssets={userAssets}
             onChangeUserAssets={onChangeUserAssets}
             apiBaseUrl={apiBaseUrl}
@@ -204,6 +230,8 @@ export function StudioSidePanel({
           onChangeCaptionColors={onChangeCaptionColors}
           captionBottomOffset={captionBottomOffset}
           onChangeCaptionBottomOffset={onChangeCaptionBottomOffset}
+          emptyScriptPreference={emptyScriptPreference}
+          onChangeEmptyScriptPreference={onChangeEmptyScriptPreference}
           videoLanguage={videoLanguage}
           disabled={disabled}
         />

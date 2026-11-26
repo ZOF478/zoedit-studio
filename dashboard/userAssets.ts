@@ -507,6 +507,8 @@ export function buildUserAssetPromptLines(assets: UserAssetPayload[]): string[] 
     '- These images were uploaded by the user for this video. They are PRIMARY visual content, not decoration. Every uploaded image MUST appear at least once across the generated scene set.',
     '- Render them with Remotion only: `import { Img, staticFile } from "remotion";` and `<Img src={staticFile("user-assets/<exact-file>")} />`. Use the exact file paths below. Never use external URLs, remote images, data URIs, or another asset path.',
     '- NEVER strip these user assets in Clean B-Roll mode. Clean B-Roll only removes decorative text overlays; uploaded logos and screenshots stay fully visible.',
+    '- PLACEMENT CONTRACT: every LOGO gets an animated hero reveal in the intro or outro scene (spring scale/rotate, brand-colored radial glow, layered halo, objectFit contain, no opaque box behind transparency). Every SCREENSHOT gets a dedicated product-showcase scene inside a sleek glassmorphic 2.5D browser/device frame with a continuous Ken Burns motion. Never replace these assets with SmartIcon, a progress bar, a checklist card, or a generic KPI card.',
+    '- If multiple assets are provided, distribute them across different scenes. Do not stack a logo and a screenshot into the same small card, and do not omit any asset.',
   ];
   for (const asset of assets) {
     const ratio =

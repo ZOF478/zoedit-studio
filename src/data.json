@@ -1,19 +1,51 @@
 {
   "meta": {
-    "title": "فيديو حول",
-    "topic": "فيديو حول منصتنا ZoEdit Studio",
-    "description": "فيديو حول · منصتنا ZoEdit · Studio"
+    "title": "This whole video",
+    "topic": "Create a high-energy, 30-second vertical (9:16) product promo video for **ZoEdit Studio**—with a bold meta hook revealing that this entire video was generated inside ZoEdit Studio itself from a single prompt.\n\nVisual direction & pacing across 5 tight scenes (30s total):\n- **Scene 1 (0–5s | The Meta Hook):** Dark sleek tech background with glowing cyan/electric-blue accents. Kinetic bold typography slams in: \"This entire video was made with ONE prompt.\" Reveal the attached **Logo zoedit studio** with a crisp spring scale-in and subtle 2.5D glow.\n- **Scene 2 (5–11s | The Problem):** Fast, punchy visual contrast showing heavy video editors lagging vs. clean code-driven speed. Big readable text: \"Heavy editors slow you down. Prompts don't.\"\n- **Scene 3 (11–19s | Product Showcase):** Smoothly bring in the attached **Dashboard** screenshot inside a sleek, floating 2.5D tilted dark-UI showcase card with subtle zoom-in highlights. Callout badges animate around it: \"Remotion + AI Agents\", \"Free & Offline TTS\", \"Auto-Synced Captions\".\n- **Scene 4 (19–25s | Zero Cost & Open Source):** Clean animated metric cards and badges popping in with crisp spring physics: \"100% Open-Source (MIT)\", \"Local-First Privacy\", \"$0.00 Render Cost\".\n- **Scene 5 (25–30s | Outro & CTA):** Bring back the **Logo zoedit studio** centered with an energetic pulse, paired with bold CTA text: \"Build motion graphics at prompt speed\" and \"github.com/ZOF478/zoedit-studio\" + \"studio.zoedit.com\".\n\nStyle rules: High-contrast dark slate and electric blue/cyan palette, large mobile-safe typography (zero text overlapping the 2.5D dashboard screenshot), smooth spring transitions, and dynamic UI sound effects on every transition.",
+    "description": "This whole video · One prompt inside ZoEdit Studio · No heavy timeline just type and AI · Everything runs local with zero render cost · So skip the slow editors · Build motion graphics at prompt speed find"
   },
   "width": 1080,
   "height": 1920,
   "fps": 60,
-  "durationInFrames": 1816,
+  "durationInFrames": 1801,
   "style": "stickman",
-  "script_language": "ar",
+  "script_language": "en",
+  "user_assets": [
+    {
+      "id": "be285670-7eeb-4008-9a96-fdbe807d3a31",
+      "filename": "be285670-7eeb-4008-9a96-fdbe807d3a31.png",
+      "role": "logo",
+      "note": "Logo zoedit studio",
+      "originalName": "logo png (1).png",
+      "mimeType": "image/png",
+      "size": 1284822,
+      "width": 2048,
+      "height": 2048,
+      "aspectRatio": 1,
+      "createdAt": 1795720557197,
+      "src": "user-assets/be285670-7eeb-4008-9a96-fdbe807d3a31.png",
+      "url": "/user-assets/be285670-7eeb-4008-9a96-fdbe807d3a31.png"
+    },
+    {
+      "id": "126d67c4-2c2d-44a1-ab7e-0ea378785850",
+      "filename": "126d67c4-2c2d-44a1-ab7e-0ea378785850.png",
+      "role": "screenshot",
+      "note": "Dashboard",
+      "originalName": "Screenshot 2026-11-26 191637.png",
+      "mimeType": "image/png",
+      "size": 201786,
+      "width": 1920,
+      "height": 950,
+      "aspectRatio": 2.0211,
+      "createdAt": 1795720609528,
+      "src": "user-assets/126d67c4-2c2d-44a1-ab7e-0ea378785850.png",
+      "url": "/user-assets/126d67c4-2c2d-44a1-ab7e-0ea378785850.png"
+    }
+  ],
   "script_depth": "condensed",
   "creative_code_mode": "creative",
   "script_pacing": "auto",
-  "respect_safe_zone": true,
+  "respect_safe_zone": false,
   "caption": {
     "animation_style": "static",
     "words_per_screen": "auto",
@@ -36,24 +68,42 @@
     "background": "#0E121A",
     "text": "#F8FAFC",
     "muted": "rgba(248, 250, 252, 0.72)",
-    "watermark": "@ZoeditStudio",
+    "watermark": "@ZofStudio",
     "watermark_enabled": false,
     "watermark_position": "top-left"
   },
   "sfx": {
     "enabled": true,
-    "volume": 0.65
+    "volume": 0.35
   },
   "scenes": [
     {
-      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-1",
-      "kicker": "فيديو حول",
-      "title": "فيديو حول",
-      "subtitle": "فيديو حول",
-      "caption": "",
-      "duration": 10,
-      "durationInFrames": 600,
-      "audioSrc": "",
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-1",
+      "kicker": "This whole video",
+      "title": "This whole video",
+      "subtitle": "This whole video",
+      "caption": "This whole video?",
+      "duration": 2.1333333333333333,
+      "durationInFrames": 128,
+      "audioSrc": "audio/scene-1795723370480-9012fb28.mp3",
+      "audioDuration": 1.872,
+      "wordTimings": [
+        {
+          "word": "This",
+          "start": 0.1,
+          "end": 0.3375
+        },
+        {
+          "word": "whole",
+          "start": 0.35,
+          "end": 0.5625
+        },
+        {
+          "word": "video",
+          "start": 0.575,
+          "end": 0.975
+        }
+      ],
       "sfxSrc": "sfx/whoosh-soft.wav",
       "sfxAt": 0.15,
       "layout": "centered",
@@ -71,27 +121,55 @@
         {
           "type": "custom_tsx",
           "component": "Scene1",
-          "title": "فيديو حول",
-          "text": "فيديو حول",
+          "title": "This whole video",
+          "text": "This whole video",
           "keywords": [
-            "فيديو حول"
+            "This whole video"
           ],
           "data": {
-            "narration": "فيديو حول",
+            "narration": "This whole video?",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-2",
-      "kicker": "منصتنا ZoEdit",
-      "title": "منصتنا ZoEdit",
-      "subtitle": "منصتنا ZoEdit",
-      "caption": "",
-      "duration": 10,
-      "durationInFrames": 600,
-      "audioSrc": "",
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-2",
+      "kicker": "One prompt inside ZoEdit Studio",
+      "title": "One prompt inside ZoEdit Studio",
+      "subtitle": "One prompt inside ZoEdit Studio",
+      "caption": "One prompt inside ZoEdit Studio.",
+      "duration": 2.75,
+      "durationInFrames": 165,
+      "audioSrc": "audio/scene-1795723372706-fd3be665.mp3",
+      "audioDuration": 2.496,
+      "wordTimings": [
+        {
+          "word": "One",
+          "start": 0.1,
+          "end": 0.4
+        },
+        {
+          "word": "prompt",
+          "start": 0.4125,
+          "end": 0.75
+        },
+        {
+          "word": "inside",
+          "start": 0.7625,
+          "end": 1.1875
+        },
+        {
+          "word": "ZoEdit",
+          "start": 1.2,
+          "end": 1.5875
+        },
+        {
+          "word": "Studio",
+          "start": 1.6,
+          "end": 2.1125
+        }
+      ],
       "sfxSrc": "sfx/pop-soft.wav",
       "sfxAt": 0.15,
       "layout": "split",
@@ -103,51 +181,434 @@
         {
           "type": "custom_tsx",
           "component": "Scene2",
-          "title": "منصتنا ZoEdit",
-          "text": "منصتنا ZoEdit",
+          "title": "One prompt inside ZoEdit Studio",
+          "text": "One prompt inside ZoEdit Studio",
           "keywords": [
-            "منصتنا ZoEdit"
+            "One prompt inside ZoEdit Studio"
           ],
           "data": {
-            "narration": "منصتنا ZoEdit",
+            "narration": "One prompt inside ZoEdit Studio.",
             "visualType": "custom-tsx"
           }
         }
       ]
     },
     {
-      "id": "scene-7bf552ec-0f58-4cb3-bf90-87700d60fe9d-3",
-      "kicker": "Studio",
-      "title": "Studio",
-      "subtitle": "Studio",
-      "caption": "",
-      "duration": 10,
-      "durationInFrames": 600,
-      "audioSrc": "",
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-3",
+      "kicker": "No heavy timeline just type and AI",
+      "title": "No heavy timeline just type and AI",
+      "subtitle": "No heavy timeline just type and AI",
+      "caption": "No heavy timeline—just type, and AI agents build the motion for you, with free offline voiceover and auto-synced captions.",
+      "duration": 8.15,
+      "durationInFrames": 489,
+      "audioSrc": "audio/scene-1795723375948-ce92ad2f.mp3",
+      "audioDuration": 7.896,
+      "wordTimings": [
+        {
+          "word": "No",
+          "start": 0.1,
+          "end": 0.3375
+        },
+        {
+          "word": "heavy",
+          "start": 0.35,
+          "end": 0.5625
+        },
+        {
+          "word": "timeline",
+          "start": 0.575,
+          "end": 1.125
+        },
+        {
+          "word": "just",
+          "start": 1.4375,
+          "end": 1.65
+        },
+        {
+          "word": "type",
+          "start": 1.6625,
+          "end": 1.9625
+        },
+        {
+          "word": "and",
+          "start": 2.3125,
+          "end": 2.4125
+        },
+        {
+          "word": "AI",
+          "start": 2.425,
+          "end": 2.7875
+        },
+        {
+          "word": "agents",
+          "start": 2.8,
+          "end": 3.225
+        },
+        {
+          "word": "build",
+          "start": 3.2375,
+          "end": 3.475
+        },
+        {
+          "word": "the",
+          "start": 3.4875,
+          "end": 3.5375
+        },
+        {
+          "word": "motion",
+          "start": 3.55,
+          "end": 3.8875
+        },
+        {
+          "word": "for",
+          "start": 3.9,
+          "end": 4.1125
+        },
+        {
+          "word": "you",
+          "start": 4.125,
+          "end": 4.275
+        },
+        {
+          "word": "with",
+          "start": 4.55,
+          "end": 4.7
+        },
+        {
+          "word": "free",
+          "start": 4.7125,
+          "end": 5.0625
+        },
+        {
+          "word": "offline",
+          "start": 5.075,
+          "end": 5.575
+        },
+        {
+          "word": "voiceover",
+          "start": 5.5875,
+          "end": 6.25
+        },
+        {
+          "word": "and",
+          "start": 6.275,
+          "end": 6.3875
+        },
+        {
+          "word": "auto-synced",
+          "start": 6.4,
+          "end": 6.8875
+        },
+        {
+          "word": "captions",
+          "start": 6.9,
+          "end": 7.5125
+        }
+      ],
       "sfxSrc": "sfx/click-subtle.wav",
       "sfxAt": 0.15,
       "layout": "stacked",
       "camera": "push-in",
       "background": "radial-gradient(circle at 82% 18%, rgba(0, 166, 244, 0.24) 0%, transparent 46%)",
       "backgroundPreset": "ai-free",
-      "character": {
-        "pose": "explaining",
-        "side": "left",
-        "accessory": "tie",
-        "enabled": true
-      },
       "generatedComponent": "Scene3",
       "elements": [
         {
           "type": "custom_tsx",
           "component": "Scene3",
-          "title": "Studio",
-          "text": "Studio",
+          "title": "No heavy timeline just type and AI",
+          "text": "No heavy timeline just type",
           "keywords": [
-            "Studio"
+            "No heavy timeline just type"
           ],
           "data": {
-            "narration": "Studio",
+            "narration": "No heavy timeline—just type, and AI agents build the motion for you, with free offline voiceover and auto-synced captions.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-4",
+      "kicker": "Everything runs local with zero render cost",
+      "title": "Everything runs local with zero render cost",
+      "subtitle": "Everything runs local with zero render cost",
+      "caption": "Everything runs local, with zero render cost—one hundred percent open-source, MIT licensed, built for speed and privacy.",
+      "duration": 8.45,
+      "durationInFrames": 507,
+      "audioSrc": "audio/scene-1795723380332-d26a9f2f.mp3",
+      "audioDuration": 8.184,
+      "wordTimings": [
+        {
+          "word": "Everything",
+          "start": 0.1,
+          "end": 0.6375
+        },
+        {
+          "word": "runs",
+          "start": 0.65,
+          "end": 0.875
+        },
+        {
+          "word": "local",
+          "start": 0.8875,
+          "end": 1.2625
+        },
+        {
+          "word": "with",
+          "start": 1.5375,
+          "end": 1.675
+        },
+        {
+          "word": "zero",
+          "start": 1.6875,
+          "end": 2.0375
+        },
+        {
+          "word": "render",
+          "start": 2.05,
+          "end": 2.3375
+        },
+        {
+          "word": "cost",
+          "start": 2.35,
+          "end": 2.75
+        },
+        {
+          "word": "one",
+          "start": 3.0625,
+          "end": 3.2
+        },
+        {
+          "word": "hundred",
+          "start": 3.2125,
+          "end": 3.5125
+        },
+        {
+          "word": "percent",
+          "start": 3.525,
+          "end": 3.9125
+        },
+        {
+          "word": "open-source",
+          "start": 3.9375,
+          "end": 4.6
+        },
+        {
+          "word": "MIT",
+          "start": 4.9125,
+          "end": 5.375
+        },
+        {
+          "word": "licensed",
+          "start": 5.3875,
+          "end": 5.9875
+        },
+        {
+          "word": "built",
+          "start": 6.3125,
+          "end": 6.5375
+        },
+        {
+          "word": "for",
+          "start": 6.55,
+          "end": 6.6875
+        },
+        {
+          "word": "speed",
+          "start": 6.7,
+          "end": 7.0875
+        },
+        {
+          "word": "and",
+          "start": 7.1,
+          "end": 7.2125
+        },
+        {
+          "word": "privacy",
+          "start": 7.225,
+          "end": 7.8
+        }
+      ],
+      "sfxSrc": "sfx/type-tick.wav",
+      "sfxAt": 0.15,
+      "layout": "overlay",
+      "camera": "slow-zoom-out",
+      "background": "linear-gradient(160deg, transparent 20%, rgba(0, 166, 244, 0.18) 100%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene4",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene4",
+          "title": "Everything runs local with zero render cost",
+          "text": "Everything runs local with zero",
+          "keywords": [
+            "Everything runs local with zero"
+          ],
+          "data": {
+            "narration": "Everything runs local, with zero render cost—one hundred percent open-source, MIT licensed, built for speed and privacy.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-5",
+      "kicker": "So skip the slow editors",
+      "title": "So skip the slow editors",
+      "subtitle": "So skip the slow editors",
+      "caption": "So skip the slow editors.",
+      "duration": 2.2,
+      "durationInFrames": 132,
+      "audioSrc": "audio/scene-1795723381696-555a39c7.mp3",
+      "audioDuration": 1.944,
+      "wordTimings": [
+        {
+          "word": "So",
+          "start": 0.1,
+          "end": 0.3625
+        },
+        {
+          "word": "skip",
+          "start": 0.375,
+          "end": 0.6875
+        },
+        {
+          "word": "the",
+          "start": 0.7,
+          "end": 0.7625
+        },
+        {
+          "word": "slow",
+          "start": 0.775,
+          "end": 1.0875
+        },
+        {
+          "word": "editors",
+          "start": 1.1,
+          "end": 1.5625
+        }
+      ],
+      "sfxSrc": "sfx/slide.wav",
+      "sfxAt": 0.15,
+      "layout": "split",
+      "camera": "pan-right",
+      "background": "linear-gradient(135deg, rgba(0, 166, 244, 0.22) 0%, transparent 58%)",
+      "backgroundPreset": "ai-free",
+      "generatedComponent": "Scene5",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene5",
+          "title": "So skip the slow editors",
+          "text": "So skip the slow editors",
+          "keywords": [
+            "So skip the slow editors"
+          ],
+          "data": {
+            "narration": "So skip the slow editors.",
+            "visualType": "custom-tsx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-e570d02d-bdf3-4a09-9cf7-cabc9859ac1b-6",
+      "kicker": "Build motion graphics at prompt speed find",
+      "title": "Build motion graphics at prompt speed find",
+      "subtitle": "Build motion graphics at prompt speed find",
+      "caption": "Build motion graphics at prompt speed—find it on GitHub or studio.zoedit.com.",
+      "duration": 6.066666666666666,
+      "durationInFrames": 364,
+      "audioSrc": "audio/scene-1795723384356-fea39d0b.mp3",
+      "audioDuration": 5.808,
+      "wordTimings": [
+        {
+          "word": "Build",
+          "start": 0.1,
+          "end": 0.425
+        },
+        {
+          "word": "motion",
+          "start": 0.4375,
+          "end": 0.775
+        },
+        {
+          "word": "graphics",
+          "start": 0.7875,
+          "end": 1.275
+        },
+        {
+          "word": "at",
+          "start": 1.2875,
+          "end": 1.3875
+        },
+        {
+          "word": "prompt",
+          "start": 1.4,
+          "end": 1.7625
+        },
+        {
+          "word": "speed",
+          "start": 1.775,
+          "end": 2.15
+        },
+        {
+          "word": "find",
+          "start": 2.625,
+          "end": 2.875
+        },
+        {
+          "word": "it",
+          "start": 2.8875,
+          "end": 2.975
+        },
+        {
+          "word": "on",
+          "start": 2.9875,
+          "end": 3.1375
+        },
+        {
+          "word": "GitHub",
+          "start": 3.15,
+          "end": 3.55
+        },
+        {
+          "word": "or",
+          "start": 3.6875,
+          "end": 3.775
+        },
+        {
+          "word": "studio.zoedit.com",
+          "start": 3.7875,
+          "end": 5.4375
+        }
+      ],
+      "sfxSrc": "sfx/impact-soft.wav",
+      "sfxAt": 0.15,
+      "layout": "centered",
+      "camera": "slow-zoom-in",
+      "background": "linear-gradient(215deg, rgba(0, 166, 244, 0.16) 0%, transparent 62%)",
+      "backgroundPreset": "ai-free",
+      "character": {
+        "pose": "pointing",
+        "side": "right",
+        "accessory": "tie",
+        "enabled": true
+      },
+      "generatedComponent": "Scene6",
+      "elements": [
+        {
+          "type": "custom_tsx",
+          "component": "Scene6",
+          "title": "Build motion graphics at prompt speed find",
+          "text": "Build motion graphics at prompt",
+          "keywords": [
+            "Build motion graphics at prompt"
+          ],
+          "data": {
+            "narration": "Build motion graphics at prompt speed—find it on GitHub or studio.zoedit.com.",
             "visualType": "custom-tsx"
           }
         }

@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronUp, Film, Mic, Terminal, Volume2 } from 'lucide-react';
+import { useState } from 'react';
+import { Check, ChevronDown, ChevronUp, Copy, Film, Mic, Terminal, Volume2 } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { RenderLogEntry } from '../types/studio';
 
@@ -39,7 +40,37 @@ export function EditorTimeline({
   isRendering = false,
 }: EditorTimelineProps) {
   const { t } = useI18n();
+  const [logsCopied, setLogsCopied] = useState(false);
   const total = scenes.reduce((sum, scene) => sum + Math.max(0.1, scene.durationSec), 0);
+
+  const handleCopyLogs = async () => {
+    const text = logs
+      .map(
+        (entry) =>
+          `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`,
+      )
+      .join('\n');
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch {
+        return;
+      }
+    }
+    setLogsCopied(true);
+    window.setTimeout(() => setLogsCopied(false), 1600);
+  };
   const safeTotal = Math.max(0.1, total);
   const selectedScene = scenes.find((scene) => scene.id === selectedSceneId) ?? scenes[0];
 
@@ -52,14 +83,29 @@ export function EditorTimeline({
               <Terminal className="h-3.5 w-3.5" />
               {t('سجل التصدير المباشر', 'Live export console')}
             </p>
-            <button
-              type="button"
-              onClick={onToggleLogs}
-              className="rounded p-0.5 text-slate-400 hover:text-slate-100 cursor-pointer"
-              aria-label={t('إغلاق السجل', 'Close logs')}
-            >
-              <ChevronDown className="h-3.5 w-3.5" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => void handleCopyLogs()}
+                disabled={logs.length === 0}
+                className="inline-flex items-center gap-1 rounded border border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-300 transition-colors hover:border-sky-400/40 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+              >
+                {logsCopied ? (
+                  <Check className="h-3 w-3 text-emerald-300" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+                {logsCopied ? t('تم النسخ', 'Copied') : t('نسخ', 'Copy')}
+              </button>
+              <button
+                type="button"
+                onClick={onToggleLogs}
+                className="rounded p-0.5 text-slate-400 hover:text-slate-100 cursor-pointer"
+                aria-label={t('إغلاق السجل', 'Close logs')}
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-2.5 font-mono text-[10px] leading-relaxed">
             {logs.length === 0 ? (
