@@ -337,10 +337,14 @@ export function drawRemotionSceneFrame(
   const captionWords = (scene.narration || '').trim().split(/\s+/).filter(Boolean);
   const chunkSize = captionWords.length <= 3 ? Math.max(2, captionWords.length) : 3;
   const chunkCount = Math.max(1, Math.ceil(captionWords.length / chunkSize));
-  const chunkIndex = Math.min(
-    chunkCount - 1,
-    Math.floor(sceneProgress * chunkCount)
+  const sceneSecond = sceneProgress * Math.max(0.1, scene.durationSec || 0);
+  const timedWordIndex = scene.wordTimings?.findIndex(
+    (timing) => sceneSecond >= timing.start && sceneSecond < timing.end
   );
+  const chunkIndex =
+    timedWordIndex !== undefined && timedWordIndex >= 0
+      ? Math.min(chunkCount - 1, Math.floor(timedWordIndex / chunkSize))
+      : Math.min(chunkCount - 1, Math.floor(sceneProgress * chunkCount));
   const chunkWords = captionWords.slice(
     chunkIndex * chunkSize,
     chunkIndex * chunkSize + chunkSize
@@ -366,8 +370,12 @@ export function drawRemotionSceneFrame(
   ctx.textAlign = 'center';
   ctx.fillStyle = '#F8FAFC';
   ctx.fillText(chunkText, width / 2, boxY + 40);
+  const timedChunkWord =
+    timedWordIndex !== undefined && timedWordIndex >= 0
+      ? scene.wordTimings?.[timedWordIndex]?.word
+      : undefined;
   const activeWidth = ctx.measureText(
-    chunkWords[Math.max(0, chunkWords.length - 2)] || ''
+    timedChunkWord || chunkWords[Math.max(0, chunkWords.length - 2)] || ''
   ).width;
   drawRoundedRect(
     ctx,

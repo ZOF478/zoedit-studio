@@ -349,7 +349,7 @@ export function ApiSettingsDrawer({
             />
             <SecretField
               id="elevenlabs-key"
-              label="ElevenLabs API key"
+              label="ElevenLabs API key (optional — Edge/Piper need no key)"
               value={elevenlabsKey}
               onChange={setElevenlabsKey}
               placeholder="sk_..."

@@ -1,6 +1,7 @@
 {
   "name": "Zoedit Studio",
-  "description": "استوديو ذكي لإنتاج فيديوهات Remotion باللغة العربية مع توليد النصوص بالذكاء الاصطناعي والتعليق الصوتي عبر ElevenLabs",
+  "version": "1.3.0",
+  "description": "استوديو موشن جرافيك ذكي لإنتاج فيديوهات Remotion مع تعليق صوتي متعدد المزودين (Edge TTS وPiper TTS وElevenLabs) ورفع الصور واللوغو وترجمة متزامنة وتأطير آمن للمنصات.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

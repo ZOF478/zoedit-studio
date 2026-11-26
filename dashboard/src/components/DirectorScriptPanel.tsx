@@ -6,10 +6,16 @@ import {
   WandSparkles,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import type { UserAsset } from '../types/studio';
+import { UserAssetComposer } from './UserAssetComposer';
 
 interface DirectorScriptPanelProps {
   masterPrompt: string;
   onChangeMasterPrompt: (value: string) => void;
+  userAssets: UserAsset[];
+  onChangeUserAssets: (assets: UserAsset[]) => void;
+  apiBaseUrl: string;
+  sessionToken: string;
   voiceoverScript: string;
   onChangeVoiceoverScript: (value: string) => void;
   onGenerateVoiceoverScript: (options?: { rephrase?: boolean }) => void;
@@ -23,6 +29,10 @@ interface DirectorScriptPanelProps {
 export function DirectorScriptPanel({
   masterPrompt,
   onChangeMasterPrompt,
+  userAssets,
+  onChangeUserAssets,
+  apiBaseUrl,
+  sessionToken,
   voiceoverScript,
   onChangeVoiceoverScript,
   onGenerateVoiceoverScript,
@@ -73,6 +83,14 @@ export function DirectorScriptPanel({
         <span>{t('البرومبت الرئيسي', 'Master prompt')}</span>
         <span className="font-mono tabular-nums">{masterPrompt.length}</span>
       </div>
+
+      <UserAssetComposer
+        assets={userAssets}
+        onChangeAssets={onChangeUserAssets}
+        apiBaseUrl={apiBaseUrl}
+        sessionToken={sessionToken}
+        disabled={disabled}
+      />
 
       <div className="mt-3 space-y-3">
         {voiceoverEnabled ? (

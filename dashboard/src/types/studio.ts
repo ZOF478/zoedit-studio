@@ -125,6 +125,42 @@ export type VisualElementType =
 
 export type ScriptLanguage = string;
 
+export type VoiceProviderId = 'edge' | 'piper' | 'elevenlabs';
+
+export type VoiceGenderFilter = 'all' | 'male' | 'female' | 'neutral';
+
+export interface VoiceWordTiming {
+  word: string;
+  start: number;
+  end: number;
+}
+
+export interface VoiceFilterPreferences {
+  language: string;
+  accent: string;
+  gender: VoiceGenderFilter;
+  search: string;
+  followVideoLanguage: boolean;
+}
+
+export type UserAssetRole = 'logo' | 'screenshot';
+
+export interface UserAsset {
+  id: string;
+  filename: string;
+  src: string;
+  url: string;
+  role: UserAssetRole;
+  note: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  width: number;
+  height: number;
+  aspectRatio: number;
+  createdAt: number;
+}
+
 export interface SceneItem {
   id: string;
   title: string;
@@ -138,9 +174,10 @@ export interface SceneItem {
   durationSec: number;
   audioDataUrl?: string | null;
   audioSrc?: string;
-  audioSource?: 'elevenlabs' | 'browser-tts' | 'none';
+  audioSource?: 'elevenlabs' | 'edge' | 'piper' | 'browser-tts' | 'none';
   audioStatus?: 'idle' | 'generating' | 'ready' | 'fallback';
   audioDuration?: number;
+  wordTimings?: VoiceWordTiming[];
   sfxId?: string;
   sfxCustomUrl?: string;
   sfxPrompt?: string;
@@ -172,6 +209,7 @@ export interface ProjectState {
   scenes: SceneItem[];
   aiProvider?: AiProviderId;
   aiModel?: string;
+  voiceProvider?: VoiceProviderId;
   voiceId: string;
   voiceModelId: string;
   voiceStability: number;
@@ -241,7 +279,19 @@ export interface ElevenLabsVoice {
   category: string;
   preview_url?: string | null;
   description?: string;
-  source?: 'personal' | 'library';
+  source?: 'personal' | 'library' | 'edge' | 'piper';
+}
+
+export interface TtsVoice extends ElevenLabsVoice {
+  provider: VoiceProviderId;
+  locale?: string;
+  localeName?: string;
+  region?: string;
+  quality?: string;
+  languageCode?: string;
+  nativeName?: string;
+  numSpeakers?: number;
+  installed?: boolean;
 }
 
 export interface BrandKit {
@@ -341,6 +391,7 @@ export interface SfxConfig {
 
 export interface VoiceoverConfig {
   enabled: boolean;
+  provider: VoiceProviderId;
   modelId: string;
   voiceId: string;
   stability: number;
@@ -348,6 +399,7 @@ export interface VoiceoverConfig {
   style: number;
   speakerBoost: boolean;
   speed: number;
+  filters: VoiceFilterPreferences;
 }
 
 export type ExportTargetDuration =
@@ -404,6 +456,7 @@ export interface ApiSettingsStatus {
   preferences?: {
     provider: AiProviderId;
     modelId: string;
+    voiceProvider?: VoiceProviderId;
     voiceId?: string;
     voiceModelId?: string;
     voiceStability?: number;
@@ -458,6 +511,7 @@ export interface SettingsSavePayload {
   customProviderBaseUrl: string;
   aiProvider: AiProviderId;
   aiModel: string;
+  voiceProvider?: VoiceProviderId;
   voiceId?: string;
   voiceModelId?: string;
   voiceStability?: number;

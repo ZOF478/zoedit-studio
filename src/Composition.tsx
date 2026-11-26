@@ -36,7 +36,7 @@ import {
   MAX_SCENE_SFX_VOLUME,
   SFX_CUE_FILES,
 } from "./sfx";
-import type { CaptionConfig, Scene, SceneElement, SfxCue } from "./types";
+import type { CaptionConfig, Scene, SceneElement, SfxCue, UserAsset } from "./types";
 import { ensureSceneFonts, FONT_FAMILY } from "./fonts";
 
 type CustomTsxElement = Extract<SceneElement, { type: "custom_tsx" }>;
@@ -504,7 +504,7 @@ const CaptionsOverlay = ({
   palette: ScenePalette;
 }) => {
   const frame = useCurrentFrame();
-  const { height } = useVideoConfig();
+  const { height, fps } = useVideoConfig();
   const caption = data.caption ?? {};
   const activeIndex = timings.findIndex(
     (timing) =>
@@ -541,10 +541,19 @@ const CaptionsOverlay = ({
   const baseText = safeHex(captionColors.text, palette.text);
   const highlight = safeHex(captionColors.highlight, palette.accent);
   const words = text.split(/\s+/).filter(Boolean);
-  const activeWord = Math.min(
-    words.length - 1,
-    Math.floor(progress * Math.max(1, words.length)),
+  const wordTimings = scene?.wordTimings ?? [];
+  const localSecond = localFrame / Math.max(1, fps);
+  const timedWordIndex = wordTimings.findIndex(
+    (wordTiming) =>
+      localSecond >= wordTiming.start && localSecond < wordTiming.end,
   );
+  const activeWord =
+    timedWordIndex >= 0
+      ? Math.min(words.length - 1, timedWordIndex)
+      : Math.min(
+          words.length - 1,
+          Math.floor(progress * Math.max(1, words.length)),
+        );
 
   const boxStyle = {
     maxWidth: "88%",
@@ -568,14 +577,18 @@ const CaptionsOverlay = ({
   const renderWords = () =>
     words.map((word, index) => {
       if (style === "word_by_word") {
-        const startFrame = (index / Math.max(1, words.length)) * sceneDuration * 0.74;
+        const timed = wordTimings[index];
+        const startFrame = timed
+          ? timed.start * fps
+          : (index / Math.max(1, words.length)) * sceneDuration * 0.74;
+        const endFrame = timed ? timed.end * fps : startFrame + 8;
         const wordProgress = interpolate(
           localFrame,
-          [startFrame, startFrame + 8],
+          [startFrame, Math.max(startFrame + 1, endFrame)],
           [0, 1],
           { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
         );
-        const isFresh = localFrame >= startFrame && localFrame < startFrame + 10;
+        const isFresh = localFrame >= startFrame && localFrame < Math.max(startFrame + 1, endFrame) + 2;
         return (
           <span
             key={`${word}-${index}`}
@@ -676,6 +689,7 @@ const GeneratedScene = ({
   brandKit,
   sfxEnabled,
   sfxVolume,
+  userAssets,
 }: {
   scene: Scene;
   index: number;
@@ -685,6 +699,7 @@ const GeneratedScene = ({
   brandKit: Record<string, unknown>;
   sfxEnabled: boolean;
   sfxVolume: number;
+  userAssets?: UserAsset[];
 }) => {
   const palette = buildPalette(scene, brandKit);
   const element = findCustomElement(scene);
@@ -732,6 +747,7 @@ const GeneratedScene = ({
               sceneIndex: index,
               sfxEnabled,
               sfxVolume,
+              userAssets: userAssets ?? [],
             }}
             durationInFrames={durationInFrames}
             showCharacter={scene.character?.enabled === true}
@@ -830,6 +846,7 @@ export const MainComposition = ({ data }: MainProps) => {
                   brandKit={brandKit}
                   sfxEnabled={sfxEnabled}
                   sfxVolume={sfxVolume}
+                  userAssets={data.user_assets ?? []}
                 />
               </TransitionSeries.Sequence>
               {index < data.scenes.length - 1

@@ -11,6 +11,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { APP_VERSION } from '../version';
 
 interface TopHeaderProps {
   onOpenSettings: () => void;
@@ -74,8 +75,11 @@ export function TopHeader({
           <Clapperboard className="h-4 w-4" />
         </span>
         <span className="min-w-0 leading-tight">
-          <span className="block whitespace-nowrap font-display text-sm font-black tracking-tight text-slate-50">
+          <span className="flex items-center gap-1.5 whitespace-nowrap font-display text-sm font-black tracking-tight text-slate-50">
             Zoedit Studio
+            <span className="rounded-full border border-sky-400/30 bg-sky-500/10 px-1.5 py-0.5 font-mono text-[8px] font-bold text-sky-200">
+              v{APP_VERSION}
+            </span>
           </span>
           <span className="hidden truncate text-[8px] font-semibold uppercase tracking-[0.16em] text-slate-500 lg:block">
             {t('استوديو موشن جرافيك ذكي', 'AI Motion Editor')}

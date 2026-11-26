@@ -35,7 +35,12 @@ import type {
   SettingsSavePayload,
   SfxConfig,
   StepStatus,
+  TtsVoice,
+  UserAsset,
+  VoiceFilterPreferences,
+  VoiceGenderFilter,
   VoiceoverConfig,
+  VoiceProviderId,
 } from './types/studio';
 import type { RenderedVideoResult } from './utils/remotionRenderer';
 import {
@@ -334,8 +339,19 @@ const DEFAULT_BRAND_KIT: BrandKit = {
   watermarkPosition: 'top-left',
 };
 
+const VOICE_PROVIDER_VALUES: VoiceProviderId[] = ['edge', 'piper', 'elevenlabs'];
+
+const DEFAULT_VOICE_FILTERS: VoiceFilterPreferences = {
+  language: 'all',
+  accent: 'all',
+  gender: 'all',
+  search: '',
+  followVideoLanguage: true,
+};
+
 const DEFAULT_VOICE_CONFIG: VoiceoverConfig = {
   enabled: true,
+  provider: 'elevenlabs',
   modelId: 'eleven_multilingual_v2',
   voiceId: 'pNInz6obpgDQGcFmaJgB',
   stability: 0.5,
@@ -343,7 +359,82 @@ const DEFAULT_VOICE_CONFIG: VoiceoverConfig = {
   style: 0,
   speakerBoost: true,
   speed: 1,
+  filters: DEFAULT_VOICE_FILTERS,
 };
+
+const VOICE_GENDER_FILTER_VALUES: VoiceGenderFilter[] = [
+  'all',
+  'male',
+  'female',
+  'neutral',
+];
+
+function normalizeStoredVoiceProvider(
+  value: unknown,
+  fallback: VoiceProviderId,
+): VoiceProviderId {
+  return typeof value === 'string' && VOICE_PROVIDER_VALUES.includes(value as VoiceProviderId)
+    ? (value as VoiceProviderId)
+    : fallback;
+}
+
+function readStoredVoiceFilters(value: unknown): VoiceFilterPreferences {
+  if (!value || typeof value !== 'object') return { ...DEFAULT_VOICE_FILTERS };
+  const record = value as Record<string, unknown>;
+  return {
+    language:
+      typeof record.language === 'string' && record.language.trim()
+        ? record.language.trim().slice(0, 80)
+        : 'all',
+    accent:
+      typeof record.accent === 'string' && record.accent.trim()
+        ? record.accent.trim().slice(0, 80)
+        : 'all',
+    gender: VOICE_GENDER_FILTER_VALUES.includes(record.gender as VoiceGenderFilter)
+      ? (record.gender as VoiceGenderFilter)
+      : 'all',
+    search: typeof record.search === 'string' ? record.search.slice(0, 120) : '',
+    followVideoLanguage: record.followVideoLanguage !== false,
+  };
+}
+
+function readStoredUserAssets(value: unknown): UserAsset[] {
+  if (!Array.isArray(value)) return [];
+  const result: UserAsset[] = [];
+  const seen = new Set<string>();
+  for (const item of value) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    const id = typeof record.id === 'string' ? record.id.trim() : '';
+    const filename = typeof record.filename === 'string' ? record.filename.trim() : '';
+    const src = typeof record.src === 'string' ? record.src.trim() : '';
+    if (!id || !filename || !src || seen.has(id)) continue;
+    if (!/^[a-f0-9-]{36}\.(?:png|jpg|webp|svg)$/i.test(filename)) continue;
+    if (!/^user-assets\/[a-f0-9-]{36}\.(?:png|jpg|webp|svg)$/i.test(src)) continue;
+    seen.add(id);
+    result.push({
+      id,
+      filename,
+      src,
+      url:
+        typeof record.url === 'string' && record.url.startsWith('/user-assets/')
+          ? record.url
+          : `/${src}`,
+      role: record.role === 'logo' ? 'logo' : 'screenshot',
+      note: typeof record.note === 'string' ? record.note.slice(0, 160) : '',
+      originalName:
+        typeof record.originalName === 'string' ? record.originalName.slice(0, 160) : filename,
+      mimeType: typeof record.mimeType === 'string' ? record.mimeType.slice(0, 80) : '',
+      size: Math.max(0, Number(record.size) || 0),
+      width: Math.max(0, Number(record.width) || 0),
+      height: Math.max(0, Number(record.height) || 0),
+      aspectRatio: Math.max(0, Number(record.aspectRatio) || 0),
+      createdAt: Number(record.createdAt) || Date.now(),
+    });
+    if (result.length >= 12) break;
+  }
+  return result;
+}
 
 const EXPORT_DURATION_VALUES: ExportTargetDuration[] = [
   '3',
@@ -372,6 +463,7 @@ type StoredWorkspaceSettings = {
   fps?: FpsOption;
   scriptLanguage?: ScriptLanguage;
   voiceConfig?: VoiceoverConfig;
+  userAssets?: UserAsset[];
   captionsEnabled?: boolean;
   sfx?: SfxConfig;
   enable25D?: boolean;
@@ -442,6 +534,10 @@ function readStoredWorkspaceSettings(): StoredWorkspaceSettings | null {
       result.voiceConfig = {
         enabled:
           typeof voice.enabled === 'boolean' ? voice.enabled : DEFAULT_VOICE_CONFIG.enabled,
+        provider: normalizeStoredVoiceProvider(
+          voice.provider,
+          DEFAULT_VOICE_CONFIG.provider,
+        ),
         modelId:
           typeof voice.modelId === 'string' && voice.modelId.trim()
             ? voice.modelId.trim()
@@ -463,6 +559,7 @@ function readStoredWorkspaceSettings(): StoredWorkspaceSettings | null {
             ? voice.speakerBoost
             : DEFAULT_VOICE_CONFIG.speakerBoost,
         speed: clampStoredNumber(voice.speed, DEFAULT_VOICE_CONFIG.speed, 0.7, 1.2),
+        filters: readStoredVoiceFilters(voice.filters),
       };
     }
     if (typeof parsed.captionsEnabled === 'boolean') {
@@ -482,6 +579,8 @@ function readStoredWorkspaceSettings(): StoredWorkspaceSettings | null {
     }
     const brandKit = readStoredBrandKit(parsed.brandKit);
     if (brandKit) result.brandKit = brandKit;
+    const userAssets = readStoredUserAssets(parsed.userAssets);
+    if (userAssets.length > 0) result.userAssets = userAssets;
     if (
       typeof parsed.selectedAiProvider === 'string' &&
       AI_PROVIDERS.some((provider) => provider.id === parsed.selectedAiProvider)
@@ -608,6 +707,9 @@ export default function App() {
   const [voiceConfig, setVoiceConfig] = useState<VoiceoverConfig>(
     initialWorkspaceSettings?.voiceConfig ?? DEFAULT_VOICE_CONFIG
   );
+  const [userAssets, setUserAssets] = useState<UserAsset[]>(
+    () => initialWorkspaceSettings?.userAssets ?? []
+  );
   const [sfx, setSfx] = useState<SfxConfig>(
     () => initialWorkspaceSettings?.sfx ?? readStoredSfx() ?? DEFAULT_SFX_CONFIG
   );
@@ -642,7 +744,7 @@ export default function App() {
     return stored ?? defaultSafeZone;
   });
 
-  const [elVoices, setElVoices] = useState<ElevenLabsVoice[]>([]);
+  const [elVoices, setElVoices] = useState<TtsVoice[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
 
   const [steps, setSteps] = useState<RenderStepState[]>(() => createExportSteps(60, t));
@@ -729,9 +831,17 @@ export default function App() {
     if (useServerPreferences) {
       if (data.preferences.provider) setSelectedAiProvider(data.preferences.provider);
       if (data.preferences.modelId) setSelectedAiModel(data.preferences.modelId);
-      if (data.preferences.voiceId || data.preferences.voiceModelId) {
+      if (
+        data.preferences.voiceId ||
+        data.preferences.voiceModelId ||
+        data.preferences.voiceProvider
+      ) {
         setVoiceConfig((prev) => ({
           ...prev,
+          provider: normalizeStoredVoiceProvider(
+            data.preferences?.voiceProvider,
+            prev.provider,
+          ),
           voiceId: data.preferences?.voiceId || prev.voiceId,
           modelId: data.preferences?.voiceModelId || prev.modelId,
           stability: data.preferences?.voiceStability ?? prev.stability,
@@ -837,32 +947,47 @@ export default function App() {
     if (!voiceConfig.enabled) setCaptionsEnabled(false);
   }, [voiceConfig.enabled]);
 
-  const fetchElevenLabsVoices = useCallback(async (baseUrl: string, token: string) => {
-    setLoadingCatalog(true);
-    try {
-      const headers: Record<string, string> = token ? { 'x-zoedit-session': token } : {};
-      const res = await fetch(`${baseUrl}/elevenlabs/voices`, { headers });
-      if (!res.ok) return;
-      const data = (await res.json()) as { voices?: ElevenLabsVoice[] };
-      if (!data.voices) return;
-      setElVoices(data.voices);
-      setVoiceConfig((prev) =>
-        data.voices?.some((voice) => voice.voice_id === prev.voiceId)
-          ? prev
-          : { ...prev, voiceId: data.voices?.[0]?.voice_id || prev.voiceId }
-      );
-    } catch {
-      // Voice catalog is optional; keep manual/default voice.
-    } finally {
-      setLoadingCatalog(false);
-    }
-  }, []);
+  const fetchTtsVoices = useCallback(
+    async (
+      baseUrl: string,
+      token: string,
+      provider: VoiceProviderId,
+      options?: { refresh?: boolean },
+    ) => {
+      setLoadingCatalog(true);
+      try {
+        const headers: Record<string, string> = token
+          ? { 'x-zoedit-session': token }
+          : {};
+        const res = await fetch(
+          `${baseUrl}/tts/voices?provider=${encodeURIComponent(provider)}${
+            options?.refresh ? '&refresh=1' : ''
+          }`,
+          { headers },
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as { voices?: TtsVoice[] };
+        if (!data.voices) return;
+        setElVoices(
+          data.voices.map((voice) => ({
+            ...voice,
+            provider: voice.provider || provider,
+          })),
+        );
+      } catch {
+        // Voice catalog is optional; keep manual/default voice.
+      } finally {
+        setLoadingCatalog(false);
+      }
+    },
+    [],
+  );
 
   const handleVoiceImported = useCallback((voice: ElevenLabsVoice) => {
     setElVoices((prev) =>
       prev.some((item) => item.voice_id === voice.voice_id)
         ? prev
-        : [voice, ...prev]
+        : [{ ...voice, provider: 'elevenlabs', source: voice.source ?? 'personal' }, ...prev]
     );
     setVoiceConfig((prev) => ({ ...prev, voiceId: voice.voice_id }));
   }, []);
@@ -877,12 +1002,9 @@ export default function App() {
           applyApiStatus(data);
           const token = data.sessionToken || '';
           if (token) setSessionToken(token);
-          if (!cancelled) await fetchElevenLabsVoices(apiBaseUrl, token);
-        } else {
-          await fetchElevenLabsVoices(apiBaseUrl, '');
         }
       } catch {
-        await fetchElevenLabsVoices(apiBaseUrl, '');
+        // Settings are optional; the voice catalog effect below still runs.
       }
     };
     void init();
@@ -891,6 +1013,50 @@ export default function App() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiBaseUrl]);
+
+  useEffect(() => {
+    void fetchTtsVoices(apiBaseUrl, sessionToken, voiceConfig.provider);
+  }, [apiBaseUrl, fetchTtsVoices, sessionToken, voiceConfig.provider]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadAssets = async () => {
+      try {
+        const res = await fetch(`${apiBaseUrl}/user-assets`, {
+          headers: sessionToken ? { 'x-zoedit-session': sessionToken } : {},
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as { assets?: UserAsset[] };
+        if (!cancelled && Array.isArray(data.assets)) {
+          setUserAssets(data.assets);
+        }
+      } catch {
+        // Keep the locally persisted list if the asset service is unavailable.
+      }
+    };
+    void loadAssets();
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl, sessionToken]);
+
+  useEffect(() => {
+    if (elVoices.length === 0) return;
+    if (elVoices.some((voice) => voice.voice_id === voiceConfig.voiceId)) return;
+    const languageName = getVideoLanguage(scriptLanguage).name.toLowerCase();
+    const languageMatch = elVoices.find((voice) => {
+      const languages = voice.languages?.length ? voice.languages : [voice.language];
+      return languages.some((item) =>
+        (item || '').toLowerCase().includes(languageName),
+      );
+    });
+    const nextVoice = languageMatch || elVoices[0];
+    setVoiceConfig((prev) =>
+      nextVoice && nextVoice.voice_id !== prev.voiceId
+        ? { ...prev, voiceId: nextVoice.voice_id }
+        : prev,
+    );
+  }, [elVoices, scriptLanguage, voiceConfig.voiceId]);
 
   useEffect(() => {
     try {
@@ -948,6 +1114,7 @@ export default function App() {
         fps,
         scriptLanguage,
         voiceConfig,
+        userAssets,
         captionsEnabled,
         sfx,
         enable25D,
@@ -967,6 +1134,7 @@ export default function App() {
     fps,
     scriptLanguage,
     voiceConfig,
+    userAssets,
     captionsEnabled,
     sfx,
     enable25D,
@@ -1056,6 +1224,7 @@ export default function App() {
         ...keys,
         aiProvider: selectedAiProvider,
         aiModel: selectedAiModel,
+        voiceProvider: voiceConfig.provider,
         voiceId: voiceConfig.voiceId,
         voiceModelId: voiceConfig.modelId,
         voiceStability: voiceConfig.stability,
@@ -1090,7 +1259,7 @@ export default function App() {
     applyApiStatus(data);
     const activeToken = data.sessionToken || sessionToken;
     if (data.sessionToken) setSessionToken(data.sessionToken);
-    await fetchElevenLabsVoices(apiBaseUrl, activeToken);
+    await fetchTtsVoices(apiBaseUrl, activeToken, voiceConfig.provider);
   };
 
   const persistAiSelection = useCallback(
@@ -1238,7 +1407,13 @@ export default function App() {
   const handleScriptLanguageChange = (value: ScriptLanguage) => {
     const nextLanguage = normalizeVideoLanguage(value, scriptLanguage);
     setScriptLanguage(nextLanguage);
-    if (!voiceConfig.enabled || elVoices.length === 0) return;
+    if (
+      !voiceConfig.enabled ||
+      !voiceConfig.filters.followVideoLanguage ||
+      elVoices.length === 0
+    ) {
+      return;
+    }
     const languageName = getVideoLanguage(nextLanguage).name.toLowerCase();
     const matchingVoice = elVoices.find((voice) => {
       const languages = voice.languages?.length ? voice.languages : [voice.language];
@@ -1320,6 +1495,7 @@ export default function App() {
           },
           voiceoverEnabled: voiceConfig.enabled,
           cleanBrollMode,
+          voiceProvider: voiceConfig.provider,
           voiceId: voiceConfig.voiceId,
           modelId: voiceConfig.modelId,
           stability: voiceConfig.stability,
@@ -1338,6 +1514,13 @@ export default function App() {
           enable25D,
           respectSafeZone,
           voiceoverScript: voiceConfig.enabled ? voiceoverScript.trim() : undefined,
+          userAssets: userAssets.map((asset) => ({
+            id: asset.id,
+            filename: asset.filename,
+            src: asset.src,
+            role: asset.role,
+            note: asset.note,
+          })),
           uiLanguage: lang,
         }),
       });
@@ -1830,13 +2013,22 @@ export default function App() {
                 onOpenSettings={() => setSettingsOpen(true)}
                 masterPrompt={masterPrompt}
                 onChangeMasterPrompt={setMasterPrompt}
+                userAssets={userAssets}
+                onChangeUserAssets={setUserAssets}
                 brandKit={brandKit}
                 onChangeBrandKit={setBrandKit}
                 voiceover={voiceConfig}
                 onChangeVoiceover={handleVoiceoverChange}
                 voices={elVoices}
                 loadingVoices={loadingCatalog}
-                onRefreshVoices={() => void fetchElevenLabsVoices(apiBaseUrl, sessionToken)}
+                onRefreshVoices={(options) =>
+                  void fetchTtsVoices(
+                    apiBaseUrl,
+                    sessionToken,
+                    voiceConfig.provider,
+                    options,
+                  )
+                }
                 onVoiceImported={handleVoiceImported}
                 sfx={sfx}
                 onChangeSfx={setSfx}
@@ -1859,6 +2051,7 @@ export default function App() {
                 apiBaseUrl={apiBaseUrl}
                 sessionToken={sessionToken}
                 historyKey={historyKey}
+                videoLanguage={scriptLanguage}
                 disabled={isRendering}
               />
             </div>

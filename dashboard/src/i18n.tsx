@@ -26,8 +26,8 @@ const SITE_TITLES: Record<Lang, string> = {
 };
 
 const SITE_DESCRIPTIONS: Record<Lang, string> = {
-  ar: 'استوديو موشن جرافيك ذكي يكتب مشاهد Remotion مخصصة بالكود، مع تعليق صوتي عبر ElevenLabs وترجمة متزامنة وتأطير آمن لمنصات الفيديو.',
-  en: 'An AI-directed motion graphics studio that writes bespoke Remotion scene code, with ElevenLabs voiceover, synced captions, and platform-safe framing.',
+  ar: 'استوديو موشن جرافيك ذكي يكتب مشاهد Remotion مخصصة بالكود، مع تعليق صوتي عبر Edge TTS وPiper TTS وElevenLabs، ورفع صور ولوغو، وترجمة متزامنة وتأطير آمن للمنصات.',
+  en: 'An AI-directed motion graphics studio with bespoke Remotion scene code, Edge TTS, offline Piper TTS, ElevenLabs voiceover, secure image/logo uploads, synced captions, and platform-safe framing.',
 };
 
 const I18nContext = createContext<I18nValue | null>(null);

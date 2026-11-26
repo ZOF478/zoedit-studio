@@ -109,8 +109,8 @@ export function UsageCostPanel({
       id: 'tts',
       icon: Mic,
       color: 'text-sky-300',
-      labelAr: 'التعليق الصوتي (ElevenLabs TTS)',
-      labelEn: 'Voiceover (ElevenLabs TTS)',
+      labelAr: 'التعليق الصوتي (Edge / Piper / ElevenLabs)',
+      labelEn: 'Voiceover (Edge / Piper / ElevenLabs)',
       detailAr: `${formatNumber(
         project ? usageValue(project, 'ttsCharacters') : 0
       )} حرف · ${formatNumber(
@@ -162,8 +162,8 @@ export function UsageCostPanel({
             </h3>
             <p className="mt-0.5 text-[11px] text-slate-400">
               {t(
-                'تُجلب مباشرة من ElevenLabs ومزود الذكاء الاصطناعي عند التحميل أو التحديث.',
-                'Fetched directly from ElevenLabs and your LLM provider on load or refresh.'
+                'تُجلب أرصدة ElevenLabs ومزود الذكاء الاصطناعي مباشرة عند التحديث؛ Edge TTS و Piper TTS مجانيان.',
+                'ElevenLabs and AI-provider balances are fetched on refresh; Edge TTS and Piper TTS are free.'
               )}
             </p>
           </div>
@@ -352,8 +352,8 @@ export function UsageCostPanel({
         <p className="flex items-start gap-2 text-[11px] leading-relaxed text-slate-400">
           <Film className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
           {t(
-            'التصيير يتم محلياً عبر Remotion لذلك تكلفة الإطارات $0.00 — تُحتسب فقط استدعاءات الذكاء الاصطناعي و ElevenLabs.',
-            'Rendering runs locally through Remotion, so frames cost $0.00 — only AI and ElevenLabs calls are billed.'
+            'التصيير يتم محلياً عبر Remotion لذلك تكلفة الإطارات $0.00 — تُحتسب فقط استدعاءات الذكاء الاصطناعي واستخدام ElevenLabs المدفوع. Edge TTS و Piper TTS بدون تكلفة.',
+            'Rendering runs locally through Remotion, so frames cost $0.00 — only AI calls and paid ElevenLabs usage are billed. Edge TTS and Piper TTS are free.'
           )}
         </p>
       </div>

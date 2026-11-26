@@ -10,7 +10,10 @@ import type {
   CaptionAnimationStyle,
   CaptionColors,
   ElevenLabsVoice,
+  ScriptLanguage,
   SfxConfig,
+  TtsVoice,
+  UserAsset,
   VoiceoverConfig,
 } from '../types/studio';
 import { AgentDirectorPanel } from './AgentDirectorPanel';
@@ -31,13 +34,15 @@ interface StudioSidePanelProps {
   onOpenSettings: () => void;
   masterPrompt: string;
   onChangeMasterPrompt: (value: string) => void;
+  userAssets: UserAsset[];
+  onChangeUserAssets: (assets: UserAsset[]) => void;
   brandKit: BrandKit;
   onChangeBrandKit: (next: BrandKit) => void;
   voiceover: VoiceoverConfig;
   onChangeVoiceover: (next: VoiceoverConfig) => void;
-  voices: ElevenLabsVoice[];
+  voices: TtsVoice[];
   loadingVoices: boolean;
-  onRefreshVoices: () => void;
+  onRefreshVoices: (options?: { refresh?: boolean }) => void;
   onVoiceImported: (voice: ElevenLabsVoice) => void;
   sfx: SfxConfig;
   onChangeSfx: (next: SfxConfig) => void;
@@ -58,6 +63,7 @@ interface StudioSidePanelProps {
   apiBaseUrl: string;
   sessionToken: string;
   historyKey: number;
+  videoLanguage: ScriptLanguage;
   disabled?: boolean;
 }
 
@@ -71,6 +77,8 @@ export function StudioSidePanel({
   onOpenSettings,
   masterPrompt,
   onChangeMasterPrompt,
+  userAssets,
+  onChangeUserAssets,
   brandKit,
   onChangeBrandKit,
   voiceover,
@@ -98,6 +106,7 @@ export function StudioSidePanel({
   apiBaseUrl,
   sessionToken,
   historyKey,
+  videoLanguage,
   disabled = false,
 }: StudioSidePanelProps) {
   const { t } = useI18n();
@@ -158,6 +167,10 @@ export function StudioSidePanel({
           <DirectorScriptPanel
             masterPrompt={masterPrompt}
             onChangeMasterPrompt={onChangeMasterPrompt}
+            userAssets={userAssets}
+            onChangeUserAssets={onChangeUserAssets}
+            apiBaseUrl={apiBaseUrl}
+            sessionToken={sessionToken}
             voiceoverScript={voiceoverScript}
             onChangeVoiceoverScript={onChangeVoiceoverScript}
             onGenerateVoiceoverScript={onGenerateVoiceoverScript}
@@ -191,6 +204,7 @@ export function StudioSidePanel({
           onChangeCaptionColors={onChangeCaptionColors}
           captionBottomOffset={captionBottomOffset}
           onChangeCaptionBottomOffset={onChangeCaptionBottomOffset}
+          videoLanguage={videoLanguage}
           disabled={disabled}
         />
       ) : null}

@@ -3,14 +3,17 @@ import {
   BookOpen,
   CheckCircle2,
   Clapperboard,
+  ImagePlus,
   Layers,
   Mic,
+  MonitorPlay,
   Scale,
   ShieldCheck,
   Sparkles,
   X,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { APP_VERSION, CONTACT_EMAIL } from '../version';
 import { StudioFooter, type StudioInfoModalId } from './StudioFooter';
 
 interface StudioGuideModalProps {
@@ -115,8 +118,8 @@ export function StudioGuideModal({ open, onClose, onOpenInfoModal }: StudioGuide
             </h2>
             <p className="mt-0.5 text-[11px] leading-relaxed text-slate-400">
               {t(
-                'يعمل Zoedit Studio محلياً 100% على جهازك بترخيص MIT، بدون قياس سحابي أو تتبّع، مع إرشادات الاستخدام المسؤول.',
-                'Zoedit Studio runs 100% locally on your machine under the MIT license with zero cloud telemetry, plus responsible-use guidance.'
+                `الإصدار ${APP_VERSION} — يعمل Zoedit Studio محلياً بترخيص MIT مع Edge TTS وPiper TTS ورفع الصور واللوغو، بدون قياس سحابي. للتواصل: ${CONTACT_EMAIL}.`,
+                `Version ${APP_VERSION} — Zoedit Studio runs locally under the MIT license with Edge TTS, Piper TTS, image/logo uploads, and zero telemetry. Contact: ${CONTACT_EMAIL}.`
               )}
             </p>
           </div>
@@ -218,26 +221,92 @@ export function StudioGuideModal({ open, onClose, onOpenInfoModal }: StudioGuide
 
               <SectionCard
                 icon={<Mic className="h-3.5 w-3.5" />}
-                title={t('Voiceover vs Silent — الصوت أم الحركة فقط', 'Voiceover vs Silent — audio or motion only')}
+                title={t('Voiceover متعدد المزودين — Edge وPiper وElevenLabs', 'Multi-provider Voiceover — Edge, Piper & ElevenLabs')}
                 tone="sky"
               >
                 <ul className="space-y-1.5">
                   <Bullet>
                     {t(
-                      'مع TTS: يكتب الذكاء الاصطناعي سكربتاً صوتياً ويولّد تعليقاً عبر ElevenLabs مع كابشن متزامن اختياري.',
-                      'With TTS: AI writes a spoken script and generates ElevenLabs voiceover with optional synced captions.'
+                      'Edge TTS مجاني بدون مفتاح: أكثر من 100 لغة ولكنة إقليمية، مع توقيتات كلمات أصلية للكابشن المتزامن.',
+                      'Key-free Edge TTS: 100+ languages and regional accents, with native word timestamps for synced captions.'
                     )}
                   </Bullet>
                   <Bullet>
                     {t(
-                      'بدون TTS: يعتمد الفيديو على النصوص الحركية والرسوم لنقل الفكرة بالكامل.',
-                      'Without TTS: kinetic typography and graphics carry the message end to end.'
+                      'Piper TTS مفتوح المصدر يعمل محلياً على المعالج؛ تُنزَّل نماذج ONNX عند الطلب إلى ~/.zoedit-studio/voices.',
+                      'Open-source Piper TTS runs locally on CPU; ONNX models download on demand to ~/.zoedit-studio/voices.'
                     )}
                   </Bullet>
                   <Bullet>
                     {t(
-                      'الكابشن لا يظهر إذا كان الصوت مغلقاً، ويمكن إخفاؤه يدوياً حتى مع تشغيل الصوت.',
-                      'Captions do not render when voiceover is off, and can be hidden manually even with voiceover on.'
+                      'ElevenLabs BYOK لمن يريد أقصى واقعية صوتية عبر مفتاحه الخاص.',
+                      'ElevenLabs BYOK for users who want maximum vocal realism with their own key.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'الثلاثة يتشاركون فلاتر اللغة واللكنة والجنس والبحث والمعاينة الحية، والكابشن لا يظهر إذا كان الصوت مغلقاً.',
+                      'All three share language, accent, gender, search, and live-preview filters; captions do not render when voiceover is off.'
+                    )}
+                  </Bullet>
+                </ul>
+              </SectionCard>
+
+              <SectionCard
+                icon={<ImagePlus className="h-3.5 w-3.5" />}
+                title={t('رفع الصور واللوغو — صور المستخدم داخل المشاهد', 'Image & Logo Uploads — user visuals inside scenes')}
+                tone="violet"
+              >
+                <ul className="space-y-1.5">
+                  <Bullet>
+                    {t(
+                      'اسحب PNG أو JPG أو WEBP أو SVG آمن إلى شريط المرفقات داخل محرر البرومبت، بحد أقصى 8MB للصورة.',
+                      'Drag PNG, JPG, WEBP, or sanitized SVG into the attachment strip inside the prompt composer, up to 8 MB per image.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'صنّف كل صورة كـ Logo أو Screenshot / Visual وأضف ملاحظة قصيرة مثل «شاشة اللوحة» أو «لوغو الشركة».',
+                      'Tag each image as Logo or Screenshot / Visual and add a short note such as “Dashboard screen” or “Company logo.”'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'يُحوّل الذكاء الاصطناعي الشاشات إلى كروت زجاجية أو نوافذ متصفح أو إطارات أجهزة بتأثير 2.5D وحركة Ken Burns، ويعرض اللوغو بمدخل بطولي وهالة متوهجة.',
+                      'AI stages screenshots in glassmorphic cards, browser windows, or device frames with 2.5D tilt and Ken Burns motion, and reveals logos with a hero entrance and glow.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'صورك تبقى محفوظة في Clean B-Roll — هذا الوضع يحذف النصوص الزخرفية فقط ولا يحذف أصولك البصرية.',
+                      'Your images survive Clean B-Roll — this mode strips decorative text only, never user visual assets.'
+                    )}
+                  </Bullet>
+                </ul>
+              </SectionCard>
+
+              <SectionCard
+                icon={<MonitorPlay className="h-3.5 w-3.5" />}
+                title={t('مساحة NLE بلا تمرير + SFX ذكي', 'Zero-scroll NLE workspace + smart SFX')}
+                tone="emerald"
+              >
+                <ul className="space-y-1.5">
+                  <Bullet>
+                    {t(
+                      'مساحة عمل 100vh بألواح قابلة للتحجيم، معاينة حية وLive Sandbox داخل حاويات ResizeObserver، وأشرطة أدوات متكيفة.',
+                      'A 100vh workspace with resizable panes, Live Preview and Live Sandbox inside ResizeObserver containers, and adaptive toolbars.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'يُحفظ التخطيط والبرومبت والسكربت والصوت والكابشن والثيم والمزود والأصوات والصور المرفقة محلياً بعد إعادة التحميل.',
+                      'Layout, prompt, script, voice, captions, theme, provider, voices, and attached images persist locally across reloads.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'المؤثرات الصوتية تُختار من مكتبة SFX المحلية الكاملة حسب السياق، مع زر تجربة مستوى الصوت المباشر.',
+                      'SFX are chosen contextually from the full local library, with a live volume-test button.'
                     )}
                   </Bullet>
                 </ul>
@@ -371,14 +440,41 @@ export function StudioGuideModal({ open, onClose, onOpenInfoModal }: StudioGuide
                   </Bullet>
                   <Bullet>
                     {t(
-                      'عند الاتصال بمزودي خدمات خارجيين مثل OpenCode وDeepSeek وOpenRouter وElevenLabs، تخضع بياناتك لشروطهم وسياسات الخصوصية الخاصة بهم، وأنت مسؤول عن الالتزام بها.',
-                      'When you connect to third-party providers such as OpenCode, DeepSeek, OpenRouter, and ElevenLabs, your data is governed by their own terms and privacy policies, and you are responsible for complying with them.'
+                      'عند الاتصال بمزودي خدمات خارجيين مثل OpenCode وDeepSeek وOpenRouter وElevenLabs أو خدمة Edge TTS السحابية، تخضع بياناتك لشروطهم وسياسات الخصوصية الخاصة بهم. Piper TTS يعمل محلياً دون إرسال الصوت.',
+                      'When you connect to third-party providers such as OpenCode, DeepSeek, OpenRouter, ElevenLabs, or the Edge TTS cloud service, your data is governed by their terms and privacy policies. Piper TTS runs locally without sending audio.'
                     )}
                   </Bullet>
                   <Bullet>
                     {t(
                       'لا تملك Zoedit Studio هذه الخدمات الخارجية ولا تضمن استمرارها أو أسعارها أو جودة مخرجاتها.',
                       'Zoedit Studio does not own these third-party services and does not guarantee their availability, pricing, or output quality.'
+                    )}
+                  </Bullet>
+                </ul>
+              </SectionCard>
+
+              <SectionCard
+                icon={<ShieldCheck className="h-3.5 w-3.5" />}
+                title={t('أمان الصور والأصول المحلية', 'Local image & asset security')}
+                tone="amber"
+              >
+                <ul className="space-y-1.5">
+                  <Bullet>
+                    {t(
+                      'تُخزَّن الصور في public/user-assets بأسماء عشوائية آمنة وأذونات 0700 للمجلدات و0600 للملفات.',
+                      'Images live in public/user-assets with safe random names and owner-only 0700 directories / 0600 files.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'يتم التحقق من نوع MIME وتوقيع الملف، وتنظيف SVG من السكربتات والأحداث والروابط الخارجية قبل الحفظ.',
+                      'MIME type and file signature are verified, and SVGs are stripped of scripts, events, and external URLs before saving.'
+                    )}
+                  </Bullet>
+                  <Bullet>
+                    {t(
+                      'حماية من اجتياز المسارات، وقيود صارمة على استيراد المشاهد بحيث لا تُحمَّل إلا الأصول المحلية المعتمدة.',
+                      'Path-traversal guards protect the folder, and scene imports only permit approved local assets.'
                     )}
                   </Bullet>
                 </ul>

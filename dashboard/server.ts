@@ -22,6 +22,31 @@ import {
   normalizeVideoLanguage,
   videoLanguageName,
 } from './src/types/languages';
+import {
+  clampVoiceSpeed,
+  estimateWordTimings,
+  getPiperCatalog,
+  listEdgeVoices,
+  normalizeVoiceProvider,
+  synthesizeEdge,
+  synthesizeElevenLabsWithTimestamps,
+  synthesizePiper,
+  VOICES_DIR,
+  type TtsWordTiming,
+  type VoiceProviderId,
+} from './tts/providers';
+import {
+  buildUserAssetPromptLines,
+  deleteUserAsset,
+  ensureUserAssetsDir,
+  listUserAssets,
+  normalizeUserAssets,
+  saveUserAssetUpload,
+  updateUserAssetMeta,
+  USER_ASSET_MAX_BYTES,
+  USER_ASSETS_DIR,
+  type UserAssetPayload,
+} from './userAssets';
 
 const DASHBOARD_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(DASHBOARD_DIR, '..');
@@ -80,6 +105,7 @@ interface StudioSettings {
   customProviderBaseUrl: string;
   aiProvider: AiProviderId;
   aiModel: string;
+  voiceProvider: VoiceProviderId;
   voiceId: string;
   voiceModelId: string;
   voiceStability: number;
@@ -198,6 +224,7 @@ interface RenderScenePayload {
   audioDataUrl?: string;
   audioSrc?: string;
   audioDuration?: number;
+  wordTimings?: TtsWordTiming[];
   sfxId?: string;
   sfxPrompt?: string;
   sfxAt?: number;
@@ -258,8 +285,10 @@ interface RenderCaptionColors {
 interface ProjectStatePayload {
   topic: string;
   scenes: RenderScenePayload[];
+  userAssets?: UserAssetPayload[];
   aiProvider: AiProviderId;
   aiModel: string;
+  voiceProvider: VoiceProviderId;
   voiceId: string;
   voiceModelId: string;
   voiceStability: number;
@@ -300,6 +329,7 @@ interface RenderJob {
   fps: number;
   voiceoverEnabled: boolean;
   cleanBrollMode: boolean;
+  voiceProvider: VoiceProviderId;
   voiceId: string;
   modelId: string;
   voiceStability: number;
@@ -327,6 +357,7 @@ interface RenderJob {
   uiLanguage: UiLanguage;
   title?: string;
   outputName?: string;
+  userAssets?: UserAssetPayload[];
   masterPrompt?: string;
   tweakInstruction?: string;
   targetDuration?: ExportTargetDuration;
@@ -344,6 +375,7 @@ interface SceneAudioCacheEntry {
   hash: string;
   audioSrc: string;
   audioDuration?: number;
+  wordTimings?: TtsWordTiming[];
   updatedAt: number;
 }
 
@@ -372,6 +404,7 @@ type ParentScene = {
   durationInFrames?: number;
   audioSrc?: string;
   audioDuration?: number;
+  wordTimings?: TtsWordTiming[];
   sfxSrc?: string;
   sfxAt?: number;
   sfxCues?: SfxCue[];
@@ -407,6 +440,7 @@ type ParentVideoData = {
   durationInFrames?: number;
   style: string;
   script_language: string;
+  user_assets?: UserAssetPayload[];
   language?: string;
   script_depth?: string;
   creative_code_mode?: string;
@@ -1386,6 +1420,7 @@ const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
   customProviderBaseUrl: '',
   aiProvider: 'opencode-free',
   aiModel: DEFAULT_FREE_MODEL,
+  voiceProvider: 'elevenlabs',
   voiceId: 'pNInz6obpgDQGcFmaJgB',
   voiceModelId: 'eleven_multilingual_v2',
   voiceStability: 0.5,
@@ -1536,6 +1571,10 @@ function normalizeStudioSettings(raw: unknown): StudioSettings {
     customProviderBaseUrl: cleanSettingString(record.customProviderBaseUrl, 300),
     aiProvider: AI_PROVIDER_IDS.has(providerRaw) ? providerRaw : DEFAULT_STUDIO_SETTINGS.aiProvider,
     aiModel: modelId || DEFAULT_STUDIO_SETTINGS.aiModel,
+    voiceProvider: normalizeVoiceProvider(
+      record.voiceProvider,
+      DEFAULT_STUDIO_SETTINGS.voiceProvider,
+    ),
     voiceId: cleanSettingString(record.voiceId, 64) || DEFAULT_STUDIO_SETTINGS.voiceId,
     voiceModelId:
       cleanSettingString(record.voiceModelId, 64) || DEFAULT_STUDIO_SETTINGS.voiceModelId,
@@ -1618,8 +1657,13 @@ function normalizeProjectState(raw: unknown): ProjectStatePayload | null {
   return {
     topic: cleanSettingString(record.topic, depthForTopic === 'article' ? 20000 : 1200),
     scenes: normalizeScenes(scenesRaw),
+    userAssets: normalizeUserAssets(record.userAssets),
     aiProvider: AI_PROVIDER_IDS.has(providerRaw) ? providerRaw : studioSettings.aiProvider,
     aiModel: cleanSettingString(record.aiModel, 160) || studioSettings.aiModel,
+    voiceProvider: normalizeVoiceProvider(
+      record.voiceProvider,
+      studioSettings.voiceProvider,
+    ),
     voiceId: cleanSettingString(record.voiceId, 64) || DEFAULT_STUDIO_SETTINGS.voiceId,
     voiceModelId:
       cleanSettingString(record.voiceModelId, 64) || DEFAULT_STUDIO_SETTINGS.voiceModelId,
@@ -1695,6 +1739,7 @@ function saveProjectState(project: ProjectStatePayload): void {
   restrictPrivateFile(CURRENT_PROJECT_FILE);
   studioSettings.aiProvider = project.aiProvider;
   studioSettings.aiModel = project.aiModel;
+  studioSettings.voiceProvider = project.voiceProvider;
   studioSettings.voiceId = project.voiceId;
   studioSettings.voiceModelId = project.voiceModelId;
   studioSettings.voiceStability = project.voiceStability;
@@ -2171,6 +2216,7 @@ function buildSettingsResponse(req: Request, sessionId?: string) {
     preferences: {
       provider: studioSettings.aiProvider,
       modelId: studioSettings.aiModel,
+      voiceProvider: studioSettings.voiceProvider,
       voiceId: studioSettings.voiceId,
       voiceModelId: studioSettings.voiceModelId,
       voiceStability: studioSettings.voiceStability,
@@ -2910,6 +2956,7 @@ function saveSceneArtifactCache(): void {
 function sceneAudioCacheHash(
   scene: RenderScenePayload,
   voice: {
+    voiceProvider?: VoiceProviderId;
     voiceId: string;
     modelId: string;
     stability: number;
@@ -2921,6 +2968,7 @@ function sceneAudioCacheHash(
 ): string {
   return contentHash({
     narration: scene.narration,
+    voiceProvider: voice.voiceProvider || 'elevenlabs',
     voiceId: voice.voiceId,
     modelId: voice.modelId,
     stability: voice.stability,
@@ -2976,6 +3024,7 @@ function sceneSegmentCacheHash(
 function seedSceneAudioCache(
   scenes: RenderScenePayload[],
   voice: {
+    voiceProvider?: VoiceProviderId;
     voiceId: string;
     modelId: string;
     stability: number;
@@ -2995,6 +3044,9 @@ function seedSceneAudioCache(
       hash,
       audioSrc,
       audioDuration: scene.audioDuration,
+      ...(scene.wordTimings && scene.wordTimings.length > 0
+        ? { wordTimings: scene.wordTimings }
+        : {}),
       updatedAt: Date.now(),
     };
     changed = true;
@@ -3159,6 +3211,28 @@ function applySceneVariety(
   });
 }
 
+function normalizeWordTimings(raw: unknown): TtsWordTiming[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const timings: TtsWordTiming[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    const word = typeof record.word === 'string' ? record.word.trim() : '';
+    const start = Number(record.start);
+    const end = Number(record.end);
+    if (!word || !Number.isFinite(start) || !Number.isFinite(end)) continue;
+    if (end <= start) continue;
+    timings.push({
+      word: word.slice(0, 120),
+      start: Number(Math.max(0, start).toFixed(4)),
+      end: Number(Math.max(start + 0.02, end).toFixed(4)),
+    });
+    if (timings.length >= 2000) break;
+  }
+  timings.sort((a, b) => a.start - b.start);
+  return timings.length > 0 ? timings : undefined;
+}
+
 function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
   const validPoses = new Set([
     'idle',
@@ -3192,6 +3266,7 @@ function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
     const audioDataUrl = typeof record.audioDataUrl === 'string' ? record.audioDataUrl : undefined;
     const audioSrc = typeof record.audioSrc === 'string' ? record.audioSrc : undefined;
     const audioDurationRaw = Number(record.audioDuration);
+    const wordTimings = normalizeWordTimings(record.wordTimings);
     const sfxIdRaw =
       typeof record.sfxId === 'string' && record.sfxId.trim()
         ? record.sfxId.trim().slice(0, 300)
@@ -3286,6 +3361,7 @@ function normalizeScenes(rawScenes: unknown[]): RenderScenePayload[] {
         Number.isFinite(audioDurationRaw) && audioDurationRaw > 0
           ? Number(audioDurationRaw.toFixed(3))
           : undefined,
+      ...(wordTimings ? { wordTimings } : {}),
       sfxId,
       sfxPrompt,
       sfxAt: Number.isFinite(sfxAtRaw) ? Math.min(8, Math.max(0, Number(sfxAtRaw.toFixed(2)))) : 0,
@@ -4179,6 +4255,7 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
         typeof element.prompt === 'string' && element.prompt.trim() ? element.prompt : undefined,
       audioSrc: scene.audioSrc,
       audioDuration: scene.audioDuration,
+      wordTimings: scene.wordTimings,
       sfxId: sfxFile && SFX_CATALOG_IDS.has(sfxFile) ? sfxFile : 'none',
       sfxAt: scene.sfxAt ?? 0,
       layout: scene.layout,
@@ -4227,8 +4304,10 @@ function projectFromVideoData(data: ParentVideoData): ProjectStatePayload | null
   return {
     topic: data.meta?.topic || '',
     scenes,
+    userAssets: normalizeUserAssets(data.user_assets),
     aiProvider: studioSettings.aiProvider,
     aiModel: studioSettings.aiModel,
+    voiceProvider: studioSettings.voiceProvider,
     voiceId: studioSettings.voiceId,
     voiceModelId: studioSettings.voiceModelId,
     voiceStability: studioSettings.voiceStability,
@@ -4279,12 +4358,14 @@ function buildProjectVideoData(project: ProjectStatePayload): ParentVideoData {
     id: `studio-${Date.now()}`,
     createdAt: Date.now(),
     scenes: project.scenes,
+    userAssets: project.userAssets,
     visualStyle: project.visualStyle,
     aspectRatio: project.aspectRatio,
     fps: project.fps,
     voiceoverEnabled: project.voiceoverEnabled,
     cleanBrollMode: project.cleanBrollMode,
     respectSafeZone: project.respectSafeZone,
+    voiceProvider: project.voiceProvider,
     voiceId: project.voiceId,
     modelId: project.voiceModelId,
     voiceStability: project.voiceStability,
@@ -4774,6 +4855,9 @@ function buildParentScene(
       scene.audioSrc ||
       (scene.audioDataUrl?.startsWith('/audio/') ? scene.audioDataUrl.slice(1) : undefined),
     audioDuration: scene.audioDuration,
+    ...(scene.wordTimings && scene.wordTimings.length > 0
+      ? { wordTimings: scene.wordTimings }
+      : {}),
     sfxSrc: sceneSfxSrc,
     sfxAt: scene.sfxAt,
     ...(sfxCues.length > 0 ? { sfxCues } : {}),
@@ -4843,6 +4927,9 @@ function buildParentVideoData(job: RenderJob, topicOverride?: string): ParentVid
       ) + (job.scenes.length > 1 ? TRANSITION_DURATION_IN_FRAMES : 0),
     style: mapVisualStyle(job.visualStyle),
     script_language: job.scriptLanguage,
+    ...(job.userAssets && job.userAssets.length > 0
+      ? { user_assets: job.userAssets }
+      : {}),
     script_depth: job.scriptDepth,
     creative_code_mode: job.creativeCodeMode,
     script_pacing: job.scriptPacing,
@@ -5533,6 +5620,48 @@ async function applyMeasuredAudioDuration(
   return duration;
 }
 
+async function synthesizeElevenLabsBasic(
+  job: RenderJob,
+  scene: RenderScenePayload,
+): Promise<{
+  buffer: Buffer;
+  extension: 'mp3';
+  wordTimings: TtsWordTiming[];
+  billedCharacters: number;
+}> {
+  const ttsResp = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(job.voiceId)}`,
+    {
+      method: 'POST',
+      headers: {
+        'xi-api-key': job.elevenlabsKey,
+        'Content-Type': 'application/json',
+        Accept: 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text: scene.narration,
+        model_id: job.modelId,
+        voice_settings: {
+          stability: job.voiceStability,
+          similarity_boost: job.voiceSimilarityBoost,
+          style: job.voiceStyle,
+          use_speaker_boost: job.voiceSpeakerBoost,
+          speed: job.voiceSpeed,
+        },
+      }),
+      signal: AbortSignal.timeout(60000),
+    },
+  );
+  if (!ttsResp.ok) {
+    throw new Error(`ElevenLabs audio generation failed (${ttsResp.status}).`);
+  }
+  const buffer = Buffer.from(await ttsResp.arrayBuffer());
+  const headerCost = Number(ttsResp.headers.get('character-cost'));
+  const billedCharacters =
+    Number.isFinite(headerCost) && headerCost >= 0 ? headerCost : scene.narration.length;
+  return { buffer, extension: 'mp3', wordTimings: [], billedCharacters };
+}
+
 async function synthesizeSceneVoice(
   job: RenderJob,
   scene: RenderScenePayload,
@@ -5541,7 +5670,8 @@ async function synthesizeSceneVoice(
 ): Promise<boolean> {
   const tr = (ar: string, en: string) => uiText(job, ar, en);
   if (!scene.narration.trim()) return false;
-  if (!job.elevenlabsKey) {
+  const provider = job.voiceProvider || 'elevenlabs';
+  if (provider === 'elevenlabs' && !job.elevenlabsKey) {
     onLog(
       'warn',
       tr(
@@ -5551,48 +5681,58 @@ async function synthesizeSceneVoice(
     );
     return false;
   }
-  try {
-    const ttsResp = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(job.voiceId)}`,
-      {
-        method: 'POST',
-        headers: {
-          'xi-api-key': job.elevenlabsKey,
-          'Content-Type': 'application/json',
-          Accept: 'audio/mpeg',
-        },
-        body: JSON.stringify({
-          text: scene.narration,
-          model_id: job.modelId,
-          voice_settings: {
-            stability: job.voiceStability,
-            similarity_boost: job.voiceSimilarityBoost,
-            style: job.voiceStyle,
-            use_speaker_boost: job.voiceSpeakerBoost,
-            speed: job.voiceSpeed,
-          },
-        }),
-        signal: AbortSignal.timeout(60000),
-      },
-    );
 
-    if (!ttsResp.ok) {
-      onLog(
-        'warn',
-        tr(
-          `المشهد ${index + 1}: تعذر توليد الصوت (${ttsResp.status}).`,
-          `Scene ${index + 1}: audio generation failed (${ttsResp.status}).`,
-        ),
-      );
-      return false;
+  const providerLabel =
+    provider === 'edge'
+      ? 'Edge TTS'
+      : provider === 'piper'
+        ? 'Piper TTS'
+        : 'ElevenLabs';
+  try {
+    let result: {
+      buffer: Buffer;
+      extension: 'mp3' | 'wav';
+      wordTimings: TtsWordTiming[];
+      billedCharacters: number;
+    };
+    if (provider === 'edge') {
+      result = await synthesizeEdge(scene.narration, {
+        voiceId: job.voiceId,
+        speed: job.voiceSpeed,
+      });
+    } else if (provider === 'piper') {
+      result = await synthesizePiper(scene.narration, {
+        voiceId: job.voiceId,
+        speed: job.voiceSpeed,
+      });
+    } else {
+      try {
+        result = await synthesizeElevenLabsWithTimestamps(scene.narration, {
+          apiKey: job.elevenlabsKey,
+          voiceId: job.voiceId,
+          modelId: job.modelId,
+          stability: job.voiceStability,
+          similarityBoost: job.voiceSimilarityBoost,
+          style: job.voiceStyle,
+          speakerBoost: job.voiceSpeakerBoost,
+          speed: job.voiceSpeed,
+        });
+      } catch {
+        result = await synthesizeElevenLabsBasic(job, scene);
+      }
     }
 
-    const buffer = Buffer.from(await ttsResp.arrayBuffer());
-    scene.audioSrc = writeAudioFile(buffer, 'mp3');
-    const headerCost = Number(ttsResp.headers.get('character-cost'));
-    const billedCharacters =
-      Number.isFinite(headerCost) && headerCost >= 0 ? headerCost : scene.narration.length;
-    const ttsUsd = Number((billedCharacters * ELEVENLABS_USD_PER_CHAR).toFixed(6));
+    if (result.buffer.length === 0) {
+      throw new Error('Empty audio response.');
+    }
+    scene.audioSrc = writeAudioFile(result.buffer, result.extension);
+    scene.wordTimings =
+      result.wordTimings.length > 0 ? result.wordTimings : undefined;
+    const billedCharacters = Math.max(0, result.billedCharacters);
+    const ttsUsd =
+      provider === 'elevenlabs'
+        ? Number((billedCharacters * ELEVENLABS_USD_PER_CHAR).toFixed(6))
+        : 0;
     job.usage = {
       ttsCharacters: (job.usage?.ttsCharacters || 0) + billedCharacters,
       ttsCalls: (job.usage?.ttsCalls || 0) + 1,
@@ -5601,17 +5741,17 @@ async function synthesizeSceneVoice(
     onLog(
       'success',
       tr(
-        `المشهد ${index + 1}: تم توليد صوت ElevenLabs (${job.modelId}, ${job.voiceId.slice(0, 8)}) إلى public/${scene.audioSrc} · ${billedCharacters} حرف.`,
-        `Scene ${index + 1}: generated ElevenLabs audio (${job.modelId}, ${job.voiceId.slice(0, 8)}) into public/${scene.audioSrc} · ${billedCharacters} chars.`,
+        `المشهد ${index + 1}: تم توليد صوت ${providerLabel} (${job.voiceId.slice(0, 12)}) إلى public/${scene.audioSrc} · ${billedCharacters} حرف · ${scene.wordTimings?.length || 0} توقيت كلمة.`,
+        `Scene ${index + 1}: generated ${providerLabel} audio (${job.voiceId.slice(0, 12)}) into public/${scene.audioSrc} · ${billedCharacters} chars · ${scene.wordTimings?.length || 0} word timings.`,
       ),
     );
     return true;
-  } catch {
+  } catch (error) {
     onLog(
       'warn',
       tr(
-        `المشهد ${index + 1}: انتهت مهلة توليد الصوت عبر ElevenLabs.`,
-        `Scene ${index + 1}: ElevenLabs audio generation timed out.`,
+        `المشهد ${index + 1}: تعذر توليد الصوت عبر ${providerLabel}${error instanceof Error ? ` (${error.message.slice(0, 120)})` : ''}.`,
+        `Scene ${index + 1}: ${providerLabel} audio generation failed${error instanceof Error ? ` (${error.message.slice(0, 120)})` : ''}.`,
       ),
     );
     return false;
@@ -5642,7 +5782,7 @@ async function prepareSceneAudio(
     return 0;
   }
 
-  if (!job.elevenlabsKey) {
+  if ((job.voiceProvider || 'elevenlabs') === 'elevenlabs' && !job.elevenlabsKey) {
     onLog(
       'warn',
       tr(
@@ -5654,6 +5794,7 @@ async function prepareSceneAudio(
 
   const cache = loadSceneArtifactCache();
   const voice = {
+    voiceProvider: job.voiceProvider || 'elevenlabs',
     voiceId: job.voiceId,
     modelId: job.modelId,
     stability: job.voiceStability,
@@ -5689,6 +5830,9 @@ async function prepareSceneAudio(
       const cachedPath = audioFilePath(cachedAudio.audioSrc);
       if (fs.existsSync(cachedPath)) {
         scene.audioSrc = cachedAudio.audioSrc;
+        if (cachedAudio.wordTimings && cachedAudio.wordTimings.length > 0) {
+          scene.wordTimings = cachedAudio.wordTimings;
+        }
         const appliedCached = await applyMeasuredAudioDuration(
           scene,
           cachedAudio.audioDuration ?? null,
@@ -5698,6 +5842,12 @@ async function prepareSceneAudio(
           job.uiLanguage,
         );
         if (appliedCached) {
+          if (!scene.wordTimings || scene.wordTimings.length === 0) {
+            scene.wordTimings = estimateWordTimings(
+              scene.narration,
+              scene.audioDuration || 0,
+            );
+          }
           onLog(
             'success',
             tr(
@@ -5712,9 +5862,7 @@ async function prepareSceneAudio(
       cacheChanged = true;
     }
 
-    const synthesized = job.elevenlabsKey
-      ? await synthesizeSceneVoice(job, scene, index, onLog)
-      : false;
+    const synthesized = await synthesizeSceneVoice(job, scene, index, onLog);
     if (synthesized) generated += 1;
 
     const measured = scene.audioSrc
@@ -5743,11 +5891,25 @@ async function prepareSceneAudio(
       );
     }
 
+    if (
+      scene.audioSrc &&
+      (!scene.wordTimings || scene.wordTimings.length === 0) &&
+      (scene.audioDuration || 0) > 0
+    ) {
+      scene.wordTimings = estimateWordTimings(
+        scene.narration,
+        scene.audioDuration || 0,
+      );
+    }
+
     if (scene.audioSrc) {
       cache.audio[cacheHash] = {
         hash: cacheHash,
         audioSrc: scene.audioSrc,
         audioDuration: scene.audioDuration,
+        ...(scene.wordTimings && scene.wordTimings.length > 0
+          ? { wordTimings: scene.wordTimings }
+          : {}),
         updatedAt: Date.now(),
       };
       cacheChanged = true;
@@ -6267,6 +6429,33 @@ function isAllowedGeneratedImport(source: string): boolean {
   );
 }
 
+function auditGeneratedAssetReferences(code: string): string[] {
+  const errors: string[] = [];
+  const allowedNamespace =
+    /https?:\/\/www\.w3\.org\/[^\s"'`)>]+/gi;
+  const withoutNamespaces = code.replace(allowedNamespace, '');
+  const externalUrls = withoutNamespaces.match(/(?:https?:)?\/\/[^\s"'`)>]+/gi) ?? [];
+  for (const url of new Set(externalUrls)) {
+    errors.push(`blocked external URL: ${url.slice(0, 120)}`);
+  }
+  if (/\bdata:image\//i.test(withoutNamespaces)) {
+    errors.push('blocked inline data:image asset');
+  }
+  const staticFilePattern = /staticFile\(\s*(['"`])([^'"`]+)\1\s*\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = staticFilePattern.exec(code)) !== null) {
+    const assetPath = match[2].trim();
+    const isUserAsset = /^user-assets\/[a-f0-9-]{36}\.(?:png|jpg|webp|svg)$/i.test(
+      assetPath,
+    );
+    const isLocalSfx = /^sfx\/[A-Za-z0-9._-]+\.(?:wav|mp3|ogg)$/i.test(assetPath);
+    if (!isUserAsset && !isLocalSfx) {
+      errors.push(`blocked static asset path: ${assetPath.slice(0, 120)}`);
+    }
+  }
+  return errors;
+}
+
 function sanitizeGeneratedTsx(
   rawCode: string,
   componentName: string,
@@ -6335,6 +6524,7 @@ function sanitizeGeneratedTsx(
       errors.push(`blocked token: ${entry.label}`);
     }
   }
+  errors.push(...auditGeneratedAssetReferences(withoutComments));
 
   if (!isValidGeneratedComponentName(componentName)) {
     errors.push('invalid component name');
@@ -6614,9 +6804,11 @@ async function requestCustomSceneCode(options: {
   wcagPrompt?: string;
   previousCode?: string;
   compilerErrors?: string;
+  userAssets?: UserAssetPayload[];
 }): Promise<string | null> {
   const { scene, componentName, scriptLanguage, aspectRatio, attempts, keys } =
     options;
+  const userAssetLines = buildUserAssetPromptLines(options.userAssets || []);
   const languageMeta = getVideoLanguage(scriptLanguage);
   const systemPrompt = [
     'You are a senior Remotion + React engineer writing a single self-contained TSX scene component.',
@@ -6629,6 +6821,7 @@ async function requestCustomSceneCode(options: {
     'Animate continuously across the entire durationInFrames with useCurrentFrame(), useVideoConfig(), spring(), and interpolate(). Never leave a static frame.',
     'Use as many subtle <SceneSfx> cues as the concrete visual actions warrant, choosing the best-fitting id from the full installed SFX library. Never add an unsolicited loud victory chime, achievement bell, or celebration fanfare at the very end unless the user prompt explicitly asks for one.',
     'Use SVG, @remotion/shapes, @remotion/paths, and @remotion/noise when useful. Use the faceless Stickman only when showCharacter is true; for human actions (praying, prostrating, sitting at a screen, standing, walking) use <SilhouetteActor pose="..." /> instead. For symbols, concepts, clocks, religious symbols, and brand logos always use <SmartIcon query="..." /> (add brand for company logos) — never hand-draw them from guessed shapes.',
+    ...(userAssetLines.length > 0 ? userAssetLines : []),
     ZOEDIT_LIBRARY_CAPABILITIES,
     VISUAL_QUALITY_CONTRACT,
     SFX_LIBRARY_RULE,
@@ -6681,6 +6874,7 @@ async function generateAndValidateCustomScene(options: {
   attempts: ChatAttempt[];
   keys: ResolvedApiKeys;
   wcagPrompt?: string;
+  userAssets?: UserAssetPayload[];
 }): Promise<{ ok: boolean; source: 'ai' | 'library-template' | 'none'; errors: string[] }> {
   let previousCode = '';
   let compilerErrors = '';
@@ -6742,6 +6936,7 @@ async function maybeGenerateCreativeScenes(
     attempts: ChatAttempt[];
     keys: ResolvedApiKeys;
     wcagPrompt?: string;
+    userAssets?: UserAssetPayload[];
   },
 ): Promise<{ scenes: RenderScenePayload[]; generated: string[]; failed: string[] }> {
   if (options.creativeCodeMode !== 'creative') {
@@ -6769,6 +6964,7 @@ async function maybeGenerateCreativeScenes(
       attempts: options.attempts,
       keys: options.keys,
       wcagPrompt: options.wcagPrompt,
+      userAssets: options.userAssets,
     });
     if (result.ok) {
       scene.generatedComponent = componentName;
@@ -7291,8 +7487,10 @@ function syncExportProject(job: RenderJob): void {
     const project = normalizeProjectState({
       topic: job.masterPrompt || job.scenes.map((scene) => scene.narration).join(' '),
       scenes: job.scenes,
+      userAssets: job.userAssets,
       aiProvider: studioSettings.aiProvider,
       aiModel: studioSettings.aiModel,
+      voiceProvider: job.voiceProvider,
       voiceId: job.voiceId,
       voiceModelId: job.modelId,
       voiceStability: job.voiceStability,
@@ -7627,6 +7825,7 @@ function cleanBrollPromptSection(enabled: boolean): string[] {
       '- Communicate primarily through shapes, icons, charts, maps, camera motion, light, color, and kinetic geometry. Never add filler copy or a title card.',
       '- Keep preserved chart labels readable and offset from strokes: Y-axis values use textAnchor="end" with x={axisX - 14} and at least 56px left padding.',
       '- Captions, when the user enables them, are rendered by the composition as an optional overlay. Never draw caption text inside the scene itself.',
+      '- USER ASSETS ARE EXEMPT: uploaded logos and screenshots are primary visual content and MUST remain fully visible in Clean B-Roll. Only decorative text overlays, titles, and text-only slides are stripped.',
       '- Keep every floating card and 2.5D SpatialCard fully outside the plot rectangle, axis lines, gridlines, and data labels with at least a 24px gap.',
       '- This layout applies ONLY because cleanBrollMode is true. Never enable it just because the voiceover is disabled.',
     ];
@@ -7682,6 +7881,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
   const languageMeta = getVideoLanguage(job.scriptLanguage);
   const languageName = languageMeta.name;
   const languageDirection = languageMeta.dir.toUpperCase();
+  const userAssetLines = buildUserAssetPromptLines(job.userAssets || []);
   const characterMomentIndices = new Set<number>();
   if (job.scenes.length > 0) {
     characterMomentIndices.add(0);
@@ -7798,6 +7998,7 @@ function buildOpenCodeScenePrompt(job: RenderJob): string {
     '## MASTER PROMPT (single source of truth)',
     job.masterPrompt,
     '',
+    ...(userAssetLines.length > 0 ? [...userAssetLines, ''] : []),
     ...(promptOnlySection.length > 0 ? [...promptOnlySection, ''] : []),
     VISUAL_QUALITY_CONTRACT,
     '',
@@ -8055,6 +8256,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
   const languageMeta = getVideoLanguage(job.scriptLanguage);
   const languageName = languageMeta.name;
   const languageDirection = languageMeta.dir.toUpperCase();
+  const userAssetLines = buildUserAssetPromptLines(job.userAssets || []);
   const sceneFiles = job.scenes.map((scene, index) => {
     const name =
       scene.generatedComponent && isValidGeneratedComponentName(scene.generatedComponent)
@@ -8077,6 +8279,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
     '## REQUESTED TWEAK',
     instruction,
     '',
+    ...(userAssetLines.length > 0 ? [...userAssetLines, ''] : []),
     '## FILES TO EDIT IN PLACE',
     ...sceneFiles,
     '',
@@ -8102,6 +8305,7 @@ function buildOpenCodeTweakPrompt(job: RenderJob, instruction: string): string {
           '- Respect Safe Zone is ON: keep ALL typography, cards, charts, and captions inside top >= 12%, bottom <= 78%, right <= 84%, left >= 6%. Never place content under the right-hand TikTok / Reels / Shorts action icons or the bottom description bar; backgrounds may stay full-bleed.',
         ]
       : []),
+    '- Preserve every user-provided logo/screenshot `<Img src={staticFile("user-assets/...")} />` reference and its cinematic motion treatment. Never replace uploaded assets with SmartIcon, remove them in Clean B-Roll, or point them at external URLs.',
     '- Never stamp one boilerplate skeleton across scenes: keep each scene\'s focal placement and composition architecture distinct and custom-directed (full-bleed type, split-screen, camera pan, icon beat, data-first chart, or clean B-Roll).',
     `- Preserve the caption direction exactly: style ${captionStyleDisplayName(job.captionAnimationStyle)}; pill ${job.captionColors.background}; base text ${job.captionColors.text}; active highlight ${job.captionColors.highlight}. Never hardcode different caption colors.`,
     '- Keep the multi-beat choreography: staggered spring entrances delayed by `index * 12` frames and continuous idle motion. Preserve or add as many subtle `<SceneSfx name="..." />` cues as the on-screen actions warrant, selecting any fitting id from the full installed SFX library; keep the mix natural and remove any generic success ding, achievement bell, or celebration fanfare at the very end unless the user explicitly requested it.',
@@ -8266,6 +8470,7 @@ async function startServer() {
   fs.mkdirSync(SFX_DIR, { recursive: true });
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  ensureUserAssetsDir();
   syncGeneratedRegistry();
 
   const app = express();
@@ -8328,6 +8533,17 @@ async function startServer() {
 
   app.use('/audio', express.static(AUDIO_DIR, { fallthrough: false }));
   app.use('/sfx', express.static(SFX_DIR, { fallthrough: false }));
+  app.use(
+    '/user-assets',
+    express.static(USER_ASSETS_DIR, {
+      fallthrough: false,
+      maxAge: '1h',
+      setHeaders: (res) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:");
+      },
+    }),
+  );
 
   app.get('/api/health', (_req: Request, res: Response) => {
     res.json({
@@ -8954,6 +9170,69 @@ async function startServer() {
   app.put('/api/project', handleSaveProject);
   app.post('/api/project', handleSaveProject);
 
+  app.get('/api/user-assets', (_req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({
+      ok: true,
+      assets: listUserAssets(),
+      maxFileBytes: USER_ASSET_MAX_BYTES,
+    });
+  });
+
+  app.post(
+    '/api/user-assets',
+    express.raw({ type: () => true, limit: '9mb' }),
+    (req: Request, res: Response) => {
+      if (!Buffer.isBuffer(req.body)) {
+        res.status(415).json({
+          error: requestUiText(
+            req,
+            'يجب إرسال بيانات الصورة الخام مع نوع MIME صحيح.',
+            'Send the raw image bytes with a valid MIME type.',
+          ),
+        });
+        return;
+      }
+      const result = saveUserAssetUpload({
+        buffer: req.body,
+        mimeType: String(req.headers['content-type'] || ''),
+        originalName: String(req.headers['x-zoedit-filename'] || 'image'),
+        role: typeof req.query.role === 'string' ? req.query.role : undefined,
+        note: typeof req.query.note === 'string' ? req.query.note : undefined,
+      });
+      if (!result.ok) {
+        res.status(result.status).json({ error: result.error });
+        return;
+      }
+      res.status(201).json({ ok: true, asset: result.asset });
+    },
+  );
+
+  app.patch('/api/user-assets/:id', (req: Request, res: Response) => {
+    const body = (req.body || {}) as { role?: unknown; note?: unknown };
+    const asset = updateUserAssetMeta(String(req.params.id || ''), {
+      role: body.role,
+      note: body.note,
+    });
+    if (!asset) {
+      res.status(404).json({
+        error: requestUiText(req, 'لم يتم العثور على الصورة.', 'Image asset was not found.'),
+      });
+      return;
+    }
+    res.json({ ok: true, asset });
+  });
+
+  app.delete('/api/user-assets/:id', (req: Request, res: Response) => {
+    if (!deleteUserAsset(String(req.params.id || ''))) {
+      res.status(404).json({
+        error: requestUiText(req, 'لم يتم العثور على الصورة.', 'Image asset was not found.'),
+      });
+      return;
+    }
+    res.json({ ok: true });
+  });
+
   app.post('/api/settings/sync', async (req: Request, res: Response) => {
     const { sessionId } = getOrCreateSessionId(req);
     const session = sessionKeyStore.get(sessionId) || { updatedAt: Date.now() };
@@ -8967,6 +9246,7 @@ async function startServer() {
       customProviderBaseUrl?: unknown;
       aiProvider?: unknown;
       aiModel?: unknown;
+      voiceProvider?: unknown;
       voiceId?: unknown;
       voiceModelId?: unknown;
       voiceStability?: unknown;
@@ -9039,6 +9319,12 @@ async function startServer() {
     }
     if (cleanSettingString(body.aiModel, 160)) {
       studioSettings.aiModel = cleanSettingString(body.aiModel, 160);
+    }
+    if (body.voiceProvider !== undefined) {
+      studioSettings.voiceProvider = normalizeVoiceProvider(
+        body.voiceProvider,
+        studioSettings.voiceProvider,
+      );
     }
     if (cleanSettingString(body.voiceId, 64)) {
       studioSettings.voiceId = cleanSettingString(body.voiceId, 64);
@@ -9299,6 +9585,285 @@ async function startServer() {
       });
     } catch {
       res.json({ source: 'catalog', voices: DEFAULT_ELEVENLABS_VOICES });
+    }
+  });
+
+  app.get('/api/tts/voices', async (req: Request, res: Response) => {
+    const provider = normalizeVoiceProvider(
+      typeof req.query.provider === 'string' ? req.query.provider : undefined,
+      'edge',
+    );
+    if (provider === 'edge') {
+      const result = await listEdgeVoices({
+        refresh: req.query.refresh === '1' || req.query.refresh === 'true',
+      });
+      res.json({
+        ok: true,
+        provider,
+        source: result.source,
+        total: result.voices.length,
+        voices: result.voices,
+        ...(result.warning ? { warning: result.warning } : {}),
+      });
+      return;
+    }
+    if (provider === 'piper') {
+      const voices = getPiperCatalog();
+      res.json({
+        ok: true,
+        provider,
+        source: 'catalog',
+        total: voices.length,
+        voices,
+        voicesDir: VOICES_DIR,
+      });
+      return;
+    }
+
+    const { elevenlabsKey } = resolveApiKeys(req);
+    if (!elevenlabsKey) {
+      res.json({
+        ok: true,
+        provider,
+        source: 'catalog',
+        total: DEFAULT_ELEVENLABS_VOICES.length,
+        voices: DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
+          ...voice,
+          provider: 'elevenlabs',
+        })),
+      });
+      return;
+    }
+    try {
+      const { voices, warning } = await fetchElevenLabsVoiceLibrary(elevenlabsKey);
+      const output =
+        voices.length > 0
+          ? voices.map((voice) => ({ ...voice, provider: 'elevenlabs' }))
+          : DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
+              ...voice,
+              provider: 'elevenlabs',
+            }));
+      res.json({
+        ok: true,
+        provider,
+        source: voices.length > 0 ? 'live' : 'catalog',
+        total: output.length,
+        voices: output,
+        ...(warning && voices.length === 0 ? { warning } : {}),
+      });
+    } catch {
+      res.json({
+        ok: true,
+        provider,
+        source: 'catalog',
+        total: DEFAULT_ELEVENLABS_VOICES.length,
+        voices: DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
+          ...voice,
+          provider: 'elevenlabs',
+        })),
+      });
+    }
+  });
+
+  app.get('/api/tts/status', async (_req: Request, res: Response) => {
+    const piperVoices = getPiperCatalog();
+    const edge = await listEdgeVoices();
+    res.json({
+      ok: true,
+      voicesDir: VOICES_DIR,
+      piper: {
+        catalogCount: piperVoices.length,
+        installedCount: piperVoices.filter((voice) => voice.installed).length,
+        installed: piperVoices
+          .filter((voice) => voice.installed)
+          .map((voice) => voice.voice_id),
+      },
+      edge: {
+        catalogCount: edge.voices.length,
+        source: edge.source,
+      },
+    });
+  });
+
+  app.post('/api/tts/preview', async (req: Request, res: Response) => {
+    const body = (req.body || {}) as {
+      provider?: unknown;
+      text?: unknown;
+      voiceId?: unknown;
+      modelId?: unknown;
+      stability?: unknown;
+      similarityBoost?: unknown;
+      style?: unknown;
+      speakerBoost?: unknown;
+      speed?: unknown;
+      voiceoverEnabled?: unknown;
+      uiLanguage?: unknown;
+    };
+    const ttsText = (ar: string, en: string) =>
+      normalizeUiLanguage(body.uiLanguage ?? requestUiLanguage(req)) === 'en' ? en : ar;
+    const provider = normalizeVoiceProvider(body.provider, 'elevenlabs');
+    const text = typeof body.text === 'string' ? body.text.trim().slice(0, 1500) : '';
+    const speed = clampVoiceSpeed(body.speed, 1);
+    const wordsCount = text.split(/\s+/).filter(Boolean).length;
+    const durationEstimateSec = Math.max(
+      2.5,
+      Number((wordsCount * 0.48 + 0.8).toFixed(1)),
+    );
+    if (!text) {
+      res.status(400).json({
+        error: ttsText('النص الصوتي مطلوب', 'Voice text is required.'),
+      });
+      return;
+    }
+    if (body.voiceoverEnabled === false) {
+      res.json({
+        source: 'none',
+        audioDataUrl: null,
+        durationEstimateSec,
+        characters: 0,
+        notice: ttsText(
+          'الوضع الصامت مفعّل — لم يتم توليد أي صوت.',
+          'Silent mode is on — no audio was generated.',
+        ),
+      });
+      return;
+    }
+
+    try {
+      let result: {
+        buffer: Buffer;
+        extension: 'mp3' | 'wav';
+        wordTimings: TtsWordTiming[];
+        billedCharacters: number;
+      };
+      if (provider === 'edge') {
+        const voiceId =
+          typeof body.voiceId === 'string' && /^[A-Za-z0-9-]{2,80}$/.test(body.voiceId)
+            ? body.voiceId
+            : 'en-US-AriaNeural';
+        result = await synthesizeEdge(text, { voiceId, speed });
+      } else if (provider === 'piper') {
+        const voiceId =
+          typeof body.voiceId === 'string' ? body.voiceId.slice(0, 120) : '';
+        if (!voiceId) {
+          res.status(400).json({
+            error: ttsText('اختر صوت Piper أولاً.', 'Select a Piper voice first.'),
+          });
+          return;
+        }
+        result = await synthesizePiper(text, { voiceId, speed });
+      } else {
+        const { elevenlabsKey } = resolveApiKeys(req);
+        if (!elevenlabsKey) {
+          res.json({
+            source: 'browser-tts',
+            audioDataUrl: null,
+            durationEstimateSec,
+            notice: ttsText(
+              'مفتاح ElevenLabs غير مضاف — يتم تشغيل معاينة صوتية محلية.',
+              'ElevenLabs key is not configured — using a local voice preview.',
+            ),
+          });
+          return;
+        }
+        const voiceId =
+          typeof body.voiceId === 'string' &&
+          /^[a-zA-Z0-9_-]{4,64}$/.test(body.voiceId)
+            ? body.voiceId
+            : 'pNInz6obpgDQGcFmaJgB';
+        const modelId =
+          typeof body.modelId === 'string' && body.modelId.trim()
+            ? body.modelId.trim().slice(0, 64)
+            : 'eleven_multilingual_v2';
+        const stability = clampNumber(body.stability, 0.5, 0, 1);
+        const similarityBoost = clampNumber(body.similarityBoost, 0.75, 0, 1);
+        const style = clampNumber(body.style, 0, 0, 1);
+        const speakerBoost =
+          typeof body.speakerBoost === 'boolean' ? body.speakerBoost : true;
+        try {
+          result = await synthesizeElevenLabsWithTimestamps(text, {
+            apiKey: elevenlabsKey,
+            voiceId,
+            modelId,
+            stability,
+            similarityBoost,
+            style,
+            speakerBoost,
+            speed,
+          });
+        } catch {
+          const ttsResp = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`,
+            {
+              method: 'POST',
+              headers: {
+                'xi-api-key': elevenlabsKey,
+                'Content-Type': 'application/json',
+                Accept: 'audio/mpeg',
+              },
+              body: JSON.stringify({
+                text,
+                model_id: modelId,
+                voice_settings: {
+                  stability,
+                  similarity_boost: similarityBoost,
+                  style,
+                  use_speaker_boost: speakerBoost,
+                  speed,
+                },
+              }),
+              signal: AbortSignal.timeout(30000),
+            },
+          );
+          if (!ttsResp.ok) {
+            res.json({
+              source: 'browser-tts',
+              audioDataUrl: null,
+              durationEstimateSec,
+              notice: ttsText(
+                `تعذر التوليد عبر ElevenLabs (${ttsResp.status}).`,
+                `Could not generate with ElevenLabs (${ttsResp.status}).`,
+              ),
+            });
+            return;
+          }
+          result = {
+            buffer: Buffer.from(await ttsResp.arrayBuffer()),
+            extension: 'mp3',
+            wordTimings: [],
+            billedCharacters:
+              Number(ttsResp.headers.get('character-cost')) || text.length,
+          };
+        }
+      }
+
+      const audioSrc = writeAudioFile(result.buffer, result.extension);
+      const billedCharacters = Math.max(0, result.billedCharacters);
+      const ttsUsd =
+        provider === 'elevenlabs'
+          ? Number((billedCharacters * ELEVENLABS_USD_PER_CHAR).toFixed(6))
+          : 0;
+      recordUsage({
+        ttsCharacters: billedCharacters,
+        ttsCalls: 1,
+        ttsUsd,
+      });
+      res.json({
+        source: provider,
+        audioDataUrl: `/${audioSrc}`,
+        audioFile: `public/${audioSrc}`,
+        durationEstimateSec,
+        characters: billedCharacters,
+        wordTimings: result.wordTimings,
+        usage: { ttsCharacters: billedCharacters, ttsCalls: 1, ttsUsd },
+      });
+    } catch (error) {
+      res.status(502).json({
+        error: ttsText(
+          `تعذر توليد الصوت: ${error instanceof Error ? error.message.slice(0, 160) : 'خطأ غير معروف'}`,
+          `Could not generate audio: ${error instanceof Error ? error.message.slice(0, 160) : 'unknown error'}`,
+        ),
+      });
     }
   });
 
@@ -9866,6 +10431,7 @@ async function startServer() {
       rephrase?: unknown;
       previousScript?: unknown;
       mode?: unknown;
+      userAssets?: unknown;
     };
 
     if (body.mode !== 'scenes') {
@@ -9953,6 +10519,8 @@ async function startServer() {
     const silentVisualMode = body.voiceoverEnabled === false;
     const sfxEnabledForScript = body.sfxEnabled !== false;
     const captionsHidden = silentVisualMode || body.captionsEnabled === false;
+    const requestedUserAssets = normalizeUserAssets(body.userAssets);
+    const userAssetLines = buildUserAssetPromptLines(requestedUserAssets);
 
     if (!topic) {
       res.status(400).json({ error: 'يرجى إدخال موضوع الفيديو أو الفكرة أولاً.' });
@@ -9963,6 +10531,7 @@ async function startServer() {
       `You are an expert ${outputLanguage} short-form video scriptwriter and Remotion motion director.`,
       `The user's exact topic is: "${topic}".`,
       'Write a completely custom script for that exact topic. Do not reuse generic placeholder scenes.',
+      ...(userAssetLines.length > 0 ? [...userAssetLines, ''] : []),
       `Create a deeply researched, non-superficial ${outputLanguage} short-form script for visualStyle="${visualStyle}" and aspectRatio="${aspectRatio}".`,
       `Design each scene for the primary ${aspectRatio} frame first, then keep it responsive: 16:9 favors a balanced horizontal two-column split (visual/chart/character beside headline and callout), 1:1 favors compact centered or split spacing with proportional type, and 9:16 favors clean vertical stacking with generous top/bottom safe zones. Never pack a scene so tightly that it clips when the aspect ratio changes.`,
       `SCRIPT DEPTH MODE: ${scriptDepth}. ${depthGuidance}`,
@@ -10115,6 +10684,7 @@ async function startServer() {
         attempts,
         keys,
         wcagPrompt,
+        userAssets: requestedUserAssets,
       });
       return {
         ...result,
@@ -10637,6 +11207,8 @@ async function startServer() {
 
       const projectVoice = readProjectState();
       seedSceneAudioCache(scenes, {
+        voiceProvider:
+          projectVoice?.voiceProvider || studioSettings.voiceProvider,
         voiceId: projectVoice?.voiceId || studioSettings.voiceId,
         modelId: projectVoice?.voiceModelId || studioSettings.voiceModelId,
         stability: projectVoice?.voiceStability ?? studioSettings.voiceStability,
@@ -10807,6 +11379,7 @@ async function startServer() {
       brandKit?: unknown;
       palette?: unknown;
       voiceoverEnabled?: unknown;
+      voiceProvider?: unknown;
       voiceId?: unknown;
       modelId?: unknown;
       stability?: unknown;
@@ -10828,6 +11401,7 @@ async function startServer() {
       respectSafeZone?: unknown;
       tweakInstruction?: unknown;
       voiceoverScript?: unknown;
+      userAssets?: unknown;
       uiLanguage?: unknown;
     };
 
@@ -10994,16 +11568,25 @@ async function startServer() {
       applyPromptOnlyPacing(scenes, targetDuration, fps);
     }
 
+    const requestedUserAssets = normalizeUserAssets(
+      body.userAssets ?? (tweakInstruction ? project?.userAssets : undefined),
+    );
+
     const job: RenderJob = {
       id: jobId,
       createdAt: Date.now(),
       scenes,
+      userAssets: requestedUserAssets,
       visualStyle: 'stickman',
       aspectRatio,
       fps,
       voiceoverEnabled,
       cleanBrollMode,
       respectSafeZone,
+      voiceProvider: normalizeVoiceProvider(
+        body.voiceProvider,
+        project?.voiceProvider ?? studioSettings.voiceProvider,
+      ),
       voiceId:
         typeof body.voiceId === 'string' && body.voiceId.trim()
           ? body.voiceId.trim()
@@ -11277,7 +11860,7 @@ async function startServer() {
             : job.voiceoverEnabled
               ? tr(
                   `تقسيم السكربت الصوتي المعتمد إلى ${job.scenes.length} مشاهد/جمل كاملة — المدة تُحسب من صوت ElevenLabs الفعلي بدون تمديد.`,
-                  `Splitting the approved voiceover script into ${job.scenes.length} complete scenes/sentences — duration follows the real ElevenLabs audio with no padding.`,
+                  `Splitting the approved voiceover script into ${job.scenes.length} complete scenes/sentences — duration follows the real generated audio with no padding.`,
                 )
               : tr(
                   `وضع الإخراج البصري المباشر من البرومبت الرئيسي إلى ${job.scenes.length} مشهداً — المدة المستهدفة: ${
@@ -11344,7 +11927,7 @@ async function startServer() {
             'success',
             tr(
               `تم تجهيز ${generated} مقطع صوتي عبر ElevenLabs وقياس المدد الفعلية لكل مشهد.`,
-              `Prepared ${generated} ElevenLabs audio segment(s) and measured the real duration of every scene.`,
+              `Prepared ${generated} voiceover audio segment(s) and measured the real duration of every scene.`,
             ),
           );
           if (job.usage) {
@@ -11667,12 +12250,14 @@ async function startServer() {
     const body = (req.body || {}) as {
       topic?: unknown;
       scenes?: unknown;
+      userAssets?: unknown;
       visualStyle?: unknown;
       aspectRatio?: unknown;
       fps?: unknown;
       voiceoverEnabled?: unknown;
       cleanBrollMode?: unknown;
       respectSafeZone?: unknown;
+      voiceProvider?: unknown;
       voiceId?: unknown;
       modelId?: unknown;
       stability?: unknown;
@@ -11775,12 +12360,17 @@ async function startServer() {
       id: jobId,
       createdAt: Date.now(),
       scenes: curatedScenes,
+      userAssets: normalizeUserAssets(body.userAssets),
       visualStyle: normalizeVisualStyleValue(body.visualStyle, studioSettings.visualStyle),
       aspectRatio: renderAspectRatio,
       fps,
       voiceoverEnabled: Boolean(body.voiceoverEnabled),
       cleanBrollMode: body.cleanBrollMode === true,
       respectSafeZone,
+      voiceProvider: normalizeVoiceProvider(
+        body.voiceProvider,
+        studioSettings.voiceProvider,
+      ),
       voiceId: typeof body.voiceId === 'string' ? body.voiceId : studioSettings.voiceId,
       modelId: typeof body.modelId === 'string' ? body.modelId : studioSettings.voiceModelId,
       voiceStability: clampNumber(body.stability, studioSettings.voiceStability, 0, 1),
@@ -11872,6 +12462,8 @@ async function startServer() {
         readParentData()?.meta?.topic ||
         '',
       scenes: job.scenes,
+      userAssets: job.userAssets,
+      voiceProvider: job.voiceProvider,
       voiceId: job.voiceId,
       voiceModelId: job.modelId,
       voiceStability: job.voiceStability,
@@ -12104,7 +12696,7 @@ async function startServer() {
           'info',
           tr(
             `المسار الصوتي ${job.modelId} جاهز للصوت ${job.voiceId.slice(0, 8)} عبر public/audio.`,
-            `Voice track ${job.modelId} is ready for voice ${job.voiceId.slice(0, 8)} via public/audio.`,
+            `Voice track (${job.voiceProvider}) is ready for voice ${job.voiceId.slice(0, 12)} via public/audio.`,
           ),
         );
       } else {
@@ -12128,7 +12720,7 @@ async function startServer() {
           'success',
           tr(
             `تم تجهيز ${audioCount} ملف صوتي عبر ElevenLabs قبل بدء التصيير مع قياس المدد الفعلية.`,
-            `Prepared ${audioCount} ElevenLabs audio file(s) before rendering with measured real durations.`,
+            `Prepared ${audioCount} voiceover audio file(s) before rendering with measured real durations.`,
           ),
         );
       }

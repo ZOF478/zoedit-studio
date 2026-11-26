@@ -48,7 +48,7 @@ function ensureExecutable() {
 }
 
 function dashboardDependenciesReady() {
-  return ['express', 'tsx', 'vite', 'react', 'remotion'].every((name) =>
+  return ['express', 'tsx', 'vite', 'react', 'remotion', 'msedge-tts'].every((name) =>
     fs.existsSync(path.join(DASHBOARD_DIR, 'node_modules', name)),
   );
 }

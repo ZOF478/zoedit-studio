@@ -1,6 +1,7 @@
 import type {
   BackgroundPresetId as ParentBackgroundPresetId,
   Scene as ParentScene,
+  UserAsset,
   VideoData,
 } from '../../../src/types';
 import { buildStaggeredSfxCues } from '../../../src/utils/sfxCues';
@@ -623,6 +624,9 @@ const buildParentScene = (
         (scene.audioDataUrl?.startsWith('/audio/') ? scene.audioDataUrl.slice(1) : undefined)
       : undefined,
     audioDuration: scene.audioDuration,
+    ...(scene.wordTimings && scene.wordTimings.length > 0
+      ? { wordTimings: scene.wordTimings }
+      : {}),
     sfxSrc: resolveSfxSrc(scene.sfxId, scene.visualType),
     sfxAt: scene.sfxAt,
     ...(sfxCues.length > 0 ? { sfxCues } : {}),
@@ -678,6 +682,7 @@ export interface BuildPreviewDataOptions {
   sfxVolume: number;
   backgroundPreset: string;
   voiceoverEnabled: boolean;
+  userAssets?: UserAsset[];
 }
 
 export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoData {
@@ -714,6 +719,9 @@ export function buildPreviewVideoData(options: BuildPreviewDataOptions): VideoDa
     style: mapVisualStyle(options.visualStyle) as VideoData['style'],
     script_language: options.scriptLanguage,
     script_pacing: options.scriptPacing as VideoData['script_pacing'],
+    ...(options.userAssets && options.userAssets.length > 0
+      ? { user_assets: options.userAssets }
+      : {}),
     caption: {
       animation_style: parentCaptionStyle(
         options.captionAnimationStyle

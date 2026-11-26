@@ -22,6 +22,31 @@ export type CaptionAnimationStyle =
 
 export type WordsPerScreen = "auto" | 2 | 3 | 4 | 5;
 
+export type WordTiming = {
+  word: string;
+  start: number;
+  end: number;
+};
+
+export type UserAssetRole = "logo" | "screenshot";
+
+export type UserAsset = {
+  id: string;
+  filename: string;
+  src: string;
+  url?: string;
+  role: UserAssetRole;
+  note?: string;
+  originalName?: string;
+  mimeType?: string;
+  size?: number;
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
+  createdAt?: number;
+};
+
+
 export type CaptionColors = {
   background?: string;
   text?: string;
@@ -376,6 +401,7 @@ export type Scene = {
   background?: string;
   audioSrc?: string;
   audioDuration?: number;
+  wordTimings?: WordTiming[];
   sfxSrc?: string;
   sfxAt?: number;
   sfxCues?: SfxCue[];
@@ -406,6 +432,7 @@ export type VideoData = {
   respect_safe_zone?: boolean;
   brand_kit?: BrandKit;
   caption?: CaptionConfig;
+  user_assets?: UserAsset[];
   script_pacing?: ScriptPacing;
   sfx?: {
     enabled?: boolean;

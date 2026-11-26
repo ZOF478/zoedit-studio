@@ -13,6 +13,7 @@ import {
   KeyRound,
   Lock,
   Mail,
+  Mic,
   Rocket,
   Scale,
   Server,
@@ -21,11 +22,10 @@ import {
   X,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { APP_VERSION, CONTACT_EMAIL, GITHUB_URL, SITE_URL } from '../version';
 
 export type StudioInfoModalId = 'about' | 'api' | 'terms';
 
-const GITHUB_URL = 'https://github.com/ZOF478/zoedit-studio';
-const SITE_URL = 'https://studio.zoedit.com';
 const ZOEDIT_URL = 'https://zoedit.com';
 const REMOTION_LICENSE_URL = 'https://www.remotion.dev/license';
 
@@ -133,6 +133,18 @@ const CREDITS = [
     Logo: OpenCodeLogo,
   },
   {
+    name: 'Edge TTS',
+    href: 'https://github.com/rany2/edge-tts',
+    noteAr: 'أصوات سحابية مجانية',
+    noteEn: 'free cloud voices',
+  },
+  {
+    name: 'Piper',
+    href: 'https://github.com/rhasspy/piper',
+    noteAr: 'تعليق صوتي محلي',
+    noteEn: 'offline neural TTS',
+  },
+  {
     name: 'ElevenLabs',
     href: 'https://elevenlabs.io',
     noteAr: 'التعليق الصوتي وتصميم الصوت',
@@ -170,9 +182,17 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
               </span>
             ))}
           </p>
-          <p className="text-[10px] text-slate-500">
-            © {new Date().getFullYear()} Zoedit Studio ·{' '}
-            {t('مفتوح المصدر بترخيص MIT', 'Open source under the MIT license')}
+          <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[10px] text-slate-500">
+            <span>© {new Date().getFullYear()} Zoedit Studio v{APP_VERSION}</span>
+            <span className="text-slate-600">·</span>
+            <span>{t('مفتوح المصدر بترخيص MIT', 'Open source under the MIT license')}</span>
+            <span className="text-slate-600">·</span>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-semibold text-slate-400 transition-colors hover:text-sky-300"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </p>
         </div>
 
@@ -193,7 +213,7 @@ export function StudioFooter({ onOpenModal }: StudioFooterProps) {
             GitHub
           </FooterLink>
           <FooterLink
-            href="mailto:studio@zoedit.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             icon={<Mail className="h-3.5 w-3.5" />}
             external={false}
           >
@@ -401,7 +421,17 @@ function AboutContent() {
             'Built by a freelance video editor (zoedit.com) facing two real constraints: working on a low-spec computer where heavy motion tools slow everything down, and keeping up with the speed of the AI era. Instead of waiting to be replaced by generic AI tools, I engineered my own AI-directed motion system—combining the best Remotion primitives, custom skills, and smart framing to produce studio-grade videos at minimal cost. Originally built for my own client work, now shared open-source with creators and editors everywhere.'
           )}
         </p>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-200">
+            v{APP_VERSION}
+          </span>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-slate-300 transition-colors hover:text-sky-200"
+          >
+            <Mail className="h-2.5 w-2.5" />
+            {CONTACT_EMAIL}
+          </a>
           <ModalLink href={ZOEDIT_URL} icon={<ExternalLink className="h-3.5 w-3.5" />}>
             zoedit.com
           </ModalLink>
@@ -509,14 +539,14 @@ function AboutContent() {
       </div>
 
       <InfoCard
-        icon={<Heart className="h-3.5 w-3.5" />}
-        title={t('لماذا ElevenLabs (V4)؟', 'Why ElevenLabs (V4)?')}
+        icon={<Mic className="h-3.5 w-3.5" />}
+        title={t('محرّك صوت متعدد المزودين', 'Multi-provider voice engine')}
         tone="violet"
       >
         <blockquote className="border-s-2 border-violet-400/50 ps-3 text-[12px] leading-relaxed text-slate-300">
           {t(
-            'ملاحظة صادقة من المؤسس: اخترنا ElevenLabs بعد تجربة إنتاجية موسعة في مشاريع حقيقية، لأنه يقدّم واقعية صوتية لا تُضاهى — خصوصاً نموذج V4 — بسعر عادل. الكود يبقى مفتوحاً بالكامل، فيمكنك إضافة مزودي TTS آخرين لاحقاً أو تخصيص نسختك بحرية.',
-            'An honest founder note: ElevenLabs was selected after extensive real-world production experience because it delivers unmatched vocal realism — especially the V4 model — at a fair price. The codebase stays fully open, so you can add other TTS providers later or customize your own copy freely.'
+            'منذ الإصدار 1.3.0 أصبح التعليق الصوتي متعدد المزودين: Edge TTS المجاني بدون مفتاح مع أكثر من 100 لغة ولكنة إقليمية، وPiper TTS مفتوح المصدر يعمل محلياً على المعالج بتنزيل نماذج ONNX عند الطلب، وElevenLabs للمستخدمين الذين يريدون أقصى واقعية صوتية عبر مفتاحهم الخاص. الثلاثة يتشاركون نفس الفلاتر والتوقيتات المتزامنة للكلمات.',
+            'As of v1.3.0, voiceover is fully multi-provider: key-free Edge TTS with 100+ languages and regional accents, open-source Piper TTS running offline on CPU with on-demand ONNX models, and ElevenLabs for users who want maximum realism with their own key. All three share the same filters and word-level synced captions.'
           )}
         </blockquote>
       </InfoCard>
@@ -588,6 +618,33 @@ function AboutContent() {
           />
         </InfoCard>
       </div>
+
+      <InfoCard
+        icon={<Sparkles className="h-3.5 w-3.5" />}
+        title={t('ما الجديد في v1.3.0؟', 'What is new in v1.3.0?')}
+        tone="amber"
+      >
+        <BulletList
+          items={[
+            t(
+              'محرّك صوت موحّد: Edge TTS مجاني بدون مفتاح، Piper TTS يعمل دون إنترنت، وElevenLabs BYOK مع فلاتر لغة ولكنة وجنس ومعاينة حية.',
+              'Unified voice engine: key-free Edge TTS, offline Piper TTS, and ElevenLabs BYOK with language, accent, gender filters and live preview.'
+            ),
+            t(
+              'رفع صور ولوغو آمن: PNG/JPG/WEBP/SVG منظّف، تصنيف Logo أو Screenshot، وحركة سينمائية داخل مشاهد Remotion مع الحفاظ عليها في Clean B-Roll.',
+              'Secure image/logo uploads: sanitized PNG/JPG/WEBP/SVG, Logo or Screenshot roles, and cinematic Remotion motion that survives Clean B-Roll.'
+            ),
+            t(
+              'مساحة عمل NLE بلا تمرير: ألواح قابلة للتحجيم، معاينة حية وLive Sandbox، شريط أدوات متكيف، وحفظ كامل محلياً بعد إعادة التحميل.',
+              'Zero-scroll NLE workspace: resizable panes, Live Preview and Live Sandbox, adaptive toolbars, and full local persistence across reloads.'
+            ),
+            t(
+              'مكتبة SFX كاملة واختبار مستوى الصوت، مع تصليب أمني وتقييد 127.0.0.1 وأذونات 0700/0600 وفحص MIME/SVG وحماية من اجتياز المسارات.',
+              'Full SFX library and volume tester, plus security hardening: 127.0.0.1 binding, 0700/0600 permissions, MIME/SVG validation, and path-traversal guards.'
+            ),
+          ]}
+        />
+      </InfoCard>
 
       <div className="rounded-xl border border-white/8 bg-[#0E121A] p-3.5">
         <h3 className="flex items-center gap-2 text-xs font-bold text-slate-100">
@@ -701,6 +758,64 @@ function ApiGuideContent() {
         ),
       ],
       linkLabel: t('مفاتيح DeepSeek', 'DeepSeek API keys'),
+    },
+    {
+      key: 'edge-tts',
+      name: 'Edge TTS',
+      href: 'https://github.com/rany2/edge-tts',
+      badge: t('مجاني — بدون مفتاح', 'Free — no key'),
+      summary: t(
+        'تعليق صوتي سحابي مجاني من Microsoft Edge بأكثر من 100 لغة ولكنة إقليمية، مع توقيتات كلمات أصلية للكابشن المتزامن.',
+        'Free Microsoft Edge cloud voiceover with 100+ languages and regional accents, plus native word timestamps for synced captions.'
+      ),
+      steps: [
+        t(
+          'اختر Edge TTS (مجاني) من محدد مزود الصوت داخل استوديو الصوت.',
+          'Choose Edge TTS (Free) from the Voiceover Provider selector in Audio Studio.'
+        ),
+        t(
+          'صفِّ الأصوات حسب اللغة أو اللكنة أو الجنس، ثم شغّل المعاينة الحية.',
+          'Filter voices by language, accent, or gender, then audition with live preview.'
+        ),
+        t(
+          'لا حاجة لأي مفتاح — يتم استخدام الخدمة مباشرة عند التصدير.',
+          'No key is required — the service is used directly during export.'
+        ),
+      ],
+      linkLabel: t('مزيد عن Edge TTS', 'More about Edge TTS'),
+      disclaimer: t(
+        'Edge TTS خدمة سحابية تابعة لـ Microsoft وتخضع لشروطها وتوفرها. قد يتطلب الاتصال بالإنترنت.',
+        'Edge TTS is a Microsoft cloud service governed by its own terms and availability. An internet connection is required.'
+      ),
+    },
+    {
+      key: 'piper-tts',
+      name: 'Piper TTS',
+      href: 'https://github.com/rhasspy/piper',
+      badge: t('محلي — مفتوح المصدر', 'Offline — open source'),
+      summary: t(
+        'تعليق صوتي محلي 100% يعمل على المعالج بدون مفاتيح أو إنترنت بعد تنزيل النموذج، مع محاذاة دقيقة لتوقيتات الكلمات.',
+        '100% local CPU voiceover with no keys or internet after the model downloads, plus carefully aligned word timings.'
+      ),
+      steps: [
+        t(
+          'اختر Piper TTS (مفتوح المصدر) من محدد مزود الصوت.',
+          'Choose Piper TTS (Open-Source Offline) from the Voiceover Provider selector.'
+        ),
+        t(
+          'اختر الصوت؛ يتم تنزيل نموذج ONNX تلقائياً إلى ~/.zoedit-studio/voices عند أول استخدام.',
+          'Pick a voice; its ONNX model downloads automatically to ~/.zoedit-studio/voices on first use.'
+        ),
+        t(
+          'يمكنك استخدام PIPER_BIN لتحديد ملف Piper التنفيذي الموجود مسبقاً إن رغبت.',
+          'Optionally set PIPER_BIN to reuse an existing Piper executable.'
+        ),
+      ],
+      linkLabel: t('مزيد عن Piper', 'More about Piper'),
+      disclaimer: t(
+        'يُخزَّن نموذج Piper محلياً بأذونات مالك فقط ولا يُرسل الصوت أو النص إلى أي خدمة سحابية.',
+        'Piper models are stored locally with owner-only permissions and audio/text never leaves your machine.'
+      ),
     },
     {
       key: 'elevenlabs',
@@ -923,21 +1038,21 @@ function TermsContent() {
       >
         <p>
           {t(
-            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai و ElevenLabs خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. لا تملك Zoedit Studio النماذج المجانية ولا تضمن استمرارها أو جودتها.',
-            'OpenCode free models, DeepSeek, OpenRouter, Kie.ai, and ElevenLabs are independent third-party services governed by their own terms, pricing, and availability. Zoedit Studio does not own or guarantee third-party free models.'
+            'نماذج OpenCode المجانية وDeepSeek وOpenRouter وKie.ai وElevenLabs وخدمة Edge TTS السحابية خدمات مستقلة تابعة لجهات خارجية، وتخضع لشروطها وأسعارها وتوفرها الخاص. Piper TTS يعمل محلياً بنموذج مفتوح المصدر. لا تملك Zoedit Studio هذه الخدمات ولا تضمن استمرارها أو جودتها.',
+            'OpenCode free models, DeepSeek, OpenRouter, Kie.ai, ElevenLabs, and the Edge TTS cloud service are independent third-party services governed by their own terms, pricing, and availability. Piper TTS runs locally under its open-source model. Zoedit Studio does not own these services or guarantee their availability or output quality.'
           )}
         </p>
       </InfoCard>
 
       <InfoCard
         icon={<Lock className="h-3.5 w-3.5" />}
-        title={t('خصوصية المفاتيح ومسؤولية المستخدم', 'Local key privacy & user responsibility')}
+        title={t('خصوصية المفاتيح والأصول المحلية', 'Local key & asset privacy')}
         tone="emerald"
       >
         <p>
           {t(
-            'تُخزَّن مفاتيح API محلياً فقط في ~/.zoedit-studio/settings.json ولا تُرسل إلى خوادم Zoedit Studio. المستخدم مسؤول بالكامل عن استخدامه لواجهات API وعن المحتوى الذي يولّده.',
-            'API keys are stored strictly locally in ~/.zoedit-studio/settings.json and never sent to Zoedit Studio servers. Users are fully responsible for their API usage and the content they generate.'
+            'تُخزَّن مفاتيح API محلياً فقط في ~/.zoedit-studio/settings.json، وتُحفظ الصور واللوغوهات المرفوعة في public/user-assets بأذونات مالك فقط. لا تُرسل المفاتيح أو الأصول إلى خوادم Zoedit Studio. أنت مسؤول بالكامل عن استخدام واجهات API وعن المحتوى الذي تولّده.',
+            'API keys are stored strictly locally in ~/.zoedit-studio/settings.json, and uploaded images/logos live in public/user-assets with owner-only permissions. Keys and assets are never sent to Zoedit Studio servers. You remain fully responsible for your API usage and generated content.'
           )}
         </p>
       </InfoCard>
